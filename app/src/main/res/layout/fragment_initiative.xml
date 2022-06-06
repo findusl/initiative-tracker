@@ -1,39 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="android.view.View"/>
         <variable name="selected" type="Boolean" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".InitiativeFragment">
+        android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
-            android:name="de.lehrbaum.initiativetracker.InitiativeFragment"
+        <!-- Could probably merge with parent with ConstraintLayout -->
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:layoutManager="LinearLayoutManager"
-            tools:context=".InitiativeFragment"
-            tools:listitem="@layout/fragment_initiative_item" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:context=".InitiativeFragment">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_new_button"
-            android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:name="de.lehrbaum.initiativetracker.InitiativeFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"
+                tools:context=".InitiativeFragment"
+                tools:listitem="@layout/fragment_initiative_item" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_new_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="@dimen/fab_margin"
+                android:layout_marginBottom="@dimen/fab_margin"
+                android:contentDescription="@string/new_button_content_description"
+                android:src="@android:drawable/ic_input_add" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:layout_marginBottom="@dimen/fab_margin"
-            android:contentDescription="@string/new_button_content_description"
-            android:src="@android:drawable/ic_input_add" />
+            android:orientation="horizontal">
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <TextView
+                android:id="@+id/state_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                tools:text="Not yet started"/>
+
+            <ImageButton
+                android:id="@+id/prev_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/min_control_size"
+                android:minWidth="@dimen/min_control_size"
+                android:src="@android:drawable/ic_media_rew"
+                android:contentDescription="@string/prev_button_content_description" />
+
+            <ImageButton
+                android:id="@+id/next_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/min_control_size"
+                android:minWidth="@dimen/min_control_size"
+                android:src="@android:drawable/ic_media_ff"
+                android:contentDescription="@string/next_button_content_description" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 </layout>
