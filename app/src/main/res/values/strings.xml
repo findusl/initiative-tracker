@@ -11,4 +11,6 @@
     <string name="name_edit_hint">The name of this creature.</string>
     <string name="cancel_text">Cancel</string>
     <string name="save_text">Save</string>
+    <string name="prev_button_content_description">Return to previous in initiative.</string>
+    <string name="next_button_content_description">Go to next in initiative.</string>
 </resources>
