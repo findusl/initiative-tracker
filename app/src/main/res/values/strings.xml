@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Initiative Tracker</string>
+    <string name="action_settings">Settings</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="initiative_fragment">Initiative Fragment</string>
+    <string name="new_button_content_description">Add a new combatant to the initiative order</string>
+    <string name="edit_button_content_description">Button to edit the entry.</string>
+    <string name="initiative_edit_hint">The initiative of this creature.</string>
+    <string name="name_edit_hint">The name of this creature.</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="save_text">Save</string>
+</resources>
