@@ -5,14 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
-        <variable name="viewModel" type="de.lehrbaum.initiativetracker.CombatantViewModel" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="de.lehrbaum.initiativetracker.CombatantViewModel" />
     </data>
 
     <FrameLayout
+        is_selected="@{viewModel.selected}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        is_selected="@{viewModel.selected}"
         android:background="@color/initiative_item_background">
 
         <LinearLayout
@@ -53,12 +57,13 @@
                 android:id="@+id/name_edit"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_control_size"
-                android:minWidth="@dimen/min_control_size"
                 android:layout_margin="@dimen/text_margin"
                 android:autofillHints="name"
                 android:hint="@string/name_edit_hint"
                 android:inputType="textPersonName"
+                android:minWidth="@dimen/min_control_size"
+                android:minHeight="@dimen/min_control_size"
+                android:selectAllOnFocus="true"
                 android:text="@{viewModel.name}"
                 android:textAppearance="?attr/textAppearanceListItem"
                 app:layout_constraintEnd_toStartOf="@+id/initiative_edit"
@@ -71,13 +76,14 @@
                 android:id="@+id/initiative_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_control_size"
-                android:minWidth="@dimen/min_control_size"
-                android:maxWidth="@dimen/min_control_size"
                 android:layout_margin="@dimen/text_margin"
                 android:autofillHints="no"
                 android:hint="@string/initiative_edit_hint"
                 android:inputType="numberDecimal"
+                android:maxWidth="@dimen/min_control_size"
+                android:minWidth="@dimen/min_control_size"
+                android:minHeight="@dimen/min_control_size"
+                android:selectAllOnFocus="true"
                 android:text="@{viewModel.initiativeString}"
                 android:textAppearance="?attr/textAppearanceListItem"
                 app:layout_constraintBottom_toBottomOf="@+id/name_edit"
@@ -90,8 +96,8 @@
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_control_size"
                 android:minWidth="@dimen/min_control_size"
+                android:minHeight="@dimen/min_control_size"
                 android:text="@string/cancel_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -102,8 +108,8 @@
                 android:id="@+id/save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_control_size"
                 android:minWidth="@dimen/min_control_size"
+                android:minHeight="@dimen/min_control_size"
                 android:text="@string/save_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/cancel_button"
