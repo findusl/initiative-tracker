@@ -19,32 +19,38 @@
         android:layout_height="wrap_content"
         android:background="@color/initiative_item_background">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="@{viewModel.selected ? View.GONE : View.VISIBLE}">
+            android:layout_margin="8dp">
 
-            <TextView
-                android:id="@+id/name_text"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:layout_weight="1"
-                android:text="@{viewModel.name}"
-                android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="Skeleton" />
+                android:orientation="horizontal"
+                android:visibility="@{viewModel.selected ? View.GONE : View.VISIBLE}">
 
-            <TextView
-                android:id="@+id/initiative_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{viewModel.initiativeString}"
-                android:textAppearance="?attr/textAppearanceListItem"
-                tools:text="10" />
+                <TextView
+                    android:id="@+id/name_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:layout_weight="1"
+                    android:text="@{viewModel.name}"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    tools:text="Skeleton" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/initiative_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:text="@{viewModel.initiativeString}"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    tools:text="10" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
