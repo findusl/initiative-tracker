@@ -35,13 +35,28 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 		}
 
 		private fun onSave() {
-			if(binding.initiativeEdit.text.toString().isBlank()) return
+			if (!validateInput()) return
+
 			val updatedCombatant = binding.viewModel?.copy(
 				name = binding.nameEdit.text.toString(),
 				initiative = parseShort(binding.initiativeEdit.text.toString())
 			)
 			updatedCombatant?.let { viewModel.updateCombatant(it) }
 			viewModel.selectCombatant(null)
+		}
+
+		private fun validateInput(): Boolean {
+			var valid = true
+			val errorMessage = "This field cannot be blank"
+			if (binding.initiativeEdit.text.toString().isBlank()) {
+				binding.initiativeEdit.error = errorMessage
+				valid = false
+			}
+			if (binding.nameEdit.text.toString().isBlank()) {
+				binding.nameEdit.error = errorMessage
+				valid = false
+			}
+			return valid
 		}
 
 		private fun onCancel() {
