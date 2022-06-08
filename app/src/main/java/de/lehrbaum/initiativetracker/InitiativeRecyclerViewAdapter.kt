@@ -49,12 +49,16 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 			var valid = true
 			val errorMessage = "This field cannot be blank"
 			if (binding.initiativeEdit.text.toString().isBlank()) {
-				binding.initiativeEdit.error = errorMessage
+				binding.initiativeEditLayout.error = errorMessage
 				valid = false
+			} else {
+				binding.initiativeEditLayout.error = null
 			}
 			if (binding.nameEdit.text.toString().isBlank()) {
-				binding.nameEdit.error = errorMessage
+				binding.nameEditLayout.error = errorMessage
 				valid = false
+			} else {
+				binding.nameEditLayout.error = null
 			}
 			return valid
 		}
