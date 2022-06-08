@@ -35,6 +35,7 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 		}
 
 		private fun onSave() {
+			if(binding.initiativeEdit.text.toString().isBlank()) return
 			val updatedCombatant = binding.viewModel?.copy(
 				name = binding.nameEdit.text.toString(),
 				initiative = parseShort(binding.initiativeEdit.text.toString())
