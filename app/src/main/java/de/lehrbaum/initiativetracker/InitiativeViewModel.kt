@@ -8,7 +8,7 @@ class InitiativeViewModel : ViewModel() {
 
 	private var nextId = 0L
 
-	private var _activeCombatant = 0
+	private var activeCombatant = 0
 
 	private val _combatants = MutableNonNullLiveData(emptyList<CombatantViewModel>())
 
@@ -39,11 +39,10 @@ class InitiativeViewModel : ViewModel() {
 	}
 
 	fun nextTurn() {
-		_combatants.value[_activeCombatant].active = false
-		++_activeCombatant
-		_activeCombatant %= _combatants.value.size
-		_combatants.value[_activeCombatant].active = true
-
+		_combatants.value[activeCombatant].active = false
+		++activeCombatant
+		activeCombatant %= _combatants.value.size
+		_combatants.value[activeCombatant].active = true
 	}
 }
 

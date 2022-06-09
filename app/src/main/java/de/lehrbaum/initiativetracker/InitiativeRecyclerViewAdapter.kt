@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker
 
+import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -28,6 +28,7 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 			binding.root.setOnClickListener(this::onClick)
 			binding.saveButton.setOnClickListener(this::onSave)
 			binding.cancelButton.setOnClickListener(this::onCancel)
+			binding.test.setBackgroundColor(Color.BLUE)
 		}
 
 		private fun onClick() {
