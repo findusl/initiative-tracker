@@ -22,13 +22,13 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp">
+            android:layout_margin="8dp"
+            android:visibility="@{viewModel.selected ? View.GONE : View.VISIBLE}">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="@{viewModel.selected ? View.GONE : View.VISIBLE}">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/name_text"
@@ -55,14 +55,14 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp">
+            android:layout_margin="8dp"
+            android:visibility="@{viewModel.selected ? View.VISIBLE : View.GONE}"
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="@{viewModel.selected ? View.VISIBLE : View.GONE}"
-                tools:visibility="gone">
+                android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/name_edit_layout"
