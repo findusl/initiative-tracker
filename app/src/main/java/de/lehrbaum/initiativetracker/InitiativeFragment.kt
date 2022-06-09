@@ -34,6 +34,16 @@ class InitiativeFragment : Fragment() {
 			viewModel.addCombatant()
 		}
 
+		binding.nextButton.setOnClickListener {
+			onNext()
+		}
+
 		return binding.root
 	}
+
+	private fun onNext() {
+		viewModel.nextTurn()
+	}
+
+
 }

@@ -8,6 +8,8 @@ class InitiativeViewModel : ViewModel() {
 
 	private var nextId = 0L
 
+	private var _activeCombatant = 0
+
 	private val _combatants = MutableNonNullLiveData(emptyList<CombatantViewModel>())
 
 	val combatants: NonNullLiveData<List<CombatantViewModel>>
@@ -35,6 +37,14 @@ class InitiativeViewModel : ViewModel() {
 			if (it.id == updatedCombatant.id) updatedCombatant else it
 		}.sortedDescending()
 	}
+
+	fun nextTurn() {
+		_combatants.value[_activeCombatant].active = false
+		++_activeCombatant
+		_activeCombatant %= _combatants.value.size
+		_combatants.value[_activeCombatant].active = true
+
+	}
 }
 
 data class CombatantViewModel(
@@ -42,6 +52,7 @@ data class CombatantViewModel(
 	val name: String,
 	val initiative: Short,
 	val selected: Boolean = false,
+	var active: Boolean = false
 ) : Comparable<CombatantViewModel> {
 
 	val initiativeString: String

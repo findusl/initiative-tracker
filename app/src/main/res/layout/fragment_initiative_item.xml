@@ -8,6 +8,8 @@
 
         <import type="android.view.View" />
 
+        <import type="android.R" />
+
         <variable
             name="viewModel"
             type="de.lehrbaum.initiativetracker.CombatantViewModel" />
@@ -23,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:background="@{viewModel.active ? R.color.holo_purple : R.color.holo_blue_bright}"
             android:visibility="@{viewModel.selected ? View.GONE : View.VISIBLE}">
 
             <LinearLayout
