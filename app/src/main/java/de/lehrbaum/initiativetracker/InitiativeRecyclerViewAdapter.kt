@@ -2,7 +2,6 @@ package de.lehrbaum.initiativetracker
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DiffUtil
@@ -10,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeItemBinding
 import java.lang.Short.parseShort
+
 
 class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) :
 	ListAdapter<CombatantViewModel, InitiativeRecyclerViewAdapter.ViewHolder>(CombatantDiffUtil()) {
@@ -30,6 +30,7 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 			binding.root.setOnClickListener(this::onClick)
 			binding.saveButton.setOnClickListener(this::onSave)
 			binding.cancelButton.setOnClickListener(this::onCancel)
+			binding.nameEdit.setSimpleItems(R.array.creatures)
 		}
 
 		private fun onClick() {
