@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker
 
-import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -19,7 +19,7 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val combatant = getItem(position)
-		holder.binding.viewModel = combatant
+		holder.bind(combatant)
 	}
 
 	inner class ViewHolder(val binding: FragmentInitiativeItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -28,7 +28,19 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 			binding.root.setOnClickListener(this::onClick)
 			binding.saveButton.setOnClickListener(this::onSave)
 			binding.cancelButton.setOnClickListener(this::onCancel)
-			binding.test.setBackgroundColor(Color.BLUE)
+		}
+
+		fun bind(viewModel: CombatantViewModel) {
+			binding.viewModel = viewModel
+			// The binding sets the visibility values delayed, which leads to wrong measurements and weird effects
+			// This way we set the visibility values immediately and the layout calculates measurements correctly.
+			if (viewModel.editMode) {
+				binding.standardView.visibility = View.GONE
+				binding.editView.visibility = View.VISIBLE
+			} else {
+				binding.standardView.visibility = View.VISIBLE
+				binding.editView.visibility = View.GONE
+			}
 		}
 
 		private fun onClick() {

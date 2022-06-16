@@ -34,5 +34,4 @@ class InitiativeFragment : Fragment() {
 		return binding.root
 	}
 
-
 }

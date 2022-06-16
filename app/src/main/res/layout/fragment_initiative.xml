@@ -65,6 +65,7 @@
                 android:minHeight="@dimen/min_control_size"
                 android:minWidth="@dimen/min_control_size"
                 android:src="@android:drawable/ic_media_rew"
+                android:onClickListener="@{()-> viewModel.prevTurn()}"
                 android:contentDescription="@string/prev_button_content_description" />
 
             <ImageButton
