@@ -1,8 +1,10 @@
 package de.lehrbaum.initiativetracker
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -56,6 +58,7 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 			)
 			updatedCombatant?.let { viewModel.updateCombatant(it) }
 			viewModel.selectCombatant(null)
+			closeSoftKeyboard()
 		}
 
 		private fun validateInput(): Boolean {
@@ -78,6 +81,14 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 
 		private fun onCancel() {
 			viewModel.selectCombatant(null)
+			closeSoftKeyboard()
+		}
+
+		private fun closeSoftKeyboard() {
+			with(binding.root.context) {
+				val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+				imm?.hideSoftInputFromWindow(binding.root.windowToken, 0)
+			}
 		}
 	}
 }
