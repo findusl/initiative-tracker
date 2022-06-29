@@ -8,22 +8,25 @@
 
         <import type="android.view.View" />
 
+        <import type="android.R" />
+
         <variable
             name="viewModel"
             type="de.lehrbaum.initiativetracker.CombatantViewModel" />
     </data>
 
     <FrameLayout
-        is_selected="@{viewModel.selected}"
+        is_activated="@{viewModel.active}"
+        is_selected="@{viewModel.editMode}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/initiative_item_background">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/standard_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:visibility="@{viewModel.selected ? View.GONE : View.VISIBLE}">
+            android:layout_margin="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,10 +56,10 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/edit_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:visibility="@{viewModel.selected ? View.VISIBLE : View.GONE}"
             tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout

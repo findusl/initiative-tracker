@@ -10,6 +10,8 @@ class InitiativeViewModel : ViewModel() {
 
 	private var nextId = 0L
 
+	private var activeCombatantIndex = 0
+
 	private val _combatants = MutableNonNullLiveData(emptyList<CombatantViewModel>())
 
 	/**
@@ -28,18 +30,20 @@ class InitiativeViewModel : ViewModel() {
 	fun selectCombatant(selectedCombatant: CombatantViewModel?) {
 		_combatants.value = _combatants.value.map {
 			val shouldBeSelected = it.id == selectedCombatant?.id
-			if (it.selected != shouldBeSelected) it.copy(selected = shouldBeSelected) else it
-		}.sortedDescending()
+			if (it.editMode != shouldBeSelected) it.copy(editMode = shouldBeSelected) else it
+		}
 	}
 
 	fun addCombatant() {
 		val newCombatant = CombatantViewModel(nextId++, latestName ?: DEFAULT_COMBATANT_TITLE, 99)
-		_combatants.value = (_combatants.value + newCombatant).sortedDescending()
+		_combatants.value = (_combatants.value + newCombatant)
+			.sortedDescending()
+			.copyWithCorrectActiveState()
 	}
 
 	fun updateCombatant(updatedCombatant: CombatantViewModel) {
 		_combatants.value = _combatants.value.map {
-			if (it.id == updatedCombatant.id) {
+      if (it.id == updatedCombatant.id) {
 				if (it.name != updatedCombatant.name) {
 					latestName = updatedCombatant.name
 				}
@@ -47,7 +51,30 @@ class InitiativeViewModel : ViewModel() {
 			} else {
 				it
 			}
-		}.sortedDescending()
+		}
+			.sortedDescending()
+			.copyWithCorrectActiveState()
+	}
+
+	fun nextTurn() {
+		activeCombatantIndex = (activeCombatantIndex + 1) % combatants.value.size
+		_combatants.value = _combatants.value.copyWithCorrectActiveState()
+	}
+
+	fun prevTurn() {
+		activeCombatantIndex--
+		if (activeCombatantIndex < 0) activeCombatantIndex = combatants.value.size - 1
+		_combatants.value = _combatants.value.copyWithCorrectActiveState()
+	}
+
+	private fun List<CombatantViewModel>.copyWithCorrectActiveState(): List<CombatantViewModel> {
+		return this.mapIndexed { index, combatantViewModel ->
+			val shouldBeActive = activeCombatantIndex == index
+			if (shouldBeActive != combatantViewModel.active)
+				combatantViewModel.copy(active = shouldBeActive)
+			else
+				combatantViewModel
+		}
 	}
 }
 
@@ -55,13 +82,17 @@ data class CombatantViewModel(
 	val id: Long,
 	val name: String,
 	val initiative: Short,
-	val selected: Boolean = false,
+	val editMode: Boolean = false,
+	var active: Boolean = false
 ) : Comparable<CombatantViewModel> {
 
 	val initiativeString: String
 		get() = initiative.toString()
 
 	override fun compareTo(other: CombatantViewModel): Int {
-		return initiative - other.initiative
+		var order = initiative - other.initiative
+		if (order == 0)
+			order = (id - other.id).toInt()
+		return order
 	}
 }
