@@ -22,6 +22,7 @@ class InitiativeFragment : Fragment() {
 		savedInstanceState: Bundle?
 	): View {
 		val binding = FragmentInitiativeBinding.inflate(inflater, container, false)
+		binding.viewModel = viewModel
 
 		initiativeRecyclerViewAdapter = InitiativeRecyclerViewAdapter(viewModel)
 		binding.list.adapter = initiativeRecyclerViewAdapter
@@ -30,10 +31,7 @@ class InitiativeFragment : Fragment() {
 			initiativeRecyclerViewAdapter.submitList(it)
 		}
 
-		binding.fabNewButton.setOnClickListener {
-			viewModel.addCombatant()
-		}
-
 		return binding.root
 	}
+
 }

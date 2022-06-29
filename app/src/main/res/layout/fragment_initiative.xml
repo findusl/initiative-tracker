@@ -5,8 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
-        <variable name="selected" type="Boolean" />
+
+        <variable
+            name="viewModel"
+            type="de.lehrbaum.initiativetracker.InitiativeViewModel" />
     </data>
 
     <LinearLayout
@@ -38,6 +40,7 @@
                 android:layout_marginEnd="@dimen/fab_margin"
                 android:layout_marginBottom="@dimen/fab_margin"
                 android:contentDescription="@string/new_button_content_description"
+                android:onClickListener="@{()-> viewModel.addCombatant()}"
                 android:src="@android:drawable/ic_input_add" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -62,6 +65,7 @@
                 android:minHeight="@dimen/min_control_size"
                 android:minWidth="@dimen/min_control_size"
                 android:src="@android:drawable/ic_media_rew"
+                android:onClickListener="@{()-> viewModel.prevTurn()}"
                 android:contentDescription="@string/prev_button_content_description" />
 
             <ImageButton
@@ -71,6 +75,7 @@
                 android:minHeight="@dimen/min_control_size"
                 android:minWidth="@dimen/min_control_size"
                 android:src="@android:drawable/ic_media_ff"
+                android:onClickListener="@{()-> viewModel.nextTurn()}"
                 android:contentDescription="@string/next_button_content_description" />
 
         </LinearLayout>
