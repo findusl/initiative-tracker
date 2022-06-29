@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableNonNullLiveData
 import androidx.lifecycle.NonNullLiveData
 import androidx.lifecycle.ViewModel
 
+private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
+
 class InitiativeViewModel : ViewModel() {
 
 	private var nextId = 0L
@@ -11,6 +13,11 @@ class InitiativeViewModel : ViewModel() {
 	private var activeCombatantIndex = 0
 
 	private val _combatants = MutableNonNullLiveData(emptyList<CombatantViewModel>())
+
+	/**
+	 * The most recent name set on a combatant. It is used for new combatants, as often monsters have the same name.
+	 */
+	private var latestName: String? = null
 
 	val combatants: NonNullLiveData<List<CombatantViewModel>>
 		get() = _combatants
@@ -28,7 +35,7 @@ class InitiativeViewModel : ViewModel() {
 	}
 
 	fun addCombatant() {
-		val newCombatant = CombatantViewModel(nextId++, "New Combatant", 99)
+		val newCombatant = CombatantViewModel(nextId++, latestName ?: DEFAULT_COMBATANT_TITLE, 99)
 		_combatants.value = (_combatants.value + newCombatant)
 			.sortedDescending()
 			.copyWithCorrectActiveState()
@@ -36,7 +43,14 @@ class InitiativeViewModel : ViewModel() {
 
 	fun updateCombatant(updatedCombatant: CombatantViewModel) {
 		_combatants.value = _combatants.value.map {
-			if (it.id == updatedCombatant.id) updatedCombatant else it
+      if (it.id == updatedCombatant.id) {
+				if (it.name != updatedCombatant.name) {
+					latestName = updatedCombatant.name
+				}
+				updatedCombatant
+			} else {
+				it
+			}
 		}
 			.sortedDescending()
 			.copyWithCorrectActiveState()
