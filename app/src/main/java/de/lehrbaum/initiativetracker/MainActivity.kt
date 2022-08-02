@@ -9,6 +9,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import de.lehrbaum.initiativetracker.databinding.ActivityMainBinding
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +19,9 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+		// Initialize Napier
+		Napier.base(DebugAntilog())
 
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
