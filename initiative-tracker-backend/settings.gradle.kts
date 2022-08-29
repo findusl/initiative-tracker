@@ -1,0 +1,1 @@
+rootProject.name = "initiative-tracker-backend"
