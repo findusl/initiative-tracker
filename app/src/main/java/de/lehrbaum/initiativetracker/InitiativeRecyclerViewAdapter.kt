@@ -24,7 +24,7 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 		holder.bind(combatant)
 	}
 
-	inner class ViewHolder(val binding: FragmentInitiativeItemBinding) : RecyclerView.ViewHolder(binding.root) {
+	inner class ViewHolder(private val binding: FragmentInitiativeItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
 		init {
 			binding.root.setOnClickListener(this::onClick)
