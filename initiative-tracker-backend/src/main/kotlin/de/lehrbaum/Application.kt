@@ -5,8 +5,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
@@ -18,11 +16,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import org.slf4j.event.Level
 
-fun main() {
-	embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-		main()
-	}.start(wait = true)
-}
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 private const val SESSION_ID_PATH_PARAMETER = "sessionId"
 
