@@ -1,14 +1,12 @@
 package de.lehrbaum.initiativetracker
 
-import androidx.lifecycle.MutableNonNullLiveData
-import androidx.lifecycle.NonNullLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import de.lehrbaum.initiativetracker.bestiary.BestiaryNetworkClient
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -25,15 +23,19 @@ class InitiativeViewModel : ViewModel() {
 	private val _combatants = MutableNonNullLiveData(emptyList<CombatantViewModel>())
 
 	/**
-	 * The most recent name set on a combatant. It is used for new combatants, as often monsters have the same name.
+	 * The most recent name set on a combatant. Default for new combatants, as often monsters have the same name.
 	 */
 	private var latestName: String? = null
 
 	private val bestiaryNetworkClient = BestiaryNetworkClient()
 
-	val allMonsters = bestiaryNetworkClient.monsters
+	private val allMonstersFlow = bestiaryNetworkClient.monsters
 		.flowOn(Dispatchers.IO)
 		.stateIn(viewModelScope + Dispatchers.Main, SharingStarted.Eagerly, listOf())
+
+	val allMonsterNamesLiveData = allMonstersFlow
+		.map { monsters -> monsters.map { it.name } }
+		.asLiveData(Dispatchers.IO)
 
 	val combatants: NonNullLiveData<List<CombatantViewModel>>
 		get() = _combatants
@@ -42,7 +44,7 @@ class InitiativeViewModel : ViewModel() {
 		addCombatant()
 		addCombatant()
 		viewModelScope.launch {
-			allMonsters.collect {
+			allMonstersFlow.collect {
 				Napier.i("Loaded ${it.size} monsters ", tag = TAG)
 			}
 		}
