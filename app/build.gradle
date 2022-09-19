@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "de.lehrbaum.initiativetracker"
         minSdk 30
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -46,11 +46,11 @@ ext {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
@@ -58,7 +58,7 @@ dependencies {
 
     api "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
     api "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
 
     api "io.ktor:ktor-client-core:$ktorVersion"
     api "io.ktor:ktor-client-serialization:$ktorVersion"
