@@ -36,7 +36,7 @@ class InitiativeRecyclerViewAdapter(
 			binding.saveButton.setOnClickListener(this::onSave)
 			binding.cancelButton.setOnClickListener(this::onCancel)
 			viewModel.allMonsterNamesLiveData.observe(viewLifecycleOwner) {
-				binding.nameEdit.setSimpleItems(it.toTypedArray())
+				binding.nameEdit.setSimpleItems(it)
 			}
 		}
 

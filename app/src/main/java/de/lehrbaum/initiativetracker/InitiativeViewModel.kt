@@ -34,7 +34,7 @@ class InitiativeViewModel : ViewModel() {
 		.stateIn(viewModelScope + Dispatchers.Main, SharingStarted.Eagerly, listOf())
 
 	val allMonsterNamesLiveData = allMonstersFlow
-		.map { monsters -> monsters.map { it.name } }
+		.map { monsters -> monsters.map { it.name }.toTypedArray() }
 		.asLiveData(Dispatchers.IO)
 
 	val combatants: NonNullLiveData<List<CombatantViewModel>>
