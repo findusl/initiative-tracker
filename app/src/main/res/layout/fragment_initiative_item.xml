@@ -87,6 +87,7 @@
                         android:minHeight="@dimen/min_control_size"
                         android:selectAllOnFocus="true"
                         android:text="@{viewModel.name}"
+
                         android:textAppearance="?attr/textAppearanceListItem"
                         app:layout_constraintEnd_toStartOf="@+id/initiative_edit"
                         tools:ignore="DuplicateSpeakableTextCheck"
