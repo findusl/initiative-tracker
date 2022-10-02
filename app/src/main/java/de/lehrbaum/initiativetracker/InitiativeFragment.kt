@@ -22,9 +22,10 @@ class InitiativeFragment : Fragment() {
 		savedInstanceState: Bundle?
 	): View {
 		val binding = FragmentInitiativeBinding.inflate(inflater, container, false)
+		binding.lifecycleOwner = viewLifecycleOwner
 		binding.viewModel = viewModel
 
-		initiativeRecyclerViewAdapter = InitiativeRecyclerViewAdapter(viewModel)
+		initiativeRecyclerViewAdapter = InitiativeRecyclerViewAdapter(viewModel, viewLifecycleOwner)
 		binding.list.adapter = initiativeRecyclerViewAdapter
 
 		viewModel.combatants.observe(viewLifecycleOwner) {

@@ -13,20 +13,4 @@
     <string name="save_text">Save</string>
     <string name="prev_button_content_description">Return to previous in initiative.</string>
     <string name="next_button_content_description">Go to next in initiative.</string>
-
-    <string-array name="creatures">
-        <!-- PCs  -->
-        <item>Istafein</item>
-        <item>Loki</item>
-
-        <!-- NPCs  -->
-        <item>Artor Morlin</item>
-
-        <!-- other  -->
-        <item>Dire Wolf</item>
-        <item>Dragon</item>
-        <item>Ogre</item>
-        <item>Skeleton</item>
-        <item>Werewolf</item>
-    </string-array>
 </resources>

@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeItemBinding
 import java.lang.Short.parseShort
 
-class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) :
+class InitiativeRecyclerViewAdapter(
+	private val viewModel: InitiativeViewModel,
+	private val viewLifecycleOwner: LifecycleOwner
+) :
 	ListAdapter<CombatantViewModel, InitiativeRecyclerViewAdapter.ViewHolder>(CombatantDiffUtil()) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,10 +31,13 @@ class InitiativeRecyclerViewAdapter(private val viewModel: InitiativeViewModel) 
 	inner class ViewHolder(private val binding: FragmentInitiativeItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
 		init {
+			binding.lifecycleOwner = viewLifecycleOwner
 			binding.root.setOnClickListener(this::onClick)
 			binding.saveButton.setOnClickListener(this::onSave)
 			binding.cancelButton.setOnClickListener(this::onCancel)
-			binding.nameEdit.setSimpleItems(R.array.creatures)
+			viewModel.allMonsterNamesLiveData.observe(viewLifecycleOwner) {
+				binding.nameEdit.setSimpleItems(it)
+			}
 		}
 
 		fun bind(viewModel: CombatantViewModel) {
