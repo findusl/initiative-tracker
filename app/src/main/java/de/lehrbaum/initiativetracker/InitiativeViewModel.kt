@@ -3,8 +3,18 @@ package de.lehrbaum.initiativetracker
 import androidx.lifecycle.MutableNonNullLiveData
 import androidx.lifecycle.NonNullLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import de.lehrbaum.initiativetracker.bestiary.BestiaryNetworkClient
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
+private const val TAG = "InitiativeViewModel"
 
 class InitiativeViewModel : ViewModel() {
 
@@ -19,12 +29,23 @@ class InitiativeViewModel : ViewModel() {
 	 */
 	private var latestName: String? = null
 
+	private val bestiaryNetworkClient = BestiaryNetworkClient()
+
+	val allMonsters = bestiaryNetworkClient.monsters
+		.flowOn(Dispatchers.IO)
+		.stateIn(viewModelScope + Dispatchers.Main, SharingStarted.Eagerly, listOf())
+
 	val combatants: NonNullLiveData<List<CombatantViewModel>>
 		get() = _combatants
 
 	init {
 		addCombatant()
 		addCombatant()
+		viewModelScope.launch {
+			allMonsters.collect {
+				Napier.i("Loaded ${it.size} monsters ", tag = TAG)
+			}
+		}
 	}
 
 	fun selectCombatant(selectedCombatant: CombatantViewModel?) {
@@ -78,21 +99,3 @@ class InitiativeViewModel : ViewModel() {
 	}
 }
 
-data class CombatantViewModel(
-	val id: Long,
-	val name: String,
-	val initiative: Short,
-	val editMode: Boolean = false,
-	var active: Boolean = false
-) : Comparable<CombatantViewModel> {
-
-	val initiativeString: String
-		get() = initiative.toString()
-
-	override fun compareTo(other: CombatantViewModel): Int {
-		var order = initiative - other.initiative
-		if (order == 0)
-			order = (id - other.id).toInt()
-		return order
-	}
-}
