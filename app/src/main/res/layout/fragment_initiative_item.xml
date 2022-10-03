@@ -87,7 +87,6 @@
                         android:minHeight="@dimen/min_control_size"
                         android:selectAllOnFocus="true"
                         android:text="@{viewModel.name}"
-
                         android:textAppearance="?attr/textAppearanceListItem"
                         app:layout_constraintEnd_toStartOf="@+id/initiative_edit"
                         tools:ignore="DuplicateSpeakableTextCheck"
@@ -109,7 +108,7 @@
                         android:layout_margin="@dimen/text_margin"
                         android:autofillHints="no"
                         android:hint="@string/initiative_edit_hint"
-                        android:inputType="numberDecimal"
+                        android:inputType="numberSigned"
                         android:maxWidth="@dimen/min_control_size"
                         android:minWidth="@dimen/min_control_size"
                         android:minHeight="@dimen/min_control_size"
