@@ -2,17 +2,14 @@ package de.lehrbaum.initiativetracker
 
 import androidx.lifecycle.*
 import de.lehrbaum.initiativetracker.bestiary.BestiaryNetworkClient
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 
 private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
-private const val TAG = "InitiativeViewModel"
 
 class InitiativeViewModel : ViewModel() {
 
@@ -43,11 +40,6 @@ class InitiativeViewModel : ViewModel() {
 	init {
 		addCombatant()
 		addCombatant()
-		viewModelScope.launch {
-			allMonstersFlow.collect {
-				Napier.i("Loaded ${it.size} monsters ", tag = TAG)
-			}
-		}
 	}
 
 	fun selectCombatant(selectedCombatant: CombatantViewModel?) {

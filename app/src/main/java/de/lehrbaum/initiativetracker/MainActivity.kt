@@ -17,11 +17,13 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var appBarConfiguration: AppBarConfiguration
 	private lateinit var binding: ActivityMainBinding
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-
+	init {
 		// Initialize Napier
 		Napier.base(DebugAntilog())
+	}
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
 
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
