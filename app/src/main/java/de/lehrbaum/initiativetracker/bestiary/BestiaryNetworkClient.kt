@@ -35,7 +35,7 @@ class BestiaryNetworkClient {
 					Napier.i(message, null, TAG)
 				}
 			}
-			level = LogLevel.NONE // change for debugging, but it's a lot of requests
+			level = LogLevel.NONE // change for debugging, lot of logs
 		}
 	}
 
@@ -61,7 +61,7 @@ class BestiaryNetworkClient {
 				}.awaitAll()
 					.filterNotNull()
 					.flatMap(BestiaryCollectionDTO::monster)
-				Napier.i("Finished loading bestiary")
+				Napier.i("Loaded ${result.size} monsters ", tag = TAG)
 				result
 			}
 		}
