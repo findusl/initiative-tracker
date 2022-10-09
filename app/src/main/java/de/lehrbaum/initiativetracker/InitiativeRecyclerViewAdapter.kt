@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeItemBinding
 import java.lang.Short.parseShort
+
+@Suppress("unused")
+private const val TAG = "InitiativeRecyclerViewAdapter"
 
 class InitiativeRecyclerViewAdapter(
 	private val viewModel: InitiativeViewModel,
@@ -38,19 +42,28 @@ class InitiativeRecyclerViewAdapter(
 			viewModel.allMonsterNamesLiveData.observe(viewLifecycleOwner) {
 				binding.nameEdit.setSimpleItems(it)
 			}
+			binding.nameEdit.doOnTextChanged { _, _, _, _ -> onChange() }
+			binding.initiativeEdit.doOnTextChanged { _, _, _, _ -> onChange() }
 		}
 
-		fun bind(viewModel: CombatantViewModel) {
-			binding.viewModel = viewModel
+		fun bind(combatantViewModel: CombatantViewModel) {
+			binding.viewModel = combatantViewModel
 			// The binding sets the visibility values delayed, which leads to wrong measurements and weird effects
 			// This way we set the visibility values immediately and the layout calculates measurements correctly.
-			if (viewModel.editMode) {
+			if (combatantViewModel.editMode) {
 				binding.standardView.visibility = View.GONE
 				binding.editView.visibility = View.VISIBLE
 			} else {
 				binding.standardView.visibility = View.VISIBLE
 				binding.editView.visibility = View.GONE
 			}
+			if (combatantViewModel.editMode) {
+				viewModel.currentlyEditingCombatant = combatantViewModel
+			}
+		}
+
+		private fun onChange() {
+			viewModel.currentlyEditingCombatant = calculateUpdatedCombatantViewModel()
 		}
 
 		private fun onClick() {
@@ -60,11 +73,8 @@ class InitiativeRecyclerViewAdapter(
 		private fun onSave() {
 			if (!validateInput()) return
 
-			val updatedCombatant = binding.viewModel?.copy(
-				name = binding.nameEdit.text.toString(),
-				initiative = parseShort(binding.initiativeEdit.text.toString())
-			)
-			updatedCombatant?.let { viewModel.updateCombatant(it) }
+			// Let it throw should this be null
+			calculateUpdatedCombatantViewModel()!!.let { viewModel.updateCombatant(it) }
 			viewModel.selectCombatant(null)
 			closeSoftKeyboard()
 		}
@@ -96,6 +106,19 @@ class InitiativeRecyclerViewAdapter(
 			with(binding.root.context) {
 				val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
 				imm?.hideSoftInputFromWindow(binding.root.windowToken, 0)
+			}
+		}
+
+		private fun calculateUpdatedCombatantViewModel(): CombatantViewModel? {
+			return try {
+				val initiative = parseShort(binding.initiativeEdit.text.toString())
+				binding.viewModel?.copy(
+					name = binding.nameEdit.text.toString(),
+					initiative = initiative
+				)
+			} catch (e: java.lang.NumberFormatException) {
+				// happens when the input is not a complete number, e.g. only minus or empty
+				null
 			}
 		}
 	}
