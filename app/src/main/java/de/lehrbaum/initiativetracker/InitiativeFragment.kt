@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,7 @@ import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeBinding
 /**
  * A fragment representing a list of Items.
  */
-class InitiativeFragment : Fragment() {
+class InitiativeFragment : Fragment(), InitiativeViewModel.Delegate {
 
 	private val viewModel by viewModels<InitiativeViewModel>()
 
@@ -21,6 +22,8 @@ class InitiativeFragment : Fragment() {
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
+		viewModel.setDelegate(this, viewLifecycleOwner)
+
 		val binding = FragmentInitiativeBinding.inflate(inflater, container, false)
 		binding.lifecycleOwner = viewLifecycleOwner
 		binding.viewModel = viewModel
@@ -33,6 +36,18 @@ class InitiativeFragment : Fragment() {
 		}
 
 		return binding.root
+	}
+
+	override fun showSaveChangesDialog(onOkListener: () -> Unit) {
+		AlertDialog.Builder(context)
+			.setTitle("Save changes?")
+			.setMessage("Do you want to save your changes?")
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setPositiveButton(android.R.string.ok) { _, _ ->
+				onOkListener()
+			}
+			.setNegativeButton(android.R.string.cancel, null)
+			.show()
 	}
 
 }
