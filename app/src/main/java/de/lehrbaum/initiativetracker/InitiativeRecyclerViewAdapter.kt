@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeItemBinding
+import de.lehrbaum.initiativetracker.extensions.setOnClickListener
 import java.lang.Short.parseShort
 
 @Suppress("unused")
