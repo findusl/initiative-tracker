@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
 
 @MainThread
-class CurrentCombatController {
+class CombatController {
 	private var nextId = 0L
 
 	/**
@@ -24,7 +24,6 @@ class CurrentCombatController {
 	private val _activeCombatantIndex = MutableStateFlow(0)
 	val activeCombatantIndex: StateFlow<Int>
 		get() = _activeCombatantIndex
-
 
 	fun nextTurn() {
 		_activeCombatantIndex.value = (activeCombatantIndex.value + 1) % combatantCount

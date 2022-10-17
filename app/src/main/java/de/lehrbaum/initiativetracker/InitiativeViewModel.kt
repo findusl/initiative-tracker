@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.*
 class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() {
 	private val editingCombatantId = MutableStateFlow<Long?>(null)
 
-	private val currentCombatController = CurrentCombatController()
+	private val currentCombatController = CombatController()
 
 	private val combatantsFlow = combine(
 		currentCombatController.currentCombat, currentCombatController.activeCombatantIndex, editingCombatantId
