@@ -41,7 +41,7 @@ android {
 }
 
 ext {
-    kotlinxSerializationVersion = "1.4.0"
+    kotlinxSerializationVersion = "1.4.1"
     ktorVersion = "2.1.2"
 }
 
