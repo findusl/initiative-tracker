@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="de.lehrbaum.initiativetracker.InitiativeViewModel" />
+            type="de.lehrbaum.initiativetracker.view.InitiativeViewModel" />
     </data>
 
     <LinearLayout
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            tools:context=".InitiativeFragment">
+            tools:context=".view.InitiativeFragment">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="LinearLayoutManager"
-                tools:context=".InitiativeFragment"
+                tools:context=".view.InitiativeFragment"
                 tools:listitem="@layout/fragment_initiative_item" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

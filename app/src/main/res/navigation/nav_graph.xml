@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/InitiativeFragment"
-        android:name="de.lehrbaum.initiativetracker.InitiativeFragment"
+        android:name="de.lehrbaum.initiativetracker.view.InitiativeFragment"
         android:label="@string/initiative_fragment"
         tools:layout="@layout/fragment_initiative">
 
