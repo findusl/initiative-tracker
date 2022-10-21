@@ -17,6 +17,8 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 
 	private val shareCombatController = ShareCombatController(currentCombatController)
 
+	private var mostRecentDeleted: CombatantModel? = null
+
 	private val combatantsFlow = combine(
 		currentCombatController.combatants, currentCombatController.activeCombatantIndex, editingCombatantId
 	) { combatants, activeCombatantIndex, editingCombatantId ->
@@ -64,7 +66,7 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 
 	private fun checkIfShouldSave() {
 		val currentlyEditingCombatant = currentlyEditingCombatant ?: return
-		val oldSelectedCombatantViewModel = combatantsFlow.value.first { it.id == currentlyEditingCombatant.id }
+		val oldSelectedCombatantViewModel = combatantsFlow.value.firstOrNull { it.id == currentlyEditingCombatant.id } ?: return
 		val sanitizedEditingCombatant = currentlyEditingCombatant
 			.copy(active = oldSelectedCombatantViewModel.active, editMode = oldSelectedCombatantViewModel.editMode)
 		if (sanitizedEditingCombatant != oldSelectedCombatantViewModel) {
@@ -84,6 +86,16 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 	fun nextTurn() = currentCombatController.nextTurn()
 
 	fun prevTurn() = currentCombatController.prevTurn()
+
+	fun deleteCombatant(position: Int) {
+		mostRecentDeleted = currentCombatController.deleteCombatant(position)
+	}
+
+	fun undoDelete() {
+		mostRecentDeleted?.let {
+			currentCombatController.addCombatant(it.name, it.initiative)
+		}
+	}
 
 	interface Delegate {
 		fun showSaveChangesDialog(onOkListener: () -> Unit)

@@ -64,7 +64,9 @@ class InitiativeRecyclerViewAdapter(
 		}
 
 		private fun onChange() {
-			viewModel.currentlyEditingCombatant = calculateUpdatedCombatantViewModel()
+			if (binding.viewModel?.editMode == true) {
+				viewModel.currentlyEditingCombatant = calculateUpdatedCombatantViewModel()
+			}
 		}
 
 		private fun onClick() {
