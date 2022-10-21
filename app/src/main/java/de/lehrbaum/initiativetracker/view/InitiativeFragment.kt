@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeBinding
 
 /**
@@ -35,6 +38,8 @@ class InitiativeFragment : Fragment(), InitiativeViewModel.Delegate {
 			initiativeRecyclerViewAdapter.submitList(it)
 		}
 
+		ItemTouchHelper(ItemTouchCallback()).attachToRecyclerView(binding.list)
+
 		return binding.root
 	}
 
@@ -48,6 +53,22 @@ class InitiativeFragment : Fragment(), InitiativeViewModel.Delegate {
 			}
 			.setNegativeButton(android.R.string.cancel, null)
 			.show()
+	}
+
+	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+
+		override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+			viewModel.deleteCombatant(viewHolder.absoluteAdapterPosition)
+			view?.let {
+				Snackbar
+					.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
+					.setAction(
+						"Undo"
+					) { viewModel.undoDelete() }.show()
+			}
+		}
+
 	}
 
 }

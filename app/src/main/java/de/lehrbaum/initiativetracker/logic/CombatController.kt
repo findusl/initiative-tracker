@@ -12,6 +12,7 @@ class CombatController {
 
 	/**
 	 * The most recent name set on a combatant. Default for new combatants, as often monsters have the same name.
+	 * (Should this be in ViewModel rather? It seems like a user helping feature not a logical feature of combat)
 	 */
 	private var latestName: String? = null
 
@@ -35,8 +36,11 @@ class CombatController {
 		_activeCombatantIndex.value = newActiveCombatant
 	}
 
-	fun addCombatant() {
-		val newCombatant = CombatantModel(nextId++, latestName ?: DEFAULT_COMBATANT_TITLE, -99)
+	fun addCombatant(
+		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
+		initiative: Short = -99
+	) {
+		val newCombatant = CombatantModel(nextId++, name, initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 	}
@@ -52,5 +56,17 @@ class CombatController {
 				it
 			}
 		}.sortByInitiative()
+	}
+
+	fun deleteCombatant(position: Int): CombatantModel {
+		var oldCombatant: CombatantModel? = null
+		_combatants.value = _combatants.value
+			.filterIndexed { index, combatantModel ->
+				if (index == position) {
+					oldCombatant = combatantModel
+					false
+				} else true
+			}
+		return oldCombatant!!
 	}
 }
