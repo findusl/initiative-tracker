@@ -1,1 +1,1 @@
-GET https://de-lehrbaum-initiative-tracker.ew.r.appspot.com/session/1234
+GET {{url}}/session/1234
