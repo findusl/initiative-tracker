@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.networking
 
 import de.lehrbaum.initiativetracker.logic.CombatController
+import io.github.aakira.napier.Napier
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
@@ -16,7 +17,9 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val REMOTE_URL = "https://de-lehrbaum-initiative-tracker.ew.r.appspot.com/session/"
+const val BASE_REMOTE_URL = "https://de-lehrbaum-initiative-tracker.ew.r.appspot.com/"
+const val BASE_LOCAL_URL = "http://10.0.2.2:8080/"
+private const val TAG = "ShareCombatController"
 
 class ShareCombatController(
 	private val combatController: CombatController
@@ -43,11 +46,12 @@ class ShareCombatController(
 	}
 
 	private suspend fun updateRemoteState(combatDTO: CombatDTO) {
-		sharedHttpClient.post {
-			url(REMOTE_URL + sessionId)
+		val response = sharedHttpClient.post {
+			url("${BASE_REMOTE_URL}session/$sessionId")
 			contentType(ContentType.Application.Json)
 			setBody(combatDTO)
 		}
+		Napier.i("Response for sharing $response", tag = TAG)
 	}
 
 	fun stopSharing() {

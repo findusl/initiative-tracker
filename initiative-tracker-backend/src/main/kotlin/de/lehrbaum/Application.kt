@@ -1,5 +1,6 @@
 package de.lehrbaum
 
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -32,7 +33,7 @@ fun Application.main() {
 			if (sessionData == null) {
 				call.respond(HttpStatusCode.NotFound, "No session with id $sessionId")
 			} else {
-				call.respondText(sessionData, status = HttpStatusCode.Found)
+				call.respondText(sessionData, ContentType.Application.Json, HttpStatusCode.OK)
 			}
 		}
 		post("/session/{$SESSION_ID_PATH_PARAMETER}") {

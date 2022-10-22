@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view
+package de.lehrbaum.initiativetracker.view.combat.host
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -10,22 +10,23 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import de.lehrbaum.initiativetracker.databinding.FragmentInitiativeItemBinding
+import de.lehrbaum.initiativetracker.databinding.ListItemCombatantBinding
 import de.lehrbaum.initiativetracker.extensions.setOnClickListener
+import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import java.lang.Short.parseShort
 
 @Suppress("unused")
-private const val TAG = "InitiativeRecyclerViewAdapter"
+private const val TAG = "CombatHostRecyclerViewAdapter"
 
-class InitiativeRecyclerViewAdapter(
-	private val viewModel: InitiativeViewModel,
+class CombatHostRecyclerViewAdapter(
+	private val viewModel: CombatHostViewModel,
 	private val viewLifecycleOwner: LifecycleOwner
 ) :
-	ListAdapter<CombatantViewModel, InitiativeRecyclerViewAdapter.ViewHolder>(CombatantDiffUtil()) {
+	ListAdapter<CombatantViewModel, CombatHostRecyclerViewAdapter.ViewHolder>(CombatantDiffUtil()) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		val inflater = LayoutInflater.from(parent.context)
-		return ViewHolder(FragmentInitiativeItemBinding.inflate(inflater, parent, false))
+		return ViewHolder(ListItemCombatantBinding.inflate(inflater, parent, false))
 	}
 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -33,7 +34,7 @@ class InitiativeRecyclerViewAdapter(
 		holder.bind(combatant)
 	}
 
-	inner class ViewHolder(private val binding: FragmentInitiativeItemBinding) : RecyclerView.ViewHolder(binding.root) {
+	inner class ViewHolder(private val binding: ListItemCombatantBinding) : RecyclerView.ViewHolder(binding.root) {
 
 		init {
 			binding.lifecycleOwner = viewLifecycleOwner
