@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 import com.google.cloud.tools.gradle.appengine.appyaml.AppEngineAppYamlExtension
 
 val ktor_version: String by project
