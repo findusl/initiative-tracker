@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view
+package de.lehrbaum.initiativetracker.view.combat.host
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -7,10 +7,11 @@ import de.lehrbaum.initiativetracker.logic.CombatController
 import de.lehrbaum.initiativetracker.logic.CombatantModel
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.networking.ShareCombatController
+import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
-class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() {
+class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() {
 	private val editingCombatantId = MutableStateFlow<Long?>(null)
 
 	private val currentCombatController = CombatController()
@@ -34,7 +35,7 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 			)
 		}.toList()
 	}
-		.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 	val combatants = combatantsFlow.asLiveData()
 
@@ -51,6 +52,9 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 	 * Set by the adapter. Should probably hide behind functions but easier for now.
 	 */
 	var currentlyEditingCombatant: CombatantViewModel? = null
+
+	val isSharing: Boolean
+		get() = shareCombatController.isSharing
 
 	init {
 		addCombatant()
@@ -79,7 +83,7 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 	fun addCombatant() = currentCombatController.addCombatant()
 
 	fun updateCombatant(updatedCombatantViewModel: CombatantViewModel) {
-		val updatedCombatant = updatedCombatantViewModel.run { CombatantModel(id, name, initiative) }
+		val updatedCombatant = with(updatedCombatantViewModel) { CombatantModel(id, name, initiative) }
 		currentCombatController.updateCombatant(updatedCombatant)
 	}
 
@@ -97,7 +101,21 @@ class InitiativeViewModel : DelegatingViewModel<InitiativeViewModel.Delegate>() 
 		}
 	}
 
+	fun onShareClicked() {
+		if (!shareCombatController.isSharing) {
+			shareCombatController.startSharing(viewModelScope)
+		}
+		delegate?.showSessionId(shareCombatController.sessionId)
+	}
+
+	fun onStopShareClicked() {
+		if (shareCombatController.isSharing) {
+			shareCombatController.stopSharing()
+		}
+	}
+
 	interface Delegate {
 		fun showSaveChangesDialog(onOkListener: () -> Unit)
+		fun showSessionId(sessionCode: Int)
 	}
 }

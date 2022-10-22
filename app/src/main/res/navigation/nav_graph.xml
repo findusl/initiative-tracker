@@ -3,14 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/InitiativeFragment">
+    app:startDestination="@id/CombatHostFragment">
 
     <fragment
-        android:id="@+id/InitiativeFragment"
-        android:name="de.lehrbaum.initiativetracker.view.InitiativeFragment"
-        android:label="@string/initiative_fragment"
-        tools:layout="@layout/fragment_initiative">
+        android:id="@+id/CombatHostFragment"
+        android:name="de.lehrbaum.initiativetracker.view.combat.host.CombatHostFragment"
+        android:label="@string/combat_host_fragment"
+        tools:layout="@layout/fragment_combat_host">
 
+        <action
+            android:id="@+id/action_CombatHostFragment_to_CombatClientFragment"
+            app:destination="@id/CombatClientFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CombatClientFragment"
+        android:name="de.lehrbaum.initiativetracker.view.combat.client.CombatClientFragment"
+        android:label="@string/combat_client_fragment"
+        tools:layout="@layout/fragment_combat_client">
+        <argument
+            android:name="sessionId"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

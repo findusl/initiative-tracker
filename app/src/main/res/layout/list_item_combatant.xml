@@ -12,7 +12,7 @@
 
         <variable
             name="viewModel"
-            type="de.lehrbaum.initiativetracker.view.CombatantViewModel" />
+            type="de.lehrbaum.initiativetracker.view.combat.CombatantViewModel" />
     </data>
 
     <FrameLayout
@@ -60,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:visibility="gone"
             tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout

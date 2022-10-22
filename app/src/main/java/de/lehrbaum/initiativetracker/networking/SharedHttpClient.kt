@@ -25,6 +25,6 @@ val sharedHttpClient = HttpClient(Android) {
 				Napier.i(message, null, TAG)
 			}
 		}
-		level = LogLevel.NONE // change for debugging, lot of logs
+		level = LogLevel.INFO // change for debugging, lot of logs
 	}
 }
