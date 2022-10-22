@@ -1,17 +1,26 @@
 package de.lehrbaum.initiativetracker.view
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.ActivityMainBinding
+import de.lehrbaum.initiativetracker.view.combat.host.CombatHostFragmentDirections
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,7 +57,41 @@ class MainActivity : AppCompatActivity() {
 		// as you specify a parent activity in AndroidManifest.xml.
 		return when (item.itemId) {
 			R.id.action_settings -> true
+			R.id.action_join_combat -> {
+				joinCombat()
+				true
+			}
 			else -> super.onOptionsItemSelected(item)
+		}
+	}
+
+	private fun joinCombat() {
+		lifecycleScope.launch {
+			val sessionId = requestSessionIdInput()
+			val action = CombatHostFragmentDirections.actionCombatHostFragmentToCombatClientFragment(sessionId)
+			findNavController(R.id.nav_host_fragment_content_main).navigate(action)
+		}
+	}
+
+	private suspend fun requestSessionIdInput(): Int {
+		val builder = AlertDialog.Builder(this)
+		builder.setTitle("Please provide the SessionId")
+		val input = EditText(this)
+		input.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+		builder.setView(input)
+
+		return suspendCancellableCoroutine { continuation ->
+			builder.setPositiveButton("OK") { dialog, _ ->
+				dialog.dismiss() // TODO handle invalid values
+				val sessionId = input.text.toString().toInt()
+				continuation.resume(sessionId)
+			}
+			builder.setNegativeButton("Cancel") { dialog, _ ->
+				dialog.cancel()
+				continuation.cancel()
+			}
+
+			builder.show()
 		}
 	}
 

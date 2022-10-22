@@ -4,7 +4,8 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="initiative_fragment">Initiative Fragment</string>
+    <string name="combat_host_fragment">Combat Host Fragment</string>
+    <string name="combat_client_fragment">Combat Client Fragment</string>
     <string name="new_button_content_description">Add a new combatant to the initiative order</string>
     <string name="edit_button_content_description">Button to edit the entry.</string>
     <string name="initiative_edit_hint">Initiative</string>
@@ -13,4 +14,8 @@
     <string name="save_text">Save</string>
     <string name="prev_button_content_description">Return to previous in initiative.</string>
     <string name="next_button_content_description">Go to next in initiative.</string>
+    <string name="leave_shared_combat">Leave shared Combat</string>
+    <string name="share_combat">Share Combat</string>
+    <string name="join_combat">Join Combat</string>
+    <string name="stop_sharing">Stop sharing</string>
 </resources>

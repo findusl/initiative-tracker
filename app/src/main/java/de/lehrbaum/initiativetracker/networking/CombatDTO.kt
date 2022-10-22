@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CombatDTO(
-	private val activeCombatantIndex: Int,
-	private val combatants: List<CombatantDTO>,
+	val activeCombatantIndex: Int,
+	val combatants: List<CombatantDTO>,
 )
 
 @Serializable

@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view
+package de.lehrbaum.initiativetracker.view.combat
 
 data class CombatantViewModel(
 	val id: Long,
