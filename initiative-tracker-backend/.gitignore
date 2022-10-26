@@ -95,3 +95,5 @@ gradle-app.setting
 
 # Manual edits because annoying:
 .idea/misc.xml
+/.idea/jpa-buddy.xml
+/.idea/kotlinc.xml
