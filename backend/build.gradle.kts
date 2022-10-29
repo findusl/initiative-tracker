@@ -21,10 +21,6 @@ application {
 	mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
-repositories {
-	mavenCentral()
-}
-
 configure<AppEngineAppYamlExtension> {
 	val projectVersion = project.version.toString()
 	val projectName = project.name
