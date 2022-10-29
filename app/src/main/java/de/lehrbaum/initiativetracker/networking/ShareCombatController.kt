@@ -1,8 +1,12 @@
 package de.lehrbaum.initiativetracker.networking
 
+import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
+import de.lehrbaum.initiativetracker.dtos.CombatDTO
 import de.lehrbaum.initiativetracker.logic.CombatController
+import de.lehrbaum.initiativetracker.logic.CombatantModel
 import io.github.aakira.napier.Napier
+import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.post
@@ -18,7 +22,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 const val BASE_REMOTE_URL = "https://de-lehrbaum-initiative-tracker.ew.r.appspot.com/"
@@ -30,7 +33,7 @@ class ShareCombatController(
 ) {
 	private var collectionJob: Job? = null
 
-	val sessionId = Random.nextInt(999999)
+	var sessionId: Int? = null
 
 	val isSharing: Boolean
 		get() = collectionJob != null
@@ -42,12 +45,15 @@ class ShareCombatController(
 			sharedHttpClient.webSocket(host = "10.0.2.2", port = 8080, path = "/session") {
 				val startMessage = StartCommand.StartHosting() as StartCommand
 				this.sendSerialized(startMessage)
+				val response = receiveDeserialized<ServerToHostCommand.SessionStarted>()
+				sessionId = response.sessionId
 				close()
 			}
+			Napier.d("Does this actually block until the socket is closed?", tag = TAG)
 		}
 		collectionJob = parentScope.launch {
 			combine(combatController.combatants, combatController.activeCombatantIndex) { combatants, activeCombatantIndex ->
-				CombatDTO(activeCombatantIndex, combatants.map { CombatantDTO(it) }.toList())
+				CombatDTO(activeCombatantIndex, combatants.map(CombatantModel::toDTO).toList())
 			}
 				.debounce(500.milliseconds)
 				.collectLatest {
