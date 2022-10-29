@@ -36,6 +36,8 @@ configure<AppEngineAppYamlExtension> {
 }
 
 dependencies {
+	implementation(project(path = ":commands"))
+
 	implementation("io.ktor:ktor-server-core:$ktor_version")
 	implementation("io.ktor:ktor-server-netty:$ktor_version")
 	implementation("io.ktor:ktor-server-call-logging:$ktor_version")
