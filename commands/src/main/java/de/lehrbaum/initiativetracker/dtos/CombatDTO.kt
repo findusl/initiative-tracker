@@ -1,6 +1,5 @@
-package de.lehrbaum.initiativetracker.networking
+package de.lehrbaum.initiativetracker.dtos
 
-import de.lehrbaum.initiativetracker.logic.CombatantModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,6 +13,4 @@ data class CombatantDTO(
 	val id: Long,
 	val name: String,
 	val initiative: Short,
-) {
-	constructor(model: CombatantModel) : this(model.id, model.name, model.initiative)
-}
+)
