@@ -4,7 +4,15 @@ pluginManagement {
         google()
         mavenCentral()
     }
+    resolutionStrategy {
+		eachPlugin {
+			if (requested.id.id.startsWith("com.google.cloud.tools.appengine")) {
+				useModule("com.google.cloud.tools:appengine-gradle-plugin:${requested.version}")
+			}
+		}
+	}
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -12,5 +20,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "Initiative Tracker"
+
 include ':app'
+include ':backend'
