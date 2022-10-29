@@ -2,20 +2,20 @@
 
 import com.google.cloud.tools.gradle.appengine.appyaml.AppEngineAppYamlExtension
 
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-
 plugins {
 	application
-	kotlin("jvm") version "1.7.10"
-	id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
+	kotlin("jvm") version "1.7.20"
+	id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
 	id("com.google.cloud.tools.appengine") version "2.4.2"
 	id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
+val ktor_version = "2.1.2"
+val kotlinVersion: String by parent!!.ext
+val logback_version = "1.4.4"
+
 group = "de.lehrbaum"
-version = "1"
+version = "2.0.0"
 
 application {
 	mainClass.set("io.ktor.server.netty.EngineMain")
@@ -46,5 +46,5 @@ dependencies {
 	implementation("io.ktor:ktor-server-websockets:$ktor_version")
 	implementation("ch.qos.logback:logback-classic:$logback_version")
 	testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }
