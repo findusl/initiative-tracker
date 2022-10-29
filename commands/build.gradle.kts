@@ -1,6 +1,14 @@
+val kotlinxSerializationVersion: String by parent!!.ext
+
 plugins {
-	id("java-library")
-	kotlin("jvm") version "1.7.10"
+	`java-library`
+	kotlin("jvm") version "1.7.20"
+	id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
+}
+
+dependencies {
+	api("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 }
 
 java {
