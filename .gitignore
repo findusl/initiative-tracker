@@ -98,6 +98,5 @@ gradle-app.setting
 .idea/misc.xml
 /.idea/jpa-buddy.xml
 /.idea/inspectionProfiles/Project_Default.xml
-/initiative-tracker-backend/.idea/httpRequests/http-client.cookies
-/initiative-tracker-backend/.idea/httpRequests/http-requests-log.http
-/initiative-tracker-backend/.idea/httpRequests/2022-10-17T181527.302.txt
+/initiative-tracker-backend/.idea/httpRequests
+/.idea/deploymentTargetDropDown.xml

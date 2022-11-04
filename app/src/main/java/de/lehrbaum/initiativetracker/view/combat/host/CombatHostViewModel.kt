@@ -105,7 +105,8 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 		if (!shareCombatController.isSharing) {
 			shareCombatController.startSharing(viewModelScope)
 		}
-		delegate?.showSessionId(shareCombatController.sessionId)
+		// TODO
+		// delegate?.showSessionId(shareCombatController.sessionId!!)
 	}
 
 	fun onStopShareClicked() {
