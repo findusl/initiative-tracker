@@ -15,7 +15,7 @@ class RemoteCombatController(private val sessionId: Int) {
 
 	val remoteCombat = flow<CombatDTO> {
 		while (true) {
-			val response = sharedHttpClient.get(BASE_REMOTE_URL + "session/" + sessionId)
+			val response = sharedHttpClient.get("TODO" + "session/" + sessionId)
 			Napier.i("Remote response: $response", tag = TAG)
 			emit(response.body())
 			delay(1000)
