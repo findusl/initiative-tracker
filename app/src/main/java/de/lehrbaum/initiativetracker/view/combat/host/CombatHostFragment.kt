@@ -100,6 +100,8 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		shareItem.isVisible = !viewModel.isSharing
 		val stopShareItem = menu.findItem(R.id.action_stop_sharing)
 		stopShareItem.isVisible = viewModel.isSharing
+		val showSessionIdItem = menu.findItem(R.id.action_show_session_id)
+		showSessionIdItem.isVisible = viewModel.isSharing
 	}
 
 	override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -110,6 +112,10 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 			}
 			R.id.action_stop_sharing -> {
 				viewModel.onStopShareClicked()
+				true
+			}
+			R.id.action_show_session_id -> {
+				viewModel.showSessionId()
 				true
 			}
 			else -> false

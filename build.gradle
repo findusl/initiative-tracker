@@ -3,7 +3,7 @@ buildscript {
     ext.kotlinVersion = "1.7.20"
     ext.kotlinxSerializationVersion = "1.4.1"
     ext.ktorVersion = "2.1.2"
-    ext.navigationVersion = "2.5.2"
+    ext.navigationVersion = "2.5.3"
 }
 
 task clean(type: Delete) {
