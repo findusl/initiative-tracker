@@ -1,8 +1,6 @@
 package de.lehrbaum
 
-import de.lehrbaum.initiativetracker.commands.HostCommand
-import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
-import de.lehrbaum.initiativetracker.commands.StartCommand
+import de.lehrbaum.initiativetracker.commands.*
 import de.lehrbaum.initiativetracker.dtos.CombatDTO
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
@@ -10,6 +8,7 @@ import io.ktor.server.websocket.sendSerialized
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -20,29 +19,53 @@ suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 
 	when (startCommand) {
 		is StartCommand.StartHosting -> handleStartHosting(startCommand)
-		is StartCommand.JoinSession -> TODO()
+		is StartCommand.JoinSession -> handleJoinSession(startCommand)
+	}
+}
+
+private suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCommand.JoinSession) {
+	val session = sessions[joinSession.sessionId]
+	if (session == null) {
+		sendSerialized(JoinSessionResponse.SessionNotFound as JoinSessionResponse)
+		return
+	} else {
+		sendSerialized(JoinSessionResponse.JoinedSession(session.combatState.value) as JoinSessionResponse)
+
+		launch(session.coroutineContext) {
+			handleClientCommmands(session)
+		}
+
+		withContext(session.coroutineContext) {
+			session.combatState.collectLatest {
+				sendSerialized(ServerToClientCommand.CombatUpdatedCommand(it) as ServerToClientCommand)
+			}
+		}
+	}
+}
+
+private suspend fun DefaultWebSocketServerSession.handleClientCommmands(session: Session) {
+	while (true) {
+		val message = receiveDeserialized<ClientCommand>()
+		when (message) {
+			is ClientCommand.AddCombatant -> TODO("Not yet implemented")
+		}
 	}
 }
 
 private suspend fun DefaultWebSocketServerSession.handleStartHosting(startHosting: StartCommand.StartHosting) {
 	var session: Session? = null
 	try {
-		session = synchronized(sessions) {
-			val sessionId = getAvailableRandomSessionId()
-			val newSession = Session(sessionId, this, MutableStateFlow(startHosting.combatDTO))
-			sessions[sessionId] = newSession
-			newSession
-		}
+		session = createSession(startHosting)
 		sendSerialized(ServerToHostCommand.SessionStarted(session.id) as ServerToHostCommand)
 
 		launch(session.coroutineContext) {
+			handleHostCommands(session)
+		}
+
+		withContext(session.coroutineContext) {
 			for (outgoing in session.serverCommandQueue) {
 				sendSerialized(outgoing)
 			}
-		}
-		// blocking consume
-		withContext(session.coroutineContext) {
-			handleHostCommands(session)
 		}
 	} finally {
 		session?.let {
@@ -63,6 +86,15 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 				session.combatState.value = message.combat
 			}
 		}
+	}
+}
+
+private fun DefaultWebSocketServerSession.createSession(startHosting: StartCommand.StartHosting): Session {
+	synchronized(sessions) {
+		val sessionId = getAvailableRandomSessionId()
+		val newSession = Session(sessionId, this, MutableStateFlow(startHosting.combatDTO))
+		sessions[sessionId] = newSession
+		return newSession
 	}
 }
 

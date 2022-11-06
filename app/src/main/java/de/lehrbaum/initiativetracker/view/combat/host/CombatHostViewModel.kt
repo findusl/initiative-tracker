@@ -10,6 +10,7 @@ import de.lehrbaum.initiativetracker.networking.ShareCombatController
 import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() {
 	private val editingCombatantId = MutableStateFlow<Long?>(null)
@@ -103,16 +104,22 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 
 	fun onShareClicked() {
 		if (!shareCombatController.isSharing) {
-			shareCombatController.startSharing(viewModelScope)
+			viewModelScope.launch {
+				val sessionId = shareCombatController.startSharing(viewModelScope)
+				delegate?.showSessionId(sessionId)
+			}
 		}
-		// TODO
-		// delegate?.showSessionId(shareCombatController.sessionId!!)
 	}
 
 	fun onStopShareClicked() {
 		if (shareCombatController.isSharing) {
 			shareCombatController.stopSharing()
 		}
+	}
+
+	fun showSessionId() {
+		val sessionId = shareCombatController.sessionId ?: -1
+		delegate?.showSessionId(sessionId)
 	}
 
 	interface Delegate {

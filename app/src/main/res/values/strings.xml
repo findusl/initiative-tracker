@@ -18,4 +18,5 @@
     <string name="share_combat">Share Combat</string>
     <string name="join_combat">Join Combat</string>
     <string name="stop_sharing">Stop sharing</string>
+    <string name="show_session_id">Show Session Id</string>
 </resources>
