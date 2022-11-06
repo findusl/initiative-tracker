@@ -1,7 +1,6 @@
 buildscript {
     dependencies {
-        def nav_version = "2.5.3"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
     }
 }
 
@@ -12,6 +11,9 @@ plugins {
     id "org.jetbrains.kotlin.plugin.serialization" version "$kotlinVersion"
     id 'androidx.navigation.safeargs.kotlin' version "2.5.3"
 }
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
 android {
     compileSdk 33
@@ -24,6 +26,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'BACKEND_HOST', properties.getProperty('backend.host', '"10.0.2.2"')
+        buildConfigField 'int', 'BACKEND_PORT', properties.getProperty('backend.port', '8080')
     }
 
     buildTypes {
@@ -40,6 +45,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
+        freeCompilerArgs += '-Xcontext-receivers'
         jvmTarget = '1.8'
     }
     namespace 'de.lehrbaum.initiativetracker'
