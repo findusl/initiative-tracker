@@ -10,7 +10,7 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
-import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.plugins.websocket.wss
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -21,7 +21,7 @@ private const val TAG = "RemoteCombatController"
 class RemoteCombatController(private val sessionId: Int) {
 
 	val remoteCombat = flow {
-		sharedHttpClient.webSocket(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
+		sharedHttpClient.wss(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
 			initiateClient()
 			handleUpdates()
 		}

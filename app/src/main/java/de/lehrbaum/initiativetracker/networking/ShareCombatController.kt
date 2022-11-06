@@ -8,10 +8,7 @@ import de.lehrbaum.initiativetracker.dtos.CombatDTO
 import de.lehrbaum.initiativetracker.logic.CombatController
 import de.lehrbaum.initiativetracker.logic.CombatantModel
 import io.github.aakira.napier.Napier
-import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
-import io.ktor.client.plugins.websocket.receiveDeserialized
-import io.ktor.client.plugins.websocket.sendSerialized
-import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -37,7 +34,7 @@ class ShareCombatController(
 
 		return suspendCancellableCoroutine { continuation ->
 			sharingJob = parentScope.launch {
-				sharedHttpClient.webSocket(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
+				sharedHttpClient.wss(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
 					val currentCombatState = toCombatDTO(combatController.combatants.value, combatController.activeCombatantIndex.value)
 					val startMessage = StartCommand.StartHosting(currentCombatState) as StartCommand
 					this.sendSerialized(startMessage)
