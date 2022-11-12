@@ -28,9 +28,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField 'String', 'BACKEND_HOST', properties.getProperty('backend.host', '"10.0.2.2"')
-        buildConfigField 'int', 'BACKEND_PORT', properties.getProperty('backend.port', '8080')
     }
 
     buildTypes {
@@ -39,8 +36,35 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "backend"
+    productFlavors {
+        lan {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension "backend"
+            applicationIdSuffix ".lan"
+            versionNameSuffix "-lan"
+
+            buildConfigField 'String', 'BACKEND_HOST', properties.getProperty('backend.lan.host', '"10.0.2.2"')
+            buildConfigField 'int', 'BACKEND_PORT', properties.getProperty('backend.lan.port', '8080')
+        }
+        remote {
+            dimension "backend"
+            applicationIdSuffix ".remote"
+            versionNameSuffix "-remote"
+
+            buildConfigField 'String', 'BACKEND_HOST', properties.getProperty('backend.remote.host', '"undefined"')
+            buildConfigField 'int', 'BACKEND_PORT', properties.getProperty('backend.remote.port', '443')
+        }
+    }
+
+
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -51,9 +75,6 @@ android {
         jvmTarget = '1.8'
     }
     namespace 'de.lehrbaum.initiativetracker'
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
