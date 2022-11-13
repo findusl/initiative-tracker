@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.BuildConfig
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
@@ -34,7 +33,7 @@ class ShareCombatController(
 
 		return suspendCancellableCoroutine { continuation ->
 			sharingJob = parentScope.launch {
-				sharedHttpClient.wss(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
+				sharedHttpClient.buildConfigWebsocket {
 					val currentCombatState = toCombatDTO(combatController.combatants.value, combatController.activeCombatantIndex.value)
 					val startMessage = StartCommand.StartHosting(currentCombatState) as StartCommand
 					this.sendSerialized(startMessage)
@@ -76,5 +75,6 @@ class ShareCombatController(
 	fun stopSharing() {
 		sharingJob?.cancel()
 		sharingJob = null
+		sessionId = null
 	}
 }

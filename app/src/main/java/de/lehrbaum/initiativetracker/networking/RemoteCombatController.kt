@@ -1,7 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
 import android.content.res.Resources.NotFoundException
-import de.lehrbaum.initiativetracker.BuildConfig
 import de.lehrbaum.initiativetracker.commands.JoinSessionResponse
 import de.lehrbaum.initiativetracker.commands.ServerToClientCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
@@ -10,7 +9,6 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
-import io.ktor.client.plugins.websocket.wss
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -21,7 +19,7 @@ private const val TAG = "RemoteCombatController"
 class RemoteCombatController(private val sessionId: Int) {
 
 	val remoteCombat = flow {
-		sharedHttpClient.wss(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
+		sharedHttpClient.buildConfigWebsocket {
 			initiateClient()
 			handleUpdates()
 		}

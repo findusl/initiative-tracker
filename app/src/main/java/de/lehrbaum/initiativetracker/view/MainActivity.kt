@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 		val builder = AlertDialog.Builder(this)
 		builder.setTitle("Please provide the SessionId")
 		val input = EditText(this)
-		input.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+		input.inputType = InputType.TYPE_CLASS_NUMBER
 		builder.setView(input)
 
 		return suspendCancellableCoroutine { continuation ->
