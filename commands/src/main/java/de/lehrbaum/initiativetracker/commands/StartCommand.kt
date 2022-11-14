@@ -10,6 +10,7 @@ sealed interface StartCommand {
 	class StartHosting(
 		val combatDTO: CombatDTO
 	) : StartCommand {
+		@Serializable
 		sealed interface Response
 
 		@Serializable
@@ -20,6 +21,7 @@ sealed interface StartCommand {
 	class JoinAsHost(
 		val sessionId: Int
 	) : StartCommand {
+		@Serializable
 		sealed interface Response
 
 		@Serializable
