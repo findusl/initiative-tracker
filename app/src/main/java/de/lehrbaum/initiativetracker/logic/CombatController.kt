@@ -58,7 +58,7 @@ class CombatController {
 		}.sortByInitiative()
 	}
 
-	fun deleteCombatant(position: Int): CombatantModel {
+	fun deleteCombatant(position: Int): CombatantModel? {
 		var oldCombatant: CombatantModel? = null
 		_combatants.value = _combatants.value
 			.filterIndexed { index, combatantModel ->
@@ -67,6 +67,9 @@ class CombatController {
 					false
 				} else true
 			}
-		return oldCombatant!!
+		if (oldCombatant != null) {
+			combatantCount--
+		}
+		return oldCombatant
 	}
 }

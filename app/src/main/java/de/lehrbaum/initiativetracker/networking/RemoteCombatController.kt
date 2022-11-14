@@ -28,7 +28,7 @@ class RemoteCombatController(private val sessionId: Int) {
 		.flowOn(Dispatchers.IO)
 
 	context(FlowCollector<CombatDTO>, DefaultClientWebSocketSession)
-		private suspend fun initiateClient() {
+	private suspend fun initiateClient() {
 		val joinSessionRequest = StartCommand.JoinSession(sessionId) as StartCommand
 		sendSerialized(joinSessionRequest)
 		val response = receiveDeserialized<JoinSessionResponse>()
@@ -39,7 +39,7 @@ class RemoteCombatController(private val sessionId: Int) {
 	}
 
 	context(FlowCollector<CombatDTO>, DefaultClientWebSocketSession)
-		private suspend fun handleUpdates() {
+	private suspend fun handleUpdates() {
 		while (true) {
 			val message = receiveDeserialized<ServerToClientCommand>()
 
