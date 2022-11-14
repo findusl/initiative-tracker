@@ -9,11 +9,14 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.FragmentCombatHostBinding
+import de.lehrbaum.initiativetracker.view.requestSessionIdInput
+import kotlinx.coroutines.launch
 
 
 /**
@@ -77,6 +80,18 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		}
 	}
 
+	override fun notifyConnectionFailed() {
+		view?.let {
+			Snackbar.make(it, "Connection failed", Snackbar.LENGTH_LONG).show()
+		}
+	}
+
+	override fun notifyAlreadySharing() {
+		view?.let {
+			Snackbar.make(it, "Already sharing", Snackbar.LENGTH_SHORT).show()
+		}
+	}
+
 	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
 
@@ -97,10 +112,13 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 
 	override fun onPrepareMenu(menu: Menu) {
 		val shareItem = menu.findItem(R.id.action_share)
-		shareItem.isVisible = !viewModel.isSharing
+		val joinAsHostItem = menu.findItem(R.id.action_join_as_host)
 		val stopShareItem = menu.findItem(R.id.action_stop_sharing)
-		stopShareItem.isVisible = viewModel.isSharing
 		val showSessionIdItem = menu.findItem(R.id.action_show_session_id)
+
+		shareItem.isVisible = !viewModel.isSharing
+		joinAsHostItem.isVisible = !viewModel.isSharing
+		stopShareItem.isVisible = viewModel.isSharing
 		showSessionIdItem.isVisible = viewModel.isSharing
 	}
 
@@ -108,6 +126,13 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		return when (menuItem.itemId) {
 			R.id.action_share -> {
 				viewModel.onShareClicked()
+				true
+			}
+			R.id.action_join_as_host -> {
+				viewModel.viewModelScope.launch {
+					val sessionId = requireContext().requestSessionIdInput()
+					viewModel.onJoinAsHostClicked(sessionId)
+				}
 				true
 			}
 			R.id.action_stop_sharing -> {

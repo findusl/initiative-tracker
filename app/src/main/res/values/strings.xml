@@ -19,4 +19,6 @@
     <string name="join_combat">Join Combat</string>
     <string name="stop_sharing">Stop sharing</string>
     <string name="show_session_id">Show Session Id</string>
+    <string name="leave_combat">Leave Combat</string>
+    <string name="join_combat_as_host">Join combat as host</string>
 </resources>
