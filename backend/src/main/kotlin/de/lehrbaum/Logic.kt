@@ -20,6 +20,7 @@ suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 	when (startCommand) {
 		is StartCommand.StartHosting -> handleStartHosting(startCommand)
 		is StartCommand.JoinSession -> handleJoinSession(startCommand)
+		else -> TODO("Handle joining session as host")
 	}
 }
 
@@ -33,7 +34,7 @@ private suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession:
 
 	try {
 		launch {
-			handleClientCommmands(session)
+			handleClientCommands(session)
 		}
 
 		session.combatState.collectLatest {
@@ -46,7 +47,7 @@ private suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession:
 	println("Finished client websocket connection")
 }
 
-private suspend fun DefaultWebSocketServerSession.handleClientCommmands(session: Session) {
+private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: Session) {
 	try {
 		while (true) {
 			val message = receiveDeserialized<ClientCommand>()
@@ -65,7 +66,7 @@ private suspend fun DefaultWebSocketServerSession.handleStartHosting(startHostin
 	var session: Session? = null
 	try {
 		session = createSession(startHosting)
-		sendSerialized(ServerToHostCommand.SessionStarted(session.id) as ServerToHostCommand)
+		sendSerialized(StartCommand.StartHosting.SessionStarted(session.id) as StartCommand.StartHosting.Response)
 
 		launch {
 			handleHostCommands(session)
