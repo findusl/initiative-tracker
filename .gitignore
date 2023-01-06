@@ -100,3 +100,4 @@ gradle-app.setting
 /.idea/inspectionProfiles/Project_Default.xml
 /initiative-tracker-backend/.idea/httpRequests
 /.idea/deploymentTargetDropDown.xml
+/.idea/androidTestResultsUserPreferences.xml
