@@ -7,9 +7,12 @@ import kotlinx.serialization.Serializable
 sealed interface StartCommand {
 
 	@Serializable
+	sealed interface HostingCommand : StartCommand
+
+	@Serializable
 	class StartHosting(
 		val combatDTO: CombatDTO
-	) : StartCommand {
+	) : HostingCommand {
 		@Serializable
 		sealed interface Response
 
@@ -20,7 +23,7 @@ sealed interface StartCommand {
 	@Serializable
 	class JoinAsHost(
 		val sessionId: Int
-	) : StartCommand {
+	) : HostingCommand {
 		@Serializable
 		sealed interface Response
 
@@ -29,6 +32,9 @@ sealed interface StartCommand {
 
 		@Serializable
 		object SessionAlreadyHasHost : Response
+
+		@Serializable
+		object SessionNotFound : Response
 	}
 
 	@Serializable
