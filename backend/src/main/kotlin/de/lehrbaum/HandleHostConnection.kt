@@ -5,6 +5,7 @@ import de.lehrbaum.initiativetracker.commands.StartCommand
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -15,13 +16,14 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 	try {
 		session = obtainSession(hostingCommand) ?: return
 
-		launch {
-			handleHostCommands(session)
+		val commandForwardingJob = launch {
+			for (outgoing in session.serverCommandQueue) {
+				sendSerialized(outgoing)
+			}
 		}
 
-		for (outgoing in session.serverCommandQueue) {
-			sendSerialized(outgoing)
-		}
+		handleHostCommands(session)
+		commandForwardingJob.cancel("Websocket closed")
 	} catch (e: Exception) {
 		println("Server websocket failed somehow $e")
 	} finally {
@@ -31,7 +33,7 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 			}
 		}
 	}
-	println("Finished host websocket connection")
+	println("Finished host websocket connection ${session?.id}")
 }
 
 private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Session) {

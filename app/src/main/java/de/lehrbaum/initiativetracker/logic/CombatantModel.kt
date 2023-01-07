@@ -6,5 +6,5 @@ data class CombatantModel(
 	val initiative: Short,
 )
 
-fun Sequence<CombatantModel>.sortByInitiative() =
+fun Iterable<CombatantModel>.sortByInitiative() =
 	sortedWith(compareByDescending(CombatantModel::initiative).thenBy(CombatantModel::id))

@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.FragmentCombatClientBinding
+import de.lehrbaum.initiativetracker.extensions.showSnackbar
 import de.lehrbaum.initiativetracker.extensions.viewModelsFactory
 
 class CombatClientFragment : Fragment(), CombatClientViewModel.Delegate, MenuProvider {
@@ -56,6 +59,7 @@ class CombatClientFragment : Fragment(), CombatClientViewModel.Delegate, MenuPro
 	}
 
 	override fun leaveCombat() {
-		parentFragmentManager.popBackStack()
+		showSnackbar("Combat ended", Snackbar.LENGTH_LONG)
+		findNavController().popBackStack()
 	}
 }
