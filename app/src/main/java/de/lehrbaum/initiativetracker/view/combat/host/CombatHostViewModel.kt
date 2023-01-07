@@ -11,6 +11,7 @@ import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -18,12 +19,12 @@ import java.net.SocketTimeoutException
 @Suppress("unused")
 private const val TAG = "CombatHostViewModel"
 
-class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() {
+class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>(), ShareCombatController.Delegate {
 	private val editingCombatantId = MutableStateFlow<Long?>(null)
 
 	private val currentCombatController = CombatController()
 
-	private val shareCombatController = ShareCombatController(currentCombatController)
+	private val shareCombatController = ShareCombatController(currentCombatController, this)
 
 	private var mostRecentDeleted: CombatantModel? = null
 
@@ -40,7 +41,7 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 				isInEditMode,
 				isActive,
 			)
-		}.toList()
+		}
 	}
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -122,9 +123,15 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 			delegate?.notifyAlreadySharing()
 			return
 		}
+
 		viewModelScope.launch {
 			handleWebsocketErrors {
-				shareCombatController.joinCombatAsHost(sessionId)
+				val result = shareCombatController.joinCombatAsHost(sessionId)
+				when (result) {
+					ShareCombatController.Result.ALREADY_HOSTED -> delegate?.notifySessionHasExistingHost()
+					ShareCombatController.Result.NOT_FOUND -> delegate?.notifySessionNotFound(sessionId)
+					else -> {}
+				}
 			}
 		}
 	}
@@ -147,8 +154,11 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 			block()
 		} catch (e: SocketTimeoutException) {
 			delegate?.notifyConnectionFailed()
+		} catch (e: ClosedReceiveChannelException) {
+			delegate?.notifySessionClosed()
 		} catch (e: Exception) {
 			Napier.e("Exception during sharing", e, TAG)
+			delegate?.showErrorMessage(e.message ?: "No message: ${e::class}")
 		}
 	}
 
@@ -163,10 +173,21 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 		delegate?.showSessionId(sessionId)
 	}
 
+	override suspend fun addCombatant(combatantModel: CombatantModel) {
+		if (delegate?.allowAddCharacter(combatantModel.name) == true) {
+			currentCombatController.addCombatant(combatantModel.name, combatantModel.initiative)
+		}
+	}
+
 	interface Delegate {
 		fun showSaveChangesDialog(onOkListener: () -> Unit)
 		fun showSessionId(sessionCode: Int)
 		fun notifyConnectionFailed()
 		fun notifyAlreadySharing()
+		fun notifySessionHasExistingHost()
+		fun notifySessionNotFound(sessionId: Int)
+		fun notifySessionClosed()
+		suspend fun allowAddCharacter(name: String): Boolean
+		fun showErrorMessage(message: String) // for faster debugging
 	}
 }

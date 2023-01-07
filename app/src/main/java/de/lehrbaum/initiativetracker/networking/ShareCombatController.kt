@@ -3,7 +3,7 @@ package de.lehrbaum.initiativetracker.networking
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
-import de.lehrbaum.initiativetracker.dtos.CombatDTO
+import de.lehrbaum.initiativetracker.dtos.CombatantDTO
 import de.lehrbaum.initiativetracker.logic.CombatController
 import de.lehrbaum.initiativetracker.logic.CombatantModel
 import io.github.aakira.napier.Napier
@@ -19,39 +19,47 @@ import kotlin.time.Duration.Companion.milliseconds
 private const val TAG = "ShareCombatController"
 
 class ShareCombatController(
-	private val combatController: CombatController
+	private val combatController: CombatController,
+	private val delegate: Delegate
 ) {
 	var sessionId = MutableStateFlow<Int?>(null)
 
-	suspend fun joinCombatAsHost(sessionId: Int) {
-		sharedHttpClient.buildConfigWebsocket {
-			joinSessionAsHost(sessionId)
-			launch { receiveEvents() }
-			shareCombatUpdates()
+	// IDEA: Return Flow of Progress/Result that allows the UI to notify the user about a successful connection etc
+	// also could possibly replace the delegate
+	// https://discuss.kotlinlang.org/t/best-practice-for-coroutine-that-reports-progress/14324/13
+	suspend fun joinCombatAsHost(sessionId: Int): Result {
+		return sharedHttpClient.buildConfigWebsocket {
+			val result = joinSessionAsHost(sessionId)
+			Napier.d("Result of joining session $sessionId as host: $result")
+			if (result == Result.SUCCESS) {
+				launch { receiveEvents() }
+				shareCombatUpdates()
+			}
+			result
 		}
 	}
 
-	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(sessionId: Int) {
+	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(sessionId: Int): Result {
 		val startMessage = StartCommand.JoinAsHost(sessionId) as StartCommand
 		this.sendSerialized(startMessage)
 		val response = receiveDeserialized<StartCommand.JoinAsHost.Response>()
-		when (response) {
+		return when (response) {
 			is StartCommand.JoinAsHost.JoinedAsHost -> {
 				val combatState = response.combatDTO
-				TODO("Update combat controller with new ")
-
+				val combatants = combatState.combatants.map(CombatantDTO::toModel)
+				combatController.overwriteWithExistingCombat(combatants, combatState.activeCombatantIndex)
+				Result.SUCCESS
 			}
-			StartCommand.JoinAsHost.SessionAlreadyHasHost -> {
-				TODO("Throw some exception and show to user")
-			}
+			StartCommand.JoinAsHost.SessionAlreadyHasHost -> Result.ALREADY_HOSTED
+			StartCommand.JoinAsHost.SessionNotFound -> Result.NOT_FOUND
 		}
 	}
 
 	suspend fun shareCombatState() {
 		sharedHttpClient.buildConfigWebsocket {
 			startHostingSession()
-			launch { receiveEvents() }
-			shareCombatUpdates()
+			launch { shareCombatUpdates() }
+			receiveEvents()
 		}
 	}
 
@@ -69,6 +77,7 @@ class ShareCombatController(
 		combine(combatController.combatants, combatController.activeCombatantIndex, ::toCombatDTO)
 			.debounce(200.milliseconds)
 			.collectLatest {
+				Napier.d("Sent combat update")
 				sendSerialized(HostCommand.CombatUpdatedCommand(it) as HostCommand)
 			}
 	}
@@ -76,10 +85,23 @@ class ShareCombatController(
 	private suspend fun DefaultClientWebSocketSession.receiveEvents() {
 		while (true) {
 			val incoming = receiveDeserialized<ServerToHostCommand>()
-			TODO("No commands to handle yet")
+			Napier.d("Received command $incoming")
+			when (incoming) {
+				is ServerToHostCommand.AddCombatant -> {
+					val combatant = incoming.combatant.toModel()
+					delegate.addCombatant(combatant)
+				}
+			}
 		}
 	}
 
-	private fun toCombatDTO(combatants: Sequence<CombatantModel>, activeCombatantIndex: Int) =
-		CombatDTO(activeCombatantIndex, combatants.map(CombatantModel::toDTO).toList())
+	enum class Result {
+		SUCCESS,
+		ALREADY_HOSTED,
+		NOT_FOUND
+	}
+
+	interface Delegate {
+		suspend fun addCombatant(combatantModel: CombatantModel)
+	}
 }

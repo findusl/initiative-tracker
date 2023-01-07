@@ -15,8 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.FragmentCombatHostBinding
+import de.lehrbaum.initiativetracker.extensions.showSnackbar
 import de.lehrbaum.initiativetracker.view.requestSessionIdInput
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 
 /**
@@ -80,32 +83,6 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		}
 	}
 
-	override fun notifyConnectionFailed() {
-		view?.let {
-			Snackbar.make(it, "Connection failed", Snackbar.LENGTH_LONG).show()
-		}
-	}
-
-	override fun notifyAlreadySharing() {
-		view?.let {
-			Snackbar.make(it, "Already sharing", Snackbar.LENGTH_SHORT).show()
-		}
-	}
-
-	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
-
-		override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-			viewModel.deleteCombatant(viewHolder.absoluteAdapterPosition)
-			view?.let {
-				Snackbar
-					.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
-					.setAction("Undo") { viewModel.undoDelete() }
-					.show()
-			}
-		}
-	}
-
 	override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
 		menuInflater.inflate(R.menu.menu_combat_host, menu)
 	}
@@ -144,6 +121,60 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 				true
 			}
 			else -> false
+		}
+	}
+
+	override fun notifyConnectionFailed() {
+		showSnackbar("Connection failed")
+	}
+
+	override fun notifyAlreadySharing() {
+		showSnackbar("Stop your current share to start a new one.", Snackbar.LENGTH_LONG)
+	}
+
+	override fun notifySessionHasExistingHost() {
+		showSnackbar("Session already has host", Snackbar.LENGTH_LONG)
+	}
+
+	override fun notifySessionNotFound(sessionId: Int) {
+		showSnackbar("Session $sessionId not found", Snackbar.LENGTH_LONG)
+	}
+
+	override fun notifySessionClosed() {
+		showSnackbar("Session closed", Snackbar.LENGTH_LONG)
+	}
+
+	override suspend fun allowAddCharacter(name: String): Boolean {
+		return suspendCancellableCoroutine { continuation ->
+			AlertDialog.Builder(context)
+				.setTitle("Allow combatant?")
+				.setMessage("Do you want to allow \"$name\" to join the combat?")
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setPositiveButton(android.R.string.ok) { _, _ ->
+					continuation.resume(true)
+				}
+				.setNegativeButton(android.R.string.cancel) { _, _ ->
+					continuation.resume(false)
+				}
+				.show()
+		}
+	}
+
+	override fun showErrorMessage(message: String) {
+		showSnackbar("Error: $message", Snackbar.LENGTH_LONG)
+	}
+
+	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+
+		override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+			viewModel.deleteCombatant(viewHolder.absoluteAdapterPosition)
+			view?.let {
+				Snackbar
+					.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
+					.setAction("Undo") { viewModel.undoDelete() }
+					.show()
+			}
 		}
 	}
 
