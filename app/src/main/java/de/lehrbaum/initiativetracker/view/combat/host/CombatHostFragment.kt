@@ -9,11 +9,17 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.FragmentCombatHostBinding
+import de.lehrbaum.initiativetracker.extensions.showSnackbar
+import de.lehrbaum.initiativetracker.view.requestSessionIdInput
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 
 /**
@@ -77,30 +83,19 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		}
 	}
 
-	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
-
-		override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-			viewModel.deleteCombatant(viewHolder.absoluteAdapterPosition)
-			view?.let {
-				Snackbar
-					.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
-					.setAction("Undo") { viewModel.undoDelete() }
-					.show()
-			}
-		}
-	}
-
 	override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
 		menuInflater.inflate(R.menu.menu_combat_host, menu)
 	}
 
 	override fun onPrepareMenu(menu: Menu) {
 		val shareItem = menu.findItem(R.id.action_share)
-		shareItem.isVisible = !viewModel.isSharing
+		val joinAsHostItem = menu.findItem(R.id.action_join_as_host)
 		val stopShareItem = menu.findItem(R.id.action_stop_sharing)
-		stopShareItem.isVisible = viewModel.isSharing
 		val showSessionIdItem = menu.findItem(R.id.action_show_session_id)
+
+		shareItem.isVisible = !viewModel.isSharing
+		joinAsHostItem.isVisible = !viewModel.isSharing
+		stopShareItem.isVisible = viewModel.isSharing
 		showSessionIdItem.isVisible = viewModel.isSharing
 	}
 
@@ -108,6 +103,13 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		return when (menuItem.itemId) {
 			R.id.action_share -> {
 				viewModel.onShareClicked()
+				true
+			}
+			R.id.action_join_as_host -> {
+				viewModel.viewModelScope.launch {
+					val sessionId = requireContext().requestSessionIdInput()
+					viewModel.onJoinAsHostClicked(sessionId)
+				}
 				true
 			}
 			R.id.action_stop_sharing -> {
@@ -119,6 +121,60 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 				true
 			}
 			else -> false
+		}
+	}
+
+	override fun notifyConnectionFailed() {
+		showSnackbar("Connection failed")
+	}
+
+	override fun notifyAlreadySharing() {
+		showSnackbar("Stop your current share to start a new one.", Snackbar.LENGTH_LONG)
+	}
+
+	override fun notifySessionHasExistingHost() {
+		showSnackbar("Session already has host", Snackbar.LENGTH_LONG)
+	}
+
+	override fun notifySessionNotFound(sessionId: Int) {
+		showSnackbar("Session $sessionId not found", Snackbar.LENGTH_LONG)
+	}
+
+	override fun notifySessionClosed() {
+		showSnackbar("Session closed", Snackbar.LENGTH_LONG)
+	}
+
+	override suspend fun allowAddCharacter(name: String): Boolean {
+		return suspendCancellableCoroutine { continuation ->
+			AlertDialog.Builder(context)
+				.setTitle("Allow combatant?")
+				.setMessage("Do you want to allow \"$name\" to join the combat?")
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setPositiveButton(android.R.string.ok) { _, _ ->
+					continuation.resume(true)
+				}
+				.setNegativeButton(android.R.string.cancel) { _, _ ->
+					continuation.resume(false)
+				}
+				.show()
+		}
+	}
+
+	override fun showErrorMessage(message: String) {
+		showSnackbar("Error: $message", Snackbar.LENGTH_LONG)
+	}
+
+	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+
+		override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+			viewModel.deleteCombatant(viewHolder.absoluteAdapterPosition)
+			view?.let {
+				Snackbar
+					.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
+					.setAction("Undo") { viewModel.undoDelete() }
+					.show()
+			}
 		}
 	}
 

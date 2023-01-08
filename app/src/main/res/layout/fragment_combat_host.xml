@@ -62,8 +62,8 @@
                 android:id="@+id/prev_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_control_size"
-                android:minWidth="@dimen/min_control_size"
+                android:minHeight="@dimen/big_control_size"
+                android:minWidth="@dimen/big_control_size"
                 android:src="@android:drawable/ic_media_rew"
                 android:onClickListener="@{()-> viewModel.prevTurn()}"
                 android:contentDescription="@string/prev_button_content_description" />
@@ -72,8 +72,8 @@
                 android:id="@+id/next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_control_size"
-                android:minWidth="@dimen/min_control_size"
+                android:minHeight="@dimen/big_control_size"
+                android:minWidth="@dimen/big_control_size"
                 android:src="@android:drawable/ic_media_ff"
                 android:onClickListener="@{()-> viewModel.nextTurn()}"
                 android:contentDescription="@string/next_button_content_description" />

@@ -1,11 +1,8 @@
 package de.lehrbaum.initiativetracker.view
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -18,8 +15,6 @@ import de.lehrbaum.initiativetracker.view.combat.host.CombatHostFragmentDirectio
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 
 class MainActivity : AppCompatActivity() {
@@ -70,28 +65,6 @@ class MainActivity : AppCompatActivity() {
 			val sessionId = requestSessionIdInput()
 			val action = CombatHostFragmentDirections.actionCombatHostFragmentToCombatClientFragment(sessionId)
 			findNavController(R.id.nav_host_fragment_content_main).navigate(action)
-		}
-	}
-
-	private suspend fun requestSessionIdInput(): Int {
-		val builder = AlertDialog.Builder(this)
-		builder.setTitle("Please provide the SessionId")
-		val input = EditText(this)
-		input.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-		builder.setView(input)
-
-		return suspendCancellableCoroutine { continuation ->
-			builder.setPositiveButton("OK") { dialog, _ ->
-				dialog.dismiss() // TODO handle invalid values
-				val sessionId = input.text.toString().toInt()
-				continuation.resume(sessionId)
-			}
-			builder.setNegativeButton("Cancel") { dialog, _ ->
-				dialog.cancel()
-				continuation.cancel()
-			}
-
-			builder.show()
 		}
 	}
 
