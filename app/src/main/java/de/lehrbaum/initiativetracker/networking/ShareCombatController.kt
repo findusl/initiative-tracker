@@ -1,55 +1,75 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.BuildConfig
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
-import de.lehrbaum.initiativetracker.dtos.CombatDTO
+import de.lehrbaum.initiativetracker.dtos.CombatantDTO
 import de.lehrbaum.initiativetracker.logic.CombatController
 import de.lehrbaum.initiativetracker.logic.CombatantModel
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlin.coroutines.resume
 import kotlin.time.Duration.Companion.milliseconds
 
+@Suppress("unused")
 private const val TAG = "ShareCombatController"
 
 class ShareCombatController(
-	private val combatController: CombatController
+	private val combatController: CombatController,
+	private val delegate: Delegate
 ) {
-	private var sharingJob: Job? = null
+	var sessionId = MutableStateFlow<Int?>(null)
 
-	var sessionId: Int? = null
-
-	val isSharing: Boolean
-		get() = sharingJob != null
-
-	suspend fun startSharing(parentScope: CoroutineScope): Int {
-		// TODO fast clicking could crash the app here
-		if (sharingJob != null) return sessionId ?: throw IllegalStateException("Sharing but no sessionId?")
-
-		return suspendCancellableCoroutine { continuation ->
-			sharingJob = parentScope.launch {
-				sharedHttpClient.wss(host = BuildConfig.BACKEND_HOST, port = BuildConfig.BACKEND_PORT, path = "/session") {
-					val currentCombatState = toCombatDTO(combatController.combatants.value, combatController.activeCombatantIndex.value)
-					val startMessage = StartCommand.StartHosting(currentCombatState) as StartCommand
-					this.sendSerialized(startMessage)
-					val response = receiveDeserialized<ServerToHostCommand>() as ServerToHostCommand.SessionStarted
-					Napier.d("Got Session id $sessionId")
-					sessionId = response.sessionId
-					continuation.resume(response.sessionId)
-
-					parentScope.launch { receiveEvents() }
-					shareCombatUpdates()
-				}
-				// this blocks until session is closed
-				Napier.d("Session was closed $sessionId", tag = TAG)
+	// IDEA: Return Flow of Progress/Result that allows the UI to notify the user about a successful connection etc
+	// also could possibly replace the delegate
+	// https://discuss.kotlinlang.org/t/best-practice-for-coroutine-that-reports-progress/14324/13
+	suspend fun joinCombatAsHost(sessionId: Int): Result {
+		return sharedHttpClient.buildConfigWebsocket {
+			val result = joinSessionAsHost(sessionId)
+			Napier.d("Result of joining session $sessionId as host: $result")
+			if (result == Result.SUCCESS) {
+				launch { receiveEvents() }
+				shareCombatUpdates()
 			}
+			result
 		}
+	}
+
+	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(sessionId: Int): Result {
+		val startMessage = StartCommand.JoinAsHost(sessionId) as StartCommand
+		this.sendSerialized(startMessage)
+		val response = receiveDeserialized<StartCommand.JoinAsHost.Response>()
+		return when (response) {
+			is StartCommand.JoinAsHost.JoinedAsHost -> {
+				val combatState = response.combatDTO
+				val combatants = combatState.combatants.map(CombatantDTO::toModel)
+				combatController.overwriteWithExistingCombat(combatants, combatState.activeCombatantIndex)
+				Result.SUCCESS
+			}
+			StartCommand.JoinAsHost.SessionAlreadyHasHost -> Result.ALREADY_HOSTED
+			StartCommand.JoinAsHost.SessionNotFound -> Result.NOT_FOUND
+		}
+	}
+
+	suspend fun shareCombatState() {
+		sharedHttpClient.buildConfigWebsocket {
+			startHostingSession()
+			launch { shareCombatUpdates() }
+			receiveEvents()
+		}
+	}
+
+	private suspend fun DefaultClientWebSocketSession.startHostingSession() {
+		val currentCombatState = toCombatDTO(combatController.combatants.value, combatController.activeCombatantIndex.value)
+		val startMessage = StartCommand.StartHosting(currentCombatState) as StartCommand
+		this.sendSerialized(startMessage)
+		val response = receiveDeserialized<StartCommand.StartHosting.Response>() as StartCommand.StartHosting.SessionStarted
+		Napier.d("Got Session id $sessionId")
+		sessionId.value = response.sessionId
 	}
 
 	@OptIn(FlowPreview::class)
@@ -57,6 +77,7 @@ class ShareCombatController(
 		combine(combatController.combatants, combatController.activeCombatantIndex, ::toCombatDTO)
 			.debounce(200.milliseconds)
 			.collectLatest {
+				Napier.d("Sent combat update")
 				sendSerialized(HostCommand.CombatUpdatedCommand(it) as HostCommand)
 			}
 	}
@@ -64,17 +85,23 @@ class ShareCombatController(
 	private suspend fun DefaultClientWebSocketSession.receiveEvents() {
 		while (true) {
 			val incoming = receiveDeserialized<ServerToHostCommand>()
+			Napier.d("Received command $incoming")
 			when (incoming) {
-				is ServerToHostCommand.SessionStarted -> TODO("Change to be separate response")
+				is ServerToHostCommand.AddCombatant -> {
+					val combatant = incoming.combatant.toModel()
+					delegate.addCombatant(combatant)
+				}
 			}
 		}
 	}
 
-	private fun toCombatDTO(combatants: Sequence<CombatantModel>, activeCombatantIndex: Int) =
-		CombatDTO(activeCombatantIndex, combatants.map(CombatantModel::toDTO).toList())
+	enum class Result {
+		SUCCESS,
+		ALREADY_HOSTED,
+		NOT_FOUND
+	}
 
-	fun stopSharing() {
-		sharingJob?.cancel()
-		sharingJob = null
+	interface Delegate {
+		suspend fun addCombatant(combatantModel: CombatantModel)
 	}
 }

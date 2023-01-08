@@ -1,15 +1,18 @@
 package de.lehrbaum.initiativetracker.view.combat.client
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
+import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.FragmentCombatClientBinding
+import de.lehrbaum.initiativetracker.extensions.showSnackbar
 import de.lehrbaum.initiativetracker.extensions.viewModelsFactory
 
-class CombatClientFragment : Fragment(), CombatClientViewModel.Delegate {
+class CombatClientFragment : Fragment(), CombatClientViewModel.Delegate, MenuProvider {
 
 	private val args: CombatClientFragmentArgs by navArgs()
 
@@ -36,4 +39,27 @@ class CombatClientFragment : Fragment(), CombatClientViewModel.Delegate {
 		return binding.root
 	}
 
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		requireActivity().addMenuProvider(this, viewLifecycleOwner)
+	}
+
+	override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+		menuInflater.inflate(R.menu.menu_combat_client, menu)
+	}
+
+	override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+		return when (menuItem.itemId) {
+			R.id.action_leave -> {
+				leaveCombat()
+				true
+			}
+			else -> false
+		}
+	}
+
+	override fun leaveCombat() {
+		showSnackbar("Combat ended", Snackbar.LENGTH_LONG)
+		findNavController().popBackStack()
+	}
 }

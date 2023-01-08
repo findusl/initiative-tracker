@@ -8,6 +8,11 @@
         android:title="@string/share_combat"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_join_as_host"
+        android:orderInCategory="1"
+        android:title="@string/join_combat_as_host"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_show_session_id"
         android:orderInCategory="2"
         android:title="@string/show_session_id"

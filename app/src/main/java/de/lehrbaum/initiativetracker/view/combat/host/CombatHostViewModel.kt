@@ -8,16 +8,23 @@ import de.lehrbaum.initiativetracker.logic.CombatantModel
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.networking.ShareCombatController
 import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 
-class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() {
+@Suppress("unused")
+private const val TAG = "CombatHostViewModel"
+
+class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>(), ShareCombatController.Delegate {
 	private val editingCombatantId = MutableStateFlow<Long?>(null)
 
 	private val currentCombatController = CombatController()
 
-	private val shareCombatController = ShareCombatController(currentCombatController)
+	private val shareCombatController = ShareCombatController(currentCombatController, this)
 
 	private var mostRecentDeleted: CombatantModel? = null
 
@@ -34,7 +41,7 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 				isInEditMode,
 				isActive,
 			)
-		}.toList()
+		}
 	}
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -54,12 +61,21 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 	 */
 	var currentlyEditingCombatant: CombatantViewModel? = null
 
+	private var sharingCombatJob: Job? = null
+
 	val isSharing: Boolean
-		get() = shareCombatController.isSharing
+		get() = sharingCombatJob != null
 
 	init {
 		addCombatant()
 		addCombatant()
+		viewModelScope.launch {
+			shareCombatController.sessionId.collect { sessionId ->
+				if (sessionId != null) {
+					delegate?.showSessionId(sessionId)
+				}
+			}
+		}
 	}
 
 	fun selectCombatant(combatantToSelect: CombatantViewModel?) {
@@ -102,28 +118,76 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>() 
 		}
 	}
 
-	fun onShareClicked() {
-		if (!shareCombatController.isSharing) {
-			viewModelScope.launch {
-				val sessionId = shareCombatController.startSharing(viewModelScope)
-				delegate?.showSessionId(sessionId)
+	fun onJoinAsHostClicked(sessionId: Int) {
+		if (isSharing) {
+			delegate?.notifyAlreadySharing()
+			return
+		}
+
+		viewModelScope.launch {
+			handleWebsocketErrors {
+				val result = shareCombatController.joinCombatAsHost(sessionId)
+				when (result) {
+					ShareCombatController.Result.ALREADY_HOSTED -> delegate?.notifySessionHasExistingHost()
+					ShareCombatController.Result.NOT_FOUND -> delegate?.notifySessionNotFound(sessionId)
+					else -> {}
+				}
 			}
 		}
 	}
 
+	fun onShareClicked() {
+		if (isSharing) {
+			delegate?.notifyAlreadySharing()
+			return
+		}
+
+		sharingCombatJob = viewModelScope.launch {
+			handleWebsocketErrors {
+				shareCombatController.shareCombatState()
+			}
+		}
+	}
+
+	private suspend fun handleWebsocketErrors(block: suspend () -> Unit) {
+		try {
+			block()
+		} catch (e: SocketTimeoutException) {
+			delegate?.notifyConnectionFailed()
+		} catch (e: ClosedReceiveChannelException) {
+			delegate?.notifySessionClosed()
+		} catch (e: Exception) {
+			Napier.e("Exception during sharing", e, TAG)
+			delegate?.showErrorMessage(e.message ?: "No message: ${e::class}")
+		}
+	}
+
 	fun onStopShareClicked() {
-		if (shareCombatController.isSharing) {
-			shareCombatController.stopSharing()
+		if (isSharing) {
+			sharingCombatJob?.cancel()
 		}
 	}
 
 	fun showSessionId() {
-		val sessionId = shareCombatController.sessionId ?: -1
+		val sessionId = shareCombatController.sessionId.value ?: -1
 		delegate?.showSessionId(sessionId)
+	}
+
+	override suspend fun addCombatant(combatantModel: CombatantModel) {
+		if (delegate?.allowAddCharacter(combatantModel.name) == true) {
+			currentCombatController.addCombatant(combatantModel.name, combatantModel.initiative)
+		}
 	}
 
 	interface Delegate {
 		fun showSaveChangesDialog(onOkListener: () -> Unit)
 		fun showSessionId(sessionCode: Int)
+		fun notifyConnectionFailed()
+		fun notifyAlreadySharing()
+		fun notifySessionHasExistingHost()
+		fun notifySessionNotFound(sessionId: Int)
+		fun notifySessionClosed()
+		suspend fun allowAddCharacter(name: String): Boolean
+		fun showErrorMessage(message: String) // for faster debugging
 	}
 }
