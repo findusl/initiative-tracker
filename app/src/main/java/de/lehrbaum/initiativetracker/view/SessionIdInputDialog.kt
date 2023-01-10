@@ -24,6 +24,9 @@ suspend fun Context.requestSessionIdInput(): Int {
 			dialog.cancel()
 			continuation.cancel()
 		}
+		builder.setOnDismissListener {
+			continuation.cancel()
+		}
 
 		builder.show()
 	}
