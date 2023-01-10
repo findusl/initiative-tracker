@@ -9,7 +9,9 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -20,7 +22,6 @@ import de.lehrbaum.initiativetracker.view.requestSessionIdInput
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-
 
 /**
  * A fragment representing a list of Items.
@@ -120,7 +121,24 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 				viewModel.showSessionId()
 				true
 			}
+			R.id.action_join_combat -> {
+				joinCombat()
+				true
+			}
+			R.id.action_characters -> {
+				val action = CombatHostFragmentDirections.actionCombatHostFragmentToCharacterListFragment()
+				findNavController().navigate(action)
+				true
+			}
 			else -> false
+		}
+	}
+
+	private fun joinCombat() {
+		lifecycleScope.launch {
+			val sessionId = requireContext().requestSessionIdInput()
+			val action = CombatHostFragmentDirections.actionCombatHostFragmentToCombatClientFragment(sessionId)
+			findNavController().navigate(action)
 		}
 	}
 

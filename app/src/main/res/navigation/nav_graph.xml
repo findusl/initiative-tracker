@@ -14,6 +14,12 @@
         <action
             android:id="@+id/action_CombatHostFragment_to_CombatClientFragment"
             app:destination="@id/CombatClientFragment" />
+        <action
+            android:id="@+id/action_CombatHostFragment_to_combatantFragment"
+            app:destination="@id/EditCombatantFragment" />
+        <action
+            android:id="@+id/action_CombatHostFragment_to_characterListFragment"
+            app:destination="@id/characterListFragment" />
     </fragment>
 
     <fragment
@@ -24,6 +30,18 @@
         <argument
             android:name="sessionId"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/EditCombatantFragment"
+        android:name="de.lehrbaum.initiativetracker.view.combat.edit.EditCombatantFragment"
+        android:label="CombatantFragment" />
+    <fragment
+        android:id="@+id/characterListFragment"
+        android:name="de.lehrbaum.initiativetracker.view.combat.characters.CharacterListFragment"
+        android:label="CharacterListFragment">
+        <action
+            android:id="@+id/action_characterListFragment_to_EditCombatantFragment"
+            app:destination="@id/EditCombatantFragment" />
     </fragment>
 
 </navigation>

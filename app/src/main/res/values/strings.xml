@@ -21,4 +21,5 @@
     <string name="show_session_id">Show Session Id</string>
     <string name="leave_combat">Leave Combat</string>
     <string name="join_combat_as_host">Join combat as host</string>
+    <string name="characters">Characters</string>
 </resources>
