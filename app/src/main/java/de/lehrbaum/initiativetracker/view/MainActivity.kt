@@ -4,23 +4,24 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.databinding.ActivityMainBinding
-import de.lehrbaum.initiativetracker.view.combat.host.CombatHostFragmentDirections
+import de.lehrbaum.initiativetracker.logic.CharacterRepository
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
 	private lateinit var appBarConfiguration: AppBarConfiguration
 	private lateinit var binding: ActivityMainBinding
+
+	lateinit var characterRepository: CharacterRepository
 
 	init {
 		// Initialize Napier
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		characterRepository = CharacterRepository(applicationContext)
 
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
@@ -52,19 +54,7 @@ class MainActivity : AppCompatActivity() {
 		// as you specify a parent activity in AndroidManifest.xml.
 		return when (item.itemId) {
 			R.id.action_settings -> true
-			R.id.action_join_combat -> {
-				joinCombat()
-				true
-			}
 			else -> super.onOptionsItemSelected(item)
-		}
-	}
-
-	private fun joinCombat() {
-		lifecycleScope.launch {
-			val sessionId = requestSessionIdInput()
-			val action = CombatHostFragmentDirections.actionCombatHostFragmentToCombatClientFragment(sessionId)
-			findNavController(R.id.nav_host_fragment_content_main).navigate(action)
 		}
 	}
 
