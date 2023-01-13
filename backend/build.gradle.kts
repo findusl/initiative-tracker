@@ -76,7 +76,7 @@ dependencies {
 	implementation("ch.qos.logback:logback-classic:$logback_version")
 
 	testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
 	testImplementation(kotlin("test"))
 	testImplementation("org.mockito:mockito-core:4.11.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
