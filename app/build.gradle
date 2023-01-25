@@ -6,8 +6,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.android.application' version '7.4.0'
-    id 'org.jetbrains.kotlin.android' version "$kotlinVersion"
+    id "com.android.application" version "7.4.0"
+    id "org.jetbrains.kotlin.android" version "$kotlinVersion"
     id "org.jetbrains.kotlin.kapt" version "$kotlinVersion"
     id "org.jetbrains.kotlin.plugin.serialization" version "$kotlinVersion"
     id "androidx.navigation.safeargs.kotlin" version "2.5.3"
@@ -24,10 +24,10 @@ android {
 
     defaultConfig {
         applicationId "de.lehrbaum.initiativetracker"
-        minSdk 30
+        minSdk 28
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,6 +36,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            debuggable false
         }
     }
 
@@ -86,9 +87,9 @@ android {
 dependencies {
     implementation project(path: ":commands")
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.appcompat:appcompat:1.6.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
@@ -112,17 +113,18 @@ dependencies {
     implementation "io.ktor:ktor-client-okhttp:$ktorVersion"
 
     implementation "com.google.dagger:hilt-android:2.44"
+    implementation "androidx.core:core-ktx:1.9.0"
     kapt "com.google.dagger:hilt-compiler:2.44"
 
-    // Napier allows us to easily log on Kotlin Multiplatform later
+    // Napier allows us to easily log on Kotlin Multiplatform in the future
     implementation("io.github.aakira:napier:2.6.1")
 
     // Compose dependencies
-    implementation "androidx.compose.ui:ui:1.3.2"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha03"
+    implementation "androidx.compose.ui:ui:1.3.3"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha04"
     implementation "androidx.compose.material:material:1.3.1"
-    debugImplementation "androidx.compose.ui:ui-tooling:1.3.2"
-    implementation "androidx.compose.ui:ui-tooling-preview:1.3.2"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.3.3"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.3.3"
 
     testImplementation "junit:junit:4.13.2"
 

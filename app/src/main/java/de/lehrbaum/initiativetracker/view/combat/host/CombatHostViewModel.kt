@@ -9,6 +9,7 @@ import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.networking.ShareCombatController
 import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
@@ -64,7 +65,7 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>(),
 	private var sharingCombatJob: Job? = null
 
 	val isSharing: Boolean
-		get() = sharingCombatJob != null
+		get() = sharingCombatJob?.isActive == true
 
 	init {
 		addCombatant()
@@ -124,7 +125,7 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>(),
 			return
 		}
 
-		viewModelScope.launch {
+		sharingCombatJob = viewModelScope.launch {
 			handleWebsocketErrors {
 				val result = shareCombatController.joinCombatAsHost(sessionId)
 				when (result) {
@@ -152,9 +153,15 @@ class CombatHostViewModel : DelegatingViewModel<CombatHostViewModel.Delegate>(),
 	private suspend fun handleWebsocketErrors(block: suspend () -> Unit) {
 		try {
 			block()
+		} catch (e: CancellationException) {
+			Napier.i("Job cancelled", tag = TAG)
+			delegate?.notifySessionClosed()
+			throw e
 		} catch (e: SocketTimeoutException) {
+			Napier.w("Socket timeout", e, TAG)
 			delegate?.notifyConnectionFailed()
 		} catch (e: ClosedReceiveChannelException) {
+			Napier.w("Channel closed", e, TAG)
 			delegate?.notifySessionClosed()
 		} catch (e: Exception) {
 			Napier.e("Exception during sharing", e, TAG)
