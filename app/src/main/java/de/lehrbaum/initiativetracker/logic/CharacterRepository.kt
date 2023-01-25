@@ -22,10 +22,10 @@ class CharacterRepository @Inject constructor(
 ) {
 	private val sharedPrefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
-	private val _characters = MutableStateFlow(loadInitialCharacters())
+	private val _characters = MutableStateFlow(loadCharacters())
 	val characters: StateFlow<List<CharacterModel>> = _characters
 
-	private fun loadInitialCharacters(): List<CharacterModel> {
+	private fun loadCharacters(): List<CharacterModel> {
 		val characterJsonSet = sharedPrefs.getStringSet(CHARACTERS_KEY, emptySet())!!
 		return characterJsonSet.asSequence()
 			.map { JsonMapper.decodeFromString<CharacterModel>(it) }
@@ -41,9 +41,11 @@ class CharacterRepository @Inject constructor(
 		}
 	}
 
-	fun addCharacter(character: CharacterModel) {
-		_characters.value = _characters.value + character
+	fun addCharacter(): CharacterModel {
+		val defaultCharacter = CharacterModel(nextFreeId(), "", 0)
+		_characters.value = _characters.value + defaultCharacter
 		saveCharacterList()
+		return defaultCharacter
 	}
 
 	fun updateCharacter(character: CharacterModel) {
@@ -52,5 +54,9 @@ class CharacterRepository @Inject constructor(
 
 	fun removeCharacter(character: CharacterModel) {
 		TODO("Implement")
+	}
+
+	private fun nextFreeId(): Long {
+		return characters.value.maxOfOrNull { it.id } ?: 0
 	}
 }

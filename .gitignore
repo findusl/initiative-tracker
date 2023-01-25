@@ -101,3 +101,4 @@ gradle-app.setting
 /initiative-tracker-backend/.idea/httpRequests
 /.idea/deploymentTargetDropDown.xml
 /.idea/androidTestResultsUserPreferences.xml
+/app/remote/release/app-remote-release.aab
