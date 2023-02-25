@@ -42,18 +42,22 @@ class CharacterRepository @Inject constructor(
 	}
 
 	fun addCharacter(): CharacterModel {
-		val defaultCharacter = CharacterModel(nextFreeId(), "", 0)
+		val defaultCharacter = CharacterModel(nextFreeId(), "New Character", 0, 0)
 		_characters.value = _characters.value + defaultCharacter
 		saveCharacterList()
 		return defaultCharacter
 	}
 
 	fun updateCharacter(character: CharacterModel) {
-		TODO("Implement")
+		_characters.value = _characters.value.map {
+			if (it.id == character.id) character else it
+		}
+		saveCharacterList()
 	}
 
 	fun removeCharacter(character: CharacterModel) {
-		TODO("Implement")
+		_characters.value = _characters.value.filter { it.id != character.id }
+		saveCharacterList()
 	}
 
 	private fun nextFreeId(): Long {
