@@ -27,21 +27,35 @@
         android:name="de.lehrbaum.initiativetracker.view.combat.client.CombatClientFragment"
         android:label="@string/combat_client_fragment"
         tools:layout="@layout/fragment_combat_client">
+
         <argument
             android:name="sessionId"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/EditCombatantFragment"
         android:name="de.lehrbaum.initiativetracker.view.combat.edit.EditCombatantFragment"
-        android:label="CombatantFragment" />
+        android:label="EditCombatantFragment" />
+
     <fragment
         android:id="@+id/characterListFragment"
         android:name="de.lehrbaum.initiativetracker.view.combat.characters.CharacterListFragment"
         android:label="CharacterListFragment">
+
         <action
-            android:id="@+id/action_characterListFragment_to_EditCombatantFragment"
-            app:destination="@id/EditCombatantFragment" />
+            android:id="@+id/action_characterListFragment_to_editCharacterFragment"
+            app:destination="@id/EditCharacterFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/EditCharacterFragment"
+        android:name="de.lehrbaum.initiativetracker.view.combat.characters.EditCharacterFragment"
+        android:label="EditCharacterFragment">
+
+        <argument
+            android:name="characterId"
+            app:argType="long" />
     </fragment>
 
 </navigation>
