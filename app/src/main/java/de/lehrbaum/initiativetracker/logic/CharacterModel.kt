@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class CharacterModel(
 	val id: Long,
 	val name: String,
-	val initiativeBonus: Short,
+	val initiativeMod: Int,
+	val hitPoints: Int
 )

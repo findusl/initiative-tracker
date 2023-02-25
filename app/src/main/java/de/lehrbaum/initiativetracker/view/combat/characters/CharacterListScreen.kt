@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 private val defaultPadding = 8.dp
 
 @Composable
-fun CharacterListView(
+fun CharacterListScreen(
 	characterListViewModel: CharacterListViewModel,
 	modifier: Modifier = Modifier,
 ) {
@@ -59,23 +59,23 @@ fun CharacterListElement(characterViewModel: CharacterViewModel, modifier: Modif
 @Preview(device = Devices.NEXUS_5, showBackground = true)
 @Composable
 fun PreviewCharacterListView() {
-	CharacterListView(MockCharacterListViewModel())
+	CharacterListScreen(MockCharacterListViewModel())
 }
 
 private class MockCharacterListViewModel : CharacterListViewModel {
 	override val characters: StateFlow<List<CharacterViewModel>>
 		get() = MutableStateFlow(
 			listOf(
-				CharacterViewModel(1, "Test Character")
+				CharacterViewModel(1, "Test Character", 2, 15)
 			)
 		)
 
 	override fun onCharacterSelected(characterViewModel: CharacterViewModel) {
-		TODO("Not yet implemented")
+
 	}
 
 	override fun onAddNewPressed() {
-		TODO("Not yet implemented")
+
 	}
 
 }

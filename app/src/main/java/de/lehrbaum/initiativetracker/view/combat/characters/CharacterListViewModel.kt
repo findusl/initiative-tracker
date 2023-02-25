@@ -13,9 +13,7 @@ import javax.inject.Inject
 
 interface CharacterListViewModel {
 	val characters: StateFlow<List<CharacterViewModel>>
-
 	fun onCharacterSelected(characterViewModel: CharacterViewModel)
-
 	fun onAddNewPressed()
 }
 
@@ -29,7 +27,7 @@ class CharacterListViewModelImpl @Inject constructor(
 	}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
 	override val characters = characterRepository.characters.map { list ->
-		list.map { CharacterViewModel(it.id, it.name) }
+		list.map { it.toCharacterViewModel() }
 	}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 	override fun onCharacterSelected(characterViewModel: CharacterViewModel) {

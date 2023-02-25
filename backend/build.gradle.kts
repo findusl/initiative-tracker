@@ -15,7 +15,7 @@ plugins {
 	id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-val ktor_version = "2.1.2"
+val ktor_version = "2.2.3"
 val kotlinVersion: String by parent!!.ext
 val logback_version = "1.4.4"
 

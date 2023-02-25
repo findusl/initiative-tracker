@@ -8,11 +8,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
+import de.lehrbaum.initiativetracker.extensions.viewModelsFactory
+import de.lehrbaum.initiativetracker.logic.CharacterRepository
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EditCharacterFragment : Fragment() {
 
-	private val characterListViewModel by viewModels<CharacterListViewModelImpl>()
+	private val args: EditCharacterFragmentArgs by navArgs()
+
+	@Inject
+	protected lateinit var characterRepository: CharacterRepository
+
+	private val editCharacterViewModel by viewModelsFactory { EditCharacterViewModelImpl(args.characterId, characterRepository) }
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
@@ -22,7 +32,7 @@ class EditCharacterFragment : Fragment() {
 			setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 			setContent {
 				MaterialTheme {
-					CharacterListView(characterListViewModel)
+					EditCharacterScreen(editCharacterViewModel = editCharacterViewModel)
 				}
 			}
 		}
