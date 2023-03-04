@@ -32,7 +32,7 @@ class EditCharacterFragment : Fragment(), EditCharacterViewModelImpl.Delegate {
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		editCharacterViewModel.setDelegate(this, this)
+		editCharacterViewModel.setDelegate(this, viewLifecycleOwner)
 		return ComposeView(requireContext()).apply {
 			setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 			setContent {
