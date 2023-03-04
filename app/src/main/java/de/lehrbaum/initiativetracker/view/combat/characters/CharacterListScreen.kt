@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-private val defaultPadding = 8.dp
+private val defaultPadding = 16.dp
 
 @Composable
 fun CharacterListScreen(
@@ -29,7 +29,7 @@ fun CharacterListScreen(
 
 	LazyColumn(modifier) {
 		val itemModifier = Modifier
-			.padding(16.dp)
+			.padding(defaultPadding)
 			.fillMaxWidth()
 		items(charactersState, key = CharacterViewModel::id) { item ->
 			CharacterListElement(item, itemModifier.clickable {
