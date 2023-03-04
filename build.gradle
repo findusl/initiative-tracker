@@ -2,7 +2,7 @@ buildscript {
     // redeclared in subprojects kts because I don't figure out how to use it there
     ext.kotlinVersion = "1.8.10"
     ext.kotlinxSerializationVersion = "1.4.1"
-    ext.ktorVersion = "2.2.3"
+    ext.ktorVersion = "2.2.4"
     ext.navigationVersion = "2.5.3"
 }
 
