@@ -28,7 +28,7 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 			.padding(16.dp)
 			.fillMaxWidth(),
 		horizontalAlignment = Alignment.CenterHorizontally,
-		verticalArrangement = Arrangement.SpaceBetween
+		verticalArrangement = Arrangement.Top
 	) {
 		OutlinedTextField(
 			value = characterViewModel.name,
@@ -39,16 +39,16 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 		)
 		Spacer(modifier = Modifier.height(16.dp))
 		OutlinedTextField(
-			value = characterViewModel.initiativeMod.toString(),
-			onValueChange = { editCharacterViewModel.onInitiativeModUpdated(it.toIntOrNull() ?: 0) },
+			value = characterViewModel.initiativeModDisplayString,
+			onValueChange = { editCharacterViewModel.onInitiativeModUpdated(it) },
 			label = { Text("Initiative Modifier") },
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 			modifier = Modifier.fillMaxWidth()
 		)
 		Spacer(modifier = Modifier.height(16.dp))
 		OutlinedTextField(
-			value = characterViewModel.hitPoints.toString(),
-			onValueChange = { editCharacterViewModel.onHitPointsUpdated(it.toIntOrNull() ?: 0) },
+			value = characterViewModel.hitPointsDisplayString,
+			onValueChange = { editCharacterViewModel.onHitPointsUpdated(it) },
 			label = { Text("Hitpoints") },
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 			isError = isHitPointError,
@@ -77,7 +77,7 @@ fun EditCharacterScreenPreview() {
 @Preview(device = Devices.NEXUS_5, showBackground = true)
 @Composable
 fun EditCharacterScreenPreviewError() {
-	val mockViewModel = MockEditCharacterViewModel(defaultCharacter)
+	val mockViewModel = MockEditCharacterViewModel(defaultCharacter.copy(initiativeMod = 0))
 	mockViewModel.isNameError.value = true
 
 	EditCharacterScreen(mockViewModel)
@@ -86,21 +86,14 @@ fun EditCharacterScreenPreviewError() {
 private class MockEditCharacterViewModel(characterViewModel: CharacterViewModel): EditCharacterViewModel {
 	override val characterViewModel = MutableStateFlow(characterViewModel)
 	override val isNameError = MutableStateFlow(false)
+	override val isHitPointsError = MutableStateFlow(false)
 
-	override fun onNameUpdated(name: String) {
+	override fun onNameUpdated(name: String) {}
 
-	}
+	override fun onInitiativeModUpdated(initiativeMod: String) {}
 
-	override fun onInitiativeModUpdated(initiativeMod: Int) {
+	override fun onHitPointsUpdated(hitPoints: String) {}
 
-	}
-
-	override fun onHitPointsUpdated(hitPoints: Int) {
-
-	}
-
-	override fun saveCharacter() {
-
-	}
+	override fun saveCharacter() {}
 
 }
