@@ -61,6 +61,6 @@ class CharacterRepository @Inject constructor(
 	}
 
 	private fun nextFreeId(): Long {
-		return characters.value.maxOfOrNull { it.id } ?: 0
+		return characters.value.maxOfOrNull { it.id }?.inc() ?: 0
 	}
 }
