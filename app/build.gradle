@@ -11,7 +11,7 @@ plugins {
     id "org.jetbrains.kotlin.kapt" version "$kotlinVersion"
     id "org.jetbrains.kotlin.plugin.serialization" version "$kotlinVersion"
     id "androidx.navigation.safeargs.kotlin" version "2.5.3"
-    id "com.google.dagger.hilt.android" version "2.44"
+    id "com.google.dagger.hilt.android" version "2.45"
 }
 
 Properties properties = new Properties()
