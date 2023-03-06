@@ -66,7 +66,7 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 
 private val defaultCharacter = CharacterViewModel(id = 1L, name = "John Doe", initiativeMod = 3, hitPoints = 10)
 
-@Preview(device = Devices.NEXUS_5, showBackground = true)
+@Preview(device = Devices.NEXUS_5, showBackground = true, showSystemUi = true)
 @Composable
 fun EditCharacterScreenPreview() {
 
@@ -74,7 +74,7 @@ fun EditCharacterScreenPreview() {
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
-@Preview(device = Devices.NEXUS_5, showBackground = true)
+@Preview(device = Devices.NEXUS_5, showBackground = true, showSystemUi = true)
 @Composable
 fun EditCharacterScreenPreviewError() {
 	val mockViewModel = MockEditCharacterViewModel(defaultCharacter.copy(initiativeMod = 0))
