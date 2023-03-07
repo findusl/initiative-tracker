@@ -22,7 +22,7 @@ class EditCharacterFragment : Fragment(), EditCharacterViewModelImpl.Delegate {
 	private val args: EditCharacterFragmentArgs by navArgs()
 
 	@Inject
-	protected lateinit var characterRepository: CharacterRepository
+	internal lateinit var characterRepository: CharacterRepository
 
 	private val editCharacterViewModel by viewModelsFactory {
 		EditCharacterViewModelImpl(args.characterId, characterRepository)

@@ -11,7 +11,7 @@ plugins {
     id "org.jetbrains.kotlin.kapt" version "$kotlinVersion"
     id "org.jetbrains.kotlin.plugin.serialization" version "$kotlinVersion"
     id "androidx.navigation.safeargs.kotlin" version "2.5.3"
-    id "com.google.dagger.hilt.android" version "2.44"
+    id "com.google.dagger.hilt.android" version "$hiltVersion"
 }
 
 Properties properties = new Properties()
@@ -112,9 +112,9 @@ dependencies {
     implementation "io.ktor:ktor-client-logging-jvm:$ktorVersion"
     implementation "io.ktor:ktor-client-okhttp:$ktorVersion"
 
-    implementation "com.google.dagger:hilt-android:2.44"
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
     implementation "androidx.core:core-ktx:1.9.0"
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 
     // Napier allows us to easily log on Kotlin Multiplatform in the future
     implementation("io.github.aakira:napier:2.6.1")

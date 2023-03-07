@@ -4,6 +4,7 @@ buildscript {
     ext.kotlinxSerializationVersion = "1.5.0"
     ext.ktorVersion = "2.2.4"
     ext.navigationVersion = "2.5.3"
+    ext.hiltVersion = "2.45"
 }
 
 task clean(type: Delete) {
