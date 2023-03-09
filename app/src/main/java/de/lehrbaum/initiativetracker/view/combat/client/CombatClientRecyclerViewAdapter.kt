@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.lehrbaum.initiativetracker.databinding.ListItemCombatantBinding
-import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 
 @Suppress("unused")
 private const val TAG = "CombatClientRecyclerViewAdapter"
@@ -15,7 +14,9 @@ private const val TAG = "CombatClientRecyclerViewAdapter"
 class CombatClientRecyclerViewAdapter(
 	private val viewLifecycleOwner: LifecycleOwner
 ) :
-	ListAdapter<CombatantViewModel, CombatClientRecyclerViewAdapter.ViewHolder>(CombatantDiffUtil()) {
+	ListAdapter<ClientCombatantViewModel, CombatClientRecyclerViewAdapter.ViewHolder>(
+		CombatantDiffUtil()
+	) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		val inflater = LayoutInflater.from(parent.context)
@@ -33,18 +34,18 @@ class CombatClientRecyclerViewAdapter(
 			binding.lifecycleOwner = viewLifecycleOwner
 		}
 
-		fun bind(combatantViewModel: CombatantViewModel) {
+		fun bind(combatantViewModel: ClientCombatantViewModel) {
 			binding.viewModel = combatantViewModel
 		}
 	}
 }
 
-private class CombatantDiffUtil : DiffUtil.ItemCallback<CombatantViewModel>() {
+private class CombatantDiffUtil : DiffUtil.ItemCallback<ClientCombatantViewModel>() {
 
-	override fun areItemsTheSame(oldItem: CombatantViewModel, newItem: CombatantViewModel): Boolean {
+	override fun areItemsTheSame(oldItem: ClientCombatantViewModel, newItem: ClientCombatantViewModel): Boolean {
 		return oldItem.id == newItem.id
 	}
 
-	override fun areContentsTheSame(oldItem: CombatantViewModel, newItem: CombatantViewModel) = oldItem == newItem
+	override fun areContentsTheSame(oldItem: ClientCombatantViewModel, newItem: ClientCombatantViewModel) = oldItem == newItem
 
 }

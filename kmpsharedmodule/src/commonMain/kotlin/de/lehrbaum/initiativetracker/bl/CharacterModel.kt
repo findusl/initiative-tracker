@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.logic
+package de.lehrbaum.initiativetracker.bl
 
 import kotlinx.serialization.Serializable
 

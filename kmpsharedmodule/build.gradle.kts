@@ -1,6 +1,8 @@
 plugins {
 	kotlin("multiplatform")
 	id("com.android.library")
+	id("org.jetbrains.compose") version Version.JetbrainsCompose.foundation
+	id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -14,23 +16,28 @@ kotlin {
 
 	@Suppress("UNUSED_VARIABLE")
 	sourceSets {
-		val commonMain by getting {
+		named("commonMain") {
 			dependencies {
 				implementation(project(path = ":commands"))
+				implementation(compose.ui)
+				implementation(compose.foundation)
+				implementation(compose.material)
+				implementation(compose.runtime)
+				implementation(compose.preview)
 			}
 		}
-		val commonTest by getting {
+		named("commonTest") {
 			dependencies {
 				implementation(kotlin("test"))
 			}
 		}
-		val androidMain by getting
-		val androidUnitTest by getting
+		named("androidMain")
+		named("androidUnitTest")
 	}
 }
 
 android {
-	namespace = "de.lehrbaum.initiativetracker.kmpsharedmodule"
+	namespace = "de.lehrbaum.initiativetracker"
 	compileSdk = 33
 	defaultConfig {
 		minSdk = 28

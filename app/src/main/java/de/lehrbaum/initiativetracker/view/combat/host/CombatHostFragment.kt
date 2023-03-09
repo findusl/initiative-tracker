@@ -5,6 +5,9 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.view.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -12,63 +15,36 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.lehrbaum.initiativetracker.R
-import de.lehrbaum.initiativetracker.databinding.FragmentCombatHostBinding
 import de.lehrbaum.initiativetracker.extensions.showSnackbar
 import de.lehrbaum.initiativetracker.view.requestSessionIdInput
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-/**
- * A fragment representing a list of Items.
- */
-class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvider {
+class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuProvider {
 
-	private val viewModel by viewModels<CombatHostViewModel>()
-
-	private lateinit var combatHostRecyclerViewAdapter: CombatHostRecyclerViewAdapter
+	private val viewModel by viewModels<CombatHostViewModelImpl>()
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
 		viewModel.setDelegate(this, viewLifecycleOwner)
-
-		val binding = FragmentCombatHostBinding.inflate(inflater, container, false)
-		binding.lifecycleOwner = viewLifecycleOwner
-		binding.viewModel = viewModel
-
-		combatHostRecyclerViewAdapter = CombatHostRecyclerViewAdapter(viewModel, viewLifecycleOwner)
-		binding.list.adapter = combatHostRecyclerViewAdapter
-
-		viewModel.combatants.observe(viewLifecycleOwner) {
-			combatHostRecyclerViewAdapter.submitList(it)
+		return ComposeView(requireContext()).apply {
+			setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+			setContent {
+				MaterialTheme {
+					CombatHostScreen(viewModel)
+				}
+			}
 		}
-
-		ItemTouchHelper(ItemTouchCallback()).attachToRecyclerView(binding.list)
-
-		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		requireActivity().addMenuProvider(this, viewLifecycleOwner)
-	}
-
-	override fun showSaveChangesDialog(onOkListener: () -> Unit) {
-		AlertDialog.Builder(context)
-			.setTitle("Save changes?")
-			.setMessage("Do you want to save your changes?")
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setPositiveButton(android.R.string.ok) { _, _ ->
-				onOkListener()
-			}
-			.setNegativeButton(android.R.string.cancel, null)
-			.show()
 	}
 
 	override fun showSessionId(sessionCode: Int) {
@@ -162,7 +138,7 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		showSnackbar("Session closed", Snackbar.LENGTH_LONG)
 	}
 
-	override suspend fun allowAddCharacter(name: String): Boolean {
+	override suspend fun allowAddExternalCharacter(name: String): Boolean {
 		return suspendCancellableCoroutine { continuation ->
 			AlertDialog.Builder(context)
 				.setTitle("Allow combatant?")
@@ -182,18 +158,12 @@ class CombatHostFragment : Fragment(), CombatHostViewModel.Delegate, MenuProvide
 		showSnackbar("Error: $message", Snackbar.LENGTH_LONG)
 	}
 
-	private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-		override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
-
-		override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-			viewModel.deleteCombatant(viewHolder.absoluteAdapterPosition)
-			view?.let {
-				Snackbar
-					.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
-					.setAction("Undo") { viewModel.undoDelete() }
-					.show()
-			}
+	override fun notifyCombatantDeleted() {
+		view?.let {
+			Snackbar
+				.make(it, "Deleted combatant", Snackbar.LENGTH_LONG)
+				.setAction("Undo") { viewModel.undoDelete() }
+				.show()
 		}
 	}
-
 }

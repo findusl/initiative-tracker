@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.kmpsharedmodule
+package de.lehrbaum.initiativetracker
 
 interface Platform {
 	val name: String

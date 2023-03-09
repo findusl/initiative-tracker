@@ -1,8 +1,8 @@
 package de.lehrbaum.initiativetracker.networking
 
+import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.CombatDTO
 import de.lehrbaum.initiativetracker.dtos.CombatantDTO
-import de.lehrbaum.initiativetracker.logic.CombatantModel
 
 fun toCombatDTO(combatants: List<CombatantModel>, activeCombatantIndex: Int) =
 	CombatDTO(activeCombatantIndex, combatants.map(CombatantModel::toDTO))

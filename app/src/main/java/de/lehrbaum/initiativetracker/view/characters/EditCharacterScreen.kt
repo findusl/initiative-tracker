@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view.combat.characters
+package de.lehrbaum.initiativetracker.view.characters
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -8,13 +8,13 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.lehrbaum.initiativetracker.view.Constants
+import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -23,13 +23,10 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 	val isNameError by editCharacterViewModel.isNameError.collectAsStateWithLifecycle()
 	val isHitPointError by editCharacterViewModel.isNameError.collectAsStateWithLifecycle()
 
-	Column(
-		modifier = Modifier
-			.padding(16.dp)
-			.fillMaxWidth(),
-		horizontalAlignment = Alignment.CenterHorizontally,
-		verticalArrangement = Arrangement.Top
-	) {
+
+	Column(modifier = Modifier
+		.padding(Constants.defaultPadding)
+		.fillMaxWidth()) {
 		OutlinedTextField(
 			value = characterViewModel.name,
 			onValueChange = { editCharacterViewModel.onNameUpdated(it) },
@@ -37,7 +34,7 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 			isError = isNameError,
 			modifier = Modifier.fillMaxWidth()
 		)
-		Spacer(modifier = Modifier.height(16.dp))
+		Spacer(modifier = Modifier.height(defaultPadding))
 		OutlinedTextField(
 			value = characterViewModel.initiativeModDisplayString,
 			onValueChange = { editCharacterViewModel.onInitiativeModUpdated(it) },
@@ -45,7 +42,7 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 			modifier = Modifier.fillMaxWidth()
 		)
-		Spacer(modifier = Modifier.height(16.dp))
+		Spacer(modifier = Modifier.height(defaultPadding))
 		OutlinedTextField(
 			value = characterViewModel.hitPointsDisplayString,
 			onValueChange = { editCharacterViewModel.onHitPointsUpdated(it) },
@@ -54,7 +51,7 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 			isError = isHitPointError,
 			modifier = Modifier.fillMaxWidth()
 		)
-		Spacer(modifier = Modifier.height(16.dp))
+		Spacer(modifier = Modifier.height(defaultPadding))
 		Button(
 			onClick = { editCharacterViewModel.saveCharacter() },
 			modifier = Modifier.fillMaxWidth()
@@ -83,7 +80,8 @@ fun EditCharacterScreenPreviewError() {
 	EditCharacterScreen(mockViewModel)
 }
 
-private class MockEditCharacterViewModel(characterViewModel: CharacterViewModel): EditCharacterViewModel {
+private class MockEditCharacterViewModel(characterViewModel: CharacterViewModel) :
+	EditCharacterViewModel {
 	override val characterViewModel = MutableStateFlow(characterViewModel)
 	override val isNameError = MutableStateFlow(false)
 	override val isHitPointsError = MutableStateFlow(false)

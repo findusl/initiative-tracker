@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view.combat.characters
+package de.lehrbaum.initiativetracker.view.characters
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,23 +15,22 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-private val defaultPadding = 16.dp
 
 @Composable
 fun CharacterListScreen(
 	characterListViewModel: CharacterListViewModel,
 	modifier: Modifier = Modifier,
 ) {
-	val charactersState by characterListViewModel.characters.collectAsStateWithLifecycle()
+	val characters by characterListViewModel.characters.collectAsStateWithLifecycle()
 
 	LazyColumn(modifier) {
 		val itemModifier = Modifier
 			.padding(defaultPadding)
 			.fillMaxWidth()
-		items(charactersState, key = CharacterViewModel::id) { item ->
+		items(characters, key = CharacterViewModel::id) { item ->
 			CharacterListElement(item, itemModifier.clickable {
 				characterListViewModel.onCharacterSelected(item)
 			})
@@ -40,14 +39,17 @@ fun CharacterListScreen(
 			Card(elevation = 8.dp, modifier = itemModifier.clickable {
 				characterListViewModel.onAddNewPressed()
 			}) {
-				Text("Add new", modifier = Modifier
-					.padding(defaultPadding)
-					.fillMaxWidth(), textAlign = TextAlign.Center)
+				Text(
+					"Add new",
+					modifier = Modifier
+						.padding(defaultPadding)
+						.fillMaxWidth(),
+					textAlign = TextAlign.Center
+				)
 			}
 		}
 	}
 }
-
 
 @Composable
 fun CharacterListElement(characterViewModel: CharacterViewModel, modifier: Modifier = Modifier) {
@@ -56,7 +58,7 @@ fun CharacterListElement(characterViewModel: CharacterViewModel, modifier: Modif
 	}
 }
 
-@Preview(device = Devices.NEXUS_5, showBackground = true)
+@Preview(device = Devices.NEXUS_5, showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewCharacterListView() {
 	CharacterListScreen(MockCharacterListViewModel())

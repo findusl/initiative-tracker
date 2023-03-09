@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view.combat.characters
+package de.lehrbaum.initiativetracker.view.characters
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import de.lehrbaum.initiativetracker.logic.CharacterModel
+import de.lehrbaum.initiativetracker.bl.CharacterModel
 
 @AndroidEntryPoint
 class CharacterListFragment : Fragment(), CharacterListViewModelImpl.Delegate {
@@ -34,7 +34,10 @@ class CharacterListFragment : Fragment(), CharacterListViewModelImpl.Delegate {
 	}
 
 	override fun editCharacter(characterModel: CharacterModel) {
-		val action = CharacterListFragmentDirections.actionCharacterListFragmentToEditCharacterFragment(characterModel.id)
+		val action =
+			CharacterListFragmentDirections.actionCharacterListFragmentToEditCharacterFragment(
+				characterModel.id
+			)
 		findNavController().navigate(action)
 	}
 }

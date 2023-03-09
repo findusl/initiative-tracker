@@ -1,17 +1,17 @@
-package de.lehrbaum.initiativetracker.view.combat
+package de.lehrbaum.initiativetracker.view.combat.client
 
-data class CombatantViewModel(
+data class ClientCombatantViewModel(
 	val id: Long,
 	val name: String,
 	val initiative: Short,
 	val editMode: Boolean = false,
 	var active: Boolean = false
-) : Comparable<CombatantViewModel> {
+) : Comparable<ClientCombatantViewModel> {
 
 	val initiativeString: String
 		get() = initiative.toString()
 
-	override fun compareTo(other: CombatantViewModel): Int {
+	override fun compareTo(other: ClientCombatantViewModel): Int {
 		var order = initiative - other.initiative
 		if (order == 0)
 			order = (id - other.id).toInt()

@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.kmpsharedmodule
+package de.lehrbaum.initiativetracker
 
 class AndroidPlatform : Platform {
 	override val name: String = "Android ${android.os.Build.VERSION.SDK_INT}"

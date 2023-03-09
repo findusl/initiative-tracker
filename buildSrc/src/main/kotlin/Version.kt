@@ -5,4 +5,7 @@ object Version {
 	const val navigation = "2.5.3"
 	const val hilt = "2.45"
 	const val logback = "1.4.5"
+	object JetbrainsCompose {
+		const val foundation = "1.3.1"
+	}
 }

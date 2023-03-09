@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.logic
+package de.lehrbaum.initiativetracker.bl
 
 data class CombatantModel(
 	val id: Long,
