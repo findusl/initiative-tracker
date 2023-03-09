@@ -1,4 +1,4 @@
-val kotlinxSerializationVersion: String by parent!!.ext
+import Constants.kotlinxSerializationVersion
 
 plugins {
 	`java-library`
