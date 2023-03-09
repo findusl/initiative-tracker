@@ -1,15 +1,13 @@
-package de.lehrbaum.initiativetracker.logic
+package de.lehrbaum.initiativetracker.bl
 
-import android.os.Looper
 import androidx.annotation.MainThread
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import okhttp3.internal.toImmutableList
 
 private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
 
 @MainThread
-class CombatController {
+class CombatController constructor() {
 	private var nextId = 0L
 
 	/**
@@ -41,10 +39,11 @@ class CombatController {
 	fun addCombatant(
 		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
 		initiative: Short = -99
-	) {
+	): CombatantModel {
 		val newCombatant = CombatantModel(nextId++, name, initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
+		return newCombatant
 	}
 
 	fun updateCombatant(updatedCombatant: CombatantModel) {
@@ -60,11 +59,11 @@ class CombatController {
 		}.sortByInitiative()
 	}
 
-	fun deleteCombatant(position: Int): CombatantModel? {
+	fun deleteCombatant(id: Long): CombatantModel? {
 		var oldCombatant: CombatantModel? = null
 		_combatants.value = _combatants.value
-			.filterIndexed { index, combatantModel ->
-				if (index == position) {
+			.filter { combatantModel ->
+				if (combatantModel.id == id) {
 					oldCombatant = combatantModel
 					false
 				} else true
@@ -80,11 +79,8 @@ class CombatController {
 	 * But that doesn't fit into the current architecture and I'm not yet sure how to implement the best solution.
 	 */
 	fun overwriteWithExistingCombat(combatants: List<CombatantModel>, activeCombatantIndex: Int) {
-		@Suppress("UsePropertyAccessSyntax") // This is clearly a function depending on env not a property
-		assert(Looper.getMainLooper().isCurrentThread()) { "This should be called on main thread to avoid race conditions" }
-
 		combatantCount = combatants.size
-		_combatants.value = combatants.toImmutableList()
+		_combatants.value = combatants.toList()
 		nextId = combatants.maxOfOrNull { it.id }?.inc() ?: 0
 		_activeCombatantIndex.value = activeCombatantIndex
 	}

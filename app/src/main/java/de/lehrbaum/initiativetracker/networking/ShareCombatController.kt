@@ -1,11 +1,11 @@
 package de.lehrbaum.initiativetracker.networking
 
+import de.lehrbaum.initiativetracker.bl.CombatController
+import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
 import de.lehrbaum.initiativetracker.dtos.CombatantDTO
-import de.lehrbaum.initiativetracker.logic.CombatController
-import de.lehrbaum.initiativetracker.logic.CombatantModel
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
@@ -89,7 +89,7 @@ class ShareCombatController(
 			when (incoming) {
 				is ServerToHostCommand.AddCombatant -> {
 					val combatant = incoming.combatant.toModel()
-					delegate.addCombatant(combatant)
+					delegate.handleAddExternalCombatant(combatant)
 				}
 			}
 		}
@@ -102,6 +102,6 @@ class ShareCombatController(
 	}
 
 	interface Delegate {
-		suspend fun addCombatant(combatantModel: CombatantModel)
+		suspend fun handleAddExternalCombatant(combatantModel: CombatantModel)
 	}
 }

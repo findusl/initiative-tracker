@@ -4,7 +4,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
 import de.lehrbaum.initiativetracker.networking.RemoteCombatController
-import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -29,7 +28,7 @@ class CombatClientViewModel(
 			val activeIndex = combat.activeCombatantIndex
 			combat.combatants.mapIndexed { index, combatant ->
 				with(combatant) {
-					CombatantViewModel(id, name, initiative, active = index == activeIndex, editMode = false)
+					ClientCombatantViewModel(id, name, initiative, active = index == activeIndex, editMode = false)
 				}
 			}
 		}
