@@ -4,6 +4,7 @@ import Constants.hiltVersion
 import Constants.kotlinxSerializationVersion
 import Constants.ktorVersion
 import Constants.navigationVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.util.*
 
 buildscript {
@@ -16,10 +17,10 @@ buildscript {
 
 @Suppress("RemoveRedundantQualifierName") // Imports do not seem to apply in the plugins block
 plugins {
-	id("com.android.application") version "7.4.2"
-	id("org.jetbrains.kotlin.android") version Constants.kotlinVersion
-	id("org.jetbrains.kotlin.kapt") version Constants.kotlinVersion
-	id("org.jetbrains.kotlin.plugin.serialization") version Constants.kotlinVersion
+	id("com.android.application")
+	kotlin("android")
+	id("org.jetbrains.kotlin.kapt")
+	id("org.jetbrains.kotlin.plugin.serialization")
 	id("androidx.navigation.safeargs.kotlin") version Constants.navigationVersion
 	id("com.google.dagger.hilt.android") version Constants.hiltVersion
 }
@@ -94,13 +95,14 @@ android {
 		kotlinCompilerExtensionVersion = "1.4.3"
 	}
 	kotlinOptions {
-		freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+		enableContextReceivers()
 		jvmTarget = "1.8"
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 }
 
 dependencies {
+	implementation(project(path = ":kmpsharedmodule"))
 	implementation(project(path = ":commands"))
 
 	implementation("androidx.core:core-ktx:1.9.0")
@@ -151,4 +153,8 @@ dependencies {
 // Allow references to generated code
 kapt {
 	correctErrorTypes = true
+}
+
+fun KotlinJvmOptions.enableContextReceivers() {
+	freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
 }
