@@ -1,28 +1,22 @@
 @file:Suppress("UnstableApiUsage") // the warning doesn't help
 
-import Constants.hiltVersion
-import Constants.kotlinxSerializationVersion
-import Constants.ktorVersion
-import Constants.navigationVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.util.*
 
 buildscript {
-	@Suppress("RemoveRedundantQualifierName") // Imports do not seem to apply in the buildscript block
 	dependencies {
-		classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Constants.navigationVersion}")
+		classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Version.navigation}")
 		classpath("com.android.tools.build:gradle:7.4.2")
 	}
 }
 
-@Suppress("RemoveRedundantQualifierName") // Imports do not seem to apply in the plugins block
 plugins {
 	id("com.android.application")
 	kotlin("android")
 	id("org.jetbrains.kotlin.kapt")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	id("androidx.navigation.safeargs.kotlin") version Constants.navigationVersion
-	id("com.google.dagger.hilt.android") version Constants.hiltVersion
+	id("androidx.navigation.safeargs.kotlin") version Version.navigation
+	id("com.google.dagger.hilt.android") version Version.hilt
 }
 
 val properties = Properties()
@@ -108,8 +102,8 @@ dependencies {
 	implementation("androidx.core:core-ktx:1.9.0")
 	implementation("androidx.appcompat:appcompat:1.6.1")
 	implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-	implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
-	implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+	implementation("androidx.navigation:navigation-fragment-ktx:${Version.navigation}")
+	implementation("androidx.navigation:navigation-ui-ktx:${Version.navigation}")
 	implementation("androidx.legacy:legacy-support-v4:1.0.0")
 	implementation("androidx.recyclerview:recyclerview:1.2.1")
 	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
@@ -117,22 +111,22 @@ dependencies {
 	implementation("com.google.android.material:material:1.8.0")
 
 	// Kotlinx Serialization
-	api("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion")
-	api("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-core:${Version.kotlinxSerialization}")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
 	// Ktor dependencies
-	api("io.ktor:ktor-client-core:$ktorVersion")
-	api("io.ktor:ktor-client-serialization:$ktorVersion")
-	api("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-	api("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-	implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-	implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
-	implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+	api("io.ktor:ktor-client-core:${Version.ktor}")
+	api("io.ktor:ktor-client-serialization:${Version.ktor}")
+	api("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
+	api("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
+	implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
+	implementation("io.ktor:ktor-client-logging-jvm:${Version.ktor}")
+	implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
-	implementation("com.google.dagger:hilt-android:$hiltVersion")
+	implementation("com.google.dagger:hilt-android:${Version.hilt}")
 	implementation("androidx.core:core-ktx:1.9.0")
-	kapt("com.google.dagger:hilt-compiler:$hiltVersion")
+	kapt("com.google.dagger:hilt-compiler:${Version.hilt}")
 
 	// Napier allows us to easily log on Kotlin Multiplatform in the future
 	implementation("io.github.aakira:napier:2.6.1")

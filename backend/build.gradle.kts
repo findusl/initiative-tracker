@@ -1,6 +1,3 @@
-import Constants.kotlinVersion
-import Constants.ktorVersion
-import Constants.logbackVersion
 import com.google.cloud.tools.gradle.appengine.appyaml.AppEngineAppYamlExtension
 import io.ktor.plugin.features.DockerImageRegistry
 import io.ktor.plugin.features.DockerPortMapping
@@ -11,8 +8,8 @@ import io.ktor.plugin.features.JreVersion
 plugins {
 	application
 	kotlin("jvm")
-	id("io.ktor.plugin") version "2.1.3"
 	id("org.jetbrains.kotlin.plugin.serialization")
+	id("io.ktor.plugin") version "2.1.3"
 	id("com.google.cloud.tools.appengine") version "2.4.2"
 	id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -65,16 +62,16 @@ ktor {
 dependencies {
 	implementation(project(path = ":commands"))
 
-	implementation("io.ktor:ktor-server-core:$ktorVersion")
-	implementation("io.ktor:ktor-server-netty:$ktorVersion")
-	implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-	implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-	implementation("io.ktor:ktor-server-websockets:$ktorVersion")
-	implementation("ch.qos.logback:logback-classic:$logbackVersion")
+	implementation("io.ktor:ktor-server-core:${Version.ktor}")
+	implementation("io.ktor:ktor-server-netty:${Version.ktor}")
+	implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
+	implementation("io.ktor:ktor-server-content-negotiation:${Version.ktor}")
+	implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
+	implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
+	implementation("ch.qos.logback:logback-classic:${Version.logback}")
 
-	testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${kotlinVersion}")
+	testImplementation("io.ktor:ktor-server-tests:${Version.ktor}")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${Version.kotlin}")
 	testImplementation(kotlin("test"))
 	testImplementation("org.mockito:mockito-core:4.11.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
