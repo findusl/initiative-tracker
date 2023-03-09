@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view.combat.characters
+package de.lehrbaum.initiativetracker.view.characters
 
 import android.os.Bundle
 import android.view.LayoutInflater

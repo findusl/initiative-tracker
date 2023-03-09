@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/CombatHostFragment"
         android:name="de.lehrbaum.initiativetracker.view.combat.host.CombatHostFragment"
-        android:label="@string/combat_host_fragment"
-        tools:layout="@layout/fragment_combat_host">
+        android:label="@string/combat_host_fragment">
 
         <action
             android:id="@+id/action_CombatHostFragment_to_CombatClientFragment"
@@ -40,7 +39,7 @@
 
     <fragment
         android:id="@+id/characterListFragment"
-        android:name="de.lehrbaum.initiativetracker.view.combat.characters.CharacterListFragment"
+        android:name="de.lehrbaum.initiativetracker.view.characters.CharacterListFragment"
         android:label="CharacterListFragment">
 
         <action
@@ -50,7 +49,7 @@
 
     <fragment
         android:id="@+id/EditCharacterFragment"
-        android:name="de.lehrbaum.initiativetracker.view.combat.characters.EditCharacterFragment"
+        android:name="de.lehrbaum.initiativetracker.view.characters.EditCharacterFragment"
         android:label="EditCharacterFragment">
 
         <argument
