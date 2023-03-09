@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package androidx.lifecycle
 
 import androidx.annotation.CallSuper
@@ -28,7 +30,7 @@ open class NonNullLiveData<T : Any>(
 	 * @return the created Observer that can be removed using [LiveData.removeObserver]
 	 */
 	fun observe(owner: LifecycleOwner, function: (T) -> Unit): Observer<T> {
-		val observer: Observer<T> = Observer { t -> t?.let { function(it) } }
+		val observer: Observer<T> = Observer { t -> function(t) }
 		observe(owner, observer)
 		return observer
 	}
@@ -39,7 +41,7 @@ open class NonNullLiveData<T : Any>(
 	 * @return the created Observer that can be removed using [LiveData.removeObserver]
 	 */
 	fun observeForever(function: (T) -> Unit): Observer<T> {
-		val observer: Observer<T> = Observer { t -> t?.let { function(it) } }
+		val observer: Observer<T> = Observer { t -> function(t) }
 		observeForever(observer)
 		return observer
 	}
@@ -107,14 +109,14 @@ fun <T, O : Any> LiveData<T>.mapToNonNullOnChange(function: (T?) -> O): NonNullL
 }
 
 /**
- * Creates a LiveData, let's name it `swLiveData`, which follows next flow:
- * it reacts on changes of `trigger` LiveData, applies the given function to new value of
+ * Creates a LiveData, let's name it `swLiveData`, which follows this flow:
+ * It reacts on changes of `trigger` LiveData, applies the given function to new value of
  * `trigger` LiveData and sets resulting LiveData as a "backing" LiveData
  * to `swLiveData`.
  * "Backing" LiveData means, that all events emitted by it will retransmitted
  * by `swLiveData`.
  *
- * @see [Transformations.switchMap]
+ * @see [LiveData.switchMap]
  *
  * @param function    a function which creates "backing" LiveData
  * @param <I>     a type of this LiveData
@@ -256,7 +258,7 @@ open class MediatorNonNullLiveData<T : Any>(
 		fun unplug()
 	}
 
-	private class SourceHelper<V : Any> internal constructor(
+	private class SourceHelper<V : Any>(
 		val liveData: NonNullLiveData<V>,
 		override val observer: (V) -> Unit
 	) : ISourceHelper<V> {
@@ -270,15 +272,15 @@ open class MediatorNonNullLiveData<T : Any>(
 			liveData.removeObserver(this)
 		}
 
-		override fun onChanged(v: V) {
+		override fun onChanged(value: V) {
 			if (version != liveData.version) {
 				version = liveData.version
-				observer(v)
+				observer(value)
 			}
 		}
 	}
 
-	private class LDSourceHelper<V> internal constructor(
+	private class LDSourceHelper<V>(
 		val liveData: LiveData<V>,
 		override val observer: (V?) -> Unit
 	) : ISourceHelper<V?> {
@@ -292,10 +294,10 @@ open class MediatorNonNullLiveData<T : Any>(
 			liveData.removeObserver(this)
 		}
 
-		override fun onChanged(v: V?) {
+		override fun onChanged(value: V?) {
 			if (version != liveData.version) {
 				version = liveData.version
-				observer(v)
+				observer(value)
 			}
 		}
 	}
