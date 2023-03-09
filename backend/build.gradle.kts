@@ -10,9 +10,9 @@ import io.ktor.plugin.features.JreVersion
 @Suppress("RemoveRedundantQualifierName") // Imports do not seem to apply in the plugins block
 plugins {
 	application
-	kotlin("jvm") version Constants.kotlinVersion
+	kotlin("jvm")
 	id("io.ktor.plugin") version "2.1.3"
-	id("org.jetbrains.kotlin.plugin.serialization") version Constants.kotlinVersion
+	id("org.jetbrains.kotlin.plugin.serialization")
 	id("com.google.cloud.tools.appengine") version "2.4.2"
 	id("com.github.johnrengelman.shadow") version "7.1.2"
 }

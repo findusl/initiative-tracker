@@ -2,8 +2,8 @@ import Constants.kotlinxSerializationVersion
 
 plugins {
 	`java-library`
-	kotlin("jvm") version "1.7.20"
-	id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
+	kotlin("jvm")
+	id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 dependencies {
@@ -12,6 +12,6 @@ dependencies {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_7
-	targetCompatibility = JavaVersion.VERSION_1_7
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
 }
