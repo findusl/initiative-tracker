@@ -8,8 +8,8 @@ buildscript {
 
 	dependencies {
 		classpath("com.android.tools.build:gradle:7.4.2")
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Constants.kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-serialization:${Constants.kotlinVersion}")
+		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Version.kotlin}")
+		classpath("org.jetbrains.kotlin:kotlin-serialization:${Version.kotlin}")
 		// https://github.com/google/dagger/issues/3068
 		classpath("com.squareup:javapoet:1.13.0")
 	}

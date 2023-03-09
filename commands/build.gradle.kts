@@ -1,5 +1,3 @@
-import Constants.kotlinxSerializationVersion
-
 plugins {
 	`java-library`
 	kotlin("jvm")
@@ -7,8 +5,8 @@ plugins {
 }
 
 dependencies {
-	api("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion")
-	api("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-core:${Version.kotlinxSerialization}")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
 }
 
 java {
