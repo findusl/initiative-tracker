@@ -13,16 +13,8 @@ pluginManagement {
 	}
 }
 
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
 rootProject.name = "Initiative Tracker"
 
-include ':app'
-include ':backend'
-include ':commands'
+include(":app")
+include(":backend")
+include(":commands")
