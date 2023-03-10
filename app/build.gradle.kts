@@ -135,7 +135,7 @@ dependencies {
 	implementation("androidx.compose.ui:ui:1.3.3")
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-rc01")
 	implementation("androidx.compose.material:material:1.3.1")
-	debugImplementation("androidx.compose.ui:ui-tooling:1.4.0-beta02")
+	debugImplementation("androidx.compose.ui:ui-tooling:1.4.0-rc01")
 	implementation("androidx.compose.ui:ui-tooling-preview:1.4.0-rc01")
 
 	testImplementation("junit:junit:4.13.2")
