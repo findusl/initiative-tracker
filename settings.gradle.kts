@@ -18,5 +18,4 @@ rootProject.name = "Initiative Tracker"
 include(":app")
 include(":backend")
 include(":commands")
-//include(":kmpsharedmodule")
 include(":kmpsharedmodule")
