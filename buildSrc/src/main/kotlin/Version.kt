@@ -4,5 +4,5 @@ object Version {
 	const val ktor = "2.2.4"
 	const val navigation = "2.5.3"
 	const val hilt = "2.45"
-	const val logback = "1.4.4"
+	const val logback = "1.4.5"
 }

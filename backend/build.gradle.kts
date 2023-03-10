@@ -9,8 +9,8 @@ plugins {
 	application
 	kotlin("jvm")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	id("io.ktor.plugin") version "2.1.3"
-	id("com.google.cloud.tools.appengine") version "2.4.2"
+	id("io.ktor.plugin") version "2.2.4"
+	id("com.google.cloud.tools.appengine") version "2.4.5"
 	id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 

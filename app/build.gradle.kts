@@ -77,8 +77,8 @@ android {
 	}
 
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
+		sourceCompatibility = JavaVersion.VERSION_11
+		targetCompatibility = JavaVersion.VERSION_11
 	}
 	buildFeatures {
 		dataBinding = true
@@ -90,7 +90,7 @@ android {
 	}
 	kotlinOptions {
 		enableContextReceivers()
-		jvmTarget = "1.8"
+		jvmTarget = "11"
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 }
@@ -105,8 +105,8 @@ dependencies {
 	implementation("androidx.navigation:navigation-fragment-ktx:${Version.navigation}")
 	implementation("androidx.navigation:navigation-ui-ktx:${Version.navigation}")
 	implementation("androidx.legacy:legacy-support-v4:1.0.0")
-	implementation("androidx.recyclerview:recyclerview:1.2.1")
-	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+	implementation("androidx.recyclerview:recyclerview:1.3.0")
+	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
 
 	implementation("com.google.android.material:material:1.8.0")
 
