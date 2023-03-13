@@ -15,7 +15,7 @@ plugins {
 	kotlin("android")
 	id("org.jetbrains.kotlin.kapt")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	id("androidx.navigation.safeargs.kotlin") version Version.navigation
+	id("androidx.navigation.safeargs.kotlin") version 2.5.3
 	id("com.google.dagger.hilt.android") version Version.hilt
 }
 
