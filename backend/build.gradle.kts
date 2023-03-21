@@ -11,7 +11,7 @@ plugins {
 	id("org.jetbrains.kotlin.plugin.serialization")
 	id("io.ktor.plugin") version "2.2.4"
 	id("com.google.cloud.tools.appengine") version "2.4.5"
-	id("com.github.johnrengelman.shadow") version "7.1.2"
+	id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "de.lehrbaum"
