@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -32,6 +33,9 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 		savedInstanceState: Bundle?
 	): View {
 		viewModel.setDelegate(this, viewLifecycleOwner)
+		viewModel.combatStarted.asLiveData().observe(viewLifecycleOwner) {
+
+		}
 		return ComposeView(requireContext()).apply {
 			setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 			setContent {
@@ -69,11 +73,15 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 		val joinAsHostItem = menu.findItem(R.id.action_join_as_host)
 		val stopShareItem = menu.findItem(R.id.action_stop_sharing)
 		val showSessionIdItem = menu.findItem(R.id.action_show_session_id)
+		val startCombatItem = menu.findItem(R.id.action_start_combat)
+		val prevCombatantItem = menu.findItem(R.id.action_prev_combatant)
 
 		shareItem.isVisible = !viewModel.isSharing
 		joinAsHostItem.isVisible = !viewModel.isSharing
 		stopShareItem.isVisible = viewModel.isSharing
 		showSessionIdItem.isVisible = viewModel.isSharing
+		startCombatItem.isVisible = !viewModel.combatStarted.value
+		prevCombatantItem.isVisible = viewModel.combatStarted.value
 	}
 
 	override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -99,6 +107,14 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 			}
 			R.id.action_join_combat -> {
 				joinCombat()
+				true
+			}
+			R.id.action_start_combat -> {
+				viewModel.startCombat()
+				true
+			}
+			R.id.action_prev_combatant -> {
+				viewModel.previousActiveCombatant()
 				true
 			}
 			R.id.action_characters -> {

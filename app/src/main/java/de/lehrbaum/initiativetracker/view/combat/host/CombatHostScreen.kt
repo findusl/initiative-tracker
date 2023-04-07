@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface HostCombatViewModel {
 	val combatants: StateFlow<List<HostCombatantViewModel>>
 	val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
+	val combatStarted: StateFlow<Boolean>
 
 	fun onCombatantSelected(hostCombatantViewModel: HostCombatantViewModel)
 	fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
@@ -41,7 +42,6 @@ interface HostCombatViewModel {
 	fun onAddNewPressed()
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CombatHostScreen(hostCombatViewModel: HostCombatViewModel) {
 	CombatantList(hostCombatViewModel)
@@ -198,6 +198,7 @@ private val sampleCombatants = listOf(
 private class MockHostCombatViewModel : HostCombatViewModel {
 	override val combatants = MutableStateFlow(sampleCombatants)
 	override val hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
+	override val combatStarted = MutableStateFlow(false)
 
 	override fun onCombatantSelected(hostCombatantViewModel: HostCombatantViewModel) {}
 

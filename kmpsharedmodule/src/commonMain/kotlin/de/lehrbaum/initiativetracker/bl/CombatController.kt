@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
 
 @MainThread
-class CombatController constructor() {
+class CombatController {
 	private var nextId = 0L
 
 	/**

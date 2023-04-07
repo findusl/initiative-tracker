@@ -12,10 +12,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
 
@@ -30,9 +27,12 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 		get() = combatController.combatants.map {
 			it.map(CombatantModel::toHostCombatantViewModel)
 		}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
 	private val _hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
 	override val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
 		get() = _hostEditCombatantViewModel
+
+	override val combatStarted = MutableStateFlow(false)
 
 	private val shareCombatController = ShareCombatController(combatController, this)
 
@@ -76,6 +76,18 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 		mostRecentDeleted?.let {
 			combatController.addCombatant(it.name, it.initiative)
 		}
+	}
+
+	fun startCombat() {
+		combatStarted.value = true
+	}
+
+	fun nextActiveCombatant() {
+		combatController.nextTurn()
+	}
+
+	fun previousActiveCombatant() {
+		combatController.prevTurn()
 	}
 
 	fun onJoinAsHostClicked(sessionId: Int) {
