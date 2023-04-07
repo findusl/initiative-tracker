@@ -34,4 +34,15 @@
         android:orderInCategory="40"
         android:title="@string/characters"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_start_combat"
+        android:title="Start Combat"
+        android:icon="@android:drawable/ic_media_play"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_prev_combatant"
+        android:title="Previous Combatant"
+        android:icon="@android:drawable/ic_media_rew"
+        app:showAsAction="ifRoom" />
+
 </menu>
