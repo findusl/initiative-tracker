@@ -106,7 +106,7 @@ dependencies {
 	implementation("androidx.navigation:navigation-ui-ktx:${Version.navigation}")
 	implementation("androidx.legacy:legacy-support-v4:1.0.0")
 	implementation("androidx.recyclerview:recyclerview:1.3.0")
-	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
+	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
 	implementation("com.google.android.material:material:1.8.0")
 
@@ -132,11 +132,11 @@ dependencies {
 	implementation("io.github.aakira:napier:2.6.1")
 
 	// Compose dependencies
-	implementation("androidx.compose.ui:ui:1.3.3")
-	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-	implementation("androidx.compose.material:material:1.3.1")
-	implementation("androidx.compose.ui:ui-tooling-preview:1.4.0-rc01")
-	debugImplementation("androidx.compose.ui:ui-tooling:1.4.0-rc01")
+	implementation("androidx.compose.ui:ui:1.4.0")
+	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+	implementation("androidx.compose.material:material:1.4.0")
+	implementation("androidx.compose.ui:ui-tooling-preview:1.4.0")
+	debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
 
 	testImplementation("junit:junit:4.13.2")
 
