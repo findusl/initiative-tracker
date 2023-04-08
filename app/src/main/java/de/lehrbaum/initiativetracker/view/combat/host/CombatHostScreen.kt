@@ -69,7 +69,7 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 	// Animate scrolling to the active character's position
 	LaunchedEffect(activeCharacterIndex) {
 		if (activeCharacterIndex != -1) {
-			listState.animateScrollToItem(activeCharacterIndex)
+			listState.animateScrollToItem(activeCharacterIndex, scrollOffset = -200)
 		}
 	}
 	LazyColumn(state = listState) {
@@ -96,16 +96,18 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 @Composable
 private fun CharacterListElement(combatant: HostCombatantViewModel, modifier: Modifier = Modifier) {
 	val backgroundColor by animateColorAsState(
-		if (combatant.active) Color(0xFFE0E0E0) else Color.White
+		if (combatant.active) Color.Cyan else Color.White
 	)
-	Card(backgroundColor = backgroundColor, elevation = 8.dp, modifier = modifier) {
-		Row {
-			Text(
-				text = combatant.name, modifier = Modifier
-					.padding(defaultPadding)
-					.weight(1.0f, fill = true)
-			)
-			Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
+	Box(modifier = Modifier.background(backgroundColor)) {
+		Card(elevation = 8.dp, modifier = modifier) {
+			Row {
+				Text(
+					text = combatant.name, modifier = Modifier
+						.padding(defaultPadding)
+						.weight(1.0f, fill = true)
+				)
+				Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
+			}
 		}
 	}
 }
@@ -226,7 +228,7 @@ fun PreviewHostEditCombatantScreen() {
 }
 
 private val sampleCombatants = listOf(
-	HostCombatantViewModel(1, "Combatant 1", 8),
+	HostCombatantViewModel(1, "Combatant 1", 8, active = true),
 	HostCombatantViewModel(2, "Combatant 2", 10)
 ).sortedByDescending { it.initiative }
 

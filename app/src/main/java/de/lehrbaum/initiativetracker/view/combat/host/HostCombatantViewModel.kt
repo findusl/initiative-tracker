@@ -6,7 +6,6 @@ data class HostCombatantViewModel(
 	val id: Long,
 	val name: String,
 	val initiative: Short,
-	val editMode: Boolean = false,
 	var active: Boolean = false
 ) : Comparable<HostCombatantViewModel> {
 
@@ -25,6 +24,6 @@ data class HostCombatantViewModel(
 	}
 }
 
-fun CombatantModel.toHostCombatantViewModel(): HostCombatantViewModel {
-	return HostCombatantViewModel(id, name, initiative)
+fun CombatantModel.toHostCombatantViewModel(active: Boolean = false): HostCombatantViewModel {
+	return HostCombatantViewModel(id, name, initiative, active)
 }
