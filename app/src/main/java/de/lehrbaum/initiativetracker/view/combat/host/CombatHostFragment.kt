@@ -33,9 +33,6 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 		savedInstanceState: Bundle?
 	): View {
 		viewModel.setDelegate(this, viewLifecycleOwner)
-		viewModel.combatStarted.asLiveData().observe(viewLifecycleOwner) {
-
-		}
 		return ComposeView(requireContext()).apply {
 			setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 			setContent {
@@ -66,6 +63,12 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 
 	override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
 		menuInflater.inflate(R.menu.menu_combat_host, menu)
+		val startCombatItem = menu.findItem(R.id.action_start_combat)
+		val prevCombatantItem = menu.findItem(R.id.action_prev_combatant)
+		viewModel.combatStarted.asLiveData().observe(viewLifecycleOwner) {
+			startCombatItem.isVisible = !it
+			prevCombatantItem.isVisible = it
+		}
 	}
 
 	override fun onPrepareMenu(menu: Menu) {
@@ -73,15 +76,11 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 		val joinAsHostItem = menu.findItem(R.id.action_join_as_host)
 		val stopShareItem = menu.findItem(R.id.action_stop_sharing)
 		val showSessionIdItem = menu.findItem(R.id.action_show_session_id)
-		val startCombatItem = menu.findItem(R.id.action_start_combat)
-		val prevCombatantItem = menu.findItem(R.id.action_prev_combatant)
 
 		shareItem.isVisible = !viewModel.isSharing
 		joinAsHostItem.isVisible = !viewModel.isSharing
 		stopShareItem.isVisible = viewModel.isSharing
 		showSessionIdItem.isVisible = viewModel.isSharing
-		startCombatItem.isVisible = !viewModel.combatStarted.value
-		prevCombatantItem.isVisible = viewModel.combatStarted.value
 	}
 
 	override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -114,7 +113,7 @@ class CombatHostFragment : Fragment(), CombatHostViewModelImpl.Delegate, MenuPro
 				true
 			}
 			R.id.action_prev_combatant -> {
-				viewModel.previousActiveCombatant()
+				viewModel.previousCombatant()
 				true
 			}
 			R.id.action_characters -> {

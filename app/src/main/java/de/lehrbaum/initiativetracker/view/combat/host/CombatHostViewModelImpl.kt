@@ -82,11 +82,11 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 		combatStarted.value = true
 	}
 
-	fun nextActiveCombatant() {
+	override fun nextCombatant() {
 		combatController.nextTurn()
 	}
 
-	fun previousActiveCombatant() {
+	fun previousCombatant() {
 		combatController.prevTurn()
 	}
 
