@@ -20,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
 import de.lehrbaum.initiativetracker.view.SwipeResponse
 import io.github.aakira.napier.Napier
@@ -40,6 +42,7 @@ interface HostCombatViewModel {
 	fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
 	fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
 	fun onAddNewPressed()
+	fun nextCombatant()
 }
 
 @Composable
@@ -50,14 +53,25 @@ fun CombatHostScreen(hostCombatViewModel: HostCombatViewModel) {
 	if (hostEditCombatantViewModel != null) {
 		HostEditCombatantDialog(hostEditCombatantViewModel)
 	}
+
+	NextCombatantButton(hostCombatViewModel)
 }
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 	val combatants by hostCombatViewModel.combatants.collectAsState()
-	// TODO use this to position currently active character
 	val listState = rememberLazyListState()
+
+	// Find the index of the active character
+	val activeCharacterIndex = combatants.indexOfFirst { it.active }
+
+	// Animate scrolling to the active character's position
+	LaunchedEffect(activeCharacterIndex) {
+		if (activeCharacterIndex != -1) {
+			listState.animateScrollToItem(activeCharacterIndex)
+		}
+	}
 	LazyColumn(state = listState) {
 		val itemModifier = Modifier
 			.padding(defaultPadding)
@@ -80,8 +94,11 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 }
 
 @Composable
-fun CharacterListElement(combatant: HostCombatantViewModel, modifier: Modifier = Modifier) {
-	Card(elevation = 8.dp, modifier = modifier) {
+private fun CharacterListElement(combatant: HostCombatantViewModel, modifier: Modifier = Modifier) {
+	val backgroundColor by animateColorAsState(
+		if (combatant.active) Color(0xFFE0E0E0) else Color.White
+	)
+	Card(backgroundColor = backgroundColor, elevation = 8.dp, modifier = modifier) {
 		Row {
 			Text(
 				text = combatant.name, modifier = Modifier
@@ -139,7 +156,7 @@ private fun handleDismissState(
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun SwipeToDismissBackground(dismissState: DismissState) {
+private fun SwipeToDismissBackground(dismissState: DismissState) {
 	val direction = dismissState.dismissDirection ?: return
 
 	val color by animateColorAsState(
@@ -176,6 +193,24 @@ fun SwipeToDismissBackground(dismissState: DismissState) {
 	}
 }
 
+@Composable
+private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
+	Box(modifier = Modifier.fillMaxSize()) {
+		// Add the Floating Action Button
+		val combatStarted by hostCombatViewModel.combatStarted.collectAsState()
+		if (combatStarted) {
+			FloatingActionButton(
+				onClick = { hostCombatViewModel.nextCombatant() },
+				modifier = Modifier
+					.padding(all = 16.dp)
+					.align(alignment = Alignment.BottomEnd),
+			) {
+				Icon(painterResource(R.drawable.baseline_fast_forward_24), contentDescription = "Next Combatant")
+			}
+		}
+	}
+}
+
 @Preview(device = Devices.NEXUS_5, showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewCombatHostScreen() {
@@ -198,7 +233,7 @@ private val sampleCombatants = listOf(
 private class MockHostCombatViewModel : HostCombatViewModel {
 	override val combatants = MutableStateFlow(sampleCombatants)
 	override val hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
-	override val combatStarted = MutableStateFlow(false)
+	override val combatStarted = MutableStateFlow(true)
 
 	override fun onCombatantSelected(hostCombatantViewModel: HostCombatantViewModel) {}
 
@@ -207,4 +242,5 @@ private class MockHostCombatViewModel : HostCombatViewModel {
 	override fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel) = SwipeResponse.SLIDE_OUT
 
 	override fun onAddNewPressed() {}
+	override fun nextCombatant() {}
 }
