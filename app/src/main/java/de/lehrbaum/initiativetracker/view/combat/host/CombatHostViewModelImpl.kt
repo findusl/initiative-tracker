@@ -24,9 +24,13 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 	private var combatController: CombatController = CombatController()
 
 	override val combatants: StateFlow<List<HostCombatantViewModel>>
-		get() = combatController.combatants.map {
-			it.map(CombatantModel::toHostCombatantViewModel)
-		}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+		get() = combatController.combatants
+			.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
+				combatants.mapIndexed { index, combatant ->
+					combatant.toHostCombatantViewModel(index == activeIndex)
+				}
+			}
+			.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 	private val _hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
 	override val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
@@ -50,6 +54,9 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 					delegate?.showSessionId(sessionId)
 				}
 			}
+		}
+		repeat(20) {
+			combatController.addCombatant()
 		}
 	}
 
