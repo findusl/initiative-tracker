@@ -132,11 +132,11 @@ dependencies {
 	implementation("io.github.aakira:napier:2.6.1")
 
 	// Compose dependencies
-	implementation("androidx.compose.ui:ui:1.4.0")
+	implementation("androidx.compose.ui:ui:1.4.1")
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 	implementation("androidx.compose.material:material:1.4.0")
-	implementation("androidx.compose.ui:ui-tooling-preview:1.4.0")
-	debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
+	implementation("androidx.compose.ui:ui-tooling-preview:1.4.1")
+	debugImplementation("androidx.compose.ui:ui-tooling:1.4.1")
 
 	testImplementation("junit:junit:4.13.2")
 
