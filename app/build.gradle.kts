@@ -6,7 +6,7 @@ import java.util.*
 buildscript {
 	dependencies {
 		classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Version.navigation}")
-		classpath("com.android.tools.build:gradle:7.4.2")
+		classpath("com.android.tools.build:gradle:${Version.Android.gradleBuildTools}")
 	}
 }
 
@@ -77,20 +77,21 @@ android {
 	}
 
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_11
-		targetCompatibility = JavaVersion.VERSION_11
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
 	buildFeatures {
 		dataBinding = true
 		viewBinding = true
 		compose = true
+		buildConfig = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = "1.4.3"
+		kotlinCompilerExtensionVersion = Version.Android.composeCompiler
 	}
 	kotlinOptions {
 		enableContextReceivers()
-		jvmTarget = "11"
+		jvmTarget = "17"
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 }
@@ -99,7 +100,7 @@ dependencies {
 	implementation(project(path = ":kmpsharedmodule"))
 	implementation(project(path = ":commands"))
 
-	implementation("androidx.core:core-ktx:1.9.0")
+	implementation("androidx.core:core-ktx:1.10.0")
 	implementation("androidx.appcompat:appcompat:1.6.1")
 	implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 	implementation("androidx.navigation:navigation-fragment-ktx:${Version.navigation}")
@@ -125,18 +126,18 @@ dependencies {
 	implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
 	implementation("com.google.dagger:hilt-android:${Version.hilt}")
-	implementation("androidx.core:core-ktx:1.9.0")
+	implementation("androidx.core:core-ktx:1.10.0")
 	kapt("com.google.dagger:hilt-compiler:${Version.hilt}")
 
 	// Napier allows us to easily log on Kotlin Multiplatform in the future
 	implementation("io.github.aakira:napier:2.6.1")
 
 	// Compose dependencies
-	implementation("androidx.compose.ui:ui:1.4.0")
+	implementation("androidx.compose.ui:ui:${Version.Android.compose}")
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-	implementation("androidx.compose.material:material:1.4.0")
-	implementation("androidx.compose.ui:ui-tooling-preview:1.4.0")
-	debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
+	implementation("androidx.compose.material:material:${Version.Android.compose}")
+	implementation("androidx.compose.ui:ui-tooling-preview:${Version.Android.compose}")
+	debugImplementation("androidx.compose.ui:ui-tooling:${Version.Android.compose}")
 
 	testImplementation("junit:junit:4.13.2")
 

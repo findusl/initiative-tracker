@@ -9,12 +9,11 @@ kotlin {
 	android {
 		compilations.all {
 			kotlinOptions {
-				jvmTarget = "11"
+				jvmTarget = "17"
 			}
 		}
 	}
 
-	@Suppress("UNUSED_VARIABLE")
 	sourceSets {
 		named("commonMain") {
 			dependencies {
@@ -41,5 +40,9 @@ android {
 	compileSdk = 33
 	defaultConfig {
 		minSdk = 28
+	}
+	compileOptions {
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
 }
