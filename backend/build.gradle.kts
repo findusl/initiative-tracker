@@ -4,14 +4,13 @@ import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
 import io.ktor.plugin.features.JreVersion
 
-@Suppress("RemoveRedundantQualifierName") // Imports do not seem to apply in the plugins block
 plugins {
 	application
 	kotlin("jvm")
 	id("org.jetbrains.kotlin.plugin.serialization")
 	id("io.ktor.plugin") version "2.2.4"
 	id("com.google.cloud.tools.appengine") version "2.4.5"
-	id("com.github.johnrengelman.shadow") version "7.1.2"
+	id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "de.lehrbaum"

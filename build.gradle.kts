@@ -1,4 +1,5 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import java.util.*
 
 plugins {
 	id("com.github.ben-manes.versions") version "0.46.0"
@@ -13,7 +14,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath("com.android.tools.build:gradle:7.4.2")
+		classpath("com.android.tools.build:gradle:${Version.Android.gradleBuildTools}")
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Version.kotlin}")
 		classpath("org.jetbrains.kotlin:kotlin-serialization:${Version.kotlin}")
 		// https://github.com/google/dagger/issues/3068
@@ -40,7 +41,8 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 fun isNonStable(version: String): Boolean {
-	val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+	val stableKeyword = listOf("RELEASE", "FINAL", "GA")
+		.any { version.uppercase(Locale.getDefault()).contains(it) }
 	val regex = "^[0-9,.v-]+(-r)?$".toRegex()
 	val isStable = stableKeyword || regex.matches(version)
 	return isStable.not()
