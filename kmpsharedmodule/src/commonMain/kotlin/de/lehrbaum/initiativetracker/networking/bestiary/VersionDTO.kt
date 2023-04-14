@@ -16,7 +16,7 @@ data class VersionDTO(
 	val name: String,
 	val senses: List<String>? = null,
 	val size: String? = null,
-	val skill: List<String>? = null,
+	val skill: SkillDTO? = null,
 	val source: String,
 	val speed: SpeedsDTO? = null,
 	val spellcasting: List<SpellcastingDTO>? = null,
