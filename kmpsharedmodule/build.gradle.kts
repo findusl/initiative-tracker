@@ -1,3 +1,5 @@
+@file:Suppress("OPT_IN_USAGE")
+
 plugins {
 	kotlin("multiplatform")
 	id("com.android.library")
@@ -6,10 +8,27 @@ plugins {
 }
 
 kotlin {
+	jvm()
 	android {
 		compilations.all {
 			kotlinOptions {
 				jvmTarget = "11"
+			}
+		}
+	}
+
+	targetHierarchy.default {
+		common {
+			group("frontend") {
+				withJvm()
+				group("mobile") {
+					withAndroid()
+					withIos()
+				}
+			}
+			group("backend") {
+				withCompilations { it.target.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm }
+				withNative()
 			}
 		}
 	}
@@ -26,13 +45,22 @@ kotlin {
 				implementation(compose.preview)
 			}
 		}
+
+		named("frontendMain") {
+			dependencies {
+
+			}
+		}
+
+
 		named("commonTest") {
 			dependencies {
 				implementation(kotlin("test"))
 			}
 		}
-		named("androidMain")
-		named("androidUnitTest")
+		named("androidMain") {
+
+		}
 	}
 }
 
