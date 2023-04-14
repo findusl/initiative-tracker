@@ -3,7 +3,9 @@ package de.lehrbaum.initiativetracker.bl
 data class CombatantModel(
 	val id: Long,
 	val name: String,
-	val initiative: Short,
+	val initiative: Int,
+	val maxHp: Int,
+	val currentHp: Int
 )
 
 fun Iterable<CombatantModel>.sortByInitiative() =

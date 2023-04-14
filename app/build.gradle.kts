@@ -112,8 +112,7 @@ dependencies {
 	implementation("com.google.android.material:material:1.8.0")
 
 	// Kotlinx Serialization
-	api("org.jetbrains.kotlinx:kotlinx-serialization-core:${Version.kotlinxSerialization}")
-	api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
 	// Ktor dependencies
@@ -126,7 +125,6 @@ dependencies {
 	implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
 	implementation("com.google.dagger:hilt-android:${Version.hilt}")
-	implementation("androidx.core:core-ktx:1.10.0")
 	kapt("com.google.dagger:hilt-compiler:${Version.hilt}")
 
 	// Napier allows us to easily log on Kotlin Multiplatform in the future

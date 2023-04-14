@@ -3,7 +3,7 @@ package de.lehrbaum.initiativetracker.view.combat.client
 data class ClientCombatantViewModel(
 	val id: Long,
 	val name: String,
-	val initiative: Short,
+	val initiative: Int,
 	val editMode: Boolean = false,
 	var active: Boolean = false
 ) : Comparable<ClientCombatantViewModel> {

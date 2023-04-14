@@ -18,6 +18,10 @@ interface HostEditCombatantViewModel {
 	val nameError: MutableState<Boolean>
 	val initiativeString: MutableState<String>
 	val initiativeError: MutableState<Boolean>
+	val maxHpString: MutableState<String>
+	val maxHpError: MutableState<Boolean>
+	val currentHpString: MutableState<String>
+	val currentHpError: MutableState<Boolean>
 
 	fun onSavePressed()
 	fun onCancelPressed()
@@ -64,6 +68,8 @@ fun HostEditCombatantScreen(hostEditCombatantViewModel: HostEditCombatantViewMod
 	) {
 		var name by hostEditCombatantViewModel.name
 		var initative by hostEditCombatantViewModel.initiativeString
+		var maxHp by hostEditCombatantViewModel.maxHpString
+		var currentHp by hostEditCombatantViewModel.currentHpString
 		OutlinedTextField(
 			value = name,
 			onValueChange = { name = it },
@@ -80,6 +86,24 @@ fun HostEditCombatantScreen(hostEditCombatantViewModel: HostEditCombatantViewMod
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 			modifier = Modifier.fillMaxWidth()
 		)
+		Spacer(modifier = Modifier.height(Constants.defaultPadding))
+		OutlinedTextField(
+			value = maxHp,
+			onValueChange = { maxHp = it },
+			label = { Text("Maximum Hitpoints") },
+			isError = hostEditCombatantViewModel.maxHpError.value,
+			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+			modifier = Modifier.fillMaxWidth()
+		)
+		Spacer(modifier = Modifier.height(Constants.defaultPadding))
+		OutlinedTextField(
+			value = currentHp,
+			onValueChange = { currentHp = it },
+			label = { Text("Current Hitpoints") },
+			isError = hostEditCombatantViewModel.currentHpError.value,
+			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+			modifier = Modifier.fillMaxWidth()
+		)
 	}
 }
 
@@ -88,6 +112,11 @@ internal class MockEditHostCombatantViewModel : HostEditCombatantViewModel {
 	override val nameError = mutableStateOf(false)
 	override val initiativeString = mutableStateOf("2")
 	override val initiativeError = mutableStateOf(false)
+	override val maxHpString = mutableStateOf("10")
+	override val maxHpError = mutableStateOf(false)
+	override val currentHpString = mutableStateOf("10")
+	override val currentHpError = mutableStateOf(false)
+
 	override fun onSavePressed() {}
 	override fun onCancelPressed() {}
 }

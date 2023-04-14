@@ -22,7 +22,10 @@ import java.net.SocketTimeoutException
 @Suppress("unused")
 private const val TAG = "HostCombatViewModelImpl"
 
-class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Delegate>(), ShareCombatController.Delegate, HostCombatViewModel {
+class CombatHostViewModelImpl :
+	DelegatingViewModel<CombatHostViewModelImpl.Delegate>(),
+	ShareCombatController.Delegate,
+	HostCombatViewModel {
 
 	private var combatController: CombatController = CombatController()
 
@@ -38,6 +41,8 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 	private val _hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
 	override val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
 		get() = _hostEditCombatantViewModel
+	override val assignDamageCombatant = mutableStateOf<HostCombatantViewModel?>(null)
+
 
 	private val bestiaryNetworkClient = BestiaryNetworkClient()
 
@@ -72,8 +77,16 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 		}
 	}
 
-	override fun onCombatantSelected(hostCombatantViewModel: HostCombatantViewModel) {
-		_hostEditCombatantViewModel.value = HostEditCombatantViewModelImpl(hostCombatantViewModel)
+	override fun onCombatantPressed(hostCombatantViewModel: HostCombatantViewModel) {
+		if (combatStarted.value) {
+			damageCombatant(hostCombatantViewModel)
+		} else {
+			editCombatant(hostCombatantViewModel)
+		}
+	}
+
+	override fun onCombatantLongPressed(combatant: HostCombatantViewModel) {
+		editCombatant(combatant)
 	}
 
 	override fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse {
@@ -86,9 +99,24 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 		return SwipeResponse.SLIDE_OUT
 	}
 
+	override fun onDamageDialogSubmit(damage: Int) {
+		assignDamageCombatant.value?.apply {
+			combatController.updateCombatant(copy(currentHp = currentHp - damage).toCombatantModel())
+		}
+		assignDamageCombatant.value = null
+	}
+
 	override fun onAddNewPressed() {
 		val newCombatant = combatController.addCombatant()
-		_hostEditCombatantViewModel.value = HostEditCombatantViewModelImpl(newCombatant.toHostCombatantViewModel())
+		editCombatant(newCombatant.toHostCombatantViewModel())
+	}
+
+	private fun editCombatant(hostCombatantViewModel: HostCombatantViewModel) {
+		_hostEditCombatantViewModel.value = HostEditCombatantViewModelImpl(hostCombatantViewModel)
+	}
+
+	private fun damageCombatant(hostCombatantViewModel: HostCombatantViewModel) {
+		assignDamageCombatant.value = hostCombatantViewModel
 	}
 
 	fun undoDelete() {
@@ -180,14 +208,23 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 		override val nameError = mutableStateOf(false)
 		override val initiativeString = mutableStateOf(hostCombatantViewModel.initiativeString)
 		override val initiativeError = mutableStateOf(false)
+		override val maxHpString = mutableStateOf(hostCombatantViewModel.maxHp.toString())
+		override val maxHpError = mutableStateOf(false)
+		override val currentHpString = mutableStateOf(hostCombatantViewModel.currentHp.toString())
+		override val currentHpError = mutableStateOf(false)
+
 
 		override fun onSavePressed() {
-			val initiative = initiativeString.value.toShortOrNull()
+			val initiative = initiativeString.value.toIntOrNull()
 			initiativeError.value = initiative == null
+			val maxHp = maxHpString.value.toIntOrNull()
+			maxHpError.value = maxHp == null
+			val currentHp = currentHpString.value.toIntOrNull()
+			currentHpError.value = currentHp == null
 			val name = this.name.value
 			nameError.value = name.isBlank()
-			if (initiative != null && !name.isBlank()) {
-				combatController.updateCombatant(CombatantModel(id, name, initiative))
+			if (initiative != null && name.isNotBlank() && maxHp != null && currentHp != null) {
+				combatController.updateCombatant(CombatantModel(id, name, initiative, maxHp, currentHp))
 				_hostEditCombatantViewModel.value = null
 			}
 		}
@@ -199,7 +236,6 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 	}
 
 	interface Delegate {
-		// fun showSaveChangesDialog(onOkListener: () -> Unit)
 		fun showSessionId(sessionCode: Int)
 		fun notifyConnectionFailed()
 		fun notifyAlreadySharing()

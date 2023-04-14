@@ -23,6 +23,10 @@ kotlin {
 				implementation(compose.material)
 				implementation(compose.runtime)
 				implementation(compose.preview)
+				implementation(
+					"org.jetbrains.kotlinx:kotlinx-serialization-json:" +
+						Version.kotlinxSerialization
+				)
 			}
 		}
 		named("commonTest") {

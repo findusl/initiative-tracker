@@ -38,9 +38,9 @@ class CombatController {
 
 	fun addCombatant(
 		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
-		initiative: Short = -99
+		initiative: Int = -99
 	): CombatantModel {
-		val newCombatant = CombatantModel(nextId++, name, initiative)
+		val newCombatant = CombatantModel(nextId++, name, initiative, 0, Int.MIN_VALUE)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 		return newCombatant
