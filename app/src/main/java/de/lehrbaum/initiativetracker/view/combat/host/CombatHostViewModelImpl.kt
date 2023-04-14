@@ -2,14 +2,17 @@ package de.lehrbaum.initiativetracker.view.combat.host
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
+import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.networking.ShareCombatController
 import de.lehrbaum.initiativetracker.view.SwipeResponse
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.*
@@ -35,6 +38,15 @@ class CombatHostViewModelImpl : DelegatingViewModel<CombatHostViewModelImpl.Dele
 	private val _hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
 	override val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
 		get() = _hostEditCombatantViewModel
+
+	private val bestiaryNetworkClient = BestiaryNetworkClient()
+
+	val allMonsterNamesLiveData = bestiaryNetworkClient.monsters
+		.map { monsters -> monsters.map { it.name }.toTypedArray() }
+		.flowOn(Dispatchers.IO)
+		// immediately start fetching as it takes a while
+		.stateIn(viewModelScope, SharingStarted.Eagerly, arrayOf())
+		.asLiveData()
 
 	override val combatStarted = MutableStateFlow(false)
 
