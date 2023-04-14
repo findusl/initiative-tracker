@@ -1,14 +1,10 @@
-package de.lehrbaum.initiativetracker.view.combat.host
+package de.lehrbaum.initiativetracker.view.combat
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Slider
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -19,20 +15,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import de.lehrbaum.initiativetracker.view.Constants
 import kotlin.math.roundToInt
 
 @Composable
-fun DamageCombatantDialog() {
+fun DamageCombatantDialog(onSubmit: (Int) -> Unit, onCancel: () -> Unit) {
+	Dialog(onDismissRequest = { onCancel() }) {
+		Surface(
+			shape = RoundedCornerShape(16.dp),
+			color = Color.White
+		) {
+			DamageCombatantDialogContent(onSubmit, onCancel)
+		}
+	}
+}
+
+@Composable
+fun DamageCombatantDialogContent(onSubmit: (Int) -> Unit, onCancel: () -> Unit) {
 	var sliderValue by remember { mutableStateOf(1.0f) }
 	val sliderValueString by remember { derivedStateOf { sliderValue.roundToInt().toString() } }
 	var textInputValue by remember(sliderValueString) { mutableStateOf(sliderValueString) }
 	val textInputError by remember { derivedStateOf { textInputValue.toIntOrNull() == null } }
 
-	Column(modifier = Modifier.fillMaxWidth()) {
+	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Row(
 			horizontalArrangement = Arrangement.Center,
-			verticalAlignment = Alignment.CenterVertically,
-			modifier = Modifier.fillMaxWidth()
+			verticalAlignment = Alignment.CenterVertically
 		) {
 			IconButton(onClick = { sliderValue-- }) {
 				Icon(
@@ -51,9 +61,12 @@ fun DamageCombatantDialog() {
 				},
 				keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 				isError = textInputError,
-				singleLine = true
+				singleLine = true,
+				modifier = Modifier.weight(1.0f)
 			)
-			IconButton(onClick = { sliderValue++ }) {
+			IconButton(
+				onClick = { sliderValue++ }
+			) {
 				Icon(
 					imageVector = Icons.Filled.ArrowForward,
 					contentDescription = "Increment",
@@ -66,14 +79,43 @@ fun DamageCombatantDialog() {
 			valueRange = 0f..100f,
 			onValueChange = { sliderValue = it }
 		)
-		// Maybe remove second slider, doesn't seem so necessary
-		/*Slider(
-			value = sliderValue % 10,
-			valueRange = 0f..10f,
-			steps = 9,
-			onValueChange = { sliderValue = (sliderValue / 10).toInt() * 10f + it }
-		)*/
+		OkCancelButtonRow(onCancel, onSubmit, sliderValue)
+	}
+}
 
+@Composable
+private fun OkCancelButtonRow(
+	onCancel: () -> Unit,
+	onSubmit: (Int) -> Unit,
+	sliderValue: Float
+) {
+	Row(
+		horizontalArrangement = Arrangement.SpaceEvenly,
+		verticalAlignment = Alignment.CenterVertically,
+		modifier = Modifier.fillMaxWidth()
+	) {
+		Button(
+			onClick = { onCancel() },
+			shape = RoundedCornerShape(50.dp),
+			modifier = Modifier
+				.height(50.dp)
+				.fillMaxWidth()
+				.weight(1f)
+		) {
+			Text(text = "Cancel")
+		}
+		Button(
+			onClick = {
+				onSubmit(sliderValue.roundToInt())
+			},
+			shape = RoundedCornerShape(50.dp),
+			modifier = Modifier
+				.height(50.dp)
+				.fillMaxWidth()
+				.weight(1f)
+		) {
+			Text(text = "Ok")
+		}
 	}
 }
 
@@ -81,5 +123,15 @@ fun DamageCombatantDialog() {
 @Preview(device = Devices.NEXUS_5, showBackground = true, showSystemUi = true)
 @Composable
 fun EditCombatantDialogPreview() {
-	DamageCombatantDialog()
+	MaterialTheme {
+		Box(
+			modifier = Modifier
+				.fillMaxSize()
+				.background(MaterialTheme.colors.background)
+				.padding(20.dp),
+			contentAlignment = Alignment.Center,
+		) {
+			DamageCombatantDialogContent({}, {})
+		}
+	}
 }

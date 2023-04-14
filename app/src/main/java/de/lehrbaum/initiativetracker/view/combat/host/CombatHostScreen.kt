@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
 import de.lehrbaum.initiativetracker.view.SwipeResponse
+import de.lehrbaum.initiativetracker.view.combat.DamageCombatantDialog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,11 +37,14 @@ import kotlinx.coroutines.flow.StateFlow
 interface HostCombatViewModel {
 	val combatants: StateFlow<List<HostCombatantViewModel>>
 	val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
+	val assignDamageCombatant: MutableState<HostCombatantViewModel?>
 	val combatStarted: StateFlow<Boolean>
 
-	fun onCombatantSelected(hostCombatantViewModel: HostCombatantViewModel)
+	fun onCombatantPressed(hostCombatantViewModel: HostCombatantViewModel)
+	fun onCombatantLongPressed(combatant: HostCombatantViewModel)
 	fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
 	fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
+	fun onDamageDialogSubmit(damage: Int)
 	fun onAddNewPressed()
 	fun nextCombatant()
 }
@@ -49,9 +53,14 @@ interface HostCombatViewModel {
 fun CombatHostScreen(hostCombatViewModel: HostCombatViewModel) {
 	CombatantList(hostCombatViewModel)
 
-	val hostEditCombatantViewModel = hostCombatViewModel.hostEditCombatantViewModel.value
-	if (hostEditCombatantViewModel != null) {
-		HostEditCombatantDialog(hostEditCombatantViewModel)
+	hostCombatViewModel.hostEditCombatantViewModel.value?.let {
+		HostEditCombatantDialog(it)
+	}
+
+	hostCombatViewModel.assignDamageCombatant.value?.let {
+		DamageCombatantDialog(hostCombatViewModel::onDamageDialogSubmit) {
+			hostCombatViewModel.assignDamageCombatant.value = null
+		}
 	}
 
 	NextCombatantButton(hostCombatViewModel)
@@ -84,7 +93,8 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 				background = { SwipeToDismissBackground(dismissState) }
 			) {
 				CharacterListElement(combatant, itemModifier.combinedClickable(
-					onClick = { hostCombatViewModel.onCombatantSelected(combatant) }
+					onClick = { hostCombatViewModel.onCombatantPressed(combatant) },
+					onLongClick = { hostCombatViewModel.onCombatantLongPressed(combatant) }
 				))
 			}
 		}
@@ -96,7 +106,7 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 @Composable
 private fun CharacterListElement(combatant: HostCombatantViewModel, modifier: Modifier = Modifier) {
 	val backgroundColor by animateColorAsState(
-		if (combatant.active) Color.Cyan else Color.White
+		if (combatant.active) MaterialTheme.colors.secondary else MaterialTheme.colors.background
 	)
 	Box(modifier = Modifier.background(backgroundColor)) {
 		Card(elevation = 8.dp, modifier = modifier) {
@@ -137,7 +147,7 @@ private fun handleDismissState(
 	hostCombatViewModel: HostCombatViewModel,
 	combatant: HostCombatantViewModel
 ): DismissState {
-	val dismissState = rememberDismissState(
+	return rememberDismissState(
 		confirmStateChange = {
 			when (it) {
 				DismissValue.DismissedToEnd -> {
@@ -153,7 +163,6 @@ private fun handleDismissState(
 			}
 		}
 	)
-	return dismissState
 }
 
 @Composable
@@ -228,21 +237,24 @@ fun PreviewHostEditCombatantScreen() {
 }
 
 private val sampleCombatants = listOf(
-	HostCombatantViewModel(1, "Combatant 1", 8, active = true),
-	HostCombatantViewModel(2, "Combatant 2", 10)
+	HostCombatantViewModel(1, "Combatant 1", 8, 20, 20, active = true),
+	HostCombatantViewModel(2, "Combatant 2", 10, 20, 10)
 ).sortedByDescending { it.initiative }
 
 private class MockHostCombatViewModel : HostCombatViewModel {
 	override val combatants = MutableStateFlow(sampleCombatants)
 	override val hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
+	override val assignDamageCombatant = mutableStateOf<HostCombatantViewModel?>(null)
 	override val combatStarted = MutableStateFlow(true)
 
-	override fun onCombatantSelected(hostCombatantViewModel: HostCombatantViewModel) {}
+	override fun onCombatantPressed(hostCombatantViewModel: HostCombatantViewModel) {}
 
 	override fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel) = SwipeResponse.SLIDE_BACK
 
 	override fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel) = SwipeResponse.SLIDE_OUT
+	override fun onDamageDialogSubmit(damage: Int) {}
 
 	override fun onAddNewPressed() {}
 	override fun nextCombatant() {}
+	override fun onCombatantLongPressed(combatant: HostCombatantViewModel) {}
 }

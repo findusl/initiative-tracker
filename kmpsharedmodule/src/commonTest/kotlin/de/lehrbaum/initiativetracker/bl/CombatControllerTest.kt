@@ -16,7 +16,7 @@ class CombatControllerTest {
 	@Test
 	fun testAddCombatant() {
 		val name = "Test Combatant"
-		val initiative: Short = 10
+		val initiative = 10
 
 		combatController.addCombatant(name, initiative)
 
@@ -28,12 +28,12 @@ class CombatControllerTest {
 	@Test
 	fun testUpdateCombatant() {
 		val name = "Test Combatant"
-		val initiative: Short = 10
+		val initiative = 10
 
 		combatController.addCombatant(name, initiative)
 
 		val updatedName = "Updated Combatant"
-		val updatedInitiative: Short = 20
+		val updatedInitiative = 20
 
 		val updatedCombatant = combatController.combatants.value.first().copy(
 			name = updatedName,
@@ -49,7 +49,7 @@ class CombatControllerTest {
 	@Test
 	fun testDeleteCombatant() {
 		val name = "Test Combatant"
-		val initiative: Short = 10
+		val initiative = 10
 
 		combatController.addCombatant(name, initiative)
 
@@ -65,7 +65,7 @@ class CombatControllerTest {
 	fun testNextTurn() {
 		val name1 = "Test Combatant 1"
 		val name2 = "Test Combatant 2"
-		val initiative: Short = 10
+		val initiative = 10
 
 		combatController.addCombatant(name1, initiative)
 		combatController.addCombatant(name2, initiative)
@@ -80,7 +80,7 @@ class CombatControllerTest {
 	fun testPrevTurn() {
 		val name1 = "Test Combatant 1"
 		val name2 = "Test Combatant 2"
-		val initiative: Short = 10
+		val initiative = 10
 
 		combatController.addCombatant(name1, initiative)
 		combatController.addCombatant(name2, initiative)
