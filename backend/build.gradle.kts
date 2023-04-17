@@ -72,7 +72,7 @@ dependencies {
 	testImplementation("io.ktor:ktor-server-tests:${Version.ktor}")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${Version.kotlin}")
 	testImplementation(kotlin("test"))
-	testImplementation("org.mockito:mockito-core:5.2.0")
+	testImplementation("org.mockito:mockito-core:5.3.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
