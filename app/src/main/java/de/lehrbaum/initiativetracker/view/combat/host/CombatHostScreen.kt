@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.R
 import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
 import de.lehrbaum.initiativetracker.view.SwipeResponse
+import de.lehrbaum.initiativetracker.view.combat.CombatantListElement
+import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
 import de.lehrbaum.initiativetracker.view.combat.DamageCombatantDialog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,15 +37,15 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Stable
 interface HostCombatViewModel {
-	val combatants: StateFlow<List<HostCombatantViewModel>>
+	val combatants: StateFlow<List<CombatantViewModel>>
 	val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
-	val assignDamageCombatant: MutableState<HostCombatantViewModel?>
+	val assignDamageCombatant: MutableState<CombatantViewModel?>
 	val combatStarted: StateFlow<Boolean>
 
-	fun onCombatantPressed(hostCombatantViewModel: HostCombatantViewModel)
-	fun onCombatantLongPressed(combatant: HostCombatantViewModel)
-	fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
-	fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse
+	fun onCombatantPressed(combatantViewModel: CombatantViewModel)
+	fun onCombatantLongPressed(combatant: CombatantViewModel)
+	fun onCombatantSwipedToEnd(combatantViewModel: CombatantViewModel): SwipeResponse
+	fun onCombatantSwipedToStart(combatantViewModel: CombatantViewModel): SwipeResponse
 	fun onDamageDialogSubmit(damage: Int)
 	fun onAddNewPressed()
 	fun nextCombatant()
@@ -85,14 +87,14 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 		val itemModifier = Modifier
 			.padding(defaultPadding)
 			.fillMaxWidth()
-		items(combatants, key = HostCombatantViewModel::id) { combatant ->
+		items(combatants, key = CombatantViewModel::id) { combatant ->
 			val dismissState = handleDismissState(hostCombatViewModel, combatant)
 			SwipeToDismiss(
 				state = dismissState,
 				dismissThresholds = { FractionalThreshold(0.3f) },
 				background = { SwipeToDismissBackground(dismissState) }
 			) {
-				CharacterListElement(combatant, itemModifier.combinedClickable(
+				CombatantListElement(combatant, itemModifier.combinedClickable(
 					onClick = { hostCombatViewModel.onCombatantPressed(combatant) },
 					onLongClick = { hostCombatViewModel.onCombatantLongPressed(combatant) }
 				))
@@ -100,25 +102,6 @@ private fun CombatantList(hostCombatViewModel: HostCombatViewModel) {
 		}
 
 		addCreateNewCard(itemModifier, hostCombatViewModel)
-	}
-}
-
-@Composable
-private fun CharacterListElement(combatant: HostCombatantViewModel, modifier: Modifier = Modifier) {
-	val backgroundColor by animateColorAsState(
-		if (combatant.active) MaterialTheme.colors.secondary else MaterialTheme.colors.background
-	)
-	Box(modifier = Modifier.background(backgroundColor)) {
-		Card(elevation = 8.dp, modifier = modifier) {
-			Row {
-				Text(
-					text = combatant.name, modifier = Modifier
-						.padding(defaultPadding)
-						.weight(1.0f, fill = true)
-				)
-				Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
-			}
-		}
 	}
 }
 
@@ -145,7 +128,7 @@ private fun LazyListScope.addCreateNewCard(
 @OptIn(ExperimentalMaterialApi::class)
 private fun handleDismissState(
 	hostCombatViewModel: HostCombatViewModel,
-	combatant: HostCombatantViewModel
+	combatant: CombatantViewModel
 ): DismissState {
 	return rememberDismissState(
 		confirmStateChange = {
@@ -237,24 +220,24 @@ fun PreviewHostEditCombatantScreen() {
 }
 
 private val sampleCombatants = listOf(
-	HostCombatantViewModel(1, "Combatant 1", 8, 20, 20, active = true),
-	HostCombatantViewModel(2, "Combatant 2", 10, 20, 10)
+	CombatantViewModel(1, "Combatant 1", 8, 20, 20, active = true),
+	CombatantViewModel(2, "Combatant 2", 10, 20, 10)
 ).sortedByDescending { it.initiative }
 
 private class MockHostCombatViewModel : HostCombatViewModel {
 	override val combatants = MutableStateFlow(sampleCombatants)
 	override val hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
-	override val assignDamageCombatant = mutableStateOf<HostCombatantViewModel?>(null)
+	override val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
 	override val combatStarted = MutableStateFlow(true)
 
-	override fun onCombatantPressed(hostCombatantViewModel: HostCombatantViewModel) {}
+	override fun onCombatantPressed(combatantViewModel: CombatantViewModel) {}
 
-	override fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel) = SwipeResponse.SLIDE_BACK
+	override fun onCombatantSwipedToEnd(combatantViewModel: CombatantViewModel) = SwipeResponse.SLIDE_BACK
 
-	override fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel) = SwipeResponse.SLIDE_OUT
+	override fun onCombatantSwipedToStart(combatantViewModel: CombatantViewModel) = SwipeResponse.SLIDE_OUT
 	override fun onDamageDialogSubmit(damage: Int) {}
 
 	override fun onAddNewPressed() {}
 	override fun nextCombatant() {}
-	override fun onCombatantLongPressed(combatant: HostCombatantViewModel) {}
+	override fun onCombatantLongPressed(combatant: CombatantViewModel) {}
 }
