@@ -84,6 +84,7 @@ fun HostEditCombatantScreen(hostEditCombatantViewModel: HostEditCombatantViewMod
 			label = { Text("Initiative Modifier") },
 			isError = hostEditCombatantViewModel.initiativeError.value,
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+			singleLine = true,
 			modifier = Modifier.fillMaxWidth()
 		)
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))
@@ -93,6 +94,7 @@ fun HostEditCombatantScreen(hostEditCombatantViewModel: HostEditCombatantViewMod
 			label = { Text("Maximum Hitpoints") },
 			isError = hostEditCombatantViewModel.maxHpError.value,
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+			singleLine = true,
 			modifier = Modifier.fillMaxWidth()
 		)
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))
@@ -102,6 +104,7 @@ fun HostEditCombatantScreen(hostEditCombatantViewModel: HostEditCombatantViewMod
 			label = { Text("Current Hitpoints") },
 			isError = hostEditCombatantViewModel.currentHpError.value,
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+			singleLine = true,
 			modifier = Modifier.fillMaxWidth()
 		)
 	}
