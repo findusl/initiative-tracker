@@ -1,19 +1,19 @@
-package de.lehrbaum.initiativetracker.view.combat.host
+package de.lehrbaum.initiativetracker.view.combat
 
 import de.lehrbaum.initiativetracker.bl.CombatantModel
 
-data class HostCombatantViewModel(
+data class CombatantViewModel(
 	val id: Long,
 	val name: String,
 	val initiative: Int,
 	val maxHp: Int,
 	val currentHp: Int = maxHp,
 	var active: Boolean = false
-) : Comparable<HostCombatantViewModel> {
+) : Comparable<CombatantViewModel> {
 
 	val initiativeString: String = initiative.toString()
 
-	override fun compareTo(other: HostCombatantViewModel): Int {
+	override fun compareTo(other: CombatantViewModel): Int {
 		var order = initiative - other.initiative
 		if (order == 0)
 			order = (id - other.id).toInt()
@@ -25,6 +25,6 @@ data class HostCombatantViewModel(
 	}
 }
 
-fun CombatantModel.toHostCombatantViewModel(active: Boolean = false): HostCombatantViewModel {
-	return HostCombatantViewModel(id, name, initiative, maxHp, currentHp, active)
+fun CombatantModel.toCombatantViewModel(active: Boolean = false): CombatantViewModel {
+	return CombatantViewModel(id, name, initiative, maxHp, currentHp, active)
 }

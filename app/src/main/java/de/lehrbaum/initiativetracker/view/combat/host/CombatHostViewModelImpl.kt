@@ -10,6 +10,8 @@ import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.networking.ShareCombatController
 import de.lehrbaum.initiativetracker.view.SwipeResponse
+import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
+import de.lehrbaum.initiativetracker.view.combat.toCombatantViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +31,11 @@ class CombatHostViewModelImpl :
 
 	private var combatController: CombatController = CombatController()
 
-	override val combatants: StateFlow<List<HostCombatantViewModel>>
+	override val combatants: StateFlow<List<CombatantViewModel>>
 		get() = combatController.combatants
 			.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
 				combatants.mapIndexed { index, combatant ->
-					combatant.toHostCombatantViewModel(index == activeIndex)
+					combatant.toCombatantViewModel(index == activeIndex)
 				}
 			}
 			.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -41,7 +43,7 @@ class CombatHostViewModelImpl :
 	private val _hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
 	override val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
 		get() = _hostEditCombatantViewModel
-	override val assignDamageCombatant = mutableStateOf<HostCombatantViewModel?>(null)
+	override val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
 
 
 	private val bestiaryNetworkClient = BestiaryNetworkClient()
@@ -77,25 +79,25 @@ class CombatHostViewModelImpl :
 		}
 	}
 
-	override fun onCombatantPressed(hostCombatantViewModel: HostCombatantViewModel) {
+	override fun onCombatantPressed(combatantViewModel: CombatantViewModel) {
 		if (combatStarted.value) {
-			damageCombatant(hostCombatantViewModel)
+			damageCombatant(combatantViewModel)
 		} else {
-			editCombatant(hostCombatantViewModel)
+			editCombatant(combatantViewModel)
 		}
 	}
 
-	override fun onCombatantLongPressed(combatant: HostCombatantViewModel) {
+	override fun onCombatantLongPressed(combatant: CombatantViewModel) {
 		editCombatant(combatant)
 	}
 
-	override fun onCombatantSwipedToEnd(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse {
+	override fun onCombatantSwipedToEnd(combatantViewModel: CombatantViewModel): SwipeResponse {
 		delegate?.showErrorMessage("Slide not yet implemented")
 		return SwipeResponse.SLIDE_BACK
 	}
 
-	override fun onCombatantSwipedToStart(hostCombatantViewModel: HostCombatantViewModel): SwipeResponse {
-		combatController.deleteCombatant(hostCombatantViewModel.id)
+	override fun onCombatantSwipedToStart(combatantViewModel: CombatantViewModel): SwipeResponse {
+		combatController.deleteCombatant(combatantViewModel.id)
 		return SwipeResponse.SLIDE_OUT
 	}
 
@@ -108,15 +110,15 @@ class CombatHostViewModelImpl :
 
 	override fun onAddNewPressed() {
 		val newCombatant = combatController.addCombatant()
-		editCombatant(newCombatant.toHostCombatantViewModel())
+		editCombatant(newCombatant.toCombatantViewModel())
 	}
 
-	private fun editCombatant(hostCombatantViewModel: HostCombatantViewModel) {
-		_hostEditCombatantViewModel.value = HostEditCombatantViewModelImpl(hostCombatantViewModel)
+	private fun editCombatant(CombatantViewModel: CombatantViewModel) {
+		_hostEditCombatantViewModel.value = HostEditCombatantViewModelImpl(CombatantViewModel)
 	}
 
-	private fun damageCombatant(hostCombatantViewModel: HostCombatantViewModel) {
-		assignDamageCombatant.value = hostCombatantViewModel
+	private fun damageCombatant(CombatantViewModel: CombatantViewModel) {
+		assignDamageCombatant.value = CombatantViewModel
 	}
 
 	fun undoDelete() {
@@ -202,15 +204,15 @@ class CombatHostViewModelImpl :
 		TODO("Not yet implemented")
 	}
 
-	inner class HostEditCombatantViewModelImpl(hostCombatantViewModel: HostCombatantViewModel) : HostEditCombatantViewModel {
-		private val id = hostCombatantViewModel.id
-		override val name = mutableStateOf(hostCombatantViewModel.name)
+	inner class HostEditCombatantViewModelImpl(CombatantViewModel: CombatantViewModel) : HostEditCombatantViewModel {
+		private val id = CombatantViewModel.id
+		override val name = mutableStateOf(CombatantViewModel.name)
 		override val nameError = mutableStateOf(false)
-		override val initiativeString = mutableStateOf(hostCombatantViewModel.initiativeString)
+		override val initiativeString = mutableStateOf(CombatantViewModel.initiativeString)
 		override val initiativeError = mutableStateOf(false)
-		override val maxHpString = mutableStateOf(hostCombatantViewModel.maxHp.toString())
+		override val maxHpString = mutableStateOf(CombatantViewModel.maxHp.toString())
 		override val maxHpError = mutableStateOf(false)
-		override val currentHpString = mutableStateOf(hostCombatantViewModel.currentHp.toString())
+		override val currentHpString = mutableStateOf(CombatantViewModel.currentHp.toString())
 		override val currentHpError = mutableStateOf(false)
 
 

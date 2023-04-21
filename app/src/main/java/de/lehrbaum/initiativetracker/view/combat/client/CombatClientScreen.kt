@@ -1,0 +1,47 @@
+package de.lehrbaum.initiativetracker.view.combat.client
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import de.lehrbaum.initiativetracker.view.Constants
+import de.lehrbaum.initiativetracker.view.combat.CombatantListElement
+import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
+import kotlinx.coroutines.flow.StateFlow
+
+@Stable
+interface ClientCombatViewModel {
+	val combatants: StateFlow<List<CombatantViewModel>>
+}
+
+@Composable
+fun CombatClientScreen(clientCombatViewModel: ClientCombatViewModel) {
+	CombatantList(clientCombatViewModel)
+}
+
+@Composable
+private fun CombatantList(clientCombatViewModel: ClientCombatViewModel) {
+	val combatants by clientCombatViewModel.combatants.collectAsState()
+	val listState = rememberLazyListState()
+
+	// Find the index of the active character
+	val activeCharacterIndex = combatants.indexOfFirst { it.active }
+
+	// Animate scrolling to the active character's position
+	LaunchedEffect(activeCharacterIndex) {
+		if (activeCharacterIndex != -1) {
+			listState.animateScrollToItem(activeCharacterIndex, scrollOffset = -200)
+		}
+	}
+	LazyColumn(state = listState) {
+		val itemModifier = Modifier
+			.padding(Constants.defaultPadding)
+			.fillMaxWidth()
+		items(combatants, key = CombatantViewModel::id) { combatant ->
+			CombatantListElement(combatant, itemModifier)
+		}
+	}
+}
