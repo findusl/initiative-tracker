@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
+import de.lehrbaum.initiativetracker.ui.screen.Constants.defaultPadding
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
