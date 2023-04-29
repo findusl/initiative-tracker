@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.R
-import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
+import de.lehrbaum.initiativetracker.ui.screen.Constants.defaultPadding
 import de.lehrbaum.initiativetracker.view.SwipeResponse
 import de.lehrbaum.initiativetracker.view.combat.CombatantListElement
 import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel

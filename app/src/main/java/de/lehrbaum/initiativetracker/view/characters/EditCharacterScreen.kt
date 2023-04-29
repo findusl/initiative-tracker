@@ -13,8 +13,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import de.lehrbaum.initiativetracker.view.Constants
-import de.lehrbaum.initiativetracker.view.Constants.defaultPadding
+import de.lehrbaum.initiativetracker.ui.screen.Constants
+import de.lehrbaum.initiativetracker.ui.screen.Constants.defaultPadding
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -25,7 +25,7 @@ fun EditCharacterScreen(editCharacterViewModel: EditCharacterViewModel) {
 
 
 	Column(modifier = Modifier
-		.padding(Constants.defaultPadding)
+		.padding(defaultPadding)
 		.fillMaxWidth()) {
 		OutlinedTextField(
 			value = characterViewModel.name,

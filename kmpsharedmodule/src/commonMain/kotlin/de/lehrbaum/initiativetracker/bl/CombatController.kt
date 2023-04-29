@@ -1,12 +1,10 @@
 package de.lehrbaum.initiativetracker.bl
 
-import androidx.annotation.MainThread
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
 
-@MainThread
 class CombatController {
 	private var nextId = 0L
 
