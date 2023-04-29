@@ -6,6 +6,7 @@ plugins {
 }
 
 kotlin {
+	jvm("desktop")
 	android {
 		compilations.all {
 			kotlinOptions {
@@ -27,11 +28,18 @@ kotlin {
 					"org.jetbrains.kotlinx:kotlinx-serialization-json:" +
 						Version.kotlinxSerialization
 				)
+				// Multiplatform Logging
+				api(Dependency.napier)
 			}
 		}
 		named("commonTest") {
 			dependencies {
 				implementation(kotlin("test"))
+			}
+		}
+		named("desktopMain") {
+			dependencies {
+				implementation(compose.desktop.common)
 			}
 		}
 		named("androidMain")

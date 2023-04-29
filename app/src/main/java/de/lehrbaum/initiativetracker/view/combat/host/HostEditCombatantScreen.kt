@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import de.lehrbaum.initiativetracker.view.Constants
+import de.lehrbaum.initiativetracker.ui.screen.Constants
 
 @Stable
 interface HostEditCombatantViewModel {

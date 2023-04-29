@@ -128,7 +128,7 @@ dependencies {
 	kapt("com.google.dagger:hilt-compiler:${Version.hilt}")
 
 	// Napier allows us to easily log on Kotlin Multiplatform in the future
-	implementation("io.github.aakira:napier:2.6.1")
+	implementation(Dependency.napier)
 
 	// Compose dependencies
 	implementation("androidx.compose.ui:ui:${Version.Android.compose}")
