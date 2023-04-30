@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.commands.HostCommand
@@ -28,7 +29,7 @@ class ShareCombatController(
 	// also could possibly replace the delegate
 	// https://discuss.kotlinlang.org/t/best-practice-for-coroutine-that-reports-progress/14324/13
 	suspend fun joinCombatAsHost(sessionId: Int): Result {
-		return sharedHttpClient.buildConfigWebsocket {
+		return GlobalInstances.httpClient.buildConfigWebsocket {
 			val result = joinSessionAsHost(sessionId)
 			Napier.d("Result of joining session $sessionId as host: $result")
 			if (result == Result.SUCCESS) {
@@ -56,7 +57,7 @@ class ShareCombatController(
 	}
 
 	suspend fun shareCombatState() {
-		sharedHttpClient.buildConfigWebsocket {
+		GlobalInstances.httpClient.buildConfigWebsocket {
 			startHostingSession()
 			launch { shareCombatUpdates() }
 			receiveEvents()

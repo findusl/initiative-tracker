@@ -112,14 +112,15 @@ dependencies {
 	implementation("com.google.android.material:material:1.8.0")
 
 	// Kotlinx Serialization
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
-	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+	implementation(Dependency.kotlinxCoroutines)
+
+	implementation(Dependency.kotlinxCoroutines)
 
 	// Ktor dependencies
-	api("io.ktor:ktor-client-core:${Version.ktor}")
-	api("io.ktor:ktor-client-serialization:${Version.ktor}")
-	api("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
-	api("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
+	implementation("io.ktor:ktor-client-core:${Version.ktor}")
+	implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
+	implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
+	implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 	implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
 	implementation("io.ktor:ktor-client-logging-jvm:${Version.ktor}")
 	implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
