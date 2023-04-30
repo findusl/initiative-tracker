@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.networking
 
 import android.content.res.Resources.NotFoundException
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.commands.JoinSessionResponse
 import de.lehrbaum.initiativetracker.commands.ServerToClientCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
@@ -19,7 +20,7 @@ private const val TAG = "RemoteCombatController"
 class RemoteCombatController(private val sessionId: Int) {
 
 	val remoteCombat = flow {
-		sharedHttpClient.buildConfigWebsocket {
+		GlobalInstances.httpClient.buildConfigWebsocket {
 			initiateClient()
 			handleUpdates()
 		}

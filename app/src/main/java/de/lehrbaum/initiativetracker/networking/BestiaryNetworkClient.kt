@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.networking.bestiary.BestiaryCollectionDTO
 import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
@@ -17,7 +18,7 @@ private const val TAG = "BestiaryNetworkClient"
 class BestiaryNetworkClient {
 
 	private val spellSources = flow<Map<String, String>> {
-		emit(sharedHttpClient.request("https://5e.tools/data/bestiary/index.json").body())
+		emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
 	}
 
 	@OptIn(ExperimentalCoroutinesApi::class)
@@ -29,7 +30,7 @@ class BestiaryNetworkClient {
 					Napier.v("Loading bestiary from $url", tag = TAG)
 					async {
 						try {
-							sharedHttpClient.request(url).body<BestiaryCollectionDTO>()
+							GlobalInstances.httpClient.request(url).body<BestiaryCollectionDTO>()
 						} catch (e: Exception) {
 							Napier.e("Failed to load from $url", e, TAG)
 							null
