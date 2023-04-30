@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface MainModel {
 	val drawerItems: StateFlow<List<DrawerItem>>
 	val content: State<ContentState>
+
+	fun onDrawerItemSelected(item: DrawerItem) { TODO() }
 }
 
 sealed interface DrawerItem {
