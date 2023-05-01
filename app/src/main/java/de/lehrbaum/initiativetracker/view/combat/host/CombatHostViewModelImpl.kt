@@ -8,10 +8,10 @@ import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
-import de.lehrbaum.initiativetracker.networking.ShareCombatController
-import de.lehrbaum.initiativetracker.view.SwipeResponse
-import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
-import de.lehrbaum.initiativetracker.view.combat.toCombatantViewModel
+import de.lehrbaum.initiativetracker.bl.ShareCombatController
+import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

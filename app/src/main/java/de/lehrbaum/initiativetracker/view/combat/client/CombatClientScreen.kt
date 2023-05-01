@@ -7,9 +7,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants
-import de.lehrbaum.initiativetracker.view.combat.CombatantListElement
-import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.screen.components.CombatantListElement
 import kotlinx.coroutines.flow.StateFlow
 
 @Stable

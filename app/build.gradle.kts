@@ -48,34 +48,6 @@ android {
 		}
 	}
 
-	flavorDimensions.add("backend")
-	productFlavors {
-		create("lan") {
-			// Assigns this product flavor to the "version" flavor dimension.
-			// If you are using only one dimension, this property is optional,
-			// and the plugin automatically assigns all the module"s flavors to
-			// that dimension.
-			dimension = "backend"
-			applicationIdSuffix = ".lan"
-			versionNameSuffix = "-lan"
-
-			val host = properties.getProperty("backend.lan.host", "\"10.0.2.2\"")
-			val port = properties.getProperty("backend.lan.port", "8080")
-			buildConfigField("String", "BACKEND_HOST", host)
-			buildConfigField("int", "BACKEND_PORT", port)
-		}
-		create("remote") {
-			dimension = "backend"
-			applicationIdSuffix = ".remote"
-			versionNameSuffix = "-remote"
-
-			val host = properties.getProperty("backend.lan.host", "\"undefined\"")
-			val port = properties.getProperty("backend.lan.port", "443")
-			buildConfigField("String", "BACKEND_HOST", host)
-			buildConfigField("int", "BACKEND_PORT", port)
-		}
-	}
-
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
