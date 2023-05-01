@@ -21,10 +21,13 @@ import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.DrawerState
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SwipeToDismiss
@@ -32,16 +35,22 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -56,6 +65,7 @@ import de.lehrbaum.initiativetracker.ui.screen.components.BurgerMenuButtonForDra
 import de.lehrbaum.initiativetracker.ui.screen.components.CombatantListElement
 import de.lehrbaum.initiativetracker.ui.screen.components.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.screen.components.showSnackbar
+import de.lehrbaum.initiativetracker.ui.screen.edit.HostEditCombatantDialog
 import io.github.aakira.napier.Napier
 
 @Composable
@@ -63,10 +73,16 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(drawerState) },
+        topBar = { TopBar(
+            drawerState,
+            hostCombatModel
+        ) },
         snackbarHost = { it.showSnackbar(hostCombatModel.snackbarState) },
         floatingActionButton = {
-            NextCombatantButton(hostCombatModel.combatStarted.collectAsState().value, hostCombatModel::nextCombatant)
+            NextCombatantButton(
+                hostCombatModel.combatStarted,
+                hostCombatModel::nextCombatant
+            )
         }
     ) {
         CombatantList(
@@ -85,9 +101,9 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
         }
     }
 
-    /*hostCombatViewModel.hostEditCombatantViewModel.value?.let {
+    hostCombatModel.editCombatantModel.value?.let {
         HostEditCombatantDialog(it)
-    }*/
+    }
 }
 
 @Composable
@@ -228,12 +244,44 @@ private fun SwipeToDismissBackground(dismissState: DismissState) {
 }
 
 @Composable
-private fun TopBar(drawerState: DrawerState) {
+private fun TopBar(
+    drawerState: DrawerState,
+    hostCombatModel: HostCombatModel
+) {
+    var displayDropdown by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = { Text("Host new combat", color = MaterialTheme.colors.onPrimary) },
         navigationIcon = {
             BurgerMenuButtonForDrawer(drawerState)
         },
-        backgroundColor = MaterialTheme.colors.primarySurface
+        actions = {
+            if (!hostCombatModel.combatStarted) {
+                IconButton(onClick = hostCombatModel::startCombat) {
+                    Icon(Icons.Default.PlayArrow, contentDescription = "Play")
+                }
+            }
+            if (hostCombatModel.isSharing) {
+                IconButton(onClick = hostCombatModel::onStopShareClicked) {
+                    Icon(Icons.Default.Close, contentDescription = "Stop Sharing")
+                }
+            } else {
+                IconButton(onClick = hostCombatModel::onShareClicked) {
+                    Icon(Icons.Default.Share, contentDescription = "Start Sharing")
+                }
+            }
+            IconButton(onClick = { displayDropdown = !displayDropdown }) {
+                Icon(Icons.Default.MoreVert, "")
+            }
+            DropdownMenu(
+                expanded = displayDropdown,
+                onDismissRequest = { displayDropdown = false }
+            ) {
+                DropdownMenuItem(onClick = hostCombatModel::showSessionId) {
+                    Text(text = "Show Session Id")
+                }
+            }
+        },
+        backgroundColor = MaterialTheme.colors.primarySurface,
     )
 }

@@ -1,9 +1,11 @@
 package de.lehrbaum.initiativetracker.ui.model.main
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
 import kotlinx.coroutines.flow.StateFlow
 
+@Stable
 interface MainModel {
 	val drawerItems: StateFlow<List<DrawerItem>>
 	val content: State<ContentState>

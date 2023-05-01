@@ -1,7 +1,10 @@
 package de.lehrbaum.initiativetracker.ui.model.host
 
 import androidx.compose.material.SnackbarDuration.Long
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.bl.ShareCombatController
@@ -9,6 +12,8 @@ import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
+import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
+import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModelImpl
 import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
@@ -34,6 +39,7 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
     override val coroutineContext = SupervisorJob() + Dispatchers.Default
 
     private var combatController: CombatController = CombatController()
+    override val editCombatantModel = mutableStateOf<EditCombatantModel?>(null)
 
     override val combatants: StateFlow<List<CombatantViewModel>>
         get() = combatController.combatants
@@ -55,7 +61,7 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
         // immediately start fetching as it takes a while
         .stateIn(this, SharingStarted.Eagerly, arrayOf())
 
-    override val combatStarted = MutableStateFlow(false)
+    override var combatStarted by mutableStateOf(false)
 
     private val shareCombatController = ShareCombatController(combatController, this)
 
@@ -63,8 +69,7 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
 
     private var sharingCombatJob: Job? = null
 
-    val isSharing: Boolean
-        get() = sharingCombatJob?.isActive == true
+    override var isSharing by mutableStateOf(false)
 
     init {
         observeSessionId()
@@ -84,7 +89,7 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
     }
 
     override fun onCombatantPressed(combatantViewModel: CombatantViewModel) {
-        if (combatStarted.value) {
+        if (combatStarted) {
             damageCombatant(combatantViewModel)
         } else {
             editCombatant(combatantViewModel)
@@ -118,22 +123,29 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
         editCombatant(newCombatant.toCombatantViewModel())
     }
 
-    private fun editCombatant(CombatantViewModel: CombatantViewModel) {
-        TODO("Edit dialog not yet implemented")
+    private fun editCombatant(combatantViewModel: CombatantViewModel) {
+        editCombatantModel.value = EditCombatantModelImpl(
+            combatantViewModel,
+            onSave = {
+                combatController.updateCombatant(it)
+                editCombatantModel.value = null
+            },
+            onCancel = { editCombatantModel.value = null }
+        )
     }
 
     private fun damageCombatant(CombatantViewModel: CombatantViewModel) {
         assignDamageCombatant.value = CombatantViewModel
     }
 
-    fun undoDelete() {
+    override fun undoDelete() {
         mostRecentDeleted?.let {
             combatController.addCombatant(it.name, it.initiative)
         }
     }
 
-    fun startCombat() {
-        combatStarted.value = true
+    override fun startCombat() {
+        combatStarted = true
     }
 
     override fun nextCombatant() {
@@ -144,7 +156,7 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
         combatController.prevTurn()
     }
 
-    fun onShareClicked() {
+    override fun onShareClicked() {
         if (isSharing) {
             snackbarState.value =
                 SnackbarState.Text("Stop your current share to start a new one.")
@@ -152,10 +164,12 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
         }
 
         sharingCombatJob = launch {
+            isSharing = true
             handleWebsocketErrors {
                 shareCombatController.shareCombatState()
             }
         }
+        sharingCombatJob?.invokeOnCompletion { isSharing = false }
     }
 
     private suspend fun handleWebsocketErrors(block: suspend () -> Unit) {
@@ -178,13 +192,13 @@ class HostCombatModelImpl: HostCombatModel, ShareCombatController.Delegate, Coro
         }
     }
 
-    fun onStopShareClicked() {
+    override fun onStopShareClicked() {
         if (isSharing) {
             sharingCombatJob?.cancel()
         }
     }
 
-    fun showSessionId() {
+    override fun showSessionId() {
         val sessionId = shareCombatController.sessionId.value ?: -1
         snackbarState.value = SnackbarState.Copyable(
             "SessionId $sessionId",
