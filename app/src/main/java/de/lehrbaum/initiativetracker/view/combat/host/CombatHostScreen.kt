@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Stable
 interface HostCombatViewModel {
 	val combatants: StateFlow<List<CombatantViewModel>>
-	val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
+	val hostEditCombatantViewModel: HostEditCombatantViewModel?
 	val assignDamageCombatant: MutableState<CombatantViewModel?>
 	val combatStarted: StateFlow<Boolean>
 
@@ -55,7 +55,7 @@ interface HostCombatViewModel {
 fun CombatHostScreen(hostCombatViewModel: HostCombatViewModel) {
 	CombatantList(hostCombatViewModel)
 
-	hostCombatViewModel.hostEditCombatantViewModel.value?.let {
+	hostCombatViewModel.hostEditCombatantViewModel?.let {
 		HostEditCombatantDialog(it)
 	}
 
@@ -215,7 +215,7 @@ fun PreviewCombatHostScreen() {
 @Composable
 fun PreviewHostEditCombatantScreen() {
 	val viewModel = MockHostCombatViewModel()
-	viewModel.hostEditCombatantViewModel.value = MockEditHostCombatantViewModel()
+	viewModel.hostEditCombatantViewModel = MockEditHostCombatantViewModel()
 	CombatHostScreen(viewModel)
 }
 
@@ -226,7 +226,7 @@ private val sampleCombatants = listOf(
 
 private class MockHostCombatViewModel : HostCombatViewModel {
 	override val combatants = MutableStateFlow(sampleCombatants)
-	override val hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
+	override var hostEditCombatantViewModel: HostEditCombatantViewModel? = null
 	override val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
 	override val combatStarted = MutableStateFlow(true)
 

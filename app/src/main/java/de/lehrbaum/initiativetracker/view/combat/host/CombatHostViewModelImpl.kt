@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.view.combat.host
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -41,8 +42,7 @@ class CombatHostViewModelImpl :
 			.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 	private val _hostEditCombatantViewModel = mutableStateOf<HostEditCombatantViewModel?>(null)
-	override val hostEditCombatantViewModel: State<HostEditCombatantViewModel?>
-		get() = _hostEditCombatantViewModel
+	override val hostEditCombatantViewModel by _hostEditCombatantViewModel
 	override val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
 
 
