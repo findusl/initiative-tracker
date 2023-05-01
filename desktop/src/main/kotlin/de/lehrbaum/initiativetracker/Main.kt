@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import de.lehrbaum.initiativetracker.ui.model.main.MainModelImpl
 import de.lehrbaum.initiativetracker.ui.model.main.MainModelPreview
 import de.lehrbaum.initiativetracker.ui.screen.main.MainScreen
 import io.github.aakira.napier.DebugAntilog
@@ -21,10 +22,10 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
-        title = "Confetti"
+        title = "InitiativeTracker"
     ) {
         MaterialTheme {
-            MainScreen(MainModelPreview())
+            MainScreen(MainModelImpl())
         }
     }
 }

@@ -1,7 +1,9 @@
-package de.lehrbaum.initiativetracker.view.combat
+package de.lehrbaum.initiativetracker.ui.model
 
+import androidx.compose.runtime.Stable
 import de.lehrbaum.initiativetracker.bl.CombatantModel
 
+@Stable
 data class CombatantViewModel(
 	val id: Long,
 	val name: String,

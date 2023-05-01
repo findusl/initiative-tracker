@@ -26,11 +26,11 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.R
+import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants.defaultPadding
-import de.lehrbaum.initiativetracker.view.SwipeResponse
-import de.lehrbaum.initiativetracker.view.combat.CombatantListElement
-import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
-import de.lehrbaum.initiativetracker.view.combat.DamageCombatantDialog
+import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
+import de.lehrbaum.initiativetracker.ui.screen.components.CombatantListElement
+import de.lehrbaum.initiativetracker.ui.screen.components.DamageCombatantDialog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

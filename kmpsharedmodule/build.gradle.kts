@@ -65,15 +65,16 @@ kotlin {
 	}
 }
 
-val localProperties = Properties()
-val localPropertiesFile: File = project.rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-	localPropertiesFile.inputStream().use {
-		localProperties.load(it)
-	}
-}
-
+// part of BuildKonfig plugin
 buildkonfig {
+	val localProperties = Properties()
+	val localPropertiesFile: File = project.rootProject.file("local.properties")
+	if (localPropertiesFile.exists()) {
+		localPropertiesFile.inputStream().use {
+			localProperties.load(it)
+		}
+	}
+
 	packageName = "de.lehrbaum.initiativetracker"
 	exposeObjectWithName = "BuildKonfig"
 
@@ -108,4 +109,8 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
 	}
+}
+
+fun org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions.enableContextReceivers() {
+	freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
 }
