@@ -19,6 +19,8 @@ import de.lehrbaum.initiativetracker.ui.model.main.ContentState
 import de.lehrbaum.initiativetracker.ui.model.main.DrawerItem
 import de.lehrbaum.initiativetracker.ui.model.main.MainModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants
+import de.lehrbaum.initiativetracker.ui.screen.components.BurgerMenuButtonForDrawer
+import de.lehrbaum.initiativetracker.ui.screen.host.HostScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -26,13 +28,13 @@ fun MainScreen(mainModel: MainModel) {
 	val scaffoldState = rememberScaffoldState()
 	val contentState by mainModel.content
 	val drawerItems by mainModel.drawerItems.collectAsState()
+	// Theoretically can reduce this to modal drawer
 	Scaffold(
 		scaffoldState = scaffoldState,
-		topBar = { TopBar(scaffoldState.drawerState) },
 		drawerContent = { Drawer(drawerItems) },
 		drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
 	) {
-		MainScreenContent(contentState)
+		MainScreenContent(contentState, scaffoldState.drawerState)
 	}
 }
 
@@ -50,25 +52,10 @@ private fun Drawer(drawerItems: List<DrawerItem>) {
 }
 
 @Composable
-private fun TopBar(drawerState: DrawerState) {
-	val coroutineScope = rememberCoroutineScope()
-	TopAppBar(
-		title = { Text("InitiativeTracker", color = colors.onPrimary) },
-		navigationIcon = {
-			IconButton(
-				onClick = { coroutineScope.launch { drawerState.open() } }
-			) {
-				Icon(Icons.Default.Menu, contentDescription = "")
-			}
-		},
-		backgroundColor = colors.primarySurface
-	)
-}
-
-@Composable
-private fun MainScreenContent(contentState: ContentState) {
+private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
 	when(contentState) {
 		is ContentState.Empty -> Text("Choose something in the menu.")
 		is ContentState.CharacterScreen -> TODO()
+		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatModel)
 	}
 }

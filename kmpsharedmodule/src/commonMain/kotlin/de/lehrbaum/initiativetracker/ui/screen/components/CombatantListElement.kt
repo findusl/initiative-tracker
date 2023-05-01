@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view.combat
+package de.lehrbaum.initiativetracker.ui.screen.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants
 
 

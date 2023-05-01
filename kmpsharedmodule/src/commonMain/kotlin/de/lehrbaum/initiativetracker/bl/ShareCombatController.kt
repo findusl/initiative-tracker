@@ -1,27 +1,28 @@
-package de.lehrbaum.initiativetracker.networking
+package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.CombatController
-import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
 import de.lehrbaum.initiativetracker.dtos.CombatantDTO
+import de.lehrbaum.initiativetracker.networking.buildConfigWebsocket
+import de.lehrbaum.initiativetracker.networking.toCombatDTO
+import de.lehrbaum.initiativetracker.networking.toModel
 import io.github.aakira.napier.Napier
-import io.ktor.client.plugins.websocket.*
-import kotlinx.coroutines.*
+import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
+import io.ktor.client.plugins.websocket.receiveDeserialized
+import io.ktor.client.plugins.websocket.sendSerialized
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-@Suppress("unused")
-private const val TAG = "ShareCombatController"
-
 class ShareCombatController(
-	private val combatController: CombatController,
-	private val delegate: Delegate
+    private val combatController: CombatController,
+    private val delegate: Delegate
 ) {
 	var sessionId = MutableStateFlow<Int?>(null)
 
@@ -31,7 +32,7 @@ class ShareCombatController(
 	suspend fun joinCombatAsHost(sessionId: Int): Result {
 		return GlobalInstances.httpClient.buildConfigWebsocket {
 			val result = joinSessionAsHost(sessionId)
-			Napier.d("Result of joining session $sessionId as host: $result")
+          Napier.d("Result of joining session $sessionId as host: $result")
 			if (result == Result.SUCCESS) {
 				launch { receiveEvents() }
 				shareCombatUpdates()
@@ -69,7 +70,7 @@ class ShareCombatController(
 		val startMessage = StartCommand.StartHosting(currentCombatState) as StartCommand
 		this.sendSerialized(startMessage)
 		val response = receiveDeserialized<StartCommand.StartHosting.Response>() as StartCommand.StartHosting.SessionStarted
-		Napier.d("Got Session id $sessionId")
+       Napier.d("Got Session id $sessionId")
 		sessionId.value = response.sessionId
 	}
 
@@ -86,7 +87,7 @@ class ShareCombatController(
 	private suspend fun DefaultClientWebSocketSession.receiveEvents() {
 		while (true) {
 			val incoming = receiveDeserialized<ServerToHostCommand>()
-			Napier.d("Received command $incoming")
+          Napier.d("Received command $incoming")
 			when (incoming) {
 				is ServerToHostCommand.AddCombatant -> {
 					val combatant = incoming.combatant.toModel()

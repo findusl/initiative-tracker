@@ -3,7 +3,7 @@ package de.lehrbaum.initiativetracker.view.combat.client
 import androidx.lifecycle.viewModelScope
 import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
 import de.lehrbaum.initiativetracker.networking.RemoteCombatController
-import de.lehrbaum.initiativetracker.view.combat.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
