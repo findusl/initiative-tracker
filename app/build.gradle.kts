@@ -109,7 +109,7 @@ dependencies {
 	implementation("androidx.recyclerview:recyclerview:1.3.0")
 	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
-	implementation("com.google.android.material:material:1.8.0")
+	implementation("com.google.android.material:material:1.9.0")
 
 	// Kotlinx Serialization
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
