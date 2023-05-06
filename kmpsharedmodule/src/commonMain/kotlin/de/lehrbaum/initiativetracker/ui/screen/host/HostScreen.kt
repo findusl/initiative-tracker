@@ -2,6 +2,7 @@
 
 package de.lehrbaum.initiativetracker.ui.screen.host
 
+import FastForward
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -258,7 +259,7 @@ private fun TopBar(
         actions = {
             if (!hostCombatModel.combatStarted) {
                 IconButton(onClick = hostCombatModel::startCombat) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = "Play")
+                    Icon(Icons.Default.FastForward, contentDescription = "Play")
                 }
             }
             if (hostCombatModel.isSharing) {
