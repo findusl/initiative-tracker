@@ -11,6 +11,10 @@ dependencies {
     implementation(compose.desktop.currentOs)
 }
 
+application {
+	mainClass.set("de.lehrbaum.initiativetracker.Mainkt")
+}
+
 tasks.withType<KotlinCompile>() {
     kotlinOptions {
         jvmTarget = "17"
