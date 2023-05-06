@@ -15,6 +15,7 @@ import kotlinx.serialization.json.Json
 private const val TAG = "DefaultHttpClient"
 
 fun createDefaultHttpClient() =
+	// This needs changes for iOS
     HttpClient(OkHttp) {
         install(WebSockets) {
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
