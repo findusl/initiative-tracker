@@ -1,11 +1,14 @@
 package de.lehrbaum.initiativetracker.ui.model.client
 
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
-import kotlinx.coroutines.flow.StateFlow
-import java.io.Closeable
+import androidx.compose.runtime.Stable
+import de.lehrbaum.initiativetracker.bl.ClientCombatState
+import kotlinx.coroutines.flow.Flow
 
-interface ClientCombatModel: Closeable {
-	val combatants: StateFlow<List<CombatantViewModel>>
+@Stable
+interface ClientCombatModel {
+	val combatState: Flow<ClientCombatState>
+
+	val combatId: Int
 
 	fun leaveCombat()
 }
