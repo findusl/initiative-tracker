@@ -2,7 +2,7 @@ package de.lehrbaum.initiativetracker.view.characters
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.lehrbaum.initiativetracker.bl.CharacterModel
+import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
 import de.lehrbaum.initiativetracker.logic.CharacterRepository
 import kotlinx.coroutines.flow.SharingStarted

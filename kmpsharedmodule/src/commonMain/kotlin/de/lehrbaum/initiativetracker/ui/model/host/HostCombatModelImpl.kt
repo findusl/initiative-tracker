@@ -1,13 +1,12 @@
 package de.lehrbaum.initiativetracker.ui.model.host
 
 import androidx.compose.material.SnackbarDuration.Long
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
-import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.bl.ShareCombatController
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
@@ -16,20 +15,9 @@ import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModelImpl
 import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 import java.net.SocketTimeoutException
 
 private const val TAG = "HostCombatModelImpl"

@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.view.characters
 
-import de.lehrbaum.initiativetracker.bl.CharacterModel
+import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 
 data class CharacterViewModel(
 	val id: Long,

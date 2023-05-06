@@ -1,18 +1,17 @@
 package de.lehrbaum.initiativetracker.view.combat.host
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import de.lehrbaum.initiativetracker.bl.CombatController
-import de.lehrbaum.initiativetracker.bl.CombatantModel
+import de.lehrbaum.initiativetracker.bl.ShareCombatController
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.extensions.DelegatingViewModel
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
-import de.lehrbaum.initiativetracker.bl.ShareCombatController
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
+import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
