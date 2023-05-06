@@ -1,15 +1,14 @@
 package de.lehrbaum.initiativetracker.ui.model.main
 
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModel
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 @Stable // assumes content is backed by mutableState variable. Hope I don't forget
 interface MainModel {
 	val activeDrawerItem: DrawerItem
-	val drawerItems: StateFlow<List<DrawerItem>>
+	val drawerItems: Flow<List<DrawerItem>>
 	val content: ContentState
 
 	fun onDrawerItemSelected(item: DrawerItem) { TODO() }
@@ -31,7 +30,8 @@ sealed interface DrawerItem {
 	}
 	data class RememberedCombat(
 		val id: Int,
-		override val name: String
+		val isHost: Boolean,
+		override val name: String = id.toString()
 	): DrawerItem
 }
 

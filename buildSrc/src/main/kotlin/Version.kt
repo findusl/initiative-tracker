@@ -7,6 +7,7 @@ object Version {
 	const val hilt = "2.46"
 	const val logback = "1.4.7"
 	const val buildKonfig = "0.13.3"
+	const val mppSettings = "1.0.0"
 	object JetbrainsCompose {
 		const val foundation = "1.4.0"
 	}

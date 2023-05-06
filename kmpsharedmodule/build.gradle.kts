@@ -1,4 +1,5 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.*
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import java.util.*
 
 plugins {
@@ -30,6 +31,9 @@ kotlin {
 				implementation(compose.material)
 				implementation(compose.runtime)
 				implementation(compose.preview)
+
+				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
+				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
 
 				implementation(Dependency.kotlinxSerialization)
 				implementation(Dependency.kotlinxCoroutines)

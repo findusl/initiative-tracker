@@ -3,21 +3,24 @@ package de.lehrbaum.initiativetracker.ui.model.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
+import de.lehrbaum.initiativetracker.bl.CombatLink
+import de.lehrbaum.initiativetracker.bl.CombatLinkRepository
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModelImpl
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.concurrent.CancellationException
+import kotlinx.coroutines.flow.map
 
 class MainModelImpl: MainModel {
 	override var activeDrawerItem by mutableStateOf<DrawerItem>(DrawerItem.HostCombat)
 
-	override val drawerItems = MutableStateFlow(listOf(
-        DrawerItem.JoinCombat,
-        DrawerItem.HostCombat,
-        DrawerItem.HostExistingCombat,
-        DrawerItem.Characters
-    ))
+	private val defaultDrawerItems = listOf(
+		DrawerItem.JoinCombat,
+		DrawerItem.HostCombat,
+		DrawerItem.HostExistingCombat,
+		DrawerItem.Characters
+	)
+
+	override val drawerItems = CombatLinkRepository.combatLinks.map {  combatLinks ->
+		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it.combatId, it.isHost) }
+	}
 
 	/** Keep a default hostCombatState to return to */
 	private val hostCombatState = hostNewCombat()
@@ -25,12 +28,15 @@ class MainModelImpl: MainModel {
     override var content by mutableStateOf<ContentState>(hostCombatState)
 
     override fun onDrawerItemSelected(item: DrawerItem) {
+		if (item == activeDrawerItem) return // avoid double click race conditions
         val newContent: ContentState? = when (item) {
             is DrawerItem.Characters -> null
             is DrawerItem.HostCombat -> hostNewCombat()
             is DrawerItem.HostExistingCombat -> TODO()
             is DrawerItem.JoinCombat -> joinCombat()
-            is DrawerItem.RememberedCombat -> TODO()
+            is DrawerItem.RememberedCombat -> {
+				if(item.isHost) TODO() else ContentState.ClientCombat(TODO())
+			}
         }
 		if (newContent != null) {
 			activeDrawerItem = item
@@ -51,7 +57,9 @@ class MainModelImpl: MainModel {
 	}
 
 	private fun joinCombat(sessionId: Int, asHost: Boolean) {
-		TODO("Implement")
+		CombatLinkRepository.addCombatLink(CombatLink(sessionId, asHost))
+		// At this point the item might not yet be visible in the drawer, but that should not matter
+		onDrawerItemSelected(DrawerItem.RememberedCombat(sessionId, asHost))
 	}
 
 	private fun ContentState.cancelContent() {

@@ -2,15 +2,9 @@ package de.lehrbaum.initiativetracker.ui.screen.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,7 +14,6 @@ import de.lehrbaum.initiativetracker.ui.model.main.ContentState
 import de.lehrbaum.initiativetracker.ui.model.main.DrawerItem
 import de.lehrbaum.initiativetracker.ui.model.main.MainModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants
-import de.lehrbaum.initiativetracker.ui.screen.components.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.screen.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.screen.join.JoinScreen
 import kotlinx.coroutines.launch
@@ -29,7 +22,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(mainModel: MainModel) {
 	val scaffoldState = rememberScaffoldState()
 	val sharedCoroutineScope = rememberCoroutineScope() // TODO use this coroutinescope to fetch data shared across views
-	val drawerItems by mainModel.drawerItems.collectAsState()
+	val drawerItems by mainModel.drawerItems.collectAsState(emptyList())
 	// Theoretically can reduce this to modal drawer
 	Scaffold(
 		scaffoldState = scaffoldState,
