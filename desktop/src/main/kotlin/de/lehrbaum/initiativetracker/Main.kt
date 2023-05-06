@@ -6,7 +6,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import de.lehrbaum.initiativetracker.ui.model.main.MainModelImpl
-import de.lehrbaum.initiativetracker.ui.model.main.MainModelPreview
 import de.lehrbaum.initiativetracker.ui.screen.main.MainScreen
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
