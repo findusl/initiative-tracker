@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.model.main.ContentState
 import de.lehrbaum.initiativetracker.ui.model.main.DrawerItem
 import de.lehrbaum.initiativetracker.ui.model.main.MainModel
+import de.lehrbaum.initiativetracker.ui.screen.ClientScreen
 import de.lehrbaum.initiativetracker.ui.screen.Constants
 import de.lehrbaum.initiativetracker.ui.screen.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.screen.join.JoinScreen
@@ -71,7 +72,7 @@ private fun MainScreenContent(contentState: ContentState, drawerState: DrawerSta
 		is ContentState.Empty -> Text("Choose something in the menu.")
 		is ContentState.CharacterScreen -> TODO()
 		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatModel)
-		is ContentState.ClientCombat -> TODO()
+		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatModel)
 		is ContentState.JoinCombat -> JoinScreen(drawerState, contentState.onJoin, contentState.onCancel)
 	}
 }

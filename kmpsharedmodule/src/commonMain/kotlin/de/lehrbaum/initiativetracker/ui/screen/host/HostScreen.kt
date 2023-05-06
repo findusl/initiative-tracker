@@ -17,34 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissState
-import androidx.compose.material.DismissValue
-import androidx.compose.material.DrawerState
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.primarySurface
-import androidx.compose.material.rememberDismissState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -74,10 +49,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(
-            drawerState,
-            hostCombatModel
-        ) },
+        topBar = { TopBar(drawerState, hostCombatModel) },
         snackbarHost = { it.showSnackbar(hostCombatModel.snackbarState) },
         floatingActionButton = {
             NextCombatantButton(
@@ -111,7 +83,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 private fun NextCombatantButton(combatStarted: Boolean, onClicked : () -> Unit) {
     if (combatStarted) {
         FloatingActionButton(onClick = { onClicked() }, ) {
-            Icon(Icons.Default.ArrowForward, contentDescription = "Next Combatant")
+            Icon(Icons.Default.FastForward, contentDescription = "Next Combatant")
         }
     }
 }
@@ -259,7 +231,7 @@ private fun TopBar(
         actions = {
             if (!hostCombatModel.combatStarted) {
                 IconButton(onClick = hostCombatModel::startCombat) {
-                    Icon(Icons.Default.FastForward, contentDescription = "Play")
+                    Icon(Icons.Default.PlayArrow, contentDescription = "Play")
                 }
             }
             if (hostCombatModel.isSharing) {
