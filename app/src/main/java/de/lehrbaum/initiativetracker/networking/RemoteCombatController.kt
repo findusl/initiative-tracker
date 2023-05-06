@@ -46,6 +46,7 @@ class RemoteCombatController(private val sessionId: Int) {
 
 			when (message) {
 				is ServerToClientCommand.CombatUpdatedCommand -> emit(message.combat)
+				ServerToClientCommand.CombatEnded -> return
 			}
 		}
 	}

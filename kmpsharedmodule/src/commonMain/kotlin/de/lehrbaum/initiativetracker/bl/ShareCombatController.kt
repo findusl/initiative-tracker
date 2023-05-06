@@ -6,8 +6,6 @@ import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
 import de.lehrbaum.initiativetracker.dtos.CombatantDTO
 import de.lehrbaum.initiativetracker.networking.buildConfigWebsocket
-import de.lehrbaum.initiativetracker.networking.toCombatDTO
-import de.lehrbaum.initiativetracker.networking.toModel
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
@@ -32,7 +30,7 @@ class ShareCombatController(
 	suspend fun joinCombatAsHost(sessionId: Int): Result {
 		return GlobalInstances.httpClient.buildConfigWebsocket {
 			val result = joinSessionAsHost(sessionId)
-          Napier.d("Result of joining session $sessionId as host: $result")
+            Napier.d("Result of joining session $sessionId as host: $result")
 			if (result == Result.SUCCESS) {
 				launch { receiveEvents() }
 				shareCombatUpdates()

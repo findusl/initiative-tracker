@@ -1,6 +1,5 @@
-package de.lehrbaum.initiativetracker.networking
+package de.lehrbaum.initiativetracker.bl
 
-import de.lehrbaum.initiativetracker.bl.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.CombatDTO
 import de.lehrbaum.initiativetracker.dtos.CombatantDTO
 

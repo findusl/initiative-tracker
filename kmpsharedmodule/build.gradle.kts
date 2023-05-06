@@ -96,8 +96,8 @@ buildkonfig {
 	defaultConfigs("remote") {
 		buildConfigField(STRING, "environment", "remote")
 
-		val host = localProperties.getProperty("backend.lan.host", "\"undefined\"")
-		val port = localProperties.getProperty("backend.lan.port", "443")
+		val host = localProperties.getProperty("backend.remote.host", "\"undefined\"")
+		val port = localProperties.getProperty("backend.remote.port", "443")
 		buildConfigField(STRING, "backendHost", host)
 		buildConfigField(INT, "backendPort", port)
 	}

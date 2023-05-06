@@ -7,5 +7,7 @@ import kotlinx.serialization.Serializable
 sealed interface ServerToClientCommand {
 	@Serializable
 	data class CombatUpdatedCommand(val combat: CombatDTO) : ServerToClientCommand
+	@Serializable
+	object CombatEnded: ServerToClientCommand
 }
 
