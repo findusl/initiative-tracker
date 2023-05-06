@@ -1,8 +1,8 @@
 package de.lehrbaum.initiativetracker.ui.model.client
 
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
-import de.lehrbaum.initiativetracker.bl.CombatLink
-import de.lehrbaum.initiativetracker.bl.CombatLinkRepository
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 
 class ClientCombatModelImpl(override val combatId: Int, private val leaveScreen: () -> Unit): ClientCombatModel {
 	private val combatSession = ClientCombatSession(combatId)

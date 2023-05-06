@@ -3,8 +3,8 @@ package de.lehrbaum.initiativetracker.ui.model.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import de.lehrbaum.initiativetracker.bl.CombatLink
-import de.lehrbaum.initiativetracker.bl.CombatLinkRepository
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModelImpl
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModelImpl
 import kotlinx.coroutines.flow.map
@@ -19,7 +19,7 @@ class MainModelImpl: MainModel {
 		DrawerItem.Characters
 	)
 
-	override val drawerItems = CombatLinkRepository.combatLinks.map {  combatLinks ->
+	override val drawerItems = CombatLinkRepository.combatLinks.map { combatLinks ->
 		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it.combatId, it.isHost) }
 	}
 

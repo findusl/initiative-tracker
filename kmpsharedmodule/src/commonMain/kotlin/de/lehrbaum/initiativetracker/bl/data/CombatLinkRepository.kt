@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.bl
+package de.lehrbaum.initiativetracker.bl.data
 
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.serialization.decodeValue
@@ -14,7 +14,7 @@ private const val SETTINGS_NAME = "combatlink"
 @Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
 object CombatLinkRepository {
-	private val settings = SettingsFactory().create(SETTINGS_NAME)
+	private val settings = createSettingsFactory().create(SETTINGS_NAME)
 	private val serializer = ListSerializer(CombatLink.serializer())
 	val combatLinks = MutableStateFlow(loadCombatLinks())
 
