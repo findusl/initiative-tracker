@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.model.edit
 
 import androidx.compose.runtime.mutableStateOf
-import de.lehrbaum.initiativetracker.bl.CombatantModel
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 
 class EditCombatantModelImpl(

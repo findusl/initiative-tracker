@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.bl
 
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.CombatDTO
 import de.lehrbaum.initiativetracker.dtos.CombatantDTO
 

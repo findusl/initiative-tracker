@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand

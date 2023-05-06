@@ -14,7 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
-import de.lehrbaum.initiativetracker.bl.CombatantModel
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModel
 import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel

@@ -2,6 +2,7 @@ package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatState.*
+import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.commands.JoinSessionResponse
 import de.lehrbaum.initiativetracker.commands.ServerToClientCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
