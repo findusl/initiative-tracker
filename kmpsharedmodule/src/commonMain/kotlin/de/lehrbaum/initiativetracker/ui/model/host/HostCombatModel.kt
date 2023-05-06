@@ -7,10 +7,12 @@ import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.coroutines.CoroutineContext
 
 @Stable
-interface HostCombatModel {
+interface HostCombatModel: CoroutineScope {
     val editCombatantModel: State<EditCombatantModel?>
     val combatants: StateFlow<List<CombatantViewModel>>
     val assignDamageCombatant: MutableState<CombatantViewModel?>
