@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
-import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
 import kotlinx.coroutines.flow.Flow
 
@@ -23,8 +22,7 @@ interface HostCombatModel {
 
     fun onCombatantPressed(combatantViewModel: CombatantViewModel)
     fun onCombatantLongPressed(combatant: CombatantViewModel)
-    fun onCombatantSwipedToEnd(combatantViewModel: CombatantViewModel): SwipeResponse
-    fun onCombatantSwipedToStart(combatantViewModel: CombatantViewModel): SwipeResponse
+	fun deleteCombatant(combatantViewModel: CombatantViewModel)
     fun onDamageDialogSubmit(damage: Int)
     fun onAddNewPressed()
     fun nextCombatant()

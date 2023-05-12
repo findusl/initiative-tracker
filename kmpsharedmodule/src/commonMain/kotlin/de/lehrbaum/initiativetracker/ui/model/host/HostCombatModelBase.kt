@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.ui.model.host
 
-import androidx.compose.material.SnackbarDuration.Long
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +7,6 @@ import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
-import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModelImpl
 import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
@@ -48,17 +46,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 		editCombatant(combatant)
 	}
 
-	override fun onCombatantSwipedToEnd(combatantViewModel: CombatantViewModel): SwipeResponse {
-		snackbarState.value = SnackbarState.Text("Slide not yet implemented", Long)
-		return SwipeResponse.SLIDE_BACK
-	}
-
-	override fun onCombatantSwipedToStart(combatantViewModel: CombatantViewModel): SwipeResponse {
-		deleteCombatant(combatantViewModel)
-		return SwipeResponse.SLIDE_OUT
-	}
-
-	private fun deleteCombatant(combatantViewModel: CombatantViewModel) {
+	override fun deleteCombatant(combatantViewModel: CombatantViewModel) {
 		mostRecentDeleted = combatController.deleteCombatant(combatantViewModel.id)
 		// TODO show dialog with undo option
 	}
