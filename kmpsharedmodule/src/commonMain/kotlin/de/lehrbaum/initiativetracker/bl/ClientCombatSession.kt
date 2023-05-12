@@ -27,7 +27,7 @@ class ClientCombatSession(val sessionId: Int) {
 		emit(Connecting)
 		try {
 			GlobalInstances.httpClient.buildConfigWebsocket {
-				if (initiateClient(this@flow)) {
+				if (joinSessionAsClient(this@flow)) {
 					handleUpdates(this@flow)
 				}
 			}
@@ -39,7 +39,7 @@ class ClientCombatSession(val sessionId: Int) {
 		.distinctUntilChanged()
 		.flowOn(Dispatchers.IO)
 
-	private suspend fun DefaultClientWebSocketSession.initiateClient(collector: FlowCollector<ClientCombatState>): Boolean {
+	private suspend fun DefaultClientWebSocketSession.joinSessionAsClient(collector: FlowCollector<ClientCombatState>): Boolean {
 		val joinSessionRequest = StartCommand.JoinSession(sessionId) as StartCommand
 		sendSerialized(joinSessionRequest)
 		val response = receiveDeserialized<JoinSessionResponse>()
