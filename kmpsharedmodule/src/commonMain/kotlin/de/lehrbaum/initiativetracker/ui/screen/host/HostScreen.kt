@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
@@ -47,6 +48,7 @@ import io.github.aakira.napier.Napier
 @Composable
 fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
     val scaffoldState = rememberScaffoldState()
+	val connectionState = hostCombatModel.hostConnectionState.collectAsState(HostConnectionState.Connecting).value
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { TopBar(drawerState, hostCombatModel) },
@@ -58,25 +60,33 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
             )
         }
     ) {
-        CombatantList(
-            hostCombatModel.combatants.collectAsState().value,
-            hostCombatModel::onCombatantPressed,
-            hostCombatModel::onCombatantLongPressed,
-            hostCombatModel::onAddNewPressed,
-            hostCombatModel::onCombatantSwipedToEnd,
-            hostCombatModel::onCombatantSwipedToStart,
-        )
+		when(connectionState) {
+			HostConnectionState.Connected -> {
+				CombatantList(
+					hostCombatModel.combatants.collectAsState(emptyList()).value,
+					hostCombatModel::onCombatantPressed,
+					hostCombatModel::onCombatantLongPressed,
+					hostCombatModel::onAddNewPressed,
+					hostCombatModel::onCombatantSwipedToEnd,
+					hostCombatModel::onCombatantSwipedToStart,
+				)
+			}
+			HostConnectionState.Connecting -> Text("Connecting")
+			is HostConnectionState.Disconnected -> Text("Disconnected! Reason: ${connectionState.reason}")
+		}
     }
 
-    hostCombatModel.assignDamageCombatant.value?.let {
-        DamageCombatantDialog(hostCombatModel::onDamageDialogSubmit) {
-            hostCombatModel.assignDamageCombatant.value = null
-        }
-    }
+	if (connectionState == HostConnectionState.Connected) {
+		hostCombatModel.assignDamageCombatant.value?.let {
+			DamageCombatantDialog(hostCombatModel::onDamageDialogSubmit) {
+				hostCombatModel.assignDamageCombatant.value = null
+			}
+		}
 
-    hostCombatModel.editCombatantModel.value?.let {
-        HostEditCombatantDialog(it)
-    }
+		hostCombatModel.editCombatantModel.value?.let {
+			HostEditCombatantDialog(it)
+		}
+	}
 }
 
 @Composable
@@ -224,7 +234,13 @@ private fun TopBar(
     var displayDropdown by remember { mutableStateOf(false) }
 
     TopAppBar(
-        title = { Text("Host new combat", color = MaterialTheme.colors.onPrimary) },
+        title = {
+			if (hostCombatModel.isSharing) {
+				Text("Session ${hostCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			} else {
+				Text("Host new combat", color = MaterialTheme.colors.onPrimary)
+			}
+		},
         navigationIcon = {
             BurgerMenuButtonForDrawer(drawerState)
         },
@@ -235,8 +251,8 @@ private fun TopBar(
                 }
             }
             if (hostCombatModel.isSharing) {
-                IconButton(onClick = hostCombatModel::onStopShareClicked) {
-                    Icon(Icons.Default.Close, contentDescription = "Stop Sharing")
+                IconButton(onClick = hostCombatModel::closeSession) {
+                    Icon(Icons.Default.Close, contentDescription = "Close Session")
                 }
             } else {
                 IconButton(onClick = hostCombatModel::onShareClicked) {
