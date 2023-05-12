@@ -4,9 +4,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import kotlinx.coroutines.launch
 
@@ -15,6 +13,7 @@ fun SnackbarHostState.showSnackbar(stateHolder: MutableState<SnackbarState?>) {
     val coroutineScope = rememberCoroutineScope()
     val state = stateHolder.value
     if (state != null) {
+		stateHolder.value = null // ensures this is not called again with the same value
         coroutineScope.launch {
             val label = when (state) {
                 is SnackbarState.Copyable -> "Copy"
@@ -34,7 +33,6 @@ fun SnackbarHostState.showSnackbar(stateHolder: MutableState<SnackbarState?>) {
                 }
             }
         }
-        stateHolder.value = null // ensures this is not called again with the same value
     }
 }
 

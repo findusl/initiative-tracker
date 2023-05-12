@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(mainModel: MainModel) {
 	val scaffoldState = rememberScaffoldState()
-	val sharedCoroutineScope = rememberCoroutineScope() // TODO use this coroutinescope to fetch data shared across views
 	val drawerItems by mainModel.drawerItems.collectAsState(emptyList())
 	// Theoretically can reduce this to modal drawer
 	Scaffold(

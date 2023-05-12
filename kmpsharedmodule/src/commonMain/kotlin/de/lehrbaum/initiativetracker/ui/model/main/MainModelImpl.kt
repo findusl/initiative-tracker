@@ -6,7 +6,8 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModelImpl
-import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModelImpl
+import de.lehrbaum.initiativetracker.ui.model.host.HostLocalCombatModelImpl
+import de.lehrbaum.initiativetracker.ui.model.host.HostSharedCombatModelImpl
 import kotlinx.coroutines.flow.map
 
 class MainModelImpl: MainModel {
@@ -36,7 +37,7 @@ class MainModelImpl: MainModel {
             is DrawerItem.HostExistingCombat -> joinCombat(asHost = true)
             is DrawerItem.JoinCombat -> joinCombat(asHost = false)
             is DrawerItem.RememberedCombat -> {
-				if(item.isHost) TODO() else clientCombat(item.id)
+				if(item.isHost) hostCombat(item.id) else clientCombat(item.id)
 			}
         }
 		if (newContent != null) {
@@ -46,7 +47,7 @@ class MainModelImpl: MainModel {
     }
 
     private fun hostNewCombat(): ContentState.HostCombat {
-        return ContentState.HostCombat(HostCombatModelImpl())
+        return ContentState.HostCombat(HostLocalCombatModelImpl())
     }
 
 	private fun clientCombat(sessionId: Int): ContentState.ClientCombat {
@@ -54,6 +55,10 @@ class MainModelImpl: MainModel {
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
 		return ContentState.ClientCombat(model)
+	}
+
+	private fun hostCombat(sessionId: Int): ContentState.HostCombat {
+		return ContentState.HostCombat(HostSharedCombatModelImpl(sessionId))
 	}
 
 	private fun joinCombat(asHost: Boolean): ContentState.JoinCombat {
