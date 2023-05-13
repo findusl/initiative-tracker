@@ -21,7 +21,7 @@ class MainModelImpl: MainModel {
 	)
 
 	override val drawerItems = CombatLinkRepository.combatLinks.map { combatLinks ->
-		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it.combatId, it.isHost) }
+		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it.sessionId, it.isHost) }
 	}
 
 	/** Keep a default hostCombatState to return to */
@@ -47,7 +47,10 @@ class MainModelImpl: MainModel {
     }
 
     private fun hostNewCombat(): ContentState.HostCombat {
-        return ContentState.HostCombat(HostLocalCombatModelImpl())
+		val hostCombatModel = HostLocalCombatModelImpl {
+			switchToCombat(it, asHost = true)
+		}
+        return ContentState.HostCombat(hostCombatModel)
     }
 
 	private fun clientCombat(sessionId: Int): ContentState.ClientCombat {
@@ -58,16 +61,21 @@ class MainModelImpl: MainModel {
 	}
 
 	private fun hostCombat(sessionId: Int): ContentState.HostCombat {
-		return ContentState.HostCombat(HostSharedCombatModelImpl(sessionId))
+		val hostCombatModel = HostSharedCombatModelImpl(sessionId){
+			onDrawerItemSelected(DrawerItem.HostCombat)
+		}
+		return ContentState.HostCombat(hostCombatModel)
 	}
 
 	private fun joinCombat(asHost: Boolean): ContentState.JoinCombat {
 		return ContentState.JoinCombat(
-			onJoin = { joinCombat(it, asHost) },
-			onCancel = { onDrawerItemSelected(DrawerItem.HostCombat) })
+			onJoin = { switchToCombat(it, asHost) },
+			onCancel = { onDrawerItemSelected(DrawerItem.HostCombat) },
+			asHost
+		)
 	}
 
-	private fun joinCombat(sessionId: Int, asHost: Boolean) {
+	private fun switchToCombat(sessionId: Int, asHost: Boolean) {
 		CombatLinkRepository.addCombatLink(CombatLink(sessionId, asHost))
 		// At this point the item might not yet be visible in the drawer, but that should not matter
 		onDrawerItemSelected(DrawerItem.RememberedCombat(sessionId, asHost))
