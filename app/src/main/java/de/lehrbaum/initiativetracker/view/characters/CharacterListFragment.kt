@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 
-@AndroidEntryPoint
 class CharacterListFragment : Fragment(), CharacterListViewModelImpl.Delegate {
 
 	private val characterListViewModel by viewModels<CharacterListViewModelImpl>()

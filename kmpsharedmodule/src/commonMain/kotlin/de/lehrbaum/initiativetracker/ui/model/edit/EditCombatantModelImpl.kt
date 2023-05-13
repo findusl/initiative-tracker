@@ -4,19 +4,19 @@ import androidx.compose.runtime.mutableStateOf
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 
-class EditCombatantModelImpl(
-    CombatantViewModel: CombatantViewModel,
-    private val onSave: (CombatantModel) -> Unit,
-    private val onCancel: () -> Unit,
+data class EditCombatantModelImpl(
+	private val combatantViewModel: CombatantViewModel,
+	private val onSave: (CombatantModel) -> Unit,
+	private val onCancel: () -> Unit,
 ) : EditCombatantModel {
-    private val id = CombatantViewModel.id
-    override val name = mutableStateOf(CombatantViewModel.name)
+    private val id = combatantViewModel.id
+    override val name = mutableStateOf(combatantViewModel.name)
     override val nameError = mutableStateOf(false)
-    override val initiativeString = mutableStateOf(CombatantViewModel.initiativeString)
+    override val initiativeString = mutableStateOf(combatantViewModel.initiativeString)
     override val initiativeError = mutableStateOf(false)
-    override val maxHpString = mutableStateOf(CombatantViewModel.maxHp.toString())
+    override val maxHpString = mutableStateOf(combatantViewModel.maxHp.toString())
     override val maxHpError = mutableStateOf(false)
-    override val currentHpString = mutableStateOf(CombatantViewModel.currentHp.toString())
+    override val currentHpString = mutableStateOf(combatantViewModel.currentHp.toString())
     override val currentHpError = mutableStateOf(false)
 
     override fun onSavePressed() {

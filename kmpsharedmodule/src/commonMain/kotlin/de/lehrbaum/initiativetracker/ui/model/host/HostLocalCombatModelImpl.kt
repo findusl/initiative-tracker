@@ -4,7 +4,7 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import kotlinx.coroutines.flow.flowOf
 
-class HostLocalCombatModelImpl(private val navigateToSharedCombat: (Int) -> Unit): HostCombatModelBase() {
+data class HostLocalCombatModelImpl(private val navigateToSharedCombat: (Int) -> Unit): HostCombatModelBase() {
 	override val hostConnectionState = flowOf(HostConnectionState.Connected)
 	override val isSharing = false
 	override val sessionId = -1

@@ -108,6 +108,7 @@ dependencies {
 	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 	implementation("androidx.compose.material:material:${Version.Android.compose}")
 	implementation("androidx.compose.ui:ui-tooling-preview:${Version.Android.compose}")
+	implementation("androidx.activity:activity-compose:${Version.Android.compose}")
 	debugImplementation("androidx.compose.ui:ui-tooling:${Version.Android.compose}")
 
 	testImplementation("junit:junit:4.13.2")
