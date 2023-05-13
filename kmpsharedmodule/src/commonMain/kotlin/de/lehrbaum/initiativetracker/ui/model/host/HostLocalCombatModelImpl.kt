@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.flowOf
 class HostLocalCombatModelImpl: HostCombatModelBase() {
 	override val hostConnectionState = flowOf(HostConnectionState.Connected)
 	override val isSharing = false
-	override val sessionId = -1
+	override val combatId = -1
 
 	override fun onShareClicked() {
 		TODO("Not yet implemented")

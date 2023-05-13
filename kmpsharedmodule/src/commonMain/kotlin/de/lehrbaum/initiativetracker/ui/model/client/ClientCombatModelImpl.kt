@@ -1,13 +1,26 @@
 package de.lehrbaum.initiativetracker.ui.model.client
 
+import androidx.compose.runtime.mutableStateOf
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 
 class ClientCombatModelImpl(override val combatId: Int, private val leaveScreen: () -> Unit): ClientCombatModel {
 	private val combatSession = ClientCombatSession(combatId)
 
 	override val combatState = combatSession.state
+
+	override val snackbarState = mutableStateOf<SnackbarState?>(null)
+
+	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
+		snackbarState.value = SnackbarState.Text("Combat press not implemented")
+	}
+
+	override fun onCombatantLongClicked(combatant: CombatantViewModel) {
+		snackbarState.value = SnackbarState.Text("Combat long press not implemented")
+	}
 
 	override fun leaveCombat() {
 		CombatLinkRepository.removeCombatLink(CombatLink(combatId, isHost = false))
