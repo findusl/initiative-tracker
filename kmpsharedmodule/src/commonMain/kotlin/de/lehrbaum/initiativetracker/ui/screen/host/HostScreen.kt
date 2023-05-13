@@ -13,6 +13,7 @@ import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
 import de.lehrbaum.initiativetracker.ui.screen.components.*
 import de.lehrbaum.initiativetracker.ui.screen.edit.HostEditCombatantDialog
+import kotlinx.coroutines.launch
 
 @Composable
 @ExperimentalMaterialApi
@@ -89,10 +90,12 @@ private fun TopBar(
 ) {
 	var displayDropdown by remember { mutableStateOf(false) }
 
+	val coroutineScope = rememberCoroutineScope()
+
 	TopAppBar(
 		title = {
 			if (hostCombatModel.isSharing) {
-				Text("Session ${hostCombatModel.combatId}", color = MaterialTheme.colors.onPrimary)
+				Text("Session ${hostCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 			} else {
 				Text("Host new combat", color = MaterialTheme.colors.onPrimary)
 			}
@@ -107,11 +110,19 @@ private fun TopBar(
 				}
 			}
 			if (hostCombatModel.isSharing) {
-				IconButton(onClick = hostCombatModel::closeSession) {
+				IconButton(onClick = {
+					coroutineScope.launch {
+						hostCombatModel.closeSession()
+					}
+				}) {
 					Icon(Icons.Default.Close, contentDescription = "Close Session")
 				}
 			} else {
-				IconButton(onClick = hostCombatModel::onShareClicked) {
+				IconButton(onClick = {
+					coroutineScope.launch {
+						hostCombatModel.onShareClicked()
+					}
+				}) {
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
 				}
 			}

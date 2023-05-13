@@ -38,7 +38,7 @@ sealed interface DrawerItem {
 sealed interface ContentState {
 	object Empty: ContentState
 	data class HostCombat(val hostCombatModel: HostCombatModel): ContentState
-	data class JoinCombat(val onJoin: (Int) -> Unit, val onCancel: () -> Unit): ContentState
+	data class JoinCombat(val onJoin: (Int) -> Unit, val onCancel: () -> Unit, val asHost: Boolean): ContentState
 	data class ClientCombat(val clientCombatModel: ClientCombatModel): ContentState
 	data class CharacterScreen(val tbd: Int) : ContentState
 }

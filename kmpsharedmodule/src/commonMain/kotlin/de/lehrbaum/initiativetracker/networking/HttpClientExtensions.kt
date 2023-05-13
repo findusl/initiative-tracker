@@ -21,22 +21,14 @@ import kotlinx.coroutines.cancel
  */
 suspend inline fun <R> HttpClient.buildConfigWebsocket(
     method: HttpMethod = HttpMethod.Get,
-    host: String = BuildKonfig.backendHost,
-    port: Int? = BuildKonfig.backendPort,
-    path: String? = "/session",
+    path: String = SESSION_PATH,
     request: HttpRequestBuilder.() -> Unit = {},
     crossinline block: suspend DefaultClientWebSocketSession.() -> R
 ): R {
-    val schema = when (BuildKonfig.environment) {
-        "lan" -> "ws"
-        "remote" -> "wss"
-        else -> throw UnsupportedOperationException("Unsupported build environment ${BuildKonfig.environment}")
-    }
-
     plugin(WebSockets)
     val session = prepareRequest {
         this.method = method
-        url(schema, host, port, path)
+		websocketUrl(path)
         request()
     }
 
@@ -48,4 +40,24 @@ suspend inline fun <R> HttpClient.buildConfigWebsocket(
             it.cancel("Websocket closed")
         }
     }
+}
+
+const val SESSION_PATH = "/session"
+
+fun HttpRequestBuilder.websocketUrl(path: String) {
+	val scheme = when (BuildKonfig.environment) {
+		"lan" -> "ws"
+		"remote" -> "wss"
+		else -> throw UnsupportedOperationException("Unsupported build environment ${BuildKonfig.environment}")
+	}
+	url(scheme, BuildKonfig.backendHost, BuildKonfig.backendPort, path)
+}
+
+fun HttpRequestBuilder.httpUrl(path: String) {
+	val scheme = when (BuildKonfig.environment) {
+		"lan" -> "http"
+		"remote" -> "https"
+		else -> throw UnsupportedOperationException("Unsupported build environment ${BuildKonfig.environment}")
+	}
+	url(scheme, BuildKonfig.backendHost, BuildKonfig.backendPort, path)
 }
