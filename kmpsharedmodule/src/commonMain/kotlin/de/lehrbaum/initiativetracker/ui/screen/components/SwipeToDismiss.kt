@@ -106,6 +106,7 @@ private fun SwipeToDismissBackground(
 	Box(
 		Modifier
 			.fillMaxSize()
+			// Could use drawBehind here to optimize https://stackoverflow.com/questions/74361197/jetpack-compose-avoid-unnecessary-recomposition
 			.background(color)
 			.padding(horizontal = 20.dp),
 		contentAlignment = alignment
