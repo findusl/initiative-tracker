@@ -17,37 +17,3 @@ import kotlinx.coroutines.flow.flowOn
 
 private const val TAG = "RemoteCombatController"
 
-class RemoteCombatController(private val sessionId: Int) {
-
-	val remoteCombat = flow {
-		GlobalInstances.httpClient.buildConfigWebsocket {
-			initiateClient()
-			handleUpdates()
-		}
-		Napier.i("Finished Websocket in remote combat", tag = TAG)
-	}
-		.flowOn(Dispatchers.IO)
-
-	context(FlowCollector<CombatDTO>, DefaultClientWebSocketSession)
-	private suspend fun initiateClient() {
-		val joinSessionRequest = StartCommand.JoinSession(sessionId) as StartCommand
-		sendSerialized(joinSessionRequest)
-		val response = receiveDeserialized<JoinSessionResponse>()
-		when (response) {
-			is JoinSessionResponse.JoinedSession -> emit(response.combatDTO)
-			JoinSessionResponse.SessionNotFound -> throw NotFoundException("Could not find session $sessionId")
-		}
-	}
-
-	context(FlowCollector<CombatDTO>, DefaultClientWebSocketSession)
-	private suspend fun handleUpdates() {
-		while (true) {
-			val message = receiveDeserialized<ServerToClientCommand>()
-
-			when (message) {
-				is ServerToClientCommand.CombatUpdatedCommand -> emit(message.combat)
-				ServerToClientCommand.CombatEnded -> return
-			}
-		}
-	}
-}
