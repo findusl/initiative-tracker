@@ -18,10 +18,10 @@ interface HostCombatModel {
     val snackbarState: MutableState<SnackbarState?>
     val combatStarted: Boolean
     val isSharing: Boolean
-	val sessionId: Int
+	val combatId: Int
 
-    fun onCombatantPressed(combatantViewModel: CombatantViewModel)
-    fun onCombatantLongPressed(combatant: CombatantViewModel)
+    fun onCombatantClicked(combatantViewModel: CombatantViewModel)
+    fun onCombatantLongClicked(combatant: CombatantViewModel)
 	fun deleteCombatant(combatantViewModel: CombatantViewModel)
     fun onDamageDialogSubmit(damage: Int)
     fun onAddNewPressed()

@@ -34,7 +34,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 
 	private var mostRecentDeleted: CombatantModel? = null
 
-	override fun onCombatantPressed(combatantViewModel: CombatantViewModel) {
+	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
 		if (combatStarted) {
 			damageCombatant(combatantViewModel)
 		} else {
@@ -42,7 +42,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 		}
 	}
 
-	override fun onCombatantLongPressed(combatant: CombatantViewModel) {
+	override fun onCombatantLongClicked(combatant: CombatantViewModel) {
 		editCombatant(combatant)
 	}
 

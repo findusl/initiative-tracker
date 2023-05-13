@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.screen.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,8 +14,8 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.model.main.ContentState
 import de.lehrbaum.initiativetracker.ui.model.main.DrawerItem
 import de.lehrbaum.initiativetracker.ui.model.main.MainModel
-import de.lehrbaum.initiativetracker.ui.screen.ClientScreen
 import de.lehrbaum.initiativetracker.ui.screen.Constants
+import de.lehrbaum.initiativetracker.ui.screen.client.ClientScreen
 import de.lehrbaum.initiativetracker.ui.screen.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.screen.join.JoinScreen
 import kotlinx.coroutines.launch
@@ -66,6 +67,7 @@ private fun Drawer(
 }
 
 @Composable
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
 	when(contentState) {
 		is ContentState.Empty -> Text("Choose something in the menu.")

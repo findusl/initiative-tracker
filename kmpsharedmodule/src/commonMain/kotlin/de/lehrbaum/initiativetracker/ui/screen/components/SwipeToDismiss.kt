@@ -4,7 +4,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -21,16 +20,30 @@ import io.github.aakira.napier.Napier
 
 @Composable
 @ExperimentalMaterialApi
-fun SwipeToDismiss(
-	dismissToEndAction: SwipeToDismissAction?,
-	dismissToStartAction: SwipeToDismissAction?,
-	content: @Composable RowScope.() -> Unit
+fun <E> SwipeToDismiss(
+	dismissToEndAction: SwipeToDismissAction<E>? = null,
+	dismissToStartAction: SwipeToDismissAction<E>? = null,
+	element: E,
+	content: @Composable () -> Unit
 ) {
+	if (dismissToEndAction == null && dismissToStartAction == null) {
+		// fast path
+		content()
+		return
+	}
 
-	val dismissState = handleDismissState(
-		dismissedToEnd = { dismissToEndAction?.action?.invoke() ?: SwipeResponse.SLIDE_BACK },
-		dismissedToStart = { dismissToStartAction?.action?.invoke() ?: SwipeResponse.SLIDE_BACK }
-	)
+	val dismissState = rememberDismissState {
+		when (it) {
+			DismissValue.DismissedToEnd -> dismissToEndAction?.action?.invoke(element)
+
+			DismissValue.DismissedToStart -> dismissToStartAction?.action?.invoke(element)
+
+			else -> {
+				Napier.w { "Dismissed to unknown state $it" }
+				null
+			}
+		}?.dismissResponse ?: false
+	}
 
 	val directions = setOfNotNull(
 		dismissToEndAction?.let { DismissDirection.StartToEnd },
@@ -42,46 +55,22 @@ fun SwipeToDismiss(
 		directions = directions,
 		dismissThresholds = { FractionalThreshold(0.3f) },
 		background = { SwipeToDismissBackground(dismissToEndAction, dismissToStartAction, dismissState) },
-		dismissContent = content
+		dismissContent = { content() }
 	)
 }
 
-data class SwipeToDismissAction(
+data class SwipeToDismissAction<E>(
 	val color: Color,
 	val icon: ImageVector,
 	val contentDescription: String,
-	val action: () -> SwipeResponse
+	val action: (element: E) -> SwipeResponse
 )
 
 @Composable
 @ExperimentalMaterialApi
-private fun handleDismissState(
-	dismissedToEnd: () -> SwipeResponse,
-	dismissedToStart: () -> SwipeResponse,
-): DismissState {
-	return rememberDismissState(
-		confirmStateChange = {
-			when (it) {
-				DismissValue.DismissedToEnd -> {
-					dismissedToEnd().dismissResponse
-				}
-				DismissValue.DismissedToStart -> {
-					dismissedToStart().dismissResponse
-				}
-				else -> {
-					Napier.w { "Dismissed to unknown state $it" }
-					false
-				}
-			}
-		}
-	)
-}
-
-@Composable
-@ExperimentalMaterialApi
 private fun SwipeToDismissBackground(
-	dismissToEndAction: SwipeToDismissAction?,
-	dismissToStartAction: SwipeToDismissAction?,
+	dismissToEndAction: SwipeToDismissAction<*>?,
+	dismissToStartAction: SwipeToDismissAction<*>?,
 	dismissState: DismissState
 ) {
 	val direction = dismissState.dismissDirection ?: return
