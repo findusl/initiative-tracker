@@ -9,7 +9,7 @@ import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SnackbarHostState.showSnackbar(stateHolder: MutableState<SnackbarState?>) {
+fun SnackbarHostState.bindSnackbarState(stateHolder: MutableState<SnackbarState?>) {
     val coroutineScope = rememberCoroutineScope()
     val state = stateHolder.value
     if (state != null) {
