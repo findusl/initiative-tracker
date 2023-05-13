@@ -18,7 +18,7 @@ interface HostCombatModel {
     val snackbarState: MutableState<SnackbarState?>
     val combatStarted: Boolean
     val isSharing: Boolean
-	val combatId: Int
+	val sessionId: Int
 
     fun onCombatantClicked(combatantViewModel: CombatantViewModel)
     fun onCombatantLongClicked(combatant: CombatantViewModel)
@@ -29,7 +29,7 @@ interface HostCombatModel {
     fun previousCombatant()
     fun undoDelete()
     fun startCombat()
-    fun onShareClicked()
-	fun closeSession()
+    suspend fun onShareClicked()
+	suspend fun closeSession()
 	fun showSessionId()
 }

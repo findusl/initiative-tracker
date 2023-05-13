@@ -6,7 +6,7 @@ import com.russhwolf.settings.serialization.encodeValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.SetSerializer
 
 private const val SETTINGS_KEY = "links"
 private const val SETTINGS_NAME = "combatlink"
@@ -15,7 +15,7 @@ private const val SETTINGS_NAME = "combatlink"
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
 object CombatLinkRepository {
 	private val settings = createSettingsFactory().create(SETTINGS_NAME)
-	private val serializer = ListSerializer(CombatLink.serializer())
+	private val serializer = SetSerializer(CombatLink.serializer())
 	val combatLinks = MutableStateFlow(loadCombatLinks())
 
 	fun addCombatLink(combatLink: CombatLink) {
@@ -37,11 +37,11 @@ object CombatLinkRepository {
 	}
 
 	private fun loadCombatLinks() =
-		settings.decodeValue(serializer, SETTINGS_KEY, emptyList())
+		settings.decodeValue(serializer, SETTINGS_KEY, emptySet())
 }
 
 @Serializable
 data class CombatLink(
-	val combatId: Int,
-	val isHost: Boolean
+    val sessionId: Int,
+    val isHost: Boolean
 )

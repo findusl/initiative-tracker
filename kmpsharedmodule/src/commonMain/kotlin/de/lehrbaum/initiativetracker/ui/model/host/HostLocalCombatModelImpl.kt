@@ -1,18 +1,21 @@
 package de.lehrbaum.initiativetracker.ui.model.host
 
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import kotlinx.coroutines.flow.flowOf
 
-class HostLocalCombatModelImpl: HostCombatModelBase() {
+class HostLocalCombatModelImpl(private val navigateToSharedCombat: (Int) -> Unit): HostCombatModelBase() {
 	override val hostConnectionState = flowOf(HostConnectionState.Connected)
 	override val isSharing = false
-	override val combatId = -1
+	override val sessionId = -1
 
-	override fun onShareClicked() {
-		TODO("Not yet implemented")
+	override suspend fun onShareClicked() {
+		val sessionId = GlobalInstances.backendApi
+			.createSession(combatController.combatants.value, combatController.activeCombatantIndex.value)
+		navigateToSharedCombat(sessionId)
 	}
 
-	override fun closeSession() {
+	override suspend fun closeSession() {
 		throw IllegalStateException("It should not be possible")
 	}
 

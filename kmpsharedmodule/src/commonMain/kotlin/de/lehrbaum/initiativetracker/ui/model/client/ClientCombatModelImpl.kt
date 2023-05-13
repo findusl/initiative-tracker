@@ -7,8 +7,8 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 
-class ClientCombatModelImpl(override val combatId: Int, private val leaveScreen: () -> Unit): ClientCombatModel {
-	private val combatSession = ClientCombatSession(combatId)
+class ClientCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit): ClientCombatModel {
+	private val combatSession = ClientCombatSession(sessionId)
 
 	override val combatState = combatSession.state
 
@@ -23,7 +23,7 @@ class ClientCombatModelImpl(override val combatId: Int, private val leaveScreen:
 	}
 
 	override fun leaveCombat() {
-		CombatLinkRepository.removeCombatLink(CombatLink(combatId, isHost = false))
+		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = false))
 		leaveScreen()
 		// theoretically by leaving the screen it should remove the flow from the Composition
 		// thereby cancelling the collection which in turn should cancel the Websocket connection

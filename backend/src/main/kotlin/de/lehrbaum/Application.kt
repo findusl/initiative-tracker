@@ -3,10 +3,13 @@ package de.lehrbaum
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
+import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
@@ -22,9 +25,18 @@ fun Application.main() {
 	configureRouting()
 }
 
+private const val BASE_PATH = "/session"
+internal const val SESSION_ID_PARAMETER = "sessionId"
+
 private fun Application.configureRouting() {
 	routing {
-		webSocket("/session") {
+		post(BASE_PATH) {
+			call.handlePostRequest()
+		}
+		delete("$BASE_PATH/{$SESSION_ID_PARAMETER}") {
+			call.handleDeleteRequest()
+		}
+		webSocket(BASE_PATH) {
 			handleWebsocketRequests()
 		}
 	}

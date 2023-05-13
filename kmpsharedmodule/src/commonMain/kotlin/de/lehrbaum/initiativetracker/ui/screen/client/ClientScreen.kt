@@ -64,7 +64,7 @@ private fun TopBar(
 ) {
 	TopAppBar(
 		title = {
-			Text("Combat ${clientCombatModel.combatId}", color = MaterialTheme.colors.onPrimary)
+			Text("Combat ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {

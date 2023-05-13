@@ -10,11 +10,14 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.screen.components.BurgerMenuButtonForDrawer
 
 @Composable
-fun JoinScreen(drawerState: DrawerState, onJoin: (Int) -> Unit, onCancel: () -> Unit) {
+fun JoinScreen(drawerState: DrawerState, onJoin: (Int) -> Unit, onCancel: () -> Unit, asHost: Boolean) {
 	Scaffold(
 		topBar = {
 			TopAppBar(
-				title = { Text("Join existing combat", color = MaterialTheme.colors.onPrimary) },
+				title = {
+					val text = if(asHost) "Host existing combat" else "Join existing combat"
+					Text(text, color = MaterialTheme.colors.onPrimary)
+				},
 				navigationIcon = { BurgerMenuButtonForDrawer(drawerState) }
 			)
 		}

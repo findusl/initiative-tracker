@@ -1,27 +1,32 @@
 package de.lehrbaum.initiativetracker.ui.model.host
 
 import androidx.compose.material.SnackbarDuration
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.HostCombatSession
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import kotlinx.coroutines.flow.Flow
 
-class HostSharedCombatModelImpl(override val combatId: Int) : HostCombatModelBase() {
-	private val hostCombatSession = HostCombatSession(combatId, combatController)
+class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModelBase() {
+	private val hostCombatSession = HostCombatSession(sessionId, combatController)
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = hostCombatSession.hostConnectionState
 	override val isSharing = true
 
-	override fun onShareClicked() {
+	override suspend fun onShareClicked() {
 		throw IllegalStateException("It should not be possible")
 	}
 
-	override fun closeSession() {
-		TODO("Not yet implemented")
-		// Should be some separate command
+	override suspend fun closeSession() {
+		// we are actively still hosting it. Whatever
+		GlobalInstances.backendApi.deleteSession(sessionId)
+		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = true))
+		leaveScreen()
 	}
 
 	override fun showSessionId() {
-		snackbarState.value = SnackbarState.Copyable("SessionId: $combatId", SnackbarDuration.Long, combatId.toString())
+		snackbarState.value = SnackbarState.Copyable("SessionId: $sessionId", SnackbarDuration.Long, sessionId.toString())
 	}
 }

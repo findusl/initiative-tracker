@@ -7,9 +7,8 @@ import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: StartCommand.HostingCommand) {
 	var session: Session? = null
@@ -23,13 +22,14 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 		}
 
 		handleHostCommands(session)
+		// maybe not necessary since it is the same scope, not sure
 		commandForwardingJob.cancel("Websocket closed")
 	} catch (e: Exception) {
 		println("Server websocket failed somehow $e")
 	} finally {
 		session?.let {
 			synchronized(sessions) {
-				sessions[session.id] = session.copy(hasActiveHost = false)
+				sessions[session.id] = session.copy(hostWebsocketSession = null)
 			}
 		}
 	}
@@ -57,7 +57,7 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: StartCommand.HostingCommand): Session? {
 	when (hostingCommand) {
 		is StartCommand.StartHosting -> {
-			val session = createSession(hostingCommand)
+			val session = createSession(hostingCommand.combatDTO, hostWebsocketSession = this)
 			val response = StartCommand.StartHosting.SessionStarted(session.id)
 			sendSerialized(response as StartCommand.StartHosting.Response)
 			return session
@@ -68,33 +68,16 @@ private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: 
 				val localSession = sessions[hostingCommand.sessionId]
 				return@synchronized if (localSession == null) {
 					StartCommand.JoinAsHost.SessionNotFound
-				} else if (localSession.hasActiveHost) {
+				} else if (localSession.hostWebsocketSession?.isActive == true) {
 					StartCommand.JoinAsHost.SessionAlreadyHasHost
 				} else {
 					session = localSession
-					sessions[hostingCommand.sessionId] = localSession.copy(hasActiveHost = true)
+					sessions[hostingCommand.sessionId] = localSession.copy(hostWebsocketSession = this)
 					StartCommand.JoinAsHost.JoinedAsHost(localSession.combatState.value)
 				}
 			}
 			sendSerialized(response)
 			return session
 		}
-	}
-}
-
-private fun DefaultWebSocketServerSession.createSession(startHosting: StartCommand.StartHosting): Session {
-	synchronized(sessions) {
-		val sessionId = getAvailableRandomSessionId()
-		val newSession = Session(sessionId, this, MutableStateFlow(startHosting.combatDTO))
-		sessions[sessionId] = newSession
-		return newSession
-	}
-}
-
-private fun getAvailableRandomSessionId(): Int {
-	while (true) {
-		val sessionId = Random.nextInt(9999)
-		if (!sessions.containsKey(sessionId))
-			return sessionId
 	}
 }

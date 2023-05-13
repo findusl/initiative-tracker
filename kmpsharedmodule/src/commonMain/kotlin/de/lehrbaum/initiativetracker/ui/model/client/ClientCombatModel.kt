@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface ClientCombatModel {
 	val combatState: Flow<ClientCombatState>
 	val snackbarState: MutableState<SnackbarState?>
-	val combatId: Int
+	val sessionId: Int
 
 	fun onCombatantClicked(combatantViewModel: CombatantViewModel)
 	fun onCombatantLongClicked(combatant: CombatantViewModel)
