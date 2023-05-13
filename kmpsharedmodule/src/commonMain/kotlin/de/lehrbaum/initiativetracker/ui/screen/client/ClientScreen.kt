@@ -12,18 +12,19 @@ import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModel
 import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.components.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.screen.components.CombatantList
-import de.lehrbaum.initiativetracker.ui.screen.components.showSnackbar
+import de.lehrbaum.initiativetracker.ui.screen.components.bindSnackbarState
 
 @Composable
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel) {
-	val scaffoldState = rememberScaffoldState()
 	val connectionStateState = clientCombatModel.combatState.collectAsState(ClientCombatState.Connecting)
+	val scaffoldState = rememberScaffoldState()
+	scaffoldState.snackbarHostState.bindSnackbarState(clientCombatModel.snackbarState)
+
 	Scaffold(
 		scaffoldState = scaffoldState,
 		topBar = { TopBar(drawerState, clientCombatModel) },
-		snackbarHost = { it.showSnackbar(clientCombatModel.snackbarState) },
 	) {
 		Content(connectionStateState, clientCombatModel)
 	}

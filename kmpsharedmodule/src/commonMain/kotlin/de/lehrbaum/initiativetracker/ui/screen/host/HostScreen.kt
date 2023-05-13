@@ -19,12 +19,13 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
-	val scaffoldState = rememberScaffoldState()
 	val connectionStateState = hostCombatModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
+	val scaffoldState = rememberScaffoldState()
+	scaffoldState.snackbarHostState.bindSnackbarState(hostCombatModel.snackbarState)
+
 	Scaffold(
 		scaffoldState = scaffoldState,
 		topBar = { TopBar(drawerState, hostCombatModel) },
-		snackbarHost = { it.showSnackbar(hostCombatModel.snackbarState) },
 		floatingActionButton = {
 			NextCombatantButton(
 				hostCombatModel.combatStarted,
@@ -97,7 +98,7 @@ private fun TopBar(
 			if (hostCombatModel.isSharing) {
 				Text("Session ${hostCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 			} else {
-				Text("Host new combat", color = MaterialTheme.colors.onPrimary)
+				Text("New combat", color = MaterialTheme.colors.onPrimary)
 			}
 		},
 		navigationIcon = {
