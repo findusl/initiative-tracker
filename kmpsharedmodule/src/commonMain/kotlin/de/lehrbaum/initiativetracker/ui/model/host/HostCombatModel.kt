@@ -1,7 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.model.host
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
@@ -9,7 +8,7 @@ import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
 import kotlinx.coroutines.flow.Flow
 
-@Stable
+// @Stable For some fucking reason if the whole object is replaced with stable some functions are not recomposed
 interface HostCombatModel {
 	val hostConnectionState: Flow<HostConnectionState>
     val combatants: Flow<List<CombatantViewModel>>
