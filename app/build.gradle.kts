@@ -70,13 +70,13 @@ dependencies {
 	implementation(project(path = ":commands"))
 
 	// For theme. not sure if I actually need it, since I have compose material too
-	implementation("com.google.android.material:material:1.8.0")
+	implementation("com.google.android.material:material:1.9.0")
 
 	// Napier allows us to easily log on Kotlin Multiplatform in the future
 	implementation(Dependency.napier)
 
 	// Compose dependencies
-	implementation("androidx.compose.material:material:${Version.Android.compose}")
+	implementation("androidx.compose.material:material:${Version.Android.composeMaterial}")
 	implementation("androidx.activity:activity-compose:${Version.Android.compose}")
 
 	testImplementation("junit:junit:4.13.2")
