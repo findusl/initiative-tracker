@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.view
+package de.lehrbaum.initiativetracker
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

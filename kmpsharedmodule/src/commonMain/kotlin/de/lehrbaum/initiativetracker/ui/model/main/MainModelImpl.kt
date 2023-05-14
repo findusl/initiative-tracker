@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.ui.model.character.CharacterListModelImpl
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModelImpl
 import de.lehrbaum.initiativetracker.ui.model.host.HostLocalCombatModelImpl
 import de.lehrbaum.initiativetracker.ui.model.host.HostSharedCombatModelImpl
@@ -31,8 +32,8 @@ class MainModelImpl: MainModel {
 
     override fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == activeDrawerItem) return // avoid double click race conditions
-        val newContent: ContentState? = when (item) {
-            is DrawerItem.Characters -> null
+        val newContent: ContentState = when (item) {
+            is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListModelImpl())
             is DrawerItem.HostCombat -> hostCombatState
             is DrawerItem.HostExistingCombat -> joinCombat(asHost = true)
             is DrawerItem.JoinCombat -> joinCombat(asHost = false)
@@ -40,11 +41,9 @@ class MainModelImpl: MainModel {
 				if(item.isHost) hostCombat(item.id) else clientCombat(item.id)
 			}
         }
-		if (newContent != null) {
-			activeDrawerItem = item
-			content = newContent
-		}
-    }
+		activeDrawerItem = item
+		content = newContent
+	}
 
     private fun hostNewCombat(): ContentState.HostCombat {
 		val hostCombatModel = HostLocalCombatModelImpl {

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -16,7 +18,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
+import de.lehrbaum.initiativetracker.ui.model.shared.SwipeResponse
 import io.github.aakira.napier.Napier
 
 @Composable
@@ -57,6 +59,18 @@ fun <E> SwipeToDismiss(
 		dismissThresholds = { FractionalThreshold(0.3f) },
 		background = { SwipeToDismissBackground(dismissToEndAction, dismissToStartAction, dismissState) },
 		dismissContent = { content() }
+	)
+}
+
+fun <E: Any>swipeToDeleteAction(deleteCharacter: (E) -> Unit): SwipeToDismissAction<E> {
+	return SwipeToDismissAction(
+		Color.Red,
+		Icons.Default.Delete,
+		contentDescription = "Delete Element",
+		action = { element ->
+			deleteCharacter(element)
+			SwipeResponse.SLIDE_OUT
+		}
 	)
 }
 

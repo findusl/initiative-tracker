@@ -6,7 +6,7 @@ import de.lehrbaum.initiativetracker.bl.HostCombatSession
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
-import de.lehrbaum.initiativetracker.ui.model.SnackbarState
+import de.lehrbaum.initiativetracker.ui.model.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 
 data class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModelBase() {

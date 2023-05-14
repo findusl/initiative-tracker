@@ -4,8 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.model.SnackbarState
+import de.lehrbaum.initiativetracker.ui.model.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.SnackbarState
 
 data class ClientCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit): ClientCombatModel {
 	private val combatSession = ClientCombatSession(sessionId)

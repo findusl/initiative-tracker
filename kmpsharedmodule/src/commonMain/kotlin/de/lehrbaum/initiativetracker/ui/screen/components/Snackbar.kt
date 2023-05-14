@@ -5,7 +5,7 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
-import de.lehrbaum.initiativetracker.ui.model.SnackbarState
+import de.lehrbaum.initiativetracker.ui.model.shared.SnackbarState
 import kotlinx.coroutines.launch
 
 @Composable
