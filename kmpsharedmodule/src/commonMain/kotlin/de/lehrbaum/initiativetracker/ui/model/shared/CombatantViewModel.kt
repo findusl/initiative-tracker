@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.ui.model
+package de.lehrbaum.initiativetracker.ui.model.shared
 
 import androidx.compose.runtime.Stable
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel

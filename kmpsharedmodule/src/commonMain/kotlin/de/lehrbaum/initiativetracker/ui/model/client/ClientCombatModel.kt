@@ -3,8 +3,8 @@ package de.lehrbaum.initiativetracker.ui.model.client
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.model.SnackbarState
+import de.lehrbaum.initiativetracker.ui.model.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 
 @Stable

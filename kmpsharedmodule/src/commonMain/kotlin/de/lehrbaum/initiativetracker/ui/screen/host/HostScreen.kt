@@ -4,15 +4,15 @@ import FastForward
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.model.SwipeResponse
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
 import de.lehrbaum.initiativetracker.ui.screen.components.*
-import de.lehrbaum.initiativetracker.ui.screen.edit.HostEditCombatantDialog
+import de.lehrbaum.initiativetracker.ui.screen.edit.EditCombatantDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,7 +41,6 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 					hostCombatModel::onCombatantClicked,
 					hostCombatModel::onCombatantLongClicked,
 					hostCombatModel::onAddNewPressed,
-					dismissToEndAction = null,
 					dismissToStartAction = swipeToDeleteAction(hostCombatModel::deleteCombatant)
 				)
 			}
@@ -59,7 +58,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 		}
 
 		hostCombatModel.editCombatantModel.value?.let {
-			HostEditCombatantDialog(it)
+			EditCombatantDialog(it)
 		}
 	}
 }
@@ -72,17 +71,6 @@ private fun NextCombatantButton(combatStarted: Boolean, onClicked: () -> Unit) {
 		}
 	}
 }
-
-private fun swipeToDeleteAction(deleteCombatant: (CombatantViewModel) -> Unit): SwipeToDismissAction<CombatantViewModel> =
-	SwipeToDismissAction(
-		Color.Red,
-		Icons.Default.Delete,
-		contentDescription = "Delete Combatant",
-		action = { combatant ->
-			deleteCombatant(combatant)
-			SwipeResponse.SLIDE_OUT
-		}
-	)
 
 @Composable
 private fun TopBar(

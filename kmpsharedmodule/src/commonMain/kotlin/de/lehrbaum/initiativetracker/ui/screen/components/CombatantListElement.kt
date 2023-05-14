@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants
 
 

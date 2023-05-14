@@ -1,19 +1,15 @@
 package de.lehrbaum.initiativetracker.ui.model.edit
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import de.lehrbaum.initiativetracker.ui.model.shared.EditField
 
 @Stable
 interface EditCombatantModel {
-    val name: MutableState<String>
-    val nameError: MutableState<Boolean>
-    val initiativeString: MutableState<String>
-    val initiativeError: MutableState<Boolean>
-    val maxHpString: MutableState<String>
-    val maxHpError: MutableState<Boolean>
-    val currentHpString: MutableState<String>
-    val currentHpError: MutableState<Boolean>
+	val nameEdit: EditField<String>
+	val initiativeEdit: EditField<Int>
+	val maxHpEdit: EditField<Int>
+	val currentHpEdit: EditField<Int>
 
-    fun onSavePressed()
-    fun onCancelPressed()
+    fun saveCombatant()
+    fun cancel()
 }

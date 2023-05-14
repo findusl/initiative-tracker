@@ -9,7 +9,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModel
-import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.toCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.components.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.screen.components.CombatantList
 import de.lehrbaum.initiativetracker.ui.screen.components.bindSnackbarState
@@ -47,9 +47,6 @@ private fun Content(
 				},
 				clientCombatModel::onCombatantClicked,
 				clientCombatModel::onCombatantLongClicked,
-				onCreateNewClicked = null,
-				dismissToEndAction = null,
-				dismissToStartAction = null,
 			)
 		}
 
