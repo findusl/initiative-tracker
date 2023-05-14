@@ -5,7 +5,6 @@ import java.util.*
 
 buildscript {
 	dependencies {
-		classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Version.navigation}")
 		classpath("com.android.tools.build:gradle:${Version.Android.gradleBuildTools}")
 	}
 }
@@ -15,8 +14,6 @@ plugins {
 	kotlin("android")
 	id("org.jetbrains.kotlin.kapt")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	id("androidx.navigation.safeargs.kotlin") version Version.navigation
-	id("com.google.dagger.hilt.android") version Version.hilt
 }
 
 val properties = Properties()
@@ -72,44 +69,15 @@ dependencies {
 	implementation(project(path = ":kmpsharedmodule"))
 	implementation(project(path = ":commands"))
 
-	implementation("androidx.core:core-ktx:1.10.0")
-	implementation("androidx.appcompat:appcompat:1.6.1")
-	implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-	implementation("androidx.navigation:navigation-fragment-ktx:${Version.navigation}")
-	implementation("androidx.navigation:navigation-ui-ktx:${Version.navigation}")
-	implementation("androidx.legacy:legacy-support-v4:1.0.0")
-	implementation("androidx.recyclerview:recyclerview:1.3.0")
-	implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-
+	// For theme. not sure if I actually need it, since I have compose material too
 	implementation("com.google.android.material:material:1.8.0")
-
-	// Kotlinx Serialization
-	implementation(Dependency.kotlinxCoroutines)
-
-	implementation(Dependency.kotlinxCoroutines)
-
-	// Ktor dependencies
-	implementation("io.ktor:ktor-client-core:${Version.ktor}")
-	implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
-	implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
-	implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
-	implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
-	implementation("io.ktor:ktor-client-logging-jvm:${Version.ktor}")
-	implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
-
-	implementation("com.google.dagger:hilt-android:${Version.hilt}")
-	kapt("com.google.dagger:hilt-compiler:${Version.hilt}")
 
 	// Napier allows us to easily log on Kotlin Multiplatform in the future
 	implementation(Dependency.napier)
 
 	// Compose dependencies
-	implementation("androidx.compose.ui:ui:${Version.Android.compose}")
-	implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 	implementation("androidx.compose.material:material:${Version.Android.compose}")
-	implementation("androidx.compose.ui:ui-tooling-preview:${Version.Android.compose}")
 	implementation("androidx.activity:activity-compose:${Version.Android.compose}")
-	debugImplementation("androidx.compose.ui:ui-tooling:${Version.Android.compose}")
 
 	testImplementation("junit:junit:4.13.2")
 
