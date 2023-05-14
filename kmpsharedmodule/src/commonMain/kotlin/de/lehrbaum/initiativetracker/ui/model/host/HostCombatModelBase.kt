@@ -5,11 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.model.SnackbarState
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModel
 import de.lehrbaum.initiativetracker.ui.model.edit.EditCombatantModelImpl
-import de.lehrbaum.initiativetracker.ui.model.toCombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.SnackbarState
+import de.lehrbaum.initiativetracker.ui.model.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.combine
 
 

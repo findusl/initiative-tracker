@@ -27,14 +27,13 @@ object CombatLinkRepository {
 
 	fun removeCombatLink(combatLink: CombatLink) {
 		synchronized(combatLinks) {
-			combatLinks.value = combatLinks.value - combatLink
+			combatLinks.value -= combatLink
 			persistCombatLinks()
 		}
 	}
 
-	private fun persistCombatLinks() {
+	private fun persistCombatLinks() =
 		settings.encodeValue(serializer, SETTINGS_KEY, combatLinks.value)
-	}
 
 	private fun loadCombatLinks() =
 		settings.decodeValue(serializer, SETTINGS_KEY, emptySet())

@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.model.main
 
 import androidx.compose.runtime.Stable
+import de.lehrbaum.initiativetracker.ui.model.character.CharacterListModel
 import de.lehrbaum.initiativetracker.ui.model.client.ClientCombatModel
 import de.lehrbaum.initiativetracker.ui.model.host.HostCombatModel
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +32,7 @@ sealed interface DrawerItem {
 	data class RememberedCombat(
 		val id: Int,
 		val isHost: Boolean,
-		override val name: String = id.toString()
+		override val name: String = id.toString() + " Host".takeIf { isHost }
 	): DrawerItem
 }
 
@@ -40,5 +41,5 @@ sealed interface ContentState {
 	data class HostCombat(val hostCombatModel: HostCombatModel): ContentState
 	data class JoinCombat(val onJoin: (Int) -> Unit, val onCancel: () -> Unit, val asHost: Boolean): ContentState
 	data class ClientCombat(val clientCombatModel: ClientCombatModel): ContentState
-	data class CharacterScreen(val tbd: Int) : ContentState
+	data class CharacterScreen(val characterListModel: CharacterListModel) : ContentState
 }

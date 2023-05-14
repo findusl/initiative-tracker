@@ -1,8 +1,10 @@
 package de.lehrbaum.initiativetracker.ui.model.edit
 
-import androidx.compose.runtime.mutableStateOf
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.EditField
+import de.lehrbaum.initiativetracker.ui.model.shared.EditField.Companion.failure
+import kotlin.Result.Companion.success
 
 data class EditCombatantModelImpl(
 	private val combatantViewModel: CombatantViewModel,
@@ -10,30 +12,30 @@ data class EditCombatantModelImpl(
 	private val onCancel: () -> Unit,
 ) : EditCombatantModel {
     private val id = combatantViewModel.id
-    override val name = mutableStateOf(combatantViewModel.name)
-    override val nameError = mutableStateOf(false)
-    override val initiativeString = mutableStateOf(combatantViewModel.initiativeString)
-    override val initiativeError = mutableStateOf(false)
-    override val maxHpString = mutableStateOf(combatantViewModel.maxHp.toString())
-    override val maxHpError = mutableStateOf(false)
-    override val currentHpString = mutableStateOf(combatantViewModel.currentHp.toString())
-    override val currentHpError = mutableStateOf(false)
+	override val nameEdit = EditField(combatantViewModel.name) { input ->
+		if (input.isBlank()) failure() else success(input)
+	}
+	override val initiativeEdit = EditField(combatantViewModel.initiative) { input ->
+		input.toIntOrNull()?.let { success(it) } ?: failure()
+	}
+	override val maxHpEdit = EditField(combatantViewModel.maxHp) { input ->
+		input.toIntOrNull()?.let { success(it) } ?: failure()
+	}
+	override val currentHpEdit = EditField(combatantViewModel.currentHp) { input ->
+		input.toIntOrNull()?.let { success(it) } ?: failure()
+	}
 
-    override fun onSavePressed() {
-        val initiative = initiativeString.value.toIntOrNull()
-        initiativeError.value = initiative == null
-        val maxHp = maxHpString.value.toIntOrNull()
-        maxHpError.value = maxHp == null
-        val currentHp = currentHpString.value.toIntOrNull()
-        currentHpError.value = currentHp == null
-        val name = this.name.value
-        nameError.value = name.isBlank()
-        if (initiative!=null && name.isNotBlank() && maxHp!=null && currentHp!=null) {
-            onSave(CombatantModel(id, name, initiative, maxHp, currentHp))
-        }
+	override fun saveCombatant() {
+		onSave(CombatantModel(
+			id,
+			nameEdit.value.getOrThrow(),
+			initiativeEdit.value.getOrThrow(),
+			maxHpEdit.value.getOrThrow(),
+			currentHpEdit.value.getOrThrow()
+		))
     }
 
-    override fun onCancelPressed() {
+    override fun cancel() {
         onCancel()
     }
 }

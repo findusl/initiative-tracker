@@ -14,23 +14,22 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.lehrbaum.initiativetracker.ui.model.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.model.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.screen.Constants
 
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun CombatantList(
-    combatants: List<CombatantViewModel>,
-    onCombatantClicked: (CombatantViewModel) -> Unit,
-    onCombatantLongClicked: (CombatantViewModel) -> Unit,
-    onCreateNewClicked: (() -> Unit)? = null,
-    dismissToEndAction: SwipeToDismissAction<CombatantViewModel>?,
-    dismissToStartAction: SwipeToDismissAction<CombatantViewModel>?,
+	combatants: List<CombatantViewModel>,
+	onCombatantClicked: (CombatantViewModel) -> Unit,
+	onCombatantLongClicked: (CombatantViewModel) -> Unit,
+	onCreateNewClicked: (() -> Unit)? = null,
+	dismissToEndAction: SwipeToDismissAction<CombatantViewModel>? = null,
+	dismissToStartAction: SwipeToDismissAction<CombatantViewModel>? = null,
 ) {
     val listState = rememberLazyListState()
 
@@ -57,19 +56,20 @@ fun CombatantList(
         }
 
         if (onCreateNewClicked != null) {
-            addCreateNewCard(itemModifier, onCreateNewClicked)
+            addCreateNewCard(itemModifier, "Add new combatant", onCreateNewClicked)
         }
     }
 }
 
-private fun LazyListScope.addCreateNewCard(
+fun LazyListScope.addCreateNewCard(
     modifier: Modifier,
+	label: String,
     onClicked: () -> Unit,
 ) {
     item {
         Card(elevation = 8.dp, modifier = modifier.clickable { onClicked() }) {
             Text(
-                text = "Add Combatant",
+                text = label,
                 modifier = Modifier
                     .padding(Constants.defaultPadding)
                     .fillMaxWidth(),
