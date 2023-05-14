@@ -27,7 +27,7 @@ suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 suspend fun ApplicationCall.handlePostRequest() {
 	val combat = receive<CombatDTO>()
 	val session = createSession(combat, hostWebsocketSession = null)
-	respond(HttpStatusCode.OK, session.id)
+	respond(HttpStatusCode.Created, session.id)
 }
 
 suspend fun ApplicationCall.handleDeleteRequest() {
