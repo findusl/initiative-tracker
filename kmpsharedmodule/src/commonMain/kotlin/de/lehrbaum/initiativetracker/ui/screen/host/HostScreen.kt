@@ -22,10 +22,12 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 	val connectionStateState = hostCombatModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
 	val scaffoldState = rememberScaffoldState()
 	scaffoldState.snackbarHostState.bindSnackbarState(hostCombatModel.snackbarState)
+	// For some reason the lambda would not be changed even though a parameter of it changed. This seems to have fixed it.
+	val topBarLambda = remember<@Composable () -> Unit>(hostCombatModel) { { TopBar(drawerState, hostCombatModel) } }
 
 	Scaffold(
 		scaffoldState = scaffoldState,
-		topBar = { TopBar(drawerState, hostCombatModel) },
+		topBar = topBarLambda,
 		floatingActionButton = {
 			NextCombatantButton(
 				hostCombatModel.combatStarted,

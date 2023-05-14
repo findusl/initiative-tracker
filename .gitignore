@@ -102,3 +102,6 @@ gradle-app.setting
 /.idea/deploymentTargetDropDown.xml
 /.idea/androidTestResultsUserPreferences.xml
 /app/remote/release/app-remote-release.aab
+
+# I have some trouble running the gradle command with correct jvm version so I have a script for that on some computers
+run_backend_gradle.sh
