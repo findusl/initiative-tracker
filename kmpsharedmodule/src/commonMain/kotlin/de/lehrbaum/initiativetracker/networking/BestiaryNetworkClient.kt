@@ -21,7 +21,7 @@ class BestiaryNetworkClient {
        emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
    }
 
-	@OptIn(ExperimentalCoroutinesApi::class)
+	@ExperimentalCoroutinesApi
 	val monsters = spellSources
 		.mapLatest { spellSources ->
           coroutineScope {
@@ -46,4 +46,16 @@ class BestiaryNetworkClient {
 		.catch {
           Napier.e("Error loading bestiary", it, tag = TAG)
 		}
+
+	// To be implemented, moved from old app
+	/*
+	private val bestiaryNetworkClient = BestiaryNetworkClient()
+
+	val allMonsterNamesLiveData = bestiaryNetworkClient.monsters
+		.map { monsters -> monsters.map { it.name }.toTypedArray() }
+		.flowOn(Dispatchers.IO)
+		// immediately start fetching as it takes a while
+		.stateIn(viewModelScope, SharingStarted.Eagerly, arrayOf())
+		.asLiveData()
+	 */
 }
