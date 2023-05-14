@@ -8,7 +8,7 @@ plugins {
 	application
 	kotlin("jvm")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	id("io.ktor.plugin") version "2.2.4"
+	id("io.ktor.plugin") version Version.ktor
 	id("com.google.cloud.tools.appengine") version "2.4.5"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -72,7 +72,7 @@ dependencies {
 	testImplementation("io.ktor:ktor-server-tests:${Version.ktor}")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${Version.kotlin}")
 	testImplementation(kotlin("test"))
-	testImplementation("org.mockito:mockito-core:5.2.0")
+	testImplementation("org.mockito:mockito-core:${Version.mockito}")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
