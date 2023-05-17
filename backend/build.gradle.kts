@@ -3,6 +3,7 @@ import io.ktor.plugin.features.DockerImageRegistry
 import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
 import io.ktor.plugin.features.JreVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	application
@@ -78,4 +79,10 @@ dependencies {
 
 tasks.test {
 	useJUnitPlatform()
+}
+
+tasks.withType<KotlinCompile> {
+	kotlinOptions.apply {
+		freeCompilerArgs = listOf("-Xcontext-receivers")
+	}
 }

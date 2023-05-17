@@ -79,6 +79,9 @@ dependencies {
 	implementation("androidx.compose.material:material:${Version.Android.composeMaterial}")
 	implementation("androidx.activity:activity-compose:${Version.Android.compose}")
 
+	// To have Dispatchers.Main on Android
+	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
+
 	testImplementation("junit:junit:4.13.2")
 
 	androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -15,7 +15,7 @@ class CharacterListModelImpl : CharacterListModel {
 	override val editCharacterModel = mutableStateOf<EditCharacterModel?>(null)
 
 	override fun editCharacter(characterViewModel: CharacterViewModel) {
-		val model = characterRepository.modelForId(characterViewModel.id)
+		val model = characterRepository.getbyId(characterViewModel.id)
 		editCharacter(model)
 	}
 

@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "HostCombatSession"
@@ -77,12 +78,10 @@ class HostCombatSession(val sessionId: Int, private val combatController: Combat
 			Napier.d("Received command $incoming")
 			when (incoming) {
 				is ServerToHostCommand.AddCombatant -> {
-					// val combatant = incoming.combatant.toModel()
-					// delegate.handleAddExternalCombatant(combatant)
-					// TODO IMPLEMENT outgoing event logic
-					// suspendCancellable here and then pass the continuation in the event.
-					// no don't suspend, in case of cancel event. hm maybe some launch and suspend. Or maybe a simple lambda
-					// also emit no event after event was handled
+					withContext(Dispatchers.Main) {
+						combatController.addCombatant(incoming.combatant.toModel())
+					}
+					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
 				}
 			}
 		}
