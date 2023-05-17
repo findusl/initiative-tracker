@@ -10,18 +10,6 @@ sealed interface StartCommand {
 	sealed interface HostingCommand : StartCommand
 
 	@Serializable
-	@Deprecated("Create combat via dedicated endpoint and always join")
-	class StartHosting(
-		val combatDTO: CombatDTO
-	) : HostingCommand {
-		@Serializable
-		sealed interface Response
-
-		@Serializable
-		data class SessionStarted(val sessionId: Int) : Response
-	}
-
-	@Serializable
 	class JoinAsHost(
 		val sessionId: Int
 	) : HostingCommand {

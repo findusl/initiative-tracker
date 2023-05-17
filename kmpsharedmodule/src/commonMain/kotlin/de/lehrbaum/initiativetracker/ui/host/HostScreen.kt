@@ -22,17 +22,17 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 	val scaffoldState = rememberScaffoldState()
 	scaffoldState.snackbarHostState.bindSnackbarState(hostCombatModel.snackbarState)
 	// For some reason the lambda would not be changed even though a parameter of it changed. This seems to have fixed it.
-	val topBarLambda = remember<@Composable () -> Unit>(hostCombatModel) { { TopBar(drawerState, hostCombatModel) } }
+	val topBarLambda = rememberComposableLambda(hostCombatModel) { TopBar(drawerState, hostCombatModel) }
 
 	Scaffold(
 		scaffoldState = scaffoldState,
 		topBar = topBarLambda,
-		floatingActionButton = {
-			NextCombatantButton(
-				hostCombatModel.combatStarted,
-				hostCombatModel::nextCombatant
-			)
-		}
+		floatingActionButton = rememberComposableLambda(hostCombatModel) {
+				NextCombatantButton(
+					hostCombatModel.combatStarted,
+					hostCombatModel::nextCombatant
+				)
+			}
 	) {
 		val connectionState = connectionStateState.value
 		when (connectionState) {
@@ -78,7 +78,7 @@ private fun TopBar(
 	drawerState: DrawerState,
 	hostCombatModel: HostCombatModel
 ) {
-	var displayDropdown by remember { mutableStateOf(false) }
+	var displayDropdown by remember(hostCombatModel) { mutableStateOf(false) }
 
 	val coroutineScope = rememberCoroutineScope()
 

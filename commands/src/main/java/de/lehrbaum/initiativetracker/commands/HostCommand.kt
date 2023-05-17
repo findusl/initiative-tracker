@@ -9,4 +9,7 @@ sealed interface HostCommand {
 	@Serializable
 	data class CombatUpdatedCommand(val combat: CombatDTO) : HostCommand
 
+	@Serializable
+	data class CommandCompleted(val accepted: Boolean): HostCommand
+
 }

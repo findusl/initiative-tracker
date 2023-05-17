@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismissAction
@@ -61,13 +60,6 @@ private fun CharacterList(
 			}
 		}
 		addCreateNewCard(itemModifier, "Add new character", onAddNewPressed)
-	}
-}
-
-@Composable
-fun CharacterListElement(characterViewModel: CharacterViewModel, modifier: Modifier = Modifier) {
-	Card(elevation = 8.dp, modifier = modifier) {
-		Text(text = characterViewModel.name, modifier = Modifier.padding(Constants.defaultPadding))
 	}
 }
 

@@ -3,15 +3,19 @@ package de.lehrbaum.initiativetracker.ui.client
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
+import de.lehrbaum.initiativetracker.ui.character.CharacterChooserDialog
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
+import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 @ExperimentalFoundationApi
@@ -26,6 +30,12 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 		topBar = { TopBar(drawerState, clientCombatModel) },
 	) {
 		Content(connectionStateState, clientCombatModel)
+	}
+
+	if (connectionStateState.value is ClientCombatState.Connected) {
+		clientCombatModel.characterChooserModel?.let {
+			CharacterChooserDialog(it)
+		}
 	}
 }
 
@@ -59,12 +69,20 @@ private fun TopBar(
 	drawerState: DrawerState,
 	clientCombatModel: ClientCombatModel
 ) {
+	val coroutineScope = rememberCoroutineScope(clientCombatModel)
 	TopAppBar(
 		title = {
-			Text("Combat ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			Text("Joined ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {
+			IconButton(onClick = {
+				coroutineScope.launch {
+					clientCombatModel.chooseCharacterToAdd()
+				}
+			}) {
+				Icon(Icons.Default.Add, contentDescription = "Choose Character to add")
+			}
 			IconButton(onClick = clientCombatModel::leaveCombat) {
 				Icon(Icons.Default.Close, contentDescription = "Leave Session")
 			}

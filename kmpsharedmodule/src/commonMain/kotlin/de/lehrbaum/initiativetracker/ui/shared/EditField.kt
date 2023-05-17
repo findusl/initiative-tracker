@@ -17,6 +17,9 @@ data class EditField<T>(
 
 	companion object {
 		fun <R> failure() = Result.Companion.failure<R>(dummy)
+
+		val RequiredIntParser: (String) -> Result<Int> =
+			{ input -> input.toIntOrNull()?.let { Result.success(it) } ?: EditField.failure() }
 	}
 }
 
