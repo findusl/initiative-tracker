@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.ui.host
 
-import FastForward
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,6 +11,7 @@ import androidx.compose.runtime.*
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.*
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantDialog
+import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import kotlinx.coroutines.launch
 
 @Composable

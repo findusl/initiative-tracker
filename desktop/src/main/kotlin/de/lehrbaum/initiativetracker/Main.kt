@@ -34,7 +34,7 @@ fun main() = application {
 	}
 }
 
-private class StandardConsoleHandler() : StreamHandler(System.out, SimpleFormatter()) {
+private class StandardConsoleHandler : StreamHandler(System.out, SimpleFormatter()) {
 	override fun publish(record: LogRecord?) {
 		if (record == null) return
 		if (record.level.intValue() >= Level.WARNING.intValue()) return
@@ -47,7 +47,7 @@ private class StandardConsoleHandler() : StreamHandler(System.out, SimpleFormatt
 	}
 }
 
-private class ErrorConsoleHandler() : StreamHandler(System.err, SimpleFormatter()) {
+private class ErrorConsoleHandler : StreamHandler(System.err, SimpleFormatter()) {
 
 	init {
 		level = Level.WARNING
