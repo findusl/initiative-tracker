@@ -32,7 +32,7 @@ sealed interface DrawerItem {
 	data class RememberedCombat(
 		val id: Int,
 		val isHost: Boolean,
-		override val name: String = id.toString() + " Host".takeIf { isHost }
+		override val name: String = id.toString() + if (isHost) " Host" else " Client"
 	): DrawerItem
 }
 

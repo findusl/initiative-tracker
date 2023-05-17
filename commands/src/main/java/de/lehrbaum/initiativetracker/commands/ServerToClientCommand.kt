@@ -9,5 +9,7 @@ sealed interface ServerToClientCommand {
 	data class CombatUpdatedCommand(val combat: CombatDTO) : ServerToClientCommand
 	@Serializable
 	object CombatEnded: ServerToClientCommand
+	@Serializable
+	data class CommandCompleted(val accepted: Boolean): ServerToClientCommand
 }
 

@@ -15,15 +15,9 @@ data class EditCombatantModelImpl(
 	override val nameEdit = EditField(combatantViewModel.name) { input ->
 		if (input.isBlank()) failure() else success(input)
 	}
-	override val initiativeEdit = EditField(combatantViewModel.initiative) { input ->
-		input.toIntOrNull()?.let { success(it) } ?: failure()
-	}
-	override val maxHpEdit = EditField(combatantViewModel.maxHp) { input ->
-		input.toIntOrNull()?.let { success(it) } ?: failure()
-	}
-	override val currentHpEdit = EditField(combatantViewModel.currentHp) { input ->
-		input.toIntOrNull()?.let { success(it) } ?: failure()
-	}
+	override val initiativeEdit = EditField(combatantViewModel.initiative, parseInput = EditField.RequiredIntParser)
+	override val maxHpEdit = EditField(combatantViewModel.maxHp, parseInput = EditField.RequiredIntParser)
+	override val currentHpEdit = EditField(combatantViewModel.currentHp, parseInput = EditField.RequiredIntParser)
 
 	override fun saveCombatant() {
 		onSave(CombatantModel(

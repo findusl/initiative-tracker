@@ -6,6 +6,8 @@ import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -14,16 +16,15 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 	var session: Session? = null
 	try {
 		session = obtainSession(hostingCommand) ?: return
-
-		val commandForwardingJob = launch {
-			for (outgoing in session.serverCommandQueue) {
-				sendSerialized(outgoing)
+		with(HostSessionState()) {
+			val commandForwardingJob = launch {
+				handleOutgoingCommands(session)
 			}
-		}
 
-		handleHostCommands(session)
-		// maybe not necessary since it is the same scope, not sure
-		commandForwardingJob.cancel("Websocket closed")
+			handleHostCommands(session)
+			// maybe not necessary since it is the same scope, not sure
+			commandForwardingJob.cancel("Websocket closed")
+		}
 	} catch (e: Exception) {
 		println("Server websocket failed somehow $e")
 	} finally {
@@ -36,6 +37,28 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 	println("Finished host websocket connection ${session?.id}")
 }
 
+context(HostSessionState)
+private suspend fun DefaultWebSocketServerSession.handleOutgoingCommands(session: Session) {
+	for (outgoing in session.serverCommandQueue) {
+		var responded = false
+		try {
+			println("Sending out command $outgoing")
+			sendSerialized(outgoing.first)
+			println("Awaiting response")
+			// in case of error on host site this can hang. but then again host could reconnect, should fix
+			val response = commandResponse.receive()
+			println("Got command response $response")
+			outgoing.second(response)
+			responded = true
+		} finally {
+			if (!responded) {
+				outgoing.second(false) // in case of cancellation or other exceptions
+			}
+		}
+	}
+}
+
+context(HostSessionState)
 private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Session) {
 	try {
 		while (true) {
@@ -44,6 +67,11 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 				is HostCommand.CombatUpdatedCommand -> {
 					println("Got Combat update ${message.combat}")
 					session.combatState.value = message.combat
+				}
+
+				is HostCommand.CommandCompleted -> {
+					println("Got command completed ${message.accepted}")
+					commandResponse.send(message.accepted)
 				}
 			}
 		}
@@ -56,12 +84,6 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 
 private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: StartCommand.HostingCommand): Session? {
 	when (hostingCommand) {
-		is StartCommand.StartHosting -> {
-			val session = createSession(hostingCommand.combatDTO, hostWebsocketSession = this)
-			val response = StartCommand.StartHosting.SessionStarted(session.id)
-			sendSerialized(response as StartCommand.StartHosting.Response)
-			return session
-		}
 		is StartCommand.JoinAsHost -> {
 			var session: Session? = null
 			val response: StartCommand.JoinAsHost.Response = synchronized(sessions) {
@@ -81,3 +103,7 @@ private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: 
 		}
 	}
 }
+
+private class HostSessionState(
+	val commandResponse: Channel<Boolean> = Channel(capacity = RENDEZVOUS)
+)

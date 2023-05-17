@@ -10,5 +10,5 @@ internal data class Session(
 	val id: Int,
 	val hostWebsocketSession: DefaultWebSocketServerSession?,
 	val combatState: MutableStateFlow<CombatDTO>,
-	val serverCommandQueue: Channel<ServerToHostCommand> = Channel(capacity = Channel.RENDEZVOUS),
+	val serverCommandQueue: Channel<Pair<ServerToHostCommand, (Boolean) -> Unit>> = Channel(capacity = Channel.RENDEZVOUS),
 )

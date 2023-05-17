@@ -46,6 +46,13 @@ class CombatController {
 		return newCombatant
 	}
 
+	fun addCombatant(combatantModel: CombatantModel): CombatantModel {
+		val newCombatant = combatantModel.copy(id = nextId++)
+		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
+		combatantCount++
+		return newCombatant
+	}
+
 	fun updateCombatant(updatedCombatant: CombatantModel) {
 		_combatants.value = _combatants.value.map {
 			if (it.id == updatedCombatant.id) {

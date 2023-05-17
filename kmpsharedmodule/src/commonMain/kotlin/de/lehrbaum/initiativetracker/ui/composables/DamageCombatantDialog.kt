@@ -1,6 +1,9 @@
 package de.lehrbaum.initiativetracker.ui.composables
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -76,42 +79,6 @@ fun DamageCombatantDialogContent(onSubmit: (Int) -> Unit, onCancel: () -> Unit) 
 			valueRange = 0f..100f,
 			onValueChange = { sliderValue = it }
 		)
-		OkCancelButtonRow(onCancel, onSubmit, sliderValue)
-	}
-}
-
-@Composable
-private fun OkCancelButtonRow(
-	onCancel: () -> Unit,
-	onSubmit: (Int) -> Unit,
-	sliderValue: Float
-) {
-	Row(
-		horizontalArrangement = Arrangement.SpaceEvenly,
-		verticalAlignment = Alignment.CenterVertically,
-		modifier = Modifier.fillMaxWidth()
-	) {
-		Button(
-			onClick = { onCancel() },
-			shape = RoundedCornerShape(50.dp),
-			modifier = Modifier
-				.height(50.dp)
-				.fillMaxWidth()
-				.weight(1f)
-		) {
-			Text(text = "Cancel")
-		}
-		Button(
-			onClick = {
-				onSubmit(sliderValue.roundToInt())
-			},
-			shape = RoundedCornerShape(50.dp),
-			modifier = Modifier
-				.height(50.dp)
-				.fillMaxWidth()
-				.weight(1f)
-		) {
-			Text(text = "Ok")
-		}
+		OkCancelButtonRow(mutableStateOf(true), onCancel, onSubmit = { onSubmit(sliderValue.roundToInt()) })
 	}
 }
