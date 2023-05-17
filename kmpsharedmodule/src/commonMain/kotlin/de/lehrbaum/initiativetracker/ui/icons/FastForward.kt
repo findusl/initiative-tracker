@@ -1,3 +1,5 @@
+package de.lehrbaum.initiativetracker.ui.icons
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.materialPath

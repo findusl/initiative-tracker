@@ -15,7 +15,7 @@ application {
 	mainClass.set("de.lehrbaum.initiativetracker.Mainkt")
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "17"
     }
