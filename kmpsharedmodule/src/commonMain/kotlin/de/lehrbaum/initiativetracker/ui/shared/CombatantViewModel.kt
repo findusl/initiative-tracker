@@ -15,6 +15,8 @@ data class CombatantViewModel(
 
 	val initiativeString: String = initiative.toString()
 
+	val healthPercentage = currentHp/maxHp.toDouble()
+
 	override fun compareTo(other: CombatantViewModel): Int {
 		var order = initiative - other.initiative
 		if (order == 0)
