@@ -1,14 +1,25 @@
 package de.lehrbaum.initiativetracker.ui.host
 
-import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.HostCombatSession
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
-data class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModelBase() {
-	private val hostCombatSession = HostCombatSession()
+data class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModel {
+
 	override val hostConnectionState: Flow<HostConnectionState>
-		get() = hostCombatSession.hostConnectionState
+		get() = flow {
+			this.emit(HostConnectionState.Connecting)
+			delay(10)
+			this.emit(HostConnectionState.Connected)
+		}
+			.distinctUntilChanged()
+			.flowOn(Dispatchers.IO)
+
 	override val isSharing = true
 
 	override suspend fun onShareClicked() {
@@ -17,7 +28,9 @@ data class HostSharedCombatModelImpl(override val sessionId: Int, private val le
 
 	override suspend fun closeSession() {
 		// we are actively still hosting it. Whatever
-		GlobalInstances.backendApi.deleteSession()
+		withContext(Dispatchers.IO) {
+			delay(10)
+		}
 		leaveScreen()
 	}
 }
