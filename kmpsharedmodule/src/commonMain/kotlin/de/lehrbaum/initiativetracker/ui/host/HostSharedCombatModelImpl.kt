@@ -8,7 +8,7 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import kotlinx.coroutines.flow.Flow
 
 data class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModelBase() {
-	private val hostCombatSession = HostCombatSession(sessionId, combatController)
+	private val hostCombatSession = HostCombatSession()
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = hostCombatSession.hostConnectionState
 	override val isSharing = true
@@ -19,7 +19,7 @@ data class HostSharedCombatModelImpl(override val sessionId: Int, private val le
 
 	override suspend fun closeSession() {
 		// we are actively still hosting it. Whatever
-		GlobalInstances.backendApi.deleteSession(sessionId)
+		GlobalInstances.backendApi.deleteSession()
 		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = true))
 		leaveScreen()
 	}

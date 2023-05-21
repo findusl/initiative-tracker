@@ -1,34 +1,17 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.bl.model.CombatantModel
-import de.lehrbaum.initiativetracker.bl.toCombatDTO
-import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
-class BackendApi(private val httpClient: HttpClient) {
-	suspend fun createSession(combatants: List<CombatantModel>, activeCombatantIndex: Int): Int = withContext(Dispatchers.IO) {
-		val combatDTO = toCombatDTO(combatants, activeCombatantIndex)
-		val response = httpClient.post {
-			httpUrl(SESSION_PATH)
-			contentType(ContentType.Application.Json)
-			setBody(combatDTO)
-		}
-		Napier.i("Response for create Session: $response")
-		response.body()
+class BackendApi {
+	suspend fun createSession(): Int {
+		delay(10)
+		return Random.nextInt(10000)
 	}
 
-	suspend fun deleteSession(sessionId: Int) = withContext(Dispatchers.IO)  {
-		val response = httpClient.delete {
-			httpUrl("$SESSION_PATH/$sessionId")
-		}
-		Napier.i("Response for delete Session $sessionId: $response")
+	suspend fun deleteSession() = withContext(Dispatchers.IO)  {
+		delay(10)
 	}
 }
