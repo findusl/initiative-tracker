@@ -4,10 +4,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.*
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantDialog
@@ -78,8 +78,6 @@ private fun TopBar(
 	drawerState: DrawerState,
 	hostCombatModel: HostCombatModel
 ) {
-	var displayDropdown by remember(hostCombatModel) { mutableStateOf(false) }
-
 	val coroutineScope = rememberCoroutineScope()
 
 	TopAppBar(
@@ -94,11 +92,6 @@ private fun TopBar(
 			BurgerMenuButtonForDrawer(drawerState)
 		},
 		actions = {
-			if (!hostCombatModel.combatStarted) {
-				IconButton(onClick = hostCombatModel::startCombat) {
-					Icon(Icons.Default.PlayArrow, contentDescription = "Play")
-				}
-			}
 			if (hostCombatModel.isSharing) {
 				IconButton(onClick = {
 					coroutineScope.launch {
@@ -114,17 +107,6 @@ private fun TopBar(
 					}
 				}) {
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
-				}
-			}
-			IconButton(onClick = { displayDropdown = !displayDropdown }) {
-				Icon(Icons.Default.MoreVert, "")
-			}
-			DropdownMenu(
-				expanded = displayDropdown,
-				onDismissRequest = { displayDropdown = false }
-			) {
-				DropdownMenuItem(onClick = hostCombatModel::showSessionId) {
-					Text(text = "Show Session Id")
 				}
 			}
 		},

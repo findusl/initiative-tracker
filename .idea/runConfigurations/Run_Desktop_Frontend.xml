@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run Desktop Frontend" type="JetRunConfigurationType" singleton="false">
+  <configuration default="false" name="Run Desktop Frontend" type="JetRunConfigurationType" singleton="true">
     <option name="MAIN_CLASS_NAME" value="de.lehrbaum.initiativetracker.MainKt" />
     <module name="Initiative_Tracker.desktop.main" />
     <shortenClasspath name="NONE" />
