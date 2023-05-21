@@ -8,12 +8,11 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatModelImpl
 
-class MainModelImpl: MainModel {
+class MainModelImpl {
 
-	/** Keep a default hostCombatState to return to */
 	private val hostCombatState = hostNewCombat()
 
-    override var content by mutableStateOf<ContentState>(hostCombatState)
+    var content by mutableStateOf<ContentState>(hostCombatState)
 
     private fun hostNewCombat(): ContentState.HostCombat {
 		val hostCombatModel = HostLocalCombatModelImpl {

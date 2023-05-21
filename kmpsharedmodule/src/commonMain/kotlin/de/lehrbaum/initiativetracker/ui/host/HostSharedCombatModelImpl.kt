@@ -1,12 +1,10 @@
 package de.lehrbaum.initiativetracker.ui.host
 
-import androidx.compose.material.SnackbarDuration
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.HostCombatSession
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
-import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 
 data class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModelBase() {
@@ -24,9 +22,5 @@ data class HostSharedCombatModelImpl(override val sessionId: Int, private val le
 		GlobalInstances.backendApi.deleteSession(sessionId)
 		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = true))
 		leaveScreen()
-	}
-
-	override fun showSessionId() {
-		snackbarState.value = SnackbarState.Copyable("SessionId: $sessionId", SnackbarDuration.Long, sessionId.toString())
 	}
 }
