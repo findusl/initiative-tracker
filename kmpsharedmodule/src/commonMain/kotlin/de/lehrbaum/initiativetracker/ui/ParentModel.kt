@@ -6,18 +6,12 @@ import androidx.compose.runtime.setValue
 
 class ParentModel {
 
-    var content by mutableStateOf(hostCombat(0))
+    var content by mutableStateOf(getContentModel(0))
 
-	private fun hostCombat(sessionId: Int): ContentState {
-		val hostCombatModel = ContentModel(sessionId){
-			content = hostCombat(it)
+	private fun getContentModel(sessionId: Int): ContentModel {
+		return ContentModel(sessionId) { newId ->
+			content = getContentModel(newId)
 		}
-		return ContentState.HostCombat(hostCombatModel)
 	}
 
-}
-
-
-sealed interface ContentState {
-	data class HostCombat(val contentModel: ContentModel): ContentState
 }
