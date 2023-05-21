@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -26,9 +25,7 @@ fun HostScreen(hostCombatModel: HostCombatModel) {
 	}
 
 	if (connectionStateState.value == HostConnectionState.Connected) {
-		hostCombatModel.editCombatantModel.value?.let {
-			EditCombatantDialog(it)
-		}
+		Text("Test")
 	}
 }
 
