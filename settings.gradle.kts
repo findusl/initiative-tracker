@@ -15,6 +15,5 @@ pluginManagement {
 
 rootProject.name = "Initiative Tracker"
 
-include(":commands")
 include(":kmpsharedmodule")
 include(":desktop")
