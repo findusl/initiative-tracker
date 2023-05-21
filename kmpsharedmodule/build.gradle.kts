@@ -4,7 +4,6 @@ import java.util.*
 
 plugins {
 	kotlin("multiplatform")
-	id("com.android.library")
 	id("org.jetbrains.compose") version Version.JetbrainsCompose.foundation
 	id("org.jetbrains.kotlin.plugin.serialization")
 	// Used to mimic BuildConfig on Multiplatform
@@ -13,13 +12,6 @@ plugins {
 
 kotlin {
 	jvm("desktop")
-	android {
-		compilations.all {
-			kotlinOptions {
-				jvmTarget = "17"
-			}
-		}
-	}
 
 	sourceSets {
 		named("commonMain") {
@@ -60,12 +52,6 @@ kotlin {
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 			}
 		}
-		named("androidMain") {
-			dependencies {
-				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
-			}
-		}
-		named("androidUnitTest")
 	}
 }
 
@@ -101,20 +87,4 @@ buildkonfig {
 		buildConfigField(STRING, "backendHost", host)
 		buildConfigField(INT, "backendPort", port)
 	}
-}
-
-android {
-	namespace = "de.lehrbaum.initiativetracker"
-	compileSdk = 33
-	defaultConfig {
-		minSdk = 28
-	}
-	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
-	}
-}
-
-fun org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions.enableContextReceivers() {
-	freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
 }

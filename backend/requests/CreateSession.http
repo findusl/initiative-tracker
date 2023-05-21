@@ -1,4 +1,0 @@
-POST {{url}}/session/1234
-Content-Type: application/json
-
-{ "activeInitiative" : "1", "combatants": [] }
