@@ -1,9 +1,8 @@
-package de.lehrbaum.initiativetracker.ui.main
+package de.lehrbaum.initiativetracker.ui
 
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import de.lehrbaum.initiativetracker.ui.host.HostScreen
 
 @Composable
 fun MainScreen(mainModel: ParentModel) {

@@ -1,17 +1,15 @@
-package de.lehrbaum.initiativetracker.ui.main
+package de.lehrbaum.initiativetracker.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import de.lehrbaum.initiativetracker.ui.host.ContentModel
-import de.lehrbaum.initiativetracker.ui.host.ContentModelImpl
 
 class ParentModel {
 
     var content by mutableStateOf(hostCombat(0))
 
 	private fun hostCombat(sessionId: Int): ContentState {
-		val hostCombatModel = ContentModelImpl(sessionId){
+		val hostCombatModel = ContentModel(sessionId){
 			content = hostCombat(it)
 		}
 		return ContentState.HostCombat(hostCombatModel)
