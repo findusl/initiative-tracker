@@ -19,6 +19,6 @@ fun MainScreen(mainModel: ParentModel) {
 @Composable
 private fun MainScreenContent(contentState: ContentState) {
 	when(contentState) {
-		is ContentState.HostCombat -> HostScreen(contentState.contentModel)
+		is ContentState.HostCombat -> ContentScreen(contentState.contentModel)
 	}
 }
