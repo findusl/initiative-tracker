@@ -16,7 +16,6 @@ kotlin {
 	sourceSets {
 		named("commonMain") {
 			dependencies {
-				implementation(project(path = ":commands"))
 
 				implementation(compose.ui)
 				implementation(compose.foundation)
