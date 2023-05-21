@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.ui.host
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -9,22 +8,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
-import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantDialog
 import kotlinx.coroutines.launch
 
 @Composable
-@ExperimentalMaterialApi
-@ExperimentalFoundationApi
-fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
+fun HostScreen(hostCombatModel: HostCombatModel) {
 	val connectionStateState = hostCombatModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
 
 	Scaffold(
-		topBar = { TopBar(drawerState, hostCombatModel) },
+		topBar = { TopBar(hostCombatModel) },
 	) {
-		val connectionState = connectionStateState.value
-		if (connectionState != HostConnectionState.Connecting)
-			Text("Content")
+		if (hostCombatModel.isSharing) {
+			Text("Session ${hostCombatModel.sessionId}")
+		} else {
+			Text("New combat")
+		}
 	}
 
 	if (connectionStateState.value == HostConnectionState.Connected) {
@@ -36,7 +34,6 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 
 @Composable
 private fun TopBar(
-	drawerState: DrawerState,
 	hostCombatModel: HostCombatModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
@@ -44,13 +41,10 @@ private fun TopBar(
 	TopAppBar(
 		title = {
 			if (hostCombatModel.isSharing) {
-				Text("Session ${hostCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+				Text("Session ${hostCombatModel.sessionId}")
 			} else {
-				Text("New combat", color = MaterialTheme.colors.onPrimary)
+				Text("New combat")
 			}
-		},
-		navigationIcon = {
-			BurgerMenuButtonForDrawer(drawerState)
 		},
 		actions = {
 			if (hostCombatModel.isSharing) {
