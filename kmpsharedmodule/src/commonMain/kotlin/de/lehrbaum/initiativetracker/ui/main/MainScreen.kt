@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
 
 @Composable
-fun MainScreen(mainModel: MainModel) {
+fun MainScreen(mainModel: MainModelImpl) {
 	val scaffoldState = rememberScaffoldState()
 	// Theoretically can reduce this to modal drawer
 	Scaffold(

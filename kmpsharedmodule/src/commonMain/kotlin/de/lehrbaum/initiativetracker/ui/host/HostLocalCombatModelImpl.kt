@@ -18,8 +18,4 @@ data class HostLocalCombatModelImpl(private val navigateToSharedCombat: (Int) ->
 	override suspend fun closeSession() {
 		throw IllegalStateException("It should not be possible")
 	}
-
-	override fun showSessionId() {
-		throw IllegalStateException("It should not be possible")
-	}
 }
