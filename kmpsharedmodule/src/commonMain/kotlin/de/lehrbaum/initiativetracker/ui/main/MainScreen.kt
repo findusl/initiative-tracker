@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
 
 @Composable
-fun MainScreen(mainModel: MainModelImpl) {
+fun MainScreen(mainModel: ParentModel) {
 	val scaffoldState = rememberScaffoldState()
 	// Theoretically can reduce this to modal drawer
 	Scaffold(
@@ -20,6 +20,6 @@ fun MainScreen(mainModel: MainModelImpl) {
 @Composable
 private fun MainScreenContent(contentState: ContentState) {
 	when(contentState) {
-		is ContentState.HostCombat -> HostScreen(contentState.hostCombatModel)
+		is ContentState.HostCombat -> HostScreen(contentState.contentModel)
 	}
 }

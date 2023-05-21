@@ -5,11 +5,9 @@ import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import kotlinx.coroutines.flow.Flow
 
 @Stable
-interface HostCombatModel {
+interface ContentModel {
 	val hostConnectionState: Flow<HostConnectionState>
-    val isSharing: Boolean
-	val sessionId: Int
+	val id: Int
 
     suspend fun onShareClicked()
-	suspend fun closeSession()
 }

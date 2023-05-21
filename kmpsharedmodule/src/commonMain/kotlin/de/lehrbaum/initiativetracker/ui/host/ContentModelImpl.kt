@@ -7,9 +7,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
-data class HostSharedCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatModel {
+data class ContentModelImpl(
+	override val id: Int,
+	private val navigateToDifferentId: (Int) -> Unit
+) : ContentModel {
 
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = flow {
@@ -20,17 +23,8 @@ data class HostSharedCombatModelImpl(override val sessionId: Int, private val le
 			.distinctUntilChanged()
 			.flowOn(Dispatchers.IO)
 
-	override val isSharing = true
-
 	override suspend fun onShareClicked() {
-		throw IllegalStateException("It should not be possible")
-	}
-
-	override suspend fun closeSession() {
-		// we are actively still hosting it. Whatever
-		withContext(Dispatchers.IO) {
-			delay(10)
-		}
-		leaveScreen()
+		delay(10)
+		navigateToDifferentId(Random.nextInt(10000))
 	}
 }
