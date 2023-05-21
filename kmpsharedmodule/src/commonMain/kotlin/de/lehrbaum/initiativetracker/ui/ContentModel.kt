@@ -13,11 +13,11 @@ data class ContentModel(
 	private val navigateToDifferentId: (Int) -> Unit
 )  {
 
-	val hostConnectionState: Flow<HostConnectionState>
+	val connectionState: Flow<Boolean>
 		get() = flow {
-			this.emit(HostConnectionState.Connecting)
+			this.emit(false)
 			delay(10)
-			this.emit(HostConnectionState.Connected)
+			this.emit(true)
 		}
 			.distinctUntilChanged()
 			.flowOn(Dispatchers.IO)

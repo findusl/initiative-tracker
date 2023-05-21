@@ -11,8 +11,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun HostScreen(contentModel: ContentModel) {
-	val connectionStateState = contentModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
+fun ContentScreen(contentModel: ContentModel) {
+	val connectionStateState = contentModel.connectionState.collectAsState(false)
 	val coroutineScope = rememberCoroutineScope()
 
 	Scaffold(
@@ -30,7 +30,7 @@ fun HostScreen(contentModel: ContentModel) {
 		}
 	}
 
-	if (connectionStateState.value == HostConnectionState.Connected) {
+	if (connectionStateState.value) {
 		Text("Test")
 	}
 }
