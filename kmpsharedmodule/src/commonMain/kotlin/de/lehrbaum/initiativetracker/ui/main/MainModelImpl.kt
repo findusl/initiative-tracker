@@ -3,6 +3,7 @@ package de.lehrbaum.initiativetracker.ui.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import de.lehrbaum.initiativetracker.ui.host.HostCombatModel
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatModelImpl
 
@@ -26,4 +27,9 @@ class MainModelImpl {
 		content = ContentState.HostCombat(hostCombatModel)
 	}
 
+}
+
+
+sealed interface ContentState {
+	data class HostCombat(val hostCombatModel: HostCombatModel): ContentState
 }
