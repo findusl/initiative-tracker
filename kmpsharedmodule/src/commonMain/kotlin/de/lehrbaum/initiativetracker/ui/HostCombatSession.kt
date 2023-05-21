@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.bl
+package de.lehrbaum.initiativetracker.ui
 
 sealed interface HostConnectionState {
 	object Connecting: HostConnectionState

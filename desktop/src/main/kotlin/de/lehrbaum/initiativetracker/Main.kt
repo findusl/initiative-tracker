@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import de.lehrbaum.initiativetracker.ui.main.MainScreen
-import de.lehrbaum.initiativetracker.ui.main.ParentModel
+import de.lehrbaum.initiativetracker.ui.MainScreen
+import de.lehrbaum.initiativetracker.ui.ParentModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import java.util.logging.Level
