@@ -43,7 +43,7 @@ class ClientCombatSession(val sessionId: Int) {
 				}
 			}
 		} catch (e: Exception) {
-			Napier.i("Exception in Remote combat", e, TAG)
+			Napier.i("Exception in Remote combat: ${e.message}", tag = TAG)
 			emit(Disconnected("Exception $e"))
 		}
 	}
@@ -98,10 +98,6 @@ class ClientCombatSession(val sessionId: Int) {
 			}
 		}
 	}
-}
-
-private sealed interface OutgoingMessage {
-	data class AddCombatant(val combatantDTO: CombatantDTO, val continuation: CancellableContinuation<Boolean>): OutgoingMessage
 }
 
 sealed interface ClientCombatState {
