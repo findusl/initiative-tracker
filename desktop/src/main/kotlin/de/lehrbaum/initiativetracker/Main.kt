@@ -3,7 +3,6 @@ package de.lehrbaum.initiativetracker
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import de.lehrbaum.initiativetracker.ui.MainModel
 import de.lehrbaum.initiativetracker.ui.MainScreen
 
 fun main() = application {
@@ -13,7 +12,7 @@ fun main() = application {
 		title = "InitiativeTracker"
 	) {
 		MaterialTheme {
-			MainScreen(MainModel())
+			MainScreen()
 		}
 	}
 }
