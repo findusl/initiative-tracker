@@ -18,14 +18,6 @@ kotlin {
 				implementation(compose.preview)
 
 				implementation(Dependency.kotlinxCoroutines)
-
-				// Multiplatform Logging
-				api(Dependency.napier)
-			}
-		}
-		named("commonTest") {
-			dependencies {
-				implementation(kotlin("test"))
 			}
 		}
 		named("desktopMain") {
