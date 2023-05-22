@@ -1,11 +1,8 @@
 package de.lehrbaum.initiativetracker.ui
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlin.random.Random
 
 data class ContentModel(
@@ -19,11 +16,9 @@ data class ContentModel(
 			delay(10)
 			this.emit(true)
 		}
-			.distinctUntilChanged()
-			.flowOn(Dispatchers.IO)
+			//.flowOn(Dispatchers.IO) //no difference
 
-	suspend fun onShareClicked() {
-		delay(10)
+	fun nextId() {
 		navigateToDifferentId(Random.nextInt(10000))
 	}
 }
