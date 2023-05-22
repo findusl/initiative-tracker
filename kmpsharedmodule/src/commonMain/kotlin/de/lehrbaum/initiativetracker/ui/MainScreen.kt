@@ -12,28 +12,25 @@ import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 
 @Composable
-fun MainScreen(mainModel: MainModel) = ContentScreen(mainModel.content)
+fun MainScreen() {
+	var id by remember { mutableStateOf(0) }
+	val contentModel by remember { derivedStateOf { ContentModel(id) } }
 
-class MainModel {
-    var content by mutableStateOf(getContentModel(0))
-
-	private fun getContentModel(sessionId: Int): ContentModel {
-		return ContentModel(sessionId) {
-			content = getContentModel(Random.nextInt(10000))
-		}
+	ContentScreen(contentModel) {
+		id = Random.nextInt(1000)
 	}
 }
 
 @Composable
-fun ContentScreen(contentModel: ContentModel) {
-	Scaffold(topBar = { TopBar(contentModel) },) {
+fun ContentScreen(contentModel: ContentModel, nextModel: () -> Unit) {
+	Scaffold(topBar = { TopBar(contentModel) }) {
 		Column {
 			Text("This number should match ${contentModel.id}")
-			Button(onClick = contentModel.nextModel) { Text("Generate new id") }
+			Button(onClick = nextModel) { Text("Generate new id") }
 		}
 	}
 
-	// this is necessary probably compose scoping
+	// access flow is necessary
 	contentModel.connectionState.collectAsState(false).value.toString()
 }
 
@@ -41,12 +38,13 @@ fun ContentScreen(contentModel: ContentModel) {
 private fun TopBar(contentModel: ContentModel) =
 	TopAppBar(title = { Text("This number should match ${contentModel.id}") })
 
-data class ContentModel(val id: Int, val nextModel: () -> Unit)  {
-	val connectionState: Flow<Boolean>
+data class ContentModel(val id: Int)  {
+	/** This flow represents data fetched in the background based on the value of id */
+	val connectionState: Flow<Int>
 		get() = flow {
-			this.emit(false)
+			this.emit(id)
 			delay(10)
-			this.emit(true)
+			this.emit(id)
 		}
 			//.flowOn(Dispatchers.IO) //no difference
 }
