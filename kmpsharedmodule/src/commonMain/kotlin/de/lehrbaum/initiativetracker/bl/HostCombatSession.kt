@@ -31,7 +31,7 @@ class HostCombatSession(val sessionId: Int, private val combatController: Combat
 				}
 			}
 		} catch (e: Exception) {
-			Napier.i("Exception in Remote combat", e, TAG)
+			Napier.i("Exception in Remote combat: ${e.message}", tag = TAG)
 			emit(HostConnectionState.Disconnected("Exception $e"))
 		}
 	}

@@ -21,12 +21,10 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 	val connectionStateState = hostCombatModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
 	val scaffoldState = rememberScaffoldState()
 	scaffoldState.snackbarHostState.bindSnackbarState(hostCombatModel.snackbarState)
-	// For some reason the lambda would not be changed even though a parameter of it changed. This seems to have fixed it.
-	val topBarLambda = rememberComposableLambda(hostCombatModel) { TopBar(drawerState, hostCombatModel) }
 
 	Scaffold(
 		scaffoldState = scaffoldState,
-		topBar = topBarLambda,
+		topBar = topBarLambda(drawerState, hostCombatModel),
 		floatingActionButton = rememberComposableLambda(hostCombatModel) {
 				NextCombatantButton(
 					hostCombatModel.combatStarted,
@@ -73,19 +71,38 @@ private fun NextCombatantButton(combatStarted: Boolean, onClicked: () -> Unit) {
 	}
 }
 
+private fun topBarLambda(drawerState: DrawerState, hostCombatModel: HostCombatModel): @Composable () -> Unit = {
+	TopBar(
+		drawerState,
+		hostCombatModel.sessionId,
+		hostCombatModel.isSharing,
+		hostCombatModel.combatStarted,
+		hostCombatModel::startCombat,
+		hostCombatModel::closeSession,
+		hostCombatModel::onShareClicked,
+		hostCombatModel::showSessionId
+	)
+}
+
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
-	hostCombatModel: HostCombatModel
+	sessionId: Int,
+	isSharing: Boolean,
+	combatStarted: Boolean,
+	startCombat: () -> Unit,
+	closeSession: suspend () -> Unit,
+	shareSession: suspend () -> Unit,
+	showSessionId: () -> Unit,
 ) {
-	var displayDropdown by remember(hostCombatModel) { mutableStateOf(false) }
+	var displayDropdown by remember(sessionId) { mutableStateOf(false) }
 
 	val coroutineScope = rememberCoroutineScope()
 
 	TopAppBar(
 		title = {
-			if (hostCombatModel.isSharing) {
-				Text("Session ${hostCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			if (isSharing) {
+				Text("Session ${sessionId}", color = MaterialTheme.colors.onPrimary)
 			} else {
 				Text("New combat", color = MaterialTheme.colors.onPrimary)
 			}
@@ -94,15 +111,15 @@ private fun TopBar(
 			BurgerMenuButtonForDrawer(drawerState)
 		},
 		actions = {
-			if (!hostCombatModel.combatStarted) {
-				IconButton(onClick = hostCombatModel::startCombat) {
+			if (!combatStarted) {
+				IconButton(onClick = startCombat) {
 					Icon(Icons.Default.PlayArrow, contentDescription = "Play")
 				}
 			}
-			if (hostCombatModel.isSharing) {
+			if (isSharing) {
 				IconButton(onClick = {
 					coroutineScope.launch {
-						hostCombatModel.closeSession()
+						closeSession()
 					}
 				}) {
 					Icon(Icons.Default.Close, contentDescription = "Close Session")
@@ -110,7 +127,7 @@ private fun TopBar(
 			} else {
 				IconButton(onClick = {
 					coroutineScope.launch {
-						hostCombatModel.onShareClicked()
+						shareSession()
 					}
 				}) {
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
@@ -123,7 +140,7 @@ private fun TopBar(
 				expanded = displayDropdown,
 				onDismissRequest = { displayDropdown = false }
 			) {
-				DropdownMenuItem(onClick = hostCombatModel::showSessionId) {
+				DropdownMenuItem(onClick = showSessionId) {
 					Text(text = "Show Session Id")
 				}
 			}

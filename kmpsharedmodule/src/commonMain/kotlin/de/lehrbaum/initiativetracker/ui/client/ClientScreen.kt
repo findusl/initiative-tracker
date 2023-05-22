@@ -27,7 +27,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 
 	Scaffold(
 		scaffoldState = scaffoldState,
-		topBar = { TopBar(drawerState, clientCombatModel) },
+		topBar = topBarLambda(drawerState, clientCombatModel),
 	) {
 		Content(connectionStateState, clientCombatModel)
 	}
@@ -44,7 +44,6 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 @Composable
 private fun Content(
 	connectionStateState: State<ClientCombatState>,
-
 	clientCombatModel: ClientCombatModel
 ) {
 	val connectionState = connectionStateState.value
@@ -64,26 +63,30 @@ private fun Content(
 	}
 }
 
+private fun topBarLambda(drawerState: DrawerState, clientCombatModel: ClientCombatModel): @Composable () -> Unit = {
+	TopBar(drawerState, clientCombatModel.sessionId, clientCombatModel::chooseCharacterToAdd, clientCombatModel::leaveCombat)
+}
+
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
-	clientCombatModel: ClientCombatModel
+	sessionId: Int,
+	chooseCharacterToAdd: suspend () -> Unit,
+	leaveCombat: () -> Unit,
 ) {
-	val coroutineScope = rememberCoroutineScope(clientCombatModel)
+	val coroutineScope = rememberCoroutineScope(sessionId)
 	TopAppBar(
 		title = {
-			Text("Joined ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			Text("Joined $sessionId", color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {
 			IconButton(onClick = {
-				coroutineScope.launch {
-					clientCombatModel.chooseCharacterToAdd()
-				}
+				coroutineScope.launch { chooseCharacterToAdd() }
 			}) {
 				Icon(Icons.Default.Add, contentDescription = "Choose Character to add")
 			}
-			IconButton(onClick = clientCombatModel::leaveCombat) {
+			IconButton(onClick = leaveCombat) {
 				Icon(Icons.Default.Close, contentDescription = "Leave Session")
 			}
 		},
