@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -26,21 +25,21 @@ fun ContentScreen(contentModel: ContentModel, nextModel: () -> Unit) {
 	Scaffold(topBar = { TopBar(contentModel) }) {
 		Column {
 			Text("This number should match ${contentModel.id}")
-			Button(onClick = nextModel) { Text("Generate new id") }
+			Button(onClick = nextModel) { Text("Generate new number") }
 		}
 	}
 
-	// access flow is necessary
-	contentModel.connectionState.collectAsState(false).value.toString()
+	// accessing flow is necessary. Remember is not necessary
+	val contentFlow = remember(contentModel) { contentModel.contentFlow }
+	contentFlow.collectAsState(false).value.toString()
 }
 
 @Composable
-private fun TopBar(contentModel: ContentModel) =
-	TopAppBar(title = { Text("This number should match ${contentModel.id}") })
+private fun TopBar(contentModel: ContentModel) = Text("This number should match ${contentModel.id}")
 
 data class ContentModel(val id: Int)  {
-	/** This flow represents data fetched in the background based on the value of id */
-	val connectionState: Flow<Int>
+	/** This flow represents data fetched in the background based on the value of id. */
+	val contentFlow: Flow<Int>
 		get() = flow {
 			this.emit(id)
 			delay(10)
