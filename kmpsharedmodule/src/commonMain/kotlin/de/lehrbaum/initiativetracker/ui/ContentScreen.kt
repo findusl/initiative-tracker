@@ -10,31 +10,23 @@ import androidx.compose.runtime.collectAsState
 
 @Composable
 fun ContentScreen(contentModel: ContentModel) {
-	val connectionStateState = contentModel.connectionState.collectAsState(false)
 
 	Scaffold(
 		topBar = { TopBar(contentModel) },
 	) {
 		Column {
 			Text("This number should match ${contentModel.id}")
-			Button(onClick = contentModel::nextId) {
-				Text("Generate new id")
-			}
+			Button(onClick = contentModel.nextModel) { Text("Generate new id") }
 		}
 	}
 
-	if (connectionStateState.value) {
-		Text("Test")
-	}
+	// this is necessary probably compose scoping
+	contentModel.connectionState.collectAsState(false).value.toString()
 }
 
 @Composable
 private fun TopBar(
 	contentModel: ContentModel
 ) {
-	TopAppBar(
-		title = {
-			Text("This number should match ${contentModel.id}")
-		}
-	)
+	TopAppBar(title = { Text("This number should match ${contentModel.id}") })
 }
