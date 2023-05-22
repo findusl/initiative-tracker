@@ -7,24 +7,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ContentScreen(contentModel: ContentModel) {
 	val connectionStateState = contentModel.connectionState.collectAsState(false)
-	val coroutineScope = rememberCoroutineScope()
 
 	Scaffold(
 		topBar = { TopBar(contentModel) },
 	) {
 		Column {
 			Text("This number should match ${contentModel.id}")
-			Button(onClick = {
-				coroutineScope.launch {
-					contentModel.onShareClicked()
-				}
-			}) {
+			Button(onClick = contentModel::nextId) {
 				Text("Generate new id")
 			}
 		}
