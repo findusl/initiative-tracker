@@ -29,7 +29,7 @@ fun ContentScreen(contentModel: ContentModel, nextModel: () -> Unit) {
 		}
 	}
 
-	// accessing flow is necessary. Remember is not necessary
+	// accessing flow is necessary. Remember is not necessary but seemed sensible
 	val contentFlow = remember(contentModel) { contentModel.contentFlow }
 	contentFlow.collectAsState(false).value.toString()
 }
