@@ -4,14 +4,19 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -19,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.shared.SwipeResponse
-import io.github.aakira.napier.Napier
 
 @Composable
 @ExperimentalMaterialApi
@@ -35,17 +39,16 @@ fun <E> SwipeToDismiss(
 		return
 	}
 
-	val dismissState = rememberDismissState {
-		when (it) {
-			DismissValue.DismissedToEnd -> dismissToEndAction?.action?.invoke(element)
+	val dismissState = remember(dismissToEndAction?.action, dismissToStartAction?.action) {
+		DismissState(DismissValue.Default) {
+			when (it) {
+				DismissValue.DismissedToEnd -> dismissToEndAction?.action?.invoke(element)
 
-			DismissValue.DismissedToStart -> dismissToStartAction?.action?.invoke(element)
+				DismissValue.DismissedToStart -> dismissToStartAction?.action?.invoke(element)
 
-			else -> {
-				Napier.w { "Dismissed to unknown state $it" }
-				null
-			}
-		}?.dismissResponse ?: false
+				DismissValue.Default -> null // Happens when the user lets go before finishing the slide
+			}?.shouldSlideOut ?: false
+		}
 	}
 
 	val directions = setOfNotNull(
@@ -53,23 +56,63 @@ fun <E> SwipeToDismiss(
 		dismissToStartAction?.let { DismissDirection.EndToStart }
 	)
 
+	val backgroundLambda = remember<@Composable RowScope.() -> Unit>(dismissToEndAction, dismissToStartAction) {
+		{ SwipeToDismissBackground(dismissToEndAction, dismissToStartAction, dismissState) }
+	}
+
 	SwipeToDismiss(
 		state = dismissState,
 		directions = directions,
 		dismissThresholds = { FractionalThreshold(0.3f) },
-		background = { SwipeToDismissBackground(dismissToEndAction, dismissToStartAction, dismissState) },
+		background = backgroundLambda,
 		dismissContent = { content() }
 	)
 }
 
-fun <E: Any>swipeToDeleteAction(deleteCharacter: (E) -> Unit): SwipeToDismissAction<E> {
+fun <E : Any> swipeToDelete(delete: (E) -> Unit): SwipeToDismissAction<E> {
 	return SwipeToDismissAction(
 		Color.Red,
 		Icons.Default.Delete,
-		contentDescription = "Delete Element",
+		contentDescription = "Delete List element",
 		action = { element ->
-			deleteCharacter(element)
+			delete(element)
 			SwipeResponse.SLIDE_OUT
+		}
+	)
+}
+
+fun <E : Any> swipeToDisable(disable: (E) -> Unit): SwipeToDismissAction<E> {
+	return SwipeToDismissAction(
+		Color.DarkGray,
+		Icons.Default.Close,
+		contentDescription = "Disable List element",
+		action = { element ->
+			disable(element)
+			SwipeResponse.SLIDE_BACK
+		}
+	)
+}
+
+fun <E : Any> swipeToEnable(enable: (E) -> Unit): SwipeToDismissAction<E> {
+	return SwipeToDismissAction(
+		Color.Green,
+		Icons.Default.Check,
+		contentDescription = "Enable List element",
+		action = { element ->
+			enable(element)
+			SwipeResponse.SLIDE_BACK
+		}
+	)
+}
+
+fun <E : Any> swipeToJumpToTurn(jumpToTurn: (E) -> Unit): SwipeToDismissAction<E> {
+	return SwipeToDismissAction(
+		Color.Blue,
+		Icons.Default.Place,
+		contentDescription = "Set list element active",
+		action = { element ->
+			jumpToTurn(element)
+			SwipeResponse.SLIDE_BACK
 		}
 	)
 }

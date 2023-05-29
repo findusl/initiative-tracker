@@ -35,7 +35,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 	private var mostRecentDeleted: CombatantModel? = null
 
 	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
-		if (combatStarted) {
+		if (combatStarted && !combatantViewModel.disabled) {
 			damageCombatant(combatantViewModel)
 		} else {
 			editCombatant(combatantViewModel)
@@ -51,6 +51,18 @@ abstract class HostCombatModelBase : HostCombatModel {
 		// TODO show dialog with undo option
 	}
 
+	override fun disableCombatant(combatantViewModel: CombatantViewModel) {
+		combatController.disableCombatant(combatantViewModel.id)
+	}
+
+	override fun enableCombatant(combatantViewModel: CombatantViewModel) {
+		combatController.enableCombatant(combatantViewModel.id)
+	}
+
+	override fun jumpToCombatant(combatantViewModel: CombatantViewModel) {
+		combatController.jumpToCombatant(combatantViewModel.id)
+	}
+
 	override fun onDamageDialogSubmit(damage: Int) {
 		assignDamageCombatant.value?.apply {
 			combatController.updateCombatant(copy(currentHp = currentHp - damage).toCombatantModel())
@@ -58,7 +70,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 		assignDamageCombatant.value = null
 	}
 
-	override fun onAddNewPressed() {
+	override fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
 		editCombatant(newCombatant.toCombatantViewModel())
 	}
