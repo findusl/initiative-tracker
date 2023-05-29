@@ -28,8 +28,8 @@ fun CombatantList(
 	onCombatantClicked: (CombatantViewModel) -> Unit,
 	onCombatantLongClicked: (CombatantViewModel) -> Unit,
 	onCreateNewClicked: (() -> Unit)? = null,
-	dismissToEndAction: SwipeToDismissAction<CombatantViewModel>? = null,
-	dismissToStartAction: SwipeToDismissAction<CombatantViewModel>? = null,
+	dismissToEndAction: (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
+	dismissToStartAction: (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
 ) {
     val listState = rememberLazyListState()
 
@@ -47,7 +47,7 @@ fun CombatantList(
             .padding(Constants.defaultPadding)
             .fillMaxWidth()
         items(combatants, key = CombatantViewModel::id) { combatant ->
-            SwipeToDismiss(dismissToEndAction, dismissToStartAction, combatant) {
+            SwipeToDismiss(dismissToEndAction(combatant), dismissToStartAction(combatant), combatant) {
                 CombatantListElement(combatant, itemModifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },
                     onLongClick = { onCombatantLongClicked(combatant) }
