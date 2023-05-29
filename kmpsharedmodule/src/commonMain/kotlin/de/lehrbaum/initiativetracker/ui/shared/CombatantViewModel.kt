@@ -9,8 +9,9 @@ data class CombatantViewModel(
 	val name: String,
 	val initiative: Int,
 	val maxHp: Int,
-	val currentHp: Int = maxHp,
-	var active: Boolean = false
+	val currentHp: Int,
+	val disabled: Boolean,
+	var active: Boolean = false,
 ) : Comparable<CombatantViewModel> {
 
 	val initiativeString: String = initiative.toString()
@@ -25,10 +26,10 @@ data class CombatantViewModel(
 	}
 
 	fun toCombatantModel(): CombatantModel {
-		return CombatantModel(id, name, initiative, maxHp, currentHp)
+		return CombatantModel(id, name, initiative, maxHp, currentHp, disabled)
 	}
 }
 
 fun CombatantModel.toCombatantViewModel(active: Boolean = false): CombatantViewModel {
-	return CombatantViewModel(id, name, initiative, maxHp, currentHp, active)
+	return CombatantViewModel(id, name, initiative, maxHp, currentHp, disabled, active)
 }

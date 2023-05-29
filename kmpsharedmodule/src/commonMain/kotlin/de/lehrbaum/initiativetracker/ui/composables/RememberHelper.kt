@@ -12,18 +12,18 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
 @Suppress("NOTHING_TO_INLINE") // Avoids Compose scope
-inline fun rememberComposableLambda(key: Any, noinline lambda: @Composable () -> Unit) =
-	remember<@Composable () -> Unit>(key) {
+inline fun rememberComposableLambda(vararg keys: Any?, noinline lambda: @Composable () -> Unit) =
+	remember<@Composable () -> Unit>(keys) {
 		lambda
 	}
 
 @Composable
 inline fun rememberCoroutineScope(
-	key: Any,
+	vararg keys: Any?,
 	crossinline getContext: @DisallowComposableCalls () -> CoroutineContext =
 		{ EmptyCoroutineContext }
 ) =
-	remember(key) { CoroutineWrapper(getContext()) }
+	remember(keys) { CoroutineWrapper(getContext()) }
 
 class CoroutineWrapper(
 	coroutineContext: CoroutineContext

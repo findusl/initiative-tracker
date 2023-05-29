@@ -32,20 +32,31 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 				)
 			}
 	) {
-		val connectionState = connectionStateState.value
-		when (connectionState) {
-			HostConnectionState.Connected -> {
-				CombatantList(
-					hostCombatModel.combatants.collectAsState(emptyList()).value,
-					hostCombatModel::onCombatantClicked,
-					hostCombatModel::onCombatantLongClicked,
-					hostCombatModel::onAddNewPressed,
-					dismissToStartAction = swipeToDeleteAction(hostCombatModel::deleteCombatant)
-				)
-			}
+		with(hostCombatModel) {
+			val connectionState = connectionStateState.value
 
-			HostConnectionState.Connecting -> Text("Connecting")
-			is HostConnectionState.Disconnected -> Text("Disconnected! Reason: ${connectionState.reason}")
+			when (connectionState) {
+				HostConnectionState.Connected -> {
+					CombatantList(
+						combatants.collectAsState(emptyList()).value,
+						::onCombatantClicked,
+						::onCombatantLongClicked,
+						::addNewCombatant,
+						dismissToStartAction = {
+							if (combatStarted && !it.disabled) swipeToDisable(::disableCombatant)
+							else swipeToDelete(::deleteCombatant)
+						},
+						dismissToEndAction = {
+							if(it.disabled) swipeToEnable(::enableCombatant)
+							else if (combatStarted) swipeToJumpToTurn(::jumpToCombatant)
+							else null
+						}
+					)
+				}
+
+				HostConnectionState.Connecting -> Text("Connecting")
+				is HostConnectionState.Disconnected -> Text("Disconnected! Reason: ${connectionState.reason}")
+			}
 		}
 	}
 
@@ -71,6 +82,7 @@ private fun NextCombatantButton(combatStarted: Boolean, onClicked: () -> Unit) {
 	}
 }
 
+/* This needs to be passing every single parameter to the TopBar Composable, otherwise it is not recomposed on hostCombatModel change */
 private fun topBarLambda(drawerState: DrawerState, hostCombatModel: HostCombatModel): @Composable () -> Unit = {
 	TopBar(
 		drawerState,
@@ -79,7 +91,7 @@ private fun topBarLambda(drawerState: DrawerState, hostCombatModel: HostCombatMo
 		hostCombatModel.combatStarted,
 		hostCombatModel::startCombat,
 		hostCombatModel::closeSession,
-		hostCombatModel::onShareClicked,
+		hostCombatModel::shareCombat,
 		hostCombatModel::showSessionId
 	)
 }

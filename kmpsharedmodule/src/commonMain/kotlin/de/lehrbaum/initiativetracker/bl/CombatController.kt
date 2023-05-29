@@ -40,7 +40,7 @@ class CombatController {
 		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
 		initiative: Int = -9 // Sorts it to the bottom where the add button is.
 	): CombatantModel {
-		val newCombatant = CombatantModel(nextId++, name, initiative, 0, 0)
+		val newCombatant = CombatantModel(nextId++, name, initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 		return newCombatant
@@ -78,7 +78,32 @@ class CombatController {
 		if (oldCombatant != null) {
 			combatantCount--
 		}
+		if (activeCombatantIndex.value >= combatantCount) {
+			_activeCombatantIndex.value = combatantCount - 1
+		}
 		return oldCombatant
+	}
+
+	fun disableCombatant(id: Long) {
+		_combatants.value = _combatants.value
+			.map { combatantModel ->
+				if (combatantModel.id == id) {
+					combatantModel.copy(disabled = true)
+				} else combatantModel
+			}
+	}
+
+	fun enableCombatant(id: Long) {
+		_combatants.value = _combatants.value
+			.map { combatantModel ->
+				if (combatantModel.id == id) {
+					combatantModel.copy(disabled = false)
+				} else combatantModel
+			}
+	}
+
+	fun jumpToCombatant(id: Long) {
+		_activeCombatantIndex.value = combatants.value.indexOfFirst { it.id == id }
 	}
 
 	/**

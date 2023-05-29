@@ -15,7 +15,7 @@ data class HostSharedCombatModelImpl(override val sessionId: Int, private val le
 		get() = hostCombatSession.hostConnectionState
 	override val isSharing = true
 
-	override suspend fun onShareClicked() {
+	override suspend fun shareCombat() {
 		throw IllegalStateException("It should not be possible")
 	}
 

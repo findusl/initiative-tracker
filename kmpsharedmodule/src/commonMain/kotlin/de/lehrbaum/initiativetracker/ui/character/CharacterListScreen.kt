@@ -15,7 +15,7 @@ import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismissAction
 import de.lehrbaum.initiativetracker.ui.composables.addCreateNewCard
-import de.lehrbaum.initiativetracker.ui.composables.swipeToDeleteAction
+import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
 
 @Composable
 @ExperimentalMaterialApi
@@ -29,7 +29,7 @@ fun CharacterListScreen(drawerState: DrawerState, characterListModel: CharacterL
 			characters,
 			characterListModel::editCharacter,
 			characterListModel::addNewCharacter,
-			dismissToStartAction = swipeToDeleteAction(characterListModel::deleteCharacter)
+			dismissToStartAction = swipeToDelete(characterListModel::deleteCharacter)
 		)
 	}
 
