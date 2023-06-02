@@ -5,15 +5,18 @@ import de.lehrbaum.initiativetracker.bl.model.sortByInitiative
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-private const val DEFAULT_COMBATANT_TITLE = "New Combatant"
+private const val DEFAULT_COMBATANT_TITLE = "New"
 
+/**
+ * Not thread safe! Has to be called from a single thread.
+ */
 class CombatController {
 	private var nextId = 0L
 
 	/**
 	 * The most recent name set on a combatant. Default for new combatants, as often monsters have the same name.
-	 * (Should this be in ViewModel rather? It seems like a user helping feature not a logical feature of combat)
 	 */
+	// (Should this be in ViewModel rather? It seems like a user helping feature not a logical feature of combat)
 	private var latestName: String? = null
 
 	private var combatantCount = 0
@@ -27,13 +30,27 @@ class CombatController {
 		get() = _activeCombatantIndex
 
 	fun nextTurn() {
-		_activeCombatantIndex.value = (activeCombatantIndex.value + 1) % combatantCount
+		val startingIndex = activeCombatantIndex.value
+		var newIndex = (startingIndex + 1) % combatantCount
+		while (combatants.value[newIndex].disabled && newIndex != startingIndex) {
+			newIndex = (newIndex + 1) % combatantCount
+		}
+		_activeCombatantIndex.value = newIndex
 	}
 
 	fun prevTurn() {
-		var newActiveCombatant = activeCombatantIndex.value - 1
+		val startingIndex = activeCombatantIndex.value
+		var newIndex = startingIndex.decreaseIndex()
+		while (combatants.value[newIndex].disabled && newIndex != startingIndex) {
+			newIndex = newIndex.decreaseIndex()
+		}
+		_activeCombatantIndex.value = newIndex
+	}
+
+	private fun Int.decreaseIndex(): Int {
+		var newActiveCombatant = this - 1
 		if (newActiveCombatant < 0) newActiveCombatant = combatantCount - 1
-		_activeCombatantIndex.value = newActiveCombatant
+		return newActiveCombatant
 	}
 
 	fun addCombatant(
