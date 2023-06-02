@@ -1,9 +1,9 @@
 package de.lehrbaum.initiativetracker.ui.shared
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 
-@Stable
+@Immutable
 data class CombatantViewModel(
 	val id: Long,
 	val name: String,

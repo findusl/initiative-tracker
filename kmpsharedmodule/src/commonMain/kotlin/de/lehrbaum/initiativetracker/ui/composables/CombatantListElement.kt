@@ -9,12 +9,14 @@ import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -24,10 +26,21 @@ fun CombatantListElement(combatant: CombatantViewModel, modifier: Modifier = Mod
 	val outerBackgroundColor by animateColorAsState(
 		if (combatant.active) MaterialTheme.colors.secondary else MaterialTheme.colors.background
 	)
-	val innerBackgroundColor = combatant.healthPercentage.healthToBrush()
+	var disabled by remember { mutableStateOf(combatant.disabled) }
+	disabled = combatant.disabled
+	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
+
+	val innerBackgroundColor = combatant.healthPercentage.healthToBrush(enabled = !disabled)
 	Box(modifier = Modifier.background(outerBackgroundColor)) {
 		Card(elevation = 8.dp, modifier = modifier) {
-			Row(Modifier.background(innerBackgroundColor)){
+			Row(Modifier
+				.background(innerBackgroundColor)
+				.drawBehind {
+					if (disabled) {
+						drawDisabledCross(crossRed)
+					}
+				}
+			){
 				Text(
 					text = combatant.name, modifier = Modifier
 						.padding(Constants.defaultPadding)
@@ -39,6 +52,24 @@ fun CombatantListElement(combatant: CombatantViewModel, modifier: Modifier = Mod
 	}
 }
 
+private fun DrawScope.drawDisabledCross(color: Color) {
+	val strokeWidth = 5.dp.toPx()
+
+	// Draw the diagonal lines of the St. Andrew's cross
+	drawLine(
+		color = color,
+		start = Offset(0f, 0f),
+		end = Offset(size.width, size.height),
+		strokeWidth = strokeWidth
+	)
+	drawLine(
+		color = color,
+		start = Offset(0f, size.height),
+		end = Offset(size.width, 0f),
+		strokeWidth = strokeWidth
+	)
+}
+
 private data class HealthColors(
 	val alpha: Float
 ) {
@@ -47,7 +78,10 @@ private data class HealthColors(
 }
 
 @Composable
-private fun Double.healthToBrush(colors: HealthColors = HealthColors(ContentAlpha.medium)): Brush {
+private fun Double.healthToBrush(
+	enabled: Boolean,
+	colors: HealthColors = HealthColors(if (enabled) ContentAlpha.medium else ContentAlpha.disabled)
+): Brush {
 	return when {
 		this > 0.99 -> SolidColor(colors.backgroundGreen)
 		this > 0.75 -> Brush.horizontalGradient(0.75f to colors.backgroundGreen, 1.0f to colors.backgroundRed)
