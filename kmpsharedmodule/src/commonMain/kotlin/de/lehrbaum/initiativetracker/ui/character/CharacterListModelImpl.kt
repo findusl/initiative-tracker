@@ -25,12 +25,13 @@ class CharacterListModelImpl : CharacterListModel {
 
 	override fun addNewCharacter() {
 		val model = characterRepository.addCharacter()
-		editCharacter(model)
+		editCharacter(model, true)
 	}
 
-	private fun editCharacter(characterModel: CharacterModel) {
+	private fun editCharacter(characterModel: CharacterModel, firstEdit: Boolean = false) {
 		editCharacterModel.value = EditCharacterModel(
 			characterModel,
+			firstEdit,
 			onSave = {
 				characterRepository.updateCharacter(it)
 				editCharacterModel.value = null

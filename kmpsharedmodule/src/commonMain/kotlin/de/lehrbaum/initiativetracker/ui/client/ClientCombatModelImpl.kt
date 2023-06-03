@@ -35,7 +35,7 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 		val combatant = suspendCancellableCoroutine<CombatantModel> { continuation ->
 			characterChooserModel = CharacterChooserModel(
 				onChosen = { character, initiative, currentHp ->
-					val combatant = character.run { CombatantModel(-1, name, initiative, maxHp ?: 0, currentHp) }
+					val combatant = character.run { CombatantModel(-1, name, initiative, maxHp, currentHp) }
 					snackbarState.value = SnackbarState.Text("Requesting to add ${combatant.name}.", SnackbarDuration.Short)
 					characterChooserModel = null
 					continuation.resume(combatant)

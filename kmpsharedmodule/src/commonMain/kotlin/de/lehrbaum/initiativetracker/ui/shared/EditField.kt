@@ -8,19 +8,29 @@ data class EditField<T>(
 	val initialValue: T,
 	val keyboardType: KeyboardType? = null,
 	val singleLine: Boolean = true,
+	val placeholder: String? = null,
+	val selectOnFirstFocus: Boolean = false,
 	val parseInput: (String) -> Result<T>
 ) {
-	var currentState by mutableStateOf(initialValue?.toString() ?: "")
+	val initialValueText = initialValue?.toString() ?: ""
+	/** Implemented EditTextField lazily, currently this value does not update the UI, only takes updates */
+	var currentState by mutableStateOf(initialValueText)
 	val hasError by derivedStateOf { parseInput(currentState).isFailure }
 	val value: Result<T>
 		get() = parseInput(currentState)
 
 	companion object {
-		fun <R> failure() = Result.Companion.failure<R>(dummy)
+		fun <R> failedParsing() = Result.Companion.failure<R>(dummy)
 
 		val RequiredIntParser: (String) -> Result<Int> =
-			{ input -> input.toIntOrNull()?.let { Result.success(it) } ?: EditField.failure() }
+			{ input -> input.toIntOrNull()?.let { Result.success(it) } ?: failedParsing() }
+
+		val OptionalIntParser: (String) -> Result<Int?> =
+			{ input ->
+				if (input.isEmpty()) Result.success(null)
+				else { input.toIntOrNull()?.let { Result.success(it) } ?: failedParsing() }
+			}
 	}
 }
 
-private val dummy = RuntimeException("I don't know what to put")
+private val dummy = RuntimeException("I don't know what to write here")

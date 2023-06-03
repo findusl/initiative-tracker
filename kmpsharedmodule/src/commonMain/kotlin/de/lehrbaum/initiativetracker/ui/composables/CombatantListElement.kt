@@ -78,11 +78,12 @@ private data class HealthColors(
 }
 
 @Composable
-private fun Double.healthToBrush(
+private fun Double?.healthToBrush(
 	enabled: Boolean,
 	colors: HealthColors = HealthColors(if (enabled) ContentAlpha.medium else ContentAlpha.disabled)
 ): Brush {
 	return when {
+		this == null -> SolidColor(MaterialTheme.colors.background)
 		this > 0.99 -> SolidColor(colors.backgroundGreen)
 		this > 0.75 -> Brush.horizontalGradient(0.75f to colors.backgroundGreen, 1.0f to colors.backgroundRed)
 		this > 0.37 -> Brush.horizontalGradient(0.37f to colors.backgroundGreen, 0.75f to colors.backgroundRed)
