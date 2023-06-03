@@ -51,7 +51,12 @@ private fun Content(
 		is ClientCombatState.Connected -> {
 			CombatantList(
 				connectionState.combatants.mapIndexed { index, combatant ->
-					combatant.toCombatantViewModel(index == connectionState.activeCombatantIndex)
+					val viewModel = combatant.toCombatantViewModel(index == connectionState.activeCombatantIndex)
+					if (viewModel.isHidden) {
+						viewModel.copy(name = "<Hidden>")
+					} else {
+						viewModel
+					}
 				},
 				clientCombatModel::onCombatantClicked,
 				clientCombatModel::onCombatantLongClicked,

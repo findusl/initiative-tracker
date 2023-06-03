@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.FullscreenDialog
@@ -53,10 +54,22 @@ fun EditCombatantScreen(editCombatantModel: EditCombatantModel, modifier: Modifi
     ) {
         EditTextField(editCombatantModel.nameEdit, "name")
         Spacer(modifier = Modifier.height(Constants.defaultPadding))
-        EditTextField(editCombatantModel.initiativeEdit, "Initiative")
+		Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+			EditTextField(editCombatantModel.initiativeEdit, "Initiative", Modifier.weight(1f))
+			Spacer(modifier = Modifier.width(Constants.defaultPadding))
+			Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+				Checkbox(
+					editCombatantModel.isHidden,
+					onCheckedChange = { editCombatantModel.isHidden = it },
+				)
+				Text(text = "Hidden")
+			}
+		}
         Spacer(modifier = Modifier.height(Constants.defaultPadding))
-        EditTextField(editCombatantModel.maxHpEdit, "Max Hitpoints")
-        Spacer(modifier = Modifier.height(Constants.defaultPadding))
-        EditTextField(editCombatantModel.currentHpEdit, "Current Hitpoints")
+		Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+			EditTextField(editCombatantModel.maxHpEdit, "Max Hitpoints", Modifier.weight(1f))
+			Spacer(modifier = Modifier.width(Constants.defaultPadding))
+			EditTextField(editCombatantModel.currentHpEdit, "Current Hitpoints", Modifier.weight(1f))
+		}
     }
 }

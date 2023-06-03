@@ -11,19 +11,19 @@ data class CombatantViewModel(
 	val maxHp: Int?,
 	val currentHp: Int?,
 	val disabled: Boolean,
-	val hidden: Boolean,
+	val isHidden: Boolean,
 	var active: Boolean = false,
 ) {
 
 	val initiativeString: String = initiative?.toString() ?: "-"
 
-	val healthPercentage: Double? = if (currentHp != null && maxHp != null) currentHp/maxHp.toDouble() else null
+	val healthPercentage: Double? = if (currentHp != null && maxHp != null) currentHp / maxHp.toDouble() else null
 
 	fun toCombatantModel(): CombatantModel {
-		return CombatantModel(id, name, initiative, maxHp, currentHp, disabled, hidden)
+		return CombatantModel(id, name, initiative, maxHp, currentHp, disabled, isHidden)
 	}
 }
 
 fun CombatantModel.toCombatantViewModel(active: Boolean = false): CombatantViewModel {
-	return CombatantViewModel(id, name, initiative, maxHp, currentHp, disabled, hidden, active)
+	return CombatantViewModel(id, name, initiative, maxHp, currentHp, disabled, isHidden, active)
 }

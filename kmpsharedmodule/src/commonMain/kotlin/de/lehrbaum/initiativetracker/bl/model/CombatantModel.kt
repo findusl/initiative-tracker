@@ -7,7 +7,7 @@ data class CombatantModel(
 	val maxHp: Int? = null,
 	val currentHp: Int? = null,
 	val disabled: Boolean = false,
-	val hidden: Boolean = false,
+	val isHidden: Boolean = false,
 )
 
 /**

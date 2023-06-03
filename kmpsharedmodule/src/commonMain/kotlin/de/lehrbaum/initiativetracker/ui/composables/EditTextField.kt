@@ -14,7 +14,12 @@ import de.lehrbaum.initiativetracker.ui.shared.EditField
 import kotlin.reflect.KClass
 
 @Composable
-fun <T> EditTextField(editField: EditField<T>, label: String, keyboardOptions: KeyboardOptions) {
+fun <T> EditTextField(
+	editField: EditField<T>,
+	label: String,
+	keyboardOptions: KeyboardOptions,
+	modifier: Modifier = Modifier,
+) {
 	var selectAllNextFocus by remember(editField) { mutableStateOf(editField.selectOnFirstFocus) }
 	var selectWhole by remember { mutableStateOf(false) } // https://stackoverflow.com/a/70241741/3795043
 	var textFieldValue by remember(editField) {
@@ -37,7 +42,7 @@ fun <T> EditTextField(editField: EditField<T>, label: String, keyboardOptions: K
         isError = editField.hasError,
         keyboardOptions = keyboardOptions,
         singleLine = editField.singleLine,
-        modifier = Modifier
+        modifier = modifier
 			.fillMaxWidth()
 			.onFocusChanged {
 				if (selectAllNextFocus && it.hasFocus) {
@@ -49,8 +54,8 @@ fun <T> EditTextField(editField: EditField<T>, label: String, keyboardOptions: K
 }
 
 @Composable
-inline fun <reified T> EditTextField(editField: EditField<T>, label: String) {
-	EditTextField(editField, label, guessKeyboardOptions(editField))
+inline fun <reified T> EditTextField(editField: EditField<T>, label: String, modifier: Modifier = Modifier) {
+	EditTextField(editField, label, guessKeyboardOptions(editField), modifier)
 }
 
 inline fun <reified T> guessKeyboardOptions(editField: EditField<T>): KeyboardOptions {

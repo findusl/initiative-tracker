@@ -1,5 +1,8 @@
 package de.lehrbaum.initiativetracker.ui.edit
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditField
@@ -29,6 +32,7 @@ data class EditCombatantModelImpl(
 		combatantViewModel.currentHp,
 		parseInput = EditField.OptionalIntParser
 	)
+	override var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
 
 	override fun saveCombatant() {
 		onSave(CombatantModel(
@@ -36,7 +40,9 @@ data class EditCombatantModelImpl(
 			nameEdit.value.getOrThrow(),
 			initiativeEdit.value.getOrThrow(),
 			maxHpEdit.value.getOrThrow(),
-			currentHpEdit.value.getOrThrow()
+			currentHpEdit.value.getOrThrow(),
+			combatantViewModel.disabled,
+			isHidden,
 		))
     }
 

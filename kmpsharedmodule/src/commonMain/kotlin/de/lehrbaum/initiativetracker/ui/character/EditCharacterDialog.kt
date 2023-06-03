@@ -53,8 +53,10 @@ fun EditCharacterScreen(editCharacterModel: EditCharacterModel, modifier: Modifi
 	) {
 		EditTextField(editCharacterModel.nameEdit, "name")
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))
-		EditTextField(editCharacterModel.initiativeModEdit, "Initiative Modifier")
-		Spacer(modifier = Modifier.height(Constants.defaultPadding))
-		EditTextField(editCharacterModel.maxHpEdit, "Max Hitpoints")
+		Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+			EditTextField(editCharacterModel.initiativeModEdit, "Initiative Modifier", Modifier.weight(1f))
+			Spacer(modifier = Modifier.width(Constants.defaultPadding))
+			EditTextField(editCharacterModel.maxHpEdit, "Max Hitpoints", Modifier.weight(1f))
+		}
 	}
 }
