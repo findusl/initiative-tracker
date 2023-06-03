@@ -55,7 +55,7 @@ class CombatController {
 
 	fun addCombatant(
 		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
-		initiative: Int = -9 // Sorts it to the bottom where the add button is.
+		initiative: Int? = null // Sorts it to the bottom where the add button is.
 	): CombatantModel {
 		val newCombatant = CombatantModel(nextId++, name, initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()

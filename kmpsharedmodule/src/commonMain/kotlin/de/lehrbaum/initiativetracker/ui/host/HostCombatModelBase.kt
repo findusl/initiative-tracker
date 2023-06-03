@@ -65,19 +65,21 @@ abstract class HostCombatModelBase : HostCombatModel {
 
 	override fun onDamageDialogSubmit(damage: Int) {
 		assignDamageCombatant.value?.apply {
-			combatController.updateCombatant(copy(currentHp = currentHp - damage).toCombatantModel())
+			if (currentHp != null) // should have never been shown if null
+				combatController.updateCombatant(copy(currentHp = currentHp - damage).toCombatantModel())
 		}
 		assignDamageCombatant.value = null
 	}
 
 	override fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
-		editCombatant(newCombatant.toCombatantViewModel())
+		editCombatant(newCombatant.toCombatantViewModel(), firstEdit = true)
 	}
 
-	private fun editCombatant(combatantViewModel: CombatantViewModel) {
+	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
 		editCombatantModel.value = EditCombatantModelImpl(
 			combatantViewModel,
+			firstEdit,
 			onSave = {
 				combatController.updateCombatant(it)
 				editCombatantModel.value = null
@@ -86,8 +88,12 @@ abstract class HostCombatModelBase : HostCombatModel {
 		)
 	}
 
-	private fun damageCombatant(CombatantViewModel: CombatantViewModel) {
-		assignDamageCombatant.value = CombatantViewModel
+	private fun damageCombatant(combatantViewModel: CombatantViewModel) {
+		if (combatantViewModel.currentHp != null) {
+			assignDamageCombatant.value = combatantViewModel
+		} else {
+			snackbarState.value = SnackbarState.Text("Combatant has no current HP")
+		}
 	}
 
 	override fun undoDelete() {

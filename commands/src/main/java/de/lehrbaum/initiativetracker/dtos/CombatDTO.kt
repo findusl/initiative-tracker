@@ -12,8 +12,9 @@ data class CombatDTO(
 data class CombatantDTO(
 	val id: Long,
 	val name: String,
-	val initiative: Int,
-	val maxHp: Int,
-	val currentHp: Int,
+	val initiative: Int?,
+	val maxHp: Int?,
+	val currentHp: Int?,
 	val disabled: Boolean,
+	val hidden: Boolean,
 )

@@ -27,7 +27,7 @@ class CharacterRepository {
 		settings.encodeValue(serializer, SETTINGS_KEY, characters.value)
 
 	fun addCharacter(): CharacterModel {
-		val defaultCharacter = CharacterModel(nextFreeId(), "New Character", 0, 0)
+		val defaultCharacter = CharacterModel(nextFreeId(), "New Character", initiativeMod = null, maxHp = null)
 		synchronized(characters) {
 			characters.value += defaultCharacter
 			persistCharacters()

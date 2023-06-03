@@ -7,6 +7,8 @@ import de.lehrbaum.initiativetracker.dtos.CombatantDTO
 fun toCombatDTO(combatants: List<CombatantModel>, activeCombatantIndex: Int) =
 	CombatDTO(activeCombatantIndex, combatants.map(CombatantModel::toDTO))
 
-fun CombatantModel.toDTO(): CombatantDTO = CombatantDTO(id, name, initiative, maxHp, currentHp, disabled)
+fun CombatantModel.toDTO(): CombatantDTO =
+	CombatantDTO(id, name, initiative, maxHp, currentHp, disabled, hidden)
 
-fun CombatantDTO.toModel(): CombatantModel = CombatantModel(id, name, initiative, maxHp, currentHp, disabled)
+fun CombatantDTO.toModel(): CombatantModel =
+	CombatantModel(id, name, initiative, maxHp, currentHp, disabled, hidden)
