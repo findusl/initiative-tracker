@@ -16,5 +16,5 @@ data class CombatantDTO(
 	val maxHp: Int?,
 	val currentHp: Int?,
 	val disabled: Boolean,
-	val hidden: Boolean,
+	val isHidden: Boolean,
 )

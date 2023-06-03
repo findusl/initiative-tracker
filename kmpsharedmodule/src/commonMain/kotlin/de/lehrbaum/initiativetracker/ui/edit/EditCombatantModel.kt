@@ -9,6 +9,7 @@ interface EditCombatantModel {
 	val initiativeEdit: EditField<Int?>
 	val maxHpEdit: EditField<Int?>
 	val currentHpEdit: EditField<Int?>
+	var isHidden: Boolean
 
     fun saveCombatant()
     fun cancel()
