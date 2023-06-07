@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.FullscreenDialog
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
@@ -24,21 +23,19 @@ import de.lehrbaum.initiativetracker.ui.shared.EditField.Companion.RequiredIntPa
 import kotlin.random.Random
 
 @Composable
-fun CharacterChooserDialog(characterChooserModel: CharacterChooserModel) {
+fun CharacterChooserScreen(characterChooserModel: CharacterChooserModel) {
 	val characters by characterChooserModel.characters.collectAsState(emptyList())
 	var chosen by remember { mutableStateOf<CharacterViewModel?>(null) }
 
-	FullscreenDialog(onDismissRequest = characterChooserModel::cancel) {
-		Scaffold(topBar = { DialogTopBar(characterChooserModel::cancel) }) {
-			LazyColumn {
-				val itemModifier = Modifier
-					.padding(Constants.defaultPadding)
-					.fillMaxWidth()
-				items(characters, key = CharacterViewModel::id) { item ->
-					CharacterListElement(item, itemModifier.clickable {
-						chosen = item
-					})
-				}
+	Scaffold(topBar = { TopBar(characterChooserModel::cancel) }) {
+		LazyColumn {
+			val itemModifier = Modifier
+				.padding(Constants.defaultPadding)
+				.fillMaxWidth()
+			items(characters, key = CharacterViewModel::id) { item ->
+				CharacterListElement(item, itemModifier.clickable {
+					chosen = item
+				})
 			}
 		}
 	}
@@ -79,7 +76,7 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 }
 
 @Composable
-private fun DialogTopBar(onCancel: () -> Unit) {
+private fun TopBar(onCancel: () -> Unit) {
 	TopAppBar(
 		title = { Text("Choose Character") },
 		navigationIcon = {

@@ -15,7 +15,7 @@ data class EditCombatantModelImpl(
 	private val onSave: (CombatantModel) -> Unit,
 	private val onCancel: () -> Unit,
 ) : EditCombatantModel {
-    private val id = combatantViewModel.id
+    override val id = combatantViewModel.id
 	override val nameEdit =
 		EditField(combatantViewModel.name, selectOnFirstFocus = firstEdit) { input ->
 			if (input.isBlank()) failedParsing() else success(input)

@@ -26,6 +26,7 @@ interface HostCombatModel {
 	fun disableCombatant(combatantViewModel: CombatantViewModel)
 	fun enableCombatant(combatantViewModel: CombatantViewModel)
     fun onDamageDialogSubmit(damage: Int)
+    fun onDamageDialogCancel()
     fun addNewCombatant()
     fun nextCombatant()
     fun previousCombatant()

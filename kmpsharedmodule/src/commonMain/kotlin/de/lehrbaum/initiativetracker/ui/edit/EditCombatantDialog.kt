@@ -10,25 +10,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.FullscreenDialog
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 
 @Composable
-fun EditCombatantDialog(editCombatantModel: EditCombatantModel) {
-    FullscreenDialog(onDismissRequest = editCombatantModel::cancel) {
-        Scaffold(topBar = { DialogTopBar(editCombatantModel) }) {
-            EditCombatantScreen(editCombatantModel, Modifier.padding(it))
-        }
-    }
+fun EditCombatantScreen(editCombatantModel: EditCombatantModel) {
+	Scaffold(topBar = { DialogTopBar(editCombatantModel) }) {
+		EditCombatantContent(editCombatantModel, Modifier.padding(it))
+	}
 }
 
 @Composable
 private fun DialogTopBar(editCombatantModel: EditCombatantModel) {
 	val canSave by derivedStateOf {
-		!editCombatantModel.run { nameEdit.hasError || initiativeEdit.hasError || maxHpEdit.hasError || currentHpEdit.hasError }
+		!editCombatantModel.run {
+			nameEdit.hasError
+				|| initiativeEdit.hasError
+				|| maxHpEdit.hasError
+				|| currentHpEdit.hasError
+		}
 	}
     TopAppBar(
-        title = {},
+        title = { Text(editCombatantModel.id.toString()) },
         navigationIcon = {
             IconButton(onClick = editCombatantModel::cancel) {
                 Icon(
@@ -46,7 +48,7 @@ private fun DialogTopBar(editCombatantModel: EditCombatantModel) {
 }
 
 @Composable
-fun EditCombatantScreen(editCombatantModel: EditCombatantModel, modifier: Modifier = Modifier) {
+private fun EditCombatantContent(editCombatantModel: EditCombatantModel, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(Constants.defaultPadding)

@@ -16,26 +16,33 @@ import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismissAction
 import de.lehrbaum.initiativetracker.ui.composables.addCreateNewCard
 import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
+import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun CharacterListScreen(drawerState: DrawerState, characterListModel: CharacterListModel) {
 	val characters by characterListModel.characters.collectAsState(emptyList())
-	Scaffold(
-		topBar = { TopBar(drawerState) }
-	) {
-		CharacterList(
-			characters,
-			characterListModel::editCharacter,
-			characterListModel::addNewCharacter,
-			dismissToStartAction = swipeToDelete(characterListModel::deleteCharacter)
-		)
-	}
 
-	characterListModel.editCharacterModel.value?.let {
-		EditCharacterDialog(it)
-	}
+	ListDetailLayout(
+		list = {
+			Scaffold(
+				topBar = { TopBar(drawerState) }
+			) {
+				CharacterList(
+					characters,
+					characterListModel::editCharacter,
+					characterListModel::addNewCharacter,
+					dismissToStartAction = swipeToDelete(characterListModel::deleteCharacter)
+				)
+			}
+		},
+		detail = characterListModel.editCharacterModel.value?.let {
+			{ EditCharacterScreen(it) }
+		}
+	)
+
+
 }
 
 @Composable
