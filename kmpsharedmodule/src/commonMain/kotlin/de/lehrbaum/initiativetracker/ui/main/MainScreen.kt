@@ -6,10 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.character.CharacterListScreen
@@ -19,18 +16,25 @@ import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(mainModel: MainModel) {
-	val scaffoldState = rememberScaffoldState()
+fun MainScreen(mainModel: MainModel, widthInt: Int? = null) {
+	val drawerState = rememberDrawerState(DrawerValue.Closed)
 	val drawerItems by mainModel.drawerItems.collectAsState(emptyList())
-	// Theoretically can reduce this to modal drawer
-	Scaffold(
-		scaffoldState = scaffoldState,
+
+	// Workaround for resizing window on desktop
+	LaunchedEffect(widthInt) {
+		if (widthInt != null) {
+			drawerState.snapTo(drawerState.currentValue)
+		}
+	}
+
+	ModalDrawer(
+		drawerState = drawerState,
 		drawerContent = {
-			Drawer(drawerItems, mainModel.activeDrawerItem, scaffoldState.drawerState, mainModel::onDrawerItemSelected)
+			Drawer(drawerItems, mainModel.activeDrawerItem, drawerState, mainModel::onDrawerItemSelected)
 		},
-		drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
+		gesturesEnabled = drawerState.isOpen,
 	) {
-		MainScreenContent(mainModel.content, scaffoldState.drawerState)
+		MainScreenContent(mainModel.content, drawerState)
 	}
 }
 

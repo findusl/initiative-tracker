@@ -9,15 +9,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.FullscreenDialog
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 
 @Composable
-fun EditCharacterDialog(editCharacterModel: EditCharacterModel) {
-	FullscreenDialog(onDismissRequest = editCharacterModel::cancel) {
-		Scaffold(topBar = { DialogTopBar(editCharacterModel) }) {
-			EditCharacterScreen(editCharacterModel, Modifier.padding(it))
-		}
+fun EditCharacterScreen(editCharacterModel: EditCharacterModel) {
+	Scaffold(topBar = { DialogTopBar(editCharacterModel) }) {
+		EditCharacterContent(editCharacterModel, Modifier.padding(it))
 	}
 }
 
@@ -45,7 +42,7 @@ private fun DialogTopBar(editCharacterModel: EditCharacterModel) {
 }
 
 @Composable
-fun EditCharacterScreen(editCharacterModel: EditCharacterModel, modifier: Modifier = Modifier) {
+private fun EditCharacterContent(editCharacterModel: EditCharacterModel, modifier: Modifier = Modifier) {
 	Column(
 		modifier = modifier
 			.padding(Constants.defaultPadding)

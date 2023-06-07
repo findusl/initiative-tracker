@@ -4,8 +4,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
 
 @Stable
-data class EditField<T>(
-	val initialValue: T,
+// cannot be a data class. That breaks stuff if different edit dialogs are shown
+// with a field with the same value. Then compose optimizes
+class EditField<T>(
+	initialValue: T,
 	val keyboardType: KeyboardType? = null,
 	val singleLine: Boolean = true,
 	val placeholder: String? = null,

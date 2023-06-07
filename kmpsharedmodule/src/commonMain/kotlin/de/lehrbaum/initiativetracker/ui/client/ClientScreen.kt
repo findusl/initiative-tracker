@@ -5,15 +5,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
-import de.lehrbaum.initiativetracker.ui.character.CharacterChooserDialog
+import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.launch
 
@@ -21,22 +20,30 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel) {
+	val clientCombatModelState = remember { mutableStateOf(clientCombatModel) }
+	clientCombatModelState.value = clientCombatModel
 	val connectionStateState = clientCombatModel.combatState.collectAsState(ClientCombatState.Connecting)
-	val scaffoldState = rememberScaffoldState()
-	scaffoldState.snackbarHostState.bindSnackbarState(clientCombatModel.snackbarState)
 
-	Scaffold(
-		scaffoldState = scaffoldState,
-		topBar = topBarLambda(drawerState, clientCombatModel),
-	) {
-		Content(connectionStateState, clientCombatModel)
-	}
+	ListDetailLayout(
+		list = {
+			val scaffoldState = rememberScaffoldState()
+			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatModel.snackbarState)
 
-	if (connectionStateState.value is ClientCombatState.Connected) {
-		clientCombatModel.characterChooserModel?.let {
-			CharacterChooserDialog(it)
-		}
-	}
+			Scaffold(
+				scaffoldState = scaffoldState,
+				topBar = { TopBar(drawerState, clientCombatModelState.value) },
+			) {
+				Content(connectionStateState, clientCombatModel)
+			}
+		},
+		detail = if (connectionStateState.value is ClientCombatState.Connected) {
+			clientCombatModel.characterChooserModel?.let {
+				{ CharacterChooserScreen(it) }
+			}
+		} else null
+	)
+
+
 }
 
 @ExperimentalFoundationApi
@@ -68,30 +75,24 @@ private fun Content(
 	}
 }
 
-private fun topBarLambda(drawerState: DrawerState, clientCombatModel: ClientCombatModel): @Composable () -> Unit = {
-	TopBar(drawerState, clientCombatModel.sessionId, clientCombatModel::chooseCharacterToAdd, clientCombatModel::leaveCombat)
-}
-
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
-	sessionId: Int,
-	chooseCharacterToAdd: suspend () -> Unit,
-	leaveCombat: () -> Unit,
+	clientCombatModel: ClientCombatModel
 ) {
-	val coroutineScope = rememberCoroutineScope(sessionId)
+	val coroutineScope = rememberCoroutineScope(clientCombatModel.sessionId)
 	TopAppBar(
 		title = {
-			Text("Joined $sessionId", color = MaterialTheme.colors.onPrimary)
+			Text("Joined ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {
 			IconButton(onClick = {
-				coroutineScope.launch { chooseCharacterToAdd() }
+				coroutineScope.launch { clientCombatModel.chooseCharacterToAdd() }
 			}) {
 				Icon(Icons.Default.Add, contentDescription = "Choose Character to add")
 			}
-			IconButton(onClick = leaveCombat) {
+			IconButton(onClick = clientCombatModel::leaveCombat) {
 				Icon(Icons.Default.Close, contentDescription = "Leave Session")
 			}
 		},
