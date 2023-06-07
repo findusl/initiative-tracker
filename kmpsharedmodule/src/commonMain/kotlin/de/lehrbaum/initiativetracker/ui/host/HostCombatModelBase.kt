@@ -71,6 +71,10 @@ abstract class HostCombatModelBase : HostCombatModel {
 		assignDamageCombatant.value = null
 	}
 
+	override fun onDamageDialogCancel() {
+		assignDamageCombatant.value = null
+	}
+
 	override fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
 		editCombatant(newCombatant.toCombatantViewModel(), firstEdit = true)
