@@ -10,6 +10,7 @@ data class CombatDTO(
 
 @Serializable
 data class CombatantDTO(
+	val ownerId: Long,
 	val id: Long,
 	val name: String,
 	val initiative: Int?,
