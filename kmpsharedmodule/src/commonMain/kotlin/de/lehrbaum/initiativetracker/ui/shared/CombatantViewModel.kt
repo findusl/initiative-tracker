@@ -5,6 +5,7 @@ import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 
 @Immutable
 data class CombatantViewModel(
+	val ownerId: Long,
 	val id: Long,
 	val name: String,
 	val initiative: Int?,
@@ -18,12 +19,8 @@ data class CombatantViewModel(
 	val initiativeString: String = initiative?.toString() ?: "-"
 
 	val healthPercentage: Double? = if (currentHp != null && maxHp != null) currentHp / maxHp.toDouble() else null
-
-	fun toCombatantModel(): CombatantModel {
-		return CombatantModel(id, name, initiative, maxHp, currentHp, disabled, isHidden)
-	}
 }
 
 fun CombatantModel.toCombatantViewModel(active: Boolean = false): CombatantViewModel {
-	return CombatantViewModel(id, name, initiative, maxHp, currentHp, disabled, isHidden, active)
+	return CombatantViewModel(ownerId, id, name, initiative, maxHp, currentHp, disabled, isHidden, active)
 }

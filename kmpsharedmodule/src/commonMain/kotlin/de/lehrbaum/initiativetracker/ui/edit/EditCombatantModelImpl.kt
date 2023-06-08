@@ -36,6 +36,7 @@ data class EditCombatantModelImpl(
 
 	override fun saveCombatant() {
 		onSave(CombatantModel(
+			combatantViewModel.ownerId,
 			id,
 			nameEdit.value.getOrThrow(),
 			initiativeEdit.value.getOrThrow(),

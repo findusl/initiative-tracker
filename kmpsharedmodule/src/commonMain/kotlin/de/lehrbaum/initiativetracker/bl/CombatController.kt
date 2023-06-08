@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.bl
 
+import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.bl.model.sortByInitiative
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,8 @@ class CombatController {
 	val activeCombatantIndex: StateFlow<Int>
 		get() = _activeCombatantIndex
 
+	private val ownerId = GeneralSettingsRepository.installationId
+
 	fun nextTurn() {
 		val startingIndex = activeCombatantIndex.value
 		var newIndex = (startingIndex + 1) % combatantCount
@@ -57,7 +60,7 @@ class CombatController {
 		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
 		initiative: Int? = null // Sorts it to the bottom where the add button is.
 	): CombatantModel {
-		val newCombatant = CombatantModel(nextId++, name, initiative)
+		val newCombatant = CombatantModel(ownerId, nextId++, name, initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 		return newCombatant
@@ -70,17 +73,21 @@ class CombatController {
 		return newCombatant
 	}
 
+	fun damageCombatant(id: Long, damage: Int) {
+		_combatants.value = _combatants.value
+			.updateCombatant(id) { combatantModel ->
+				combatantModel.copy(currentHp = combatantModel.currentHp?.minus(damage))
+			}
+	}
+
 	fun updateCombatant(updatedCombatant: CombatantModel) {
-		_combatants.value = _combatants.value.map {
-			if (it.id == updatedCombatant.id) {
-				if (it.name != updatedCombatant.name) {
+		_combatants.value = _combatants.value
+			.updateCombatant(updatedCombatant.id) { combatantModel ->
+				if (combatantModel.name != updatedCombatant.name) {
 					latestName = updatedCombatant.name
 				}
 				updatedCombatant
-			} else {
-				it
-			}
-		}.sortByInitiative()
+			}.sortByInitiative()
 	}
 
 	fun deleteCombatant(id: Long): CombatantModel? {
@@ -103,19 +110,15 @@ class CombatController {
 
 	fun disableCombatant(id: Long) {
 		_combatants.value = _combatants.value
-			.map { combatantModel ->
-				if (combatantModel.id == id) {
-					combatantModel.copy(disabled = true)
-				} else combatantModel
+			.updateCombatant(id) { combatantModel ->
+				combatantModel.copy(disabled = true)
 			}
 	}
 
 	fun enableCombatant(id: Long) {
 		_combatants.value = _combatants.value
-			.map { combatantModel ->
-				if (combatantModel.id == id) {
-					combatantModel.copy(disabled = false)
-				} else combatantModel
+			.updateCombatant(id) { combatantModel ->
+				combatantModel.copy(disabled = false)
 			}
 	}
 
@@ -132,5 +135,16 @@ class CombatController {
 		_combatants.value = combatants.toList()
 		nextId = combatants.maxOfOrNull { it.id }?.inc() ?: 0
 		_activeCombatantIndex.value = activeCombatantIndex
+	}
+}
+
+private inline fun List<CombatantModel>.updateCombatant(
+	id: Long,
+	updater: (CombatantModel) -> CombatantModel
+): List<CombatantModel> {
+	return map {
+		if (it.id == id) {
+			updater(it)
+		} else it
 	}
 }

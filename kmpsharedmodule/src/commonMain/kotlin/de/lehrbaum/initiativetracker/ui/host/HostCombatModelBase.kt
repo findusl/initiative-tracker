@@ -66,7 +66,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 	override fun onDamageDialogSubmit(damage: Int) {
 		assignDamageCombatant.value?.apply {
 			if (currentHp != null) // should have never been shown if null
-				combatController.updateCombatant(copy(currentHp = currentHp - damage).toCombatantModel())
+				combatController.damageCombatant(id, damage)
 		}
 		assignDamageCombatant.value = null
 	}

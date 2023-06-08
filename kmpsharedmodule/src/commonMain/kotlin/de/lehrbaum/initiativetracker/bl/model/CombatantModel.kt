@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.bl.model
 
 data class CombatantModel(
+	val ownerId: Long,
 	val id: Long,
 	val name: String,
 	val initiative: Int? = null,

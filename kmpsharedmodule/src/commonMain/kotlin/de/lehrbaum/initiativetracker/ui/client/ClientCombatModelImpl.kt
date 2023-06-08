@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -20,6 +21,9 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 	override val combatState = combatSession.state
 
 	override val snackbarState = mutableStateOf<SnackbarState?>(null)
+
+	private val ownerId = GeneralSettingsRepository.installationId
+
 	override var characterChooserModel by mutableStateOf<CharacterChooserModel?>(null)
 		private set
 
@@ -35,7 +39,7 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 		val combatant = suspendCancellableCoroutine<CombatantModel> { continuation ->
 			characterChooserModel = CharacterChooserModel(
 				onChosen = { character, initiative, currentHp ->
-					val combatant = character.run { CombatantModel(-1, name, initiative, maxHp, currentHp) }
+					val combatant = character.run { CombatantModel(ownerId, id = -1, name, initiative, maxHp, currentHp) }
 					snackbarState.value = SnackbarState.Text("Requesting to add ${combatant.name}.", SnackbarDuration.Short)
 					characterChooserModel = null
 					continuation.resume(combatant)
