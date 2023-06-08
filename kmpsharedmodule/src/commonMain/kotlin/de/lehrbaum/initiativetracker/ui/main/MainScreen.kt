@@ -68,6 +68,7 @@ private fun Drawer(
 	}
 }
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 @Composable
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
@@ -76,6 +77,7 @@ private fun MainScreenContent(contentState: ContentState, drawerState: DrawerSta
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListModel)
 		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatModel)
 		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatModel)
-		is ContentState.JoinCombat -> JoinScreen(drawerState, contentState.onJoin, contentState.onCancel, contentState.asHost)
+		is ContentState.JoinCombat ->
+			JoinScreen(drawerState, contentState.onJoin, contentState.onCancel, contentState.asHost)
 	}
 }
