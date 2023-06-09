@@ -35,5 +35,3 @@ fun SnackbarHostState.bindSnackbarState(stateHolder: MutableState<SnackbarState?
         }
     }
 }
-
-

@@ -77,4 +77,3 @@ fun <T: Any> guessKeyboardOptions(editField: EditField<*>, clazz: KClass<T>): Ke
 	return if (type != null) KeyboardOptions(keyboardType = type) else KeyboardOptions.Default
 }
 
-

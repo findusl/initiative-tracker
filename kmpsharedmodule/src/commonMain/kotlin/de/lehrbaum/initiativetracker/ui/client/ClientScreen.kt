@@ -42,8 +42,6 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 			}
 		} else null
 	)
-
-
 }
 
 @ExperimentalFoundationApi

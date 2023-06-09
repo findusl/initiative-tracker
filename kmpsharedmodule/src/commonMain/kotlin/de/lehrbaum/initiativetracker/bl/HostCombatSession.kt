@@ -38,7 +38,6 @@ class HostCombatSession(val sessionId: Int, private val combatController: Combat
 		.distinctUntilChanged()
 		.flowOn(Dispatchers.IO)
 
-
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(collector: FlowCollector<HostConnectionState>): Boolean {
 		val startMessage = StartCommand.JoinAsHost(sessionId) as StartCommand
 		this.sendSerialized(startMessage)

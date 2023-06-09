@@ -41,8 +41,6 @@ fun CharacterListScreen(drawerState: DrawerState, characterListModel: CharacterL
 			{ EditCharacterScreen(it) }
 		}
 	)
-
-
 }
 
 @Composable

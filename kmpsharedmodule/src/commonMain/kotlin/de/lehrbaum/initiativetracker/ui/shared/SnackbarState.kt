@@ -7,6 +7,7 @@ import androidx.compose.runtime.Stable
 sealed interface SnackbarState {
     val text: String
     val duration: SnackbarDuration
+
     data class Text(
         override val text: String,
         override val duration: SnackbarDuration = SnackbarDuration.Short
@@ -17,6 +18,5 @@ sealed interface SnackbarState {
         override val duration: SnackbarDuration = SnackbarDuration.Long,
         val copyText: String
     ): SnackbarState
-
 
 }

@@ -9,7 +9,6 @@
 .idea/**/shelf
 .idea/azure/
 
-
 # AWS User-specific
 .idea/**/aws.xml
 

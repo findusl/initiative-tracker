@@ -12,7 +12,6 @@ import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.combine
 
-
 abstract class HostCombatModelBase : HostCombatModel {
 
 	protected var combatController: CombatController = CombatController()
