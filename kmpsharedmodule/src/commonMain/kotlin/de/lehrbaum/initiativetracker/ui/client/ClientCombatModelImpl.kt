@@ -10,6 +10,8 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserModel
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModel
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -27,12 +29,35 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 	override var characterChooserModel by mutableStateOf<CharacterChooserModel?>(null)
 		private set
 
+	override var editCombatantModel by mutableStateOf<EditCombatantModel?>(null)
+		private set
+
+	override var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
+		private set
+
 	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
 		snackbarState.value = SnackbarState.Text("Combat press not implemented")
 	}
 
 	override fun onCombatantLongClicked(combatant: CombatantViewModel) {
-		snackbarState.value = SnackbarState.Text("Combat long press not implemented")
+		if (combatant.ownerId == ownerId) {
+			editCombatant(combatant)
+		} else {
+			snackbarState.value = SnackbarState.Text("Cannot edit characters not added by you.")
+		}
+	}
+
+	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
+		editCombatantModel = EditCombatantModelImpl(
+			combatantViewModel,
+			firstEdit,
+			onSave = {
+				snackbarState.value = SnackbarState.Text("Requesting to change ${it.name} in background.", SnackbarDuration.Short)
+				editCombatantModel = null
+				TODO("Implement")
+			},
+			onCancel = { editCombatantModel = null }
+		)
 	}
 
 	override suspend fun chooseCharacterToAdd() {
@@ -52,6 +77,14 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 		val result = combatSession.requestAddCharacter(combatant)
 		val message = if (result) "Added ${combatant.name} successfully." else "Adding ${combatant.name} rejected."
 		snackbarState.value = SnackbarState.Text(message, SnackbarDuration.Long)
+	}
+
+	override fun onDamageDialogSubmit(damage: Int) {
+		TODO("Not yet implemented")
+	}
+
+	override fun onDamageDialogCancel() {
+		TODO("Not yet implemented")
 	}
 
 	override fun leaveCombat() {
