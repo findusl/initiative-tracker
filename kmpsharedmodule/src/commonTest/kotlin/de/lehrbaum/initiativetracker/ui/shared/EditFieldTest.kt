@@ -3,7 +3,6 @@ package de.lehrbaum.initiativetracker.ui.shared
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 
-
 internal class EditFieldTest {
 	@Test
 	fun `Ensure equals works as expected`() {
