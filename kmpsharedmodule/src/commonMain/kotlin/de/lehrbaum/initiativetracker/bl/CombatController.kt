@@ -74,20 +74,18 @@ class CombatController {
 	}
 
 	fun damageCombatant(id: Long, damage: Int) {
-		_combatants.value = _combatants.value
-			.updateCombatant(id) { combatantModel ->
-				combatantModel.copy(currentHp = combatantModel.currentHp?.minus(damage))
-			}
+		_combatants.updateCombatant(id) { combatantModel ->
+			combatantModel.copy(currentHp = combatantModel.currentHp?.minus(damage))
+		}
 	}
 
 	fun updateCombatant(updatedCombatant: CombatantModel) {
-		_combatants.value = _combatants.value
-			.updateCombatant(updatedCombatant.id) { combatantModel ->
-				if (combatantModel.name != updatedCombatant.name) {
-					latestName = updatedCombatant.name
-				}
-				updatedCombatant
-			}.sortByInitiative()
+		_combatants.updateCombatant(updatedCombatant.id, reSort = true) { combatantModel ->
+			if (combatantModel.name != updatedCombatant.name) {
+				latestName = updatedCombatant.name
+			}
+			updatedCombatant
+		}
 	}
 
 	fun deleteCombatant(id: Long): CombatantModel? {
@@ -109,17 +107,15 @@ class CombatController {
 	}
 
 	fun disableCombatant(id: Long) {
-		_combatants.value = _combatants.value
-			.updateCombatant(id) { combatantModel ->
-				combatantModel.copy(disabled = true)
-			}
+		_combatants.updateCombatant(id) { combatantModel ->
+			combatantModel.copy(disabled = true)
+		}
 	}
 
 	fun enableCombatant(id: Long) {
-		_combatants.value = _combatants.value
-			.updateCombatant(id) { combatantModel ->
-				combatantModel.copy(disabled = false)
-			}
+		_combatants.updateCombatant(id) { combatantModel ->
+			combatantModel.copy(disabled = false)
+		}
 	}
 
 	fun jumpToCombatant(id: Long) {
@@ -138,13 +134,16 @@ class CombatController {
 	}
 }
 
-private inline fun List<CombatantModel>.updateCombatant(
+private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
 	id: Long,
+	reSort: Boolean = false,
 	updater: (CombatantModel) -> CombatantModel
-): List<CombatantModel> {
-	return map {
+) {
+	var result = value.map {
 		if (it.id == id) {
 			updater(it)
 		} else it
 	}
+	if (reSort) result = result.sortByInitiative()
+	this.value = result
 }
