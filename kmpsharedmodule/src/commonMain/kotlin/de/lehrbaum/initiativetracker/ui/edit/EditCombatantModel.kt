@@ -12,6 +12,7 @@ interface EditCombatantModel {
 	val currentHpEdit: EditField<Int?>
 	var isHidden: Boolean
 
-    fun saveCombatant()
+    suspend fun saveCombatant()
+
     fun cancel()
 }

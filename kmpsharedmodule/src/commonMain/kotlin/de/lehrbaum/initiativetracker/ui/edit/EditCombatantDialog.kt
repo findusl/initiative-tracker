@@ -4,13 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
+import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditCombatantScreen(editCombatantModel: EditCombatantModel) {
@@ -29,6 +30,8 @@ private fun DialogTopBar(editCombatantModel: EditCombatantModel) {
 				|| currentHpEdit.hasError
 		}
 	}
+	val coroutineScope = rememberCoroutineScope()
+	var showLoadingSpinner by remember { mutableStateOf(false) }
     TopAppBar(
         title = { Text(editCombatantModel.id.toString()) },
         navigationIcon = {
@@ -40,8 +43,27 @@ private fun DialogTopBar(editCombatantModel: EditCombatantModel) {
             }
         },
         actions = {
-            Button(onClick = editCombatantModel::saveCombatant, enabled = canSave) {
-                Text("Save")
+            Button(
+				onClick = {
+					coroutineScope.launch {
+						showLoadingSpinner = true
+						editCombatantModel.saveCombatant()
+						showLoadingSpinner = false
+					}
+				},
+				enabled = canSave
+			) {
+				Row(verticalAlignment = Alignment.CenterVertically) {
+					Text("Save")
+					// Values found by trial and error. Might not work everywhere
+					if (showLoadingSpinner) {
+						CircularProgressIndicator(
+							color = MaterialTheme.colors.onPrimary,
+							strokeWidth = 3.dp,
+							modifier = Modifier.padding(start = 8.dp).size(28.dp)
+						)
+					}
+				}
             }
         }
     )

@@ -12,7 +12,7 @@ import kotlin.Result.Companion.success
 data class EditCombatantModelImpl(
 	private val combatantViewModel: CombatantViewModel,
 	private val firstEdit: Boolean,
-	private val onSave: (CombatantModel) -> Unit,
+	private val onSave: suspend (CombatantModel) -> Unit,
 	private val onCancel: () -> Unit,
 ) : EditCombatantModel {
     override val id = combatantViewModel.id
@@ -34,7 +34,7 @@ data class EditCombatantModelImpl(
 	)
 	override var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
 
-	override fun saveCombatant() {
+	override suspend fun saveCombatant() {
 		onSave(CombatantModel(
 			combatantViewModel.ownerId,
 			id,
