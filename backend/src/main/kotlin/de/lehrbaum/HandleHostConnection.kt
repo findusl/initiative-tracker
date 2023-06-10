@@ -16,6 +16,7 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 	var session: Session? = null
 	try {
 		session = obtainSession(hostingCommand) ?: return
+		println("Host connected ${session.id}")
 		with(HostSessionState()) {
 			val commandForwardingJob = launch {
 				handleOutgoingCommands(session)

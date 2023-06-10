@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 private const val DEFAULT_COMBATANT_TITLE = "New"
 
 /**
- * Not thread safe! Has to be called from a single thread.
+ * Not thread safe! Has to be called from a single thread. Currently that is Dispatchers.Main
+ * Probably should change that in the future...
  */
 class CombatController {
 	private var nextId = 0L

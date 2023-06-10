@@ -5,25 +5,18 @@ import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-
-@Composable
-@Suppress("NOTHING_TO_INLINE") // Avoids Compose scope
-inline fun rememberComposableLambda(vararg keys: Any?, noinline lambda: @Composable () -> Unit) =
-	remember<@Composable () -> Unit>(keys) {
-		lambda
-	}
 
 @Composable
 inline fun rememberCoroutineScope(
-	vararg keys: Any?,
+	key: Any?,
 	crossinline getContext: @DisallowComposableCalls () -> CoroutineContext =
-		{ EmptyCoroutineContext }
+		{ Dispatchers.Main }
 ) =
-	remember(keys) { CoroutineWrapper(getContext()) }
+	remember(key) { CoroutineWrapper(getContext()) }
 
 class CoroutineWrapper(
 	coroutineContext: CoroutineContext

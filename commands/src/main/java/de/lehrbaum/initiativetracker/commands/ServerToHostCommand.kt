@@ -8,4 +8,7 @@ sealed interface ServerToHostCommand {
 
 	@Serializable
 	data class AddCombatant(val combatant: CombatantDTO) : ServerToHostCommand
+
+	@Serializable
+	data class EditCombatant(val combatant: CombatantDTO) : ServerToHostCommand
 }
