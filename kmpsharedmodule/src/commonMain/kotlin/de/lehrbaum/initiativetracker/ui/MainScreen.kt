@@ -29,7 +29,7 @@ fun ContentScreen(contentModel: ContentModel, nextModel: () -> Unit) {
 		}
 	}
 
-	// accessing flow is necessary. Remember is not necessary but seemed sensible
+	// accessing flow is necessary
 	contentModel.contentFlow.collectAsState(0).value.toString()
 }
 
