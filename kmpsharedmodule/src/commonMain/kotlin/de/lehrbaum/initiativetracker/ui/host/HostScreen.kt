@@ -56,7 +56,7 @@ private fun MainContent(
 	hostCombatViewModel: HostCombatViewModel,
 	connectionStateState: State<HostConnectionState>
 ) {
-	hostCombatViewModel.apply {
+	hostCombatViewModel.run {
 		val connectionState = connectionStateState.value
 
 		when (connectionState) {
