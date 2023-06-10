@@ -8,10 +8,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
-import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
-import de.lehrbaum.initiativetracker.ui.composables.CombatantList
-import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
-import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.composables.*
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
@@ -22,27 +19,34 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatViewModel) {
-	val clientCombatModelState = remember { mutableStateOf(clientCombatViewModel) }
-	clientCombatModelState.value = clientCombatViewModel
+	val clientCombatViewModelState = remember { mutableStateOf(clientCombatViewModel) }
+	clientCombatViewModelState.value = clientCombatViewModel
 	val connectionStateState = clientCombatViewModel.combatState.collectAsState(ClientCombatState.Connecting)
 	val coroutineScope = rememberCoroutineScope(clientCombatViewModel.sessionId)
 
 	ListDetailLayout(
 		list = {
 			val scaffoldState = rememberScaffoldState()
-			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatViewModel.snackbarState)
+			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatViewModelState.value.snackbarState)
 
 			Scaffold(
 				scaffoldState = scaffoldState,
-				topBar = { TopBar(drawerState, clientCombatModelState.value, coroutineScope) },
+				topBar = { TopBar(drawerState, clientCombatViewModelState.value, coroutineScope) },
 			) {
-				Content(connectionStateState, clientCombatViewModel)
+				Content(connectionStateState, clientCombatViewModelState.value)
+			}
+
+			if (connectionStateState.value is ClientCombatState.Connected) {
+				clientCombatViewModelState.value.run {
+					assignDamageCombatant?.let {
+						DamageCombatantDialog(::onDamageDialogSubmit, ::onDamageDialogCancel)
+					}
+				}
 			}
 		},
 		detail = if (connectionStateState.value is ClientCombatState.Connected) {
 			clientCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } }
 				?: clientCombatViewModel.editCombatantViewModel?.let { { EditCombatantScreen(it) } }
-
 		} else null
 	)
 }
