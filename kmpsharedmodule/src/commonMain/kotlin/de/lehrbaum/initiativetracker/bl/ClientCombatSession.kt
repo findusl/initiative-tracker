@@ -81,13 +81,21 @@ class ClientCombatSession(val sessionId: Int) {
 		}
 	}
 
-	@Suppress("OPT_IN_IS_NOT_ENABLED") // The cancellation of a command cannot be bound to any useful Scope
-	@OptIn(DelicateCoroutinesApi::class)
 	suspend fun requestAddCharacter(combatantModel: CombatantModel): Boolean {
+		return sendClientCommand(ClientCommand.AddCombatant(combatantModel.toDTO()))
+	}
+
+	suspend fun requestEditCharacter(combatantModel: CombatantModel): Boolean {
+		return sendClientCommand(ClientCommand.EditCombatant(combatantModel.toDTO()))
+	}
+
+	@Suppress("OPT_IN_IS_NOT_ENABLED") // The cancellation of a command cannot be bound to any Scope
+	@OptIn(DelicateCoroutinesApi::class)
+	private suspend fun sendClientCommand(command: ClientCommand): Boolean {
+		Napier.d("Attempting to send client command $command. Mutex locked: ${outgoingMutex.isLocked}")
 		outgoingMutex.withLock { // only one command at a time
 			val webSocketSession = this.webSocketSession ?: return false
-			val command = ClientCommand.AddCombatant(combatantModel.toDTO())
-			webSocketSession.sendSerialized(command as ClientCommand)
+			webSocketSession.sendSerialized(command)
 			return suspendCancellableCoroutine {
 				outgoingContinuation = it
 				it.invokeOnCancellation {

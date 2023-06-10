@@ -14,6 +14,7 @@ import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
+import de.lehrbaum.initiativetracker.ui.shared.SnackbarState.Text
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -24,7 +25,7 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 
 	override val snackbarState = mutableStateOf<SnackbarState?>(null)
 
-	private val ownerId = GeneralSettingsRepository.installationId
+	override val ownerId = GeneralSettingsRepository.installationId
 
 	override var characterChooserModel by mutableStateOf<CharacterChooserModel?>(null)
 		private set
@@ -36,14 +37,14 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 		private set
 
 	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
-		snackbarState.value = SnackbarState.Text("Combat press not implemented")
+		snackbarState.value = Text("Combat press not implemented")
 	}
 
 	override fun onCombatantLongClicked(combatant: CombatantViewModel) {
 		if (combatant.ownerId == ownerId) {
 			editCombatant(combatant)
 		} else {
-			snackbarState.value = SnackbarState.Text("Cannot edit characters not added by you.")
+			snackbarState.value = Text("Cannot edit characters not added by you.")
 		}
 	}
 
@@ -52,9 +53,13 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 			combatantViewModel,
 			firstEdit,
 			onSave = {
-				snackbarState.value = SnackbarState.Text("Requesting to change ${it.name} in background.", SnackbarDuration.Short)
-				editCombatantModel = null
-				TODO("Implement")
+				snackbarState.value = Text("Requesting to edit ${it.name}.", SnackbarDuration.Short)
+				val result = combatSession.requestEditCharacter(it)
+				if (result) {
+					editCombatantModel = null
+				} else {
+					snackbarState.value = Text("Edit rejected", SnackbarDuration.Long)
+				}
 			},
 			onCancel = { editCombatantModel = null }
 		)
@@ -65,7 +70,7 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 			characterChooserModel = CharacterChooserModel(
 				onChosen = { character, initiative, currentHp ->
 					val combatant = character.run { CombatantModel(ownerId, id = -1, name, initiative, maxHp, currentHp) }
-					snackbarState.value = SnackbarState.Text("Requesting to add ${combatant.name}.", SnackbarDuration.Short)
+					snackbarState.value = Text("Requesting to add ${combatant.name}.", SnackbarDuration.Short)
 					characterChooserModel = null
 					continuation.resume(combatant)
 				},
@@ -73,10 +78,11 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 					characterChooserModel = null
 				}
 			)
+			continuation.invokeOnCancellation { characterChooserModel = null }
 		}
 		val result = combatSession.requestAddCharacter(combatant)
 		val message = if (result) "Added ${combatant.name} successfully." else "Adding ${combatant.name} rejected."
-		snackbarState.value = SnackbarState.Text(message, SnackbarDuration.Long)
+		snackbarState.value = Text(message, SnackbarDuration.Long)
 	}
 
 	override fun onDamageDialogSubmit(damage: Int) {

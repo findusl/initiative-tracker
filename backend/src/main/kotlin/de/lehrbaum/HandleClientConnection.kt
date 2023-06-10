@@ -14,6 +14,7 @@ suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCo
 		sendSerialized(JoinSessionResponse.SessionNotFound as JoinSessionResponse)
 		return
 	}
+	println("Client connected session ${session.id}")
 	sendSerialized(JoinSessionResponse.JoinedSession(session.combatState.value) as JoinSessionResponse)
 
 	try {
@@ -43,6 +44,11 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 				is ClientCommand.AddCombatant -> {
 					println("Got addCombatant command $message")
 					val command: ServerToHostCommand = ServerToHostCommand.AddCombatant(message.combatant)
+					forwardCommandAndHandleResponse(session, command)
+				}
+				is ClientCommand.EditCombatant -> {
+					println("Got editCombatant command $message")
+					val command: ServerToHostCommand = ServerToHostCommand.EditCombatant(message.combatant)
 					forwardCommandAndHandleResponse(session, command)
 				}
 

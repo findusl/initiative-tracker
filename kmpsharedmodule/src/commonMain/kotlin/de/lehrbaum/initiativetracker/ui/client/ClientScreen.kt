@@ -12,8 +12,10 @@ import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -23,6 +25,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 	val clientCombatModelState = remember { mutableStateOf(clientCombatModel) }
 	clientCombatModelState.value = clientCombatModel
 	val connectionStateState = clientCombatModel.combatState.collectAsState(ClientCombatState.Connecting)
+	val coroutineScope = rememberCoroutineScope(clientCombatModel.sessionId)
 
 	ListDetailLayout(
 		list = {
@@ -31,15 +34,15 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 
 			Scaffold(
 				scaffoldState = scaffoldState,
-				topBar = { TopBar(drawerState, clientCombatModelState.value) },
+				topBar = { TopBar(drawerState, clientCombatModelState.value, coroutineScope) },
 			) {
 				Content(connectionStateState, clientCombatModel)
 			}
 		},
 		detail = if (connectionStateState.value is ClientCombatState.Connected) {
-			clientCombatModel.characterChooserModel?.let {
-				{ CharacterChooserScreen(it) }
-			}
+			clientCombatModel.characterChooserModel?.let { { CharacterChooserScreen(it) } }
+				?: clientCombatModel.editCombatantModel?.let { { EditCombatantScreen(it) } }
+
 		} else null
 	)
 }
@@ -57,7 +60,7 @@ private fun Content(
 			CombatantList(
 				connectionState.combatants.mapIndexed { index, combatant ->
 					val viewModel = combatant.toCombatantViewModel(index == connectionState.activeCombatantIndex)
-					if (viewModel.isHidden) {
+					if (viewModel.isHidden && clientCombatModel.ownerId != viewModel.ownerId) {
 						viewModel.copy(name = "<Hidden>")
 					} else {
 						viewModel
@@ -76,9 +79,9 @@ private fun Content(
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
-	clientCombatModel: ClientCombatModel
+	clientCombatModel: ClientCombatModel,
+	coroutineScope: CoroutineScope,
 ) {
-	val coroutineScope = rememberCoroutineScope(clientCombatModel.sessionId)
 	TopAppBar(
 		title = {
 			Text("Joined ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)

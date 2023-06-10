@@ -82,6 +82,13 @@ class HostCombatSession(val sessionId: Int, private val combatController: Combat
 					}
 					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
 				}
+
+				is ServerToHostCommand.EditCombatant -> {
+					withContext(Dispatchers.Main) {
+						combatController.updateCombatant(incoming.combatant.toModel())
+					}
+					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
+				}
 			}
 		}
 	}

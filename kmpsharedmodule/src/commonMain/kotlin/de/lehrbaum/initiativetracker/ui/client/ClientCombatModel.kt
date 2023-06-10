@@ -14,6 +14,7 @@ interface ClientCombatModel {
 	val combatState: Flow<ClientCombatState>
 	val snackbarState: MutableState<SnackbarState?>
 	val sessionId: Int
+	val ownerId: Long // TODO this should be hidden in the ClientCombatModel in future
 	val characterChooserModel: CharacterChooserModel?
 	val editCombatantModel: EditCombatantModel?
 	val assignDamageCombatant: CombatantViewModel?
