@@ -4,16 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModel
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 
 @Stable
-interface HostCombatModel {
+interface HostCombatViewModel {
 	val hostConnectionState: Flow<HostConnectionState>
     val combatants: Flow<List<CombatantViewModel>>
-	val editCombatantModel: State<EditCombatantModel?>
+	val editCombatantViewModel: State<EditCombatantViewModel?>
     val assignDamageCombatant: MutableState<CombatantViewModel?>
     val snackbarState: MutableState<SnackbarState?>
     val combatStarted: Boolean

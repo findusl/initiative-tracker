@@ -21,27 +21,27 @@ import kotlinx.coroutines.launch
 @Composable
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
-fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel) {
-	val clientCombatModelState = remember { mutableStateOf(clientCombatModel) }
-	clientCombatModelState.value = clientCombatModel
-	val connectionStateState = clientCombatModel.combatState.collectAsState(ClientCombatState.Connecting)
-	val coroutineScope = rememberCoroutineScope(clientCombatModel.sessionId)
+fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatViewModel) {
+	val clientCombatModelState = remember { mutableStateOf(clientCombatViewModel) }
+	clientCombatModelState.value = clientCombatViewModel
+	val connectionStateState = clientCombatViewModel.combatState.collectAsState(ClientCombatState.Connecting)
+	val coroutineScope = rememberCoroutineScope(clientCombatViewModel.sessionId)
 
 	ListDetailLayout(
 		list = {
 			val scaffoldState = rememberScaffoldState()
-			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatModel.snackbarState)
+			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatViewModel.snackbarState)
 
 			Scaffold(
 				scaffoldState = scaffoldState,
 				topBar = { TopBar(drawerState, clientCombatModelState.value, coroutineScope) },
 			) {
-				Content(connectionStateState, clientCombatModel)
+				Content(connectionStateState, clientCombatViewModel)
 			}
 		},
 		detail = if (connectionStateState.value is ClientCombatState.Connected) {
-			clientCombatModel.characterChooserModel?.let { { CharacterChooserScreen(it) } }
-				?: clientCombatModel.editCombatantModel?.let { { EditCombatantScreen(it) } }
+			clientCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } }
+				?: clientCombatViewModel.editCombatantViewModel?.let { { EditCombatantScreen(it) } }
 
 		} else null
 	)
@@ -52,22 +52,23 @@ fun ClientScreen(drawerState: DrawerState, clientCombatModel: ClientCombatModel)
 @Composable
 private fun Content(
 	connectionStateState: State<ClientCombatState>,
-	clientCombatModel: ClientCombatModel
+	clientCombatViewModel: ClientCombatViewModel
 ) {
 	val connectionState = connectionStateState.value
 	when (connectionState) {
 		is ClientCombatState.Connected -> {
+			val combatantList = connectionState.combatants.mapIndexed { index, combatant ->
+				val viewModel = combatant.toCombatantViewModel(active = index == connectionState.activeCombatantIndex)
+				if (viewModel.isHidden && clientCombatViewModel.ownerId != viewModel.ownerId) {
+					viewModel.copy(name = "<Hidden>")
+				} else {
+					viewModel
+				}
+			}
 			CombatantList(
-				connectionState.combatants.mapIndexed { index, combatant ->
-					val viewModel = combatant.toCombatantViewModel(index == connectionState.activeCombatantIndex)
-					if (viewModel.isHidden && clientCombatModel.ownerId != viewModel.ownerId) {
-						viewModel.copy(name = "<Hidden>")
-					} else {
-						viewModel
-					}
-				},
-				clientCombatModel::onCombatantClicked,
-				clientCombatModel::onCombatantLongClicked,
+				combatantList,
+				clientCombatViewModel::onCombatantClicked,
+				clientCombatViewModel::onCombatantLongClicked,
 			)
 		}
 
@@ -79,21 +80,21 @@ private fun Content(
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
-	clientCombatModel: ClientCombatModel,
+	clientCombatViewModel: ClientCombatViewModel,
 	coroutineScope: CoroutineScope,
 ) {
 	TopAppBar(
 		title = {
-			Text("Joined ${clientCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			Text("Joined ${clientCombatViewModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {
 			IconButton(onClick = {
-				coroutineScope.launch { clientCombatModel.chooseCharacterToAdd() }
+				coroutineScope.launch { clientCombatViewModel.chooseCharacterToAdd() }
 			}) {
 				Icon(Icons.Default.Add, contentDescription = "Choose Character to add")
 			}
-			IconButton(onClick = clientCombatModel::leaveCombat) {
+			IconButton(onClick = clientCombatViewModel::leaveCombat) {
 				Icon(Icons.Default.Close, contentDescription = "Leave Session")
 			}
 		},

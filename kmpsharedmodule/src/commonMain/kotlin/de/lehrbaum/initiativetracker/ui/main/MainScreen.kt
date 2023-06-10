@@ -74,9 +74,9 @@ private fun Drawer(
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
 	when(contentState) {
 		is ContentState.Empty -> Text("Choose something in the menu.")
-		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListModel)
-		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatModel)
-		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatModel)
+		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
+		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
+		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatViewModel)
 		is ContentState.JoinCombat ->
 			JoinScreen(drawerState, contentState.onJoin, contentState.onCancel, contentState.asHost)
 	}

@@ -18,16 +18,16 @@ import kotlinx.coroutines.launch
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
-fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
-	val hostCombatModelState = remember { mutableStateOf(hostCombatModel) }
-	hostCombatModelState.value = hostCombatModel
+fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewModel) {
+	val hostCombatModelState = remember { mutableStateOf(hostCombatViewModel) }
+	hostCombatModelState.value = hostCombatViewModel
 
-	val connectionStateState = hostCombatModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
+	val connectionStateState = hostCombatViewModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
 
 	ListDetailLayout(
 		list = {
 			val scaffoldState = rememberScaffoldState()
-			scaffoldState.snackbarHostState.bindSnackbarState(hostCombatModel.snackbarState)
+			scaffoldState.snackbarHostState.bindSnackbarState(hostCombatViewModel.snackbarState)
 
 			Scaffold(
 				scaffoldState = scaffoldState,
@@ -38,13 +38,13 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 			}
 
 			if (connectionStateState.value == HostConnectionState.Connected) {
-				hostCombatModel.assignDamageCombatant.value?.let {
-					DamageCombatantDialog(hostCombatModel::onDamageDialogSubmit, hostCombatModel::onDamageDialogCancel)
+				hostCombatViewModel.assignDamageCombatant.value?.let {
+					DamageCombatantDialog(hostCombatViewModel::onDamageDialogSubmit, hostCombatViewModel::onDamageDialogCancel)
 				}
 			}
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
-			hostCombatModel.editCombatantModel.value?.let { { EditCombatantScreen(it) } }
+			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
 		} else null
 	)
 }
@@ -53,10 +53,10 @@ fun HostScreen(drawerState: DrawerState, hostCombatModel: HostCombatModel) {
 @ExperimentalFoundationApi
 @Composable
 private fun MainContent(
-	hostCombatModel: HostCombatModel,
+	hostCombatViewModel: HostCombatViewModel,
 	connectionStateState: State<HostConnectionState>
 ) {
-	hostCombatModel.apply {
+	hostCombatViewModel.apply {
 		val connectionState = connectionStateState.value
 
 		when (connectionState) {
@@ -85,9 +85,9 @@ private fun MainContent(
 }
 
 @Composable
-private fun NextCombatantButton(hostCombatModel: HostCombatModel) {
-	if (hostCombatModel.combatStarted) {
-		FloatingActionButton(onClick = hostCombatModel::nextCombatant) {
+private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
+	if (hostCombatViewModel.combatStarted) {
+		FloatingActionButton(onClick = hostCombatViewModel::nextCombatant) {
 			Icon(Icons.Default.FastForward, contentDescription = "Next Combatant")
 		}
 	}
@@ -96,16 +96,16 @@ private fun NextCombatantButton(hostCombatModel: HostCombatModel) {
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
-	hostCombatModel: HostCombatModel
+	hostCombatViewModel: HostCombatViewModel
 ) {
-	var displayDropdown by remember(hostCombatModel.sessionId) { mutableStateOf(false) }
+	var displayDropdown by remember(hostCombatViewModel.sessionId) { mutableStateOf(false) }
 
 	val coroutineScope = rememberCoroutineScope()
 
 	TopAppBar(
 		title = {
-			if (hostCombatModel.isSharing) {
-				Text("Session ${hostCombatModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			if (hostCombatViewModel.isSharing) {
+				Text("Session ${hostCombatViewModel.sessionId}", color = MaterialTheme.colors.onPrimary)
 			} else {
 				Text("New combat", color = MaterialTheme.colors.onPrimary)
 			}
@@ -114,15 +114,15 @@ private fun TopBar(
 			BurgerMenuButtonForDrawer(drawerState)
 		},
 		actions = {
-			if (!hostCombatModel.combatStarted) {
-				IconButton(onClick = hostCombatModel::startCombat) {
+			if (!hostCombatViewModel.combatStarted) {
+				IconButton(onClick = hostCombatViewModel::startCombat) {
 					Icon(Icons.Default.PlayArrow, contentDescription = "Play")
 				}
 			}
-			if (hostCombatModel.isSharing) {
+			if (hostCombatViewModel.isSharing) {
 				IconButton(onClick = {
 					coroutineScope.launch {
-						hostCombatModel.closeSession()
+						hostCombatViewModel.closeSession()
 					}
 				}) {
 					Icon(Icons.Default.Close, contentDescription = "Close Session")
@@ -130,7 +130,7 @@ private fun TopBar(
 			} else {
 				IconButton(onClick = {
 					coroutineScope.launch {
-						hostCombatModel.shareCombat()
+						hostCombatViewModel.shareCombat()
 					}
 				}) {
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
@@ -143,7 +143,7 @@ private fun TopBar(
 				expanded = displayDropdown,
 				onDismissRequest = { displayDropdown = false }
 			) {
-				DropdownMenuItem(onClick = hostCombatModel::showSessionId) {
+				DropdownMenuItem(onClick = hostCombatViewModel::showSessionId) {
 					Text(text = "Show Session Id")
 				}
 			}

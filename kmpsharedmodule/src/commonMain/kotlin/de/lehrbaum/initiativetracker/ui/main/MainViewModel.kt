@@ -1,9 +1,9 @@
 package de.lehrbaum.initiativetracker.ui.main
 
 import androidx.compose.runtime.Stable
-import de.lehrbaum.initiativetracker.ui.character.CharacterListModel
-import de.lehrbaum.initiativetracker.ui.client.ClientCombatModel
-import de.lehrbaum.initiativetracker.ui.host.HostCombatModel
+import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModel
+import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModel
+import de.lehrbaum.initiativetracker.ui.host.HostCombatViewModel
 import kotlinx.coroutines.flow.Flow
 
 @Stable // assumes content is backed by mutableState variable. Hope I don't forget
@@ -38,8 +38,8 @@ sealed interface DrawerItem {
 
 sealed interface ContentState {
 	object Empty: ContentState
-	data class HostCombat(val hostCombatModel: HostCombatModel): ContentState
+	data class HostCombat(val hostCombatViewModel: HostCombatViewModel): ContentState
 	data class JoinCombat(val onJoin: (Int) -> Unit, val onCancel: () -> Unit, val asHost: Boolean): ContentState
-	data class ClientCombat(val clientCombatModel: ClientCombatModel): ContentState
-	data class CharacterScreen(val characterListModel: CharacterListModel) : ContentState
+	data class ClientCombat(val clientCombatViewModel: ClientCombatViewModel): ContentState
+	data class CharacterScreen(val characterListViewModel: CharacterListViewModel) : ContentState
 }

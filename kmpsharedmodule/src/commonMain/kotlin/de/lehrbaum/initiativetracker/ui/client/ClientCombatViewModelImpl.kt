@@ -9,16 +9,19 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
-import de.lehrbaum.initiativetracker.ui.character.CharacterChooserModel
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModel
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModelImpl
+import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState.Text
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-data class ClientCombatModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit): ClientCombatModel {
+data class ClientCombatViewModelImpl(
+	override val sessionId: Int,
+	private val leaveScreen: () -> Unit
+): ClientCombatViewModel {
 	private val combatSession = ClientCombatSession(sessionId)
 
 	override val combatState = combatSession.state
@@ -27,10 +30,10 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 
 	override val ownerId = GeneralSettingsRepository.installationId
 
-	override var characterChooserModel by mutableStateOf<CharacterChooserModel?>(null)
+	override var characterChooserViewModel by mutableStateOf<CharacterChooserViewModel?>(null)
 		private set
 
-	override var editCombatantModel by mutableStateOf<EditCombatantModel?>(null)
+	override var editCombatantViewModel by mutableStateOf<EditCombatantViewModel?>(null)
 		private set
 
 	override var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
@@ -49,36 +52,36 @@ data class ClientCombatModelImpl(override val sessionId: Int, private val leaveS
 	}
 
 	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
-		editCombatantModel = EditCombatantModelImpl(
+		editCombatantViewModel = EditCombatantViewModelImpl(
 			combatantViewModel,
 			firstEdit,
 			onSave = {
 				snackbarState.value = Text("Requesting to edit ${it.name}.", SnackbarDuration.Short)
 				val result = combatSession.requestEditCharacter(it)
 				if (result) {
-					editCombatantModel = null
+					editCombatantViewModel = null
 				} else {
 					snackbarState.value = Text("Edit rejected", SnackbarDuration.Long)
 				}
 			},
-			onCancel = { editCombatantModel = null }
+			onCancel = { editCombatantViewModel = null }
 		)
 	}
 
 	override suspend fun chooseCharacterToAdd() {
 		val combatant = suspendCancellableCoroutine<CombatantModel> { continuation ->
-			characterChooserModel = CharacterChooserModel(
+			characterChooserViewModel = CharacterChooserViewModel(
 				onChosen = { character, initiative, currentHp ->
 					val combatant = character.run { CombatantModel(ownerId, id = -1, name, initiative, maxHp, currentHp) }
 					snackbarState.value = Text("Requesting to add ${combatant.name}.", SnackbarDuration.Short)
-					characterChooserModel = null
+					characterChooserViewModel = null
 					continuation.resume(combatant)
 				},
 				onCancel = {
-					characterChooserModel = null
+					characterChooserViewModel = null
 				}
 			)
-			continuation.invokeOnCancellation { characterChooserModel = null }
+			continuation.invokeOnCancellation { characterChooserViewModel = null }
 		}
 		val result = combatSession.requestAddCharacter(combatant)
 		val message = if (result) "Added ${combatant.name} successfully." else "Adding ${combatant.name} rejected."

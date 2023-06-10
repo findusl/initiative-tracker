@@ -9,12 +9,12 @@ import de.lehrbaum.initiativetracker.ui.shared.EditField
 import de.lehrbaum.initiativetracker.ui.shared.EditField.Companion.failedParsing
 import kotlin.Result.Companion.success
 
-data class EditCombatantModelImpl(
+data class EditCombatantViewModelImpl(
 	private val combatantViewModel: CombatantViewModel,
 	private val firstEdit: Boolean,
 	private val onSave: suspend (CombatantModel) -> Unit,
 	private val onCancel: () -> Unit,
-) : EditCombatantModel {
+) : EditCombatantViewModel {
     override val id = combatantViewModel.id
 	override val nameEdit =
 		EditField(combatantViewModel.name, selectOnFirstFocus = firstEdit) { input ->

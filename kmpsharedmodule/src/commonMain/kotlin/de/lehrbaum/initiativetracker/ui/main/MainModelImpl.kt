@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
-import de.lehrbaum.initiativetracker.ui.character.CharacterListModelImpl
-import de.lehrbaum.initiativetracker.ui.client.ClientCombatModelImpl
-import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatModelImpl
-import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatModelImpl
+import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModelImpl
+import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
+import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
+import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
 import kotlinx.coroutines.flow.map
 
 class MainModelImpl: MainModel {
@@ -33,7 +33,7 @@ class MainModelImpl: MainModel {
     override fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == activeDrawerItem) return // avoid double click race conditions
         val newContent: ContentState = when (item) {
-            is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListModelImpl())
+            is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModelImpl())
             is DrawerItem.HostCombat -> hostCombatState
             is DrawerItem.HostExistingCombat -> joinCombat(asHost = true)
             is DrawerItem.JoinCombat -> joinCombat(asHost = false)
@@ -46,21 +46,21 @@ class MainModelImpl: MainModel {
 	}
 
     private fun hostNewCombat(): ContentState.HostCombat {
-		val hostCombatModel = HostLocalCombatModelImpl {
+		val hostCombatModel = HostLocalCombatViewModelImpl {
 			switchToCombat(it, asHost = true)
 		}
         return ContentState.HostCombat(hostCombatModel)
     }
 
 	private fun clientCombat(sessionId: Int): ContentState.ClientCombat {
-		val model = ClientCombatModelImpl(sessionId) {
+		val model = ClientCombatViewModelImpl(sessionId) {
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
 		return ContentState.ClientCombat(model)
 	}
 
 	private fun hostCombat(sessionId: Int): ContentState.HostCombat {
-		val hostCombatModel = HostSharedCombatModelImpl(sessionId){
+		val hostCombatModel = HostSharedCombatViewModelImpl(sessionId){
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
 		return ContentState.HostCombat(hostCombatModel)

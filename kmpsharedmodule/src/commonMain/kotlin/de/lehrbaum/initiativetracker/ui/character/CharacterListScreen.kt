@@ -21,8 +21,8 @@ import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
-fun CharacterListScreen(drawerState: DrawerState, characterListModel: CharacterListModel) {
-	val characters by characterListModel.characters.collectAsState(emptyList())
+fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: CharacterListViewModel) {
+	val characters by characterListViewModel.characters.collectAsState(emptyList())
 
 	ListDetailLayout(
 		list = {
@@ -31,13 +31,13 @@ fun CharacterListScreen(drawerState: DrawerState, characterListModel: CharacterL
 			) {
 				CharacterList(
 					characters,
-					characterListModel::editCharacter,
-					characterListModel::addNewCharacter,
-					dismissToStartAction = swipeToDelete(characterListModel::deleteCharacter)
+					characterListViewModel::editCharacter,
+					characterListViewModel::addNewCharacter,
+					dismissToStartAction = swipeToDelete(characterListViewModel::deleteCharacter)
 				)
 			}
 		},
-		detail = characterListModel.editCharacterModel.value?.let {
+		detail = characterListViewModel.editCharacterModel.value?.let {
 			{ EditCharacterScreen(it) }
 		}
 	)
