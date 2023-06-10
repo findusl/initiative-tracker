@@ -4,7 +4,7 @@ import de.lehrbaum.initiativetracker.bl.data.CharacterRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import kotlinx.coroutines.flow.map
 
-class CharacterChooserModel(
+class CharacterChooserViewModel(
 	private val onChosen: (CharacterModel, Int, Int) -> Unit,
 	private val onCancel: () -> Unit,
 ) {

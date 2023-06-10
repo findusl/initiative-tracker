@@ -5,14 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModel
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantModelImpl
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
+import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.combine
 
-abstract class HostCombatModelBase : HostCombatModel {
+abstract class HostCombatViewModelBase : HostCombatViewModel {
 
 	protected var combatController: CombatController = CombatController()
 
@@ -23,7 +23,7 @@ abstract class HostCombatModelBase : HostCombatModel {
 			}
 		}
 
-	override val editCombatantModel = mutableStateOf<EditCombatantModel?>(null)
+	override val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)
 
 	override val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
 
@@ -80,14 +80,14 @@ abstract class HostCombatModelBase : HostCombatModel {
 	}
 
 	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
-		editCombatantModel.value = EditCombatantModelImpl(
+		editCombatantViewModel.value = EditCombatantViewModelImpl(
 			combatantViewModel,
 			firstEdit,
 			onSave = {
 				combatController.updateCombatant(it)
-				editCombatantModel.value = null
+				editCombatantViewModel.value = null
 			},
-			onCancel = { editCombatantModel.value = null }
+			onCancel = { editCombatantViewModel.value = null }
 		)
 	}
 

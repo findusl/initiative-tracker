@@ -5,7 +5,7 @@ import de.lehrbaum.initiativetracker.bl.data.CharacterRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import kotlinx.coroutines.flow.map
 
-class CharacterListModelImpl : CharacterListModel {
+class CharacterListViewModelImpl : CharacterListViewModel {
 	private val characterRepository = CharacterRepository()
 
 	override val characters = characterRepository.characters.map { list ->

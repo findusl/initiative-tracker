@@ -3,7 +3,7 @@ package de.lehrbaum.initiativetracker.ui.character
 import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.Flow
 
-interface CharacterListModel {
+interface CharacterListViewModel {
 	val characters: Flow<List<CharacterViewModel>>
 	val editCharacterModel: State<EditCharacterModel?>
 	fun editCharacter(characterViewModel: CharacterViewModel)

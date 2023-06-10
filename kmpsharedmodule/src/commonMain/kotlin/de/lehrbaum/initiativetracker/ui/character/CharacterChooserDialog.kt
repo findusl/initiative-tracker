@@ -23,11 +23,11 @@ import de.lehrbaum.initiativetracker.ui.shared.EditField.Companion.RequiredIntPa
 import kotlin.random.Random
 
 @Composable
-fun CharacterChooserScreen(characterChooserModel: CharacterChooserModel) {
-	val characters by characterChooserModel.characters.collectAsState(emptyList())
+fun CharacterChooserScreen(characterChooserViewModel: CharacterChooserViewModel) {
+	val characters by characterChooserViewModel.characters.collectAsState(emptyList())
 	var chosen by remember { mutableStateOf<CharacterViewModel?>(null) }
 
-	Scaffold(topBar = { TopBar(characterChooserModel::cancel) }) {
+	Scaffold(topBar = { TopBar(characterChooserViewModel::cancel) }) {
 		LazyColumn {
 			val itemModifier = Modifier
 				.padding(Constants.defaultPadding)
@@ -40,7 +40,7 @@ fun CharacterChooserScreen(characterChooserModel: CharacterChooserModel) {
 		}
 	}
 	chosen?.let {
-		ExtraInfoDialog(it, onComplete = characterChooserModel::onChosen, onCancel = {
+		ExtraInfoDialog(it, onComplete = characterChooserViewModel::onChosen, onCancel = {
 			chosen = null
 		})
 	}
