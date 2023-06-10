@@ -29,7 +29,7 @@ fun ContentScreen(contentModel: ContentModel, nextModel: () -> Unit) {
 		}
 	}
 
-	// accessing flow is necessary
+	// accessing flow is necessary for the bug to appear
 	contentModel.contentFlow.collectAsState(0).value.toString()
 }
 
