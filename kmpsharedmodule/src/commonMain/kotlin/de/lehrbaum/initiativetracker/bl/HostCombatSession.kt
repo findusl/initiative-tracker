@@ -19,7 +19,11 @@ import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "HostCombatSession"
 
-class HostCombatSession(val sessionId: Int, private val combatController: CombatController) {
+class HostCombatSession(
+	val sessionId: Int,
+	private val combatController: CombatController,
+	private val commandHandler: suspend (ServerToHostCommand) -> Boolean
+) {
 	val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
 		try {
@@ -88,6 +92,13 @@ class HostCombatSession(val sessionId: Int, private val combatController: Combat
 						combatController.updateCombatant(incoming.combatant.toModel())
 					}
 					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
+				}
+
+				is ServerToHostCommand.DamageCombatant -> {
+					val result = withContext(Dispatchers.Main) {
+						commandHandler(incoming)
+					}
+					sendSerialized(HostCommand.CommandCompleted(result) as HostCommand)
 				}
 			}
 		}

@@ -88,12 +88,16 @@ data class ClientCombatViewModelImpl(
 		snackbarState.value = Text(message, SnackbarDuration.Long)
 	}
 
-	override fun onDamageDialogSubmit(damage: Int) {
+	override suspend fun onDamageDialogSubmit(damage: Int) {
+		assignDamageCombatant?.apply {
+
+		}
+		assignDamageCombatant = null
 		TODO("Not yet implemented")
 	}
 
 	override fun onDamageDialogCancel() {
-		TODO("Not yet implemented")
+		assignDamageCombatant = null
 	}
 
 	override fun leaveCombat() {

@@ -86,3 +86,13 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs = listOf("-Xcontext-receivers")
 	}
 }
+
+
+tasks.register<Copy>("buildAndCopyImage") {
+	group = "ktor"
+	dependsOn("buildImage")
+
+	from("$buildDir/jib-image.tar")
+	into("/Volumes/hspeed/docker_images")
+}
+

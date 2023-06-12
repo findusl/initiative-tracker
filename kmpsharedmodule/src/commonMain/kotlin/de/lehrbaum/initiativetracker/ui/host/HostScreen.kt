@@ -37,11 +37,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 				MainContent(hostCombatModelState.value, connectionStateState)
 			}
 
-			if (connectionStateState.value == HostConnectionState.Connected) {
-				hostCombatViewModel.assignDamageCombatant.value?.let {
-					DamageCombatantDialog(hostCombatViewModel::onDamageDialogSubmit, hostCombatViewModel::onDamageDialogCancel)
-				}
-			}
+			Dialogs(connectionStateState.value, hostCombatModelState.value)
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
@@ -80,6 +76,23 @@ private fun MainContent(
 
 			HostConnectionState.Connecting -> Text("Connecting")
 			is HostConnectionState.Disconnected -> Text("Disconnected! Reason: ${connectionState.reason}")
+		}
+	}
+}
+
+@Composable
+private fun Dialogs(
+	connectionState: HostConnectionState,
+	hostCombatViewModel: HostCombatViewModel
+) {
+	if (connectionState == HostConnectionState.Connected) {
+		with(hostCombatViewModel) {
+			assignDamageCombatant.value?.let {
+				DamageCombatantDialog(::onDamageDialogSubmit, ::onDamageDialogCancel)
+			}
+			confirmDamage?.let { (damage, combatant) ->
+				ConfirmDamageDialog(damage, combatant.name, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
+			}
 		}
 	}
 }

@@ -14,7 +14,7 @@ interface ClientCombatViewModel {
 	val combatState: Flow<ClientCombatState>
 	val snackbarState: MutableState<SnackbarState?>
 	val sessionId: Int
-	val ownerId: Long // TODO this should be hidden in the ClientCombatViewModel in future
+	val ownerId: Long // TODO this should be hidden in future
 	val characterChooserViewModel: CharacterChooserViewModel?
 	val editCombatantViewModel: EditCombatantViewModel?
 	val assignDamageCombatant: CombatantViewModel?
@@ -22,7 +22,7 @@ interface ClientCombatViewModel {
 	fun onCombatantClicked(combatantViewModel: CombatantViewModel)
 	fun onCombatantLongClicked(combatant: CombatantViewModel)
 	suspend fun chooseCharacterToAdd()
-	fun onDamageDialogSubmit(damage: Int)
+	suspend fun onDamageDialogSubmit(damage: Int)
 	fun onDamageDialogCancel()
 	fun leaveCombat()
 }

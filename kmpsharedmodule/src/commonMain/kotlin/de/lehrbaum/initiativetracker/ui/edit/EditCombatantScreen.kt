@@ -44,6 +44,7 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
         actions = {
             Button(
 				onClick = {
+					if (showLoadingSpinner) return@Button
 					coroutineScope.launch {
 						showLoadingSpinner = true
 						editCombatantViewModel.saveCombatant()
