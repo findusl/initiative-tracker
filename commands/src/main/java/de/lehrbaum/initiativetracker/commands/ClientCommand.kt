@@ -13,6 +13,9 @@ sealed interface ClientCommand {
 	data class EditCombatant(val combatant: CombatantDTO) : ClientCommand
 
 	@Serializable
+	data class DamageCombatant(val combatantId: Long, val damage: Int, val ownerId: Long) : ClientCommand
+
+	@Serializable
 	/**
 	 * Attempts to cancel a command. Cancellation is not guaranteed.
 	 */

@@ -51,6 +51,12 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 					val command: ServerToHostCommand = ServerToHostCommand.EditCombatant(message.combatant)
 					forwardCommandAndHandleResponse(session, command)
 				}
+				is ClientCommand.DamageCombatant -> {
+					println("Got damageCombatant command $message")
+					val command: ServerToHostCommand =
+						ServerToHostCommand.DamageCombatant(message.combatantId, message.damage, message.ownerId)
+					forwardCommandAndHandleResponse(session, command)
+				}
 
 				ClientCommand.CancelCommand -> {
 					// don't wait here. Either there is an active command or not.
