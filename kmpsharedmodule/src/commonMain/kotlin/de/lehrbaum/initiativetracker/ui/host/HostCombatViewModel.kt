@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.ui.composables.DamageOption
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
@@ -16,7 +17,8 @@ interface HostCombatViewModel {
 	val editCombatantViewModel: State<EditCombatantViewModel?>
     val assignDamageCombatant: MutableState<CombatantViewModel?>
     val snackbarState: MutableState<SnackbarState?>
-    val combatStarted: Boolean
+	val confirmDamage: Pair<Int, CombatantViewModel>?
+	val combatStarted: Boolean
     val isSharing: Boolean
 	val sessionId: Int
 
@@ -27,6 +29,8 @@ interface HostCombatViewModel {
 	fun enableCombatant(combatantViewModel: CombatantViewModel)
     fun onDamageDialogSubmit(damage: Int)
     fun onDamageDialogCancel()
+	fun onConfirmDamageDialogSubmit(option: DamageOption)
+	fun onConfirmDamageDialogCancel()
     fun addNewCombatant()
     fun nextCombatant()
     fun previousCombatant()

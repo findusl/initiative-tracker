@@ -21,7 +21,7 @@ import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import kotlin.math.roundToInt
 
 @Composable
-fun DamageCombatantDialog(onSubmit: (Int) -> Unit, onCancel: () -> Unit) {
+fun DamageCombatantDialog(onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
 	GeneralDialog(onDismissRequest = { onCancel() }) {
 		Surface(
 			shape = RoundedCornerShape(16.dp),
@@ -33,11 +33,12 @@ fun DamageCombatantDialog(onSubmit: (Int) -> Unit, onCancel: () -> Unit) {
 }
 
 @Composable
-fun DamageCombatantDialogContent(onSubmit: (Int) -> Unit, onCancel: () -> Unit) {
+fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
 	var sliderValue by remember { mutableStateOf(1.0f) }
 	val sliderValueString by remember { derivedStateOf { sliderValue.roundToInt().toString() } }
 	var textInputValue by remember(sliderValueString) { mutableStateOf(sliderValueString) }
 	val textInputError by remember { derivedStateOf { textInputValue.toIntOrNull() == null } }
+	val coroutineScope = rememberCoroutineScope()
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Row(
@@ -79,6 +80,11 @@ fun DamageCombatantDialogContent(onSubmit: (Int) -> Unit, onCancel: () -> Unit) 
 			valueRange = 0f..100f,
 			onValueChange = { sliderValue = it }
 		)
-		OkCancelButtonRow(mutableStateOf(true), onCancel, onSubmit = { onSubmit(sliderValue.roundToInt()) })
+		OkCancelButtonRow(
+			mutableStateOf(true),
+			onCancel,
+			onSubmit = { onSubmit(sliderValue.roundToInt()) },
+			coroutineScope
+		)
 	}
 }
