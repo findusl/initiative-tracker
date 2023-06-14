@@ -65,6 +65,8 @@ class ClientCombatSession(val sessionId: Int) {
 	private suspend fun DefaultClientWebSocketSession.handleUpdates(collector: FlowCollector<ClientCombatState>) {
 		while (true) {
 			val message = receiveDeserialized<ServerToClientCommand>()
+			// different approach with the for message in iterator might be more readable. But requires complex iterator code
+			// val message = Json.decodeFromString<ServerToClientCommand>((frame as Frame.Text).readText())
 			when (message) {
 				is ServerToClientCommand.CombatUpdatedCommand -> collector.emit(Connected(message.combat))
 				ServerToClientCommand.CombatEnded -> {
@@ -87,6 +89,10 @@ class ClientCombatSession(val sessionId: Int) {
 
 	suspend fun requestEditCharacter(combatantModel: CombatantModel): Boolean {
 		return sendClientCommand(ClientCommand.EditCombatant(combatantModel.toDTO()))
+	}
+
+	suspend fun requestDamageCharacter(combatantId: Long, damage: Int, ownerId: Long): Boolean {
+		return sendClientCommand(ClientCommand.DamageCombatant(combatantId, damage, ownerId))
 	}
 
 	@Suppress("OPT_IN_IS_NOT_ENABLED") // The cancellation of a command cannot be bound to any Scope
