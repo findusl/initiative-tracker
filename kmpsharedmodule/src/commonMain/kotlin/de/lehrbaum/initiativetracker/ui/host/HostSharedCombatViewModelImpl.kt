@@ -20,8 +20,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
-data class HostSharedCombatViewModelImpl(override val sessionId: Int, private val leaveScreen: () -> Unit) : HostCombatViewModelBase() {
-	private val hostCombatSession = HostCombatSession(sessionId, combatController, ::handleServerToHostCommand)
+data class HostSharedCombatViewModelImpl(
+	override val sessionId: Int,
+	private val leaveScreen: () -> Unit
+) : HostCombatViewModelBase(), HostCombatSession.Delegate {
+	private val hostCombatSession = HostCombatSession(sessionId, combatController, this)
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = hostCombatSession.hostConnectionState
 	override var confirmDamage: Pair<Int, CombatantViewModel>? by mutableStateOf(null)
@@ -31,10 +34,10 @@ data class HostSharedCombatViewModelImpl(override val sessionId: Int, private va
 
 	override fun onConfirmDamageDialogSubmit(option: DamageOption) {
 		val (damage, combatant) = confirmDamage ?: return
-		val actualDamage = when(option) {
+		val actualDamage = when (option) {
 			FULL -> damage
-			HALF -> damage/2
-			DOUBLE -> damage*2
+			HALF -> damage / 2
+			DOUBLE -> damage * 2
 			NONE -> 0
 		}
 		if (actualDamage > 0)
@@ -63,21 +66,15 @@ data class HostSharedCombatViewModelImpl(override val sessionId: Int, private va
 		snackbarState.value = SnackbarState.Copyable("SessionId: $sessionId", SnackbarDuration.Long, sessionId.toString())
 	}
 
-	private suspend fun handleServerToHostCommand(command: ServerToHostCommand): Boolean {
-		return when(command) {
-			is ServerToHostCommand.AddCombatant -> TODO("So far autohandled")
-			is ServerToHostCommand.EditCombatant -> TODO("So far autohandled")
-			is ServerToHostCommand.DamageCombatant -> {
-				val combatant = combatController.combatants.value.first { it.id == command.combatantId }.toCombatantViewModel()
-				if (combatant.ownerId == command.ownerId) {
-					combatController.damageCombatant(combatant.id, command.damage)
-					return true
-				}
-				suspendCancellableCoroutine {
-					confirmDamageContinuation = it
-					confirmDamage = Pair(command.damage, combatant)
-				}
-			}
+	override suspend fun handleDamageCombatantCommand(command: ServerToHostCommand.DamageCombatant): Boolean {
+		val combatant = combatController.combatants.value.first { it.id == command.combatantId }.toCombatantViewModel()
+		if (combatant.ownerId == command.ownerId) {
+			combatController.damageCombatant(combatant.id, command.damage)
+			return true
+		}
+		return suspendCancellableCoroutine {
+			confirmDamageContinuation = it
+			confirmDamage = Pair(command.damage, combatant)
 		}
 	}
 }

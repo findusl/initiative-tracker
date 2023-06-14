@@ -44,7 +44,7 @@ fun JoinScreen(drawerState: DrawerState, onJoin: (Int) -> Unit, onCancel: () -> 
 
 @Composable
 fun InputSessionIdTextField(sessionIdState: MutableState<Int>, textError: MutableState<Boolean>) {
-	var text by remember { mutableStateOf("0") }
+	var text by remember { mutableStateOf("") }
 	OutlinedTextField(
 		value = text,
 		onValueChange = {  input ->
