@@ -6,7 +6,7 @@ import androidx.compose.ui.text.input.KeyboardType
 @Stable
 // cannot be a data class. That breaks stuff if different edit dialogs are shown
 // with a field with the same value. Then compose optimizes
-class EditField<T>(
+class EditFieldViewModel<T>(
 	initialValue: T,
 	val keyboardType: KeyboardType? = null,
 	val singleLine: Boolean = true,

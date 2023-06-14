@@ -18,8 +18,8 @@ import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
-import de.lehrbaum.initiativetracker.ui.shared.EditField
-import de.lehrbaum.initiativetracker.ui.shared.EditField.Companion.RequiredIntParser
+import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
+import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel.Companion.RequiredIntParser
 import kotlin.random.Random
 
 @Composable
@@ -55,11 +55,11 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 		) {
 			Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 				val initiativeField = remember(chosen) {
-					EditField(Random.nextInt(20) + (chosen.initiativeMod ?: 0), parseInput = RequiredIntParser)
+					EditFieldViewModel(Random.nextInt(20) + (chosen.initiativeMod ?: 0), parseInput = RequiredIntParser)
 				}
 				EditTextField(initiativeField, "Initiative")
 				val currentHpField = remember(chosen) {
-					EditField(chosen.maxHp ?: 0, parseInput = RequiredIntParser)
+					EditFieldViewModel(chosen.maxHp ?: 0, parseInput = RequiredIntParser)
 				}
 				EditTextField(currentHpField, "Current HP")
 

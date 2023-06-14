@@ -40,7 +40,7 @@ data class ClientCombatViewModelImpl(
 		private set
 
 	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
-		snackbarState.value = Text("Combat press not implemented")
+		assignDamageCombatant = combatantViewModel
 	}
 
 	override fun onCombatantLongClicked(combatant: CombatantViewModel) {
@@ -89,11 +89,11 @@ data class ClientCombatViewModelImpl(
 	}
 
 	override suspend fun onDamageDialogSubmit(damage: Int) {
-		assignDamageCombatant?.apply {
-
-		}
-		assignDamageCombatant = null
-		TODO("Not yet implemented")
+		val result = assignDamageCombatant?.let {
+			combatSession.requestDamageCharacter(it.id, damage, ownerId)
+		} ?: true
+		if (result)
+			assignDamageCombatant = null
 	}
 
 	override fun onDamageDialogCancel() {

@@ -10,20 +10,21 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import de.lehrbaum.initiativetracker.ui.shared.EditField
-import kotlin.reflect.KClass
+import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
+import io.ktor.util.reflect.TypeInfo
+import io.ktor.util.reflect.typeInfo
 
 @Composable
 fun <T> EditTextField(
-	editField: EditField<T>,
+	editFieldViewModel: EditFieldViewModel<T>,
 	label: String,
 	keyboardOptions: KeyboardOptions,
 	modifier: Modifier = Modifier,
 ) {
-	var selectAllNextFocus by remember(editField) { mutableStateOf(editField.selectOnFirstFocus) }
+	var selectAllNextFocus by remember(editFieldViewModel) { mutableStateOf(editFieldViewModel.selectOnFirstFocus) }
 	var selectWhole by remember { mutableStateOf(false) } // https://stackoverflow.com/a/70241741/3795043
-	var textFieldValue by remember(editField) {
-		mutableStateOf(TextFieldValue(editField.initialValueText))
+	var textFieldValue by remember(editFieldViewModel) {
+		mutableStateOf(TextFieldValue(editFieldViewModel.initialValueText))
 	}
 
     OutlinedTextField(
@@ -35,13 +36,13 @@ fun <T> EditTextField(
 			} else {
 				textFieldValue = it
 			}
-			editField.currentState = it.text
+			editFieldViewModel.currentState = it.text
 		},
         label = { Text(label) },
-		placeholder = editField.placeholder?.let { { Text(it) } },
-        isError = editField.hasError,
+		placeholder = editFieldViewModel.placeholder?.let { { Text(it) } },
+        isError = editFieldViewModel.hasError,
         keyboardOptions = keyboardOptions,
-        singleLine = editField.singleLine,
+        singleLine = editFieldViewModel.singleLine,
         modifier = modifier
 			.fillMaxWidth()
 			.onFocusChanged {
@@ -54,20 +55,19 @@ fun <T> EditTextField(
 }
 
 @Composable
-inline fun <reified T> EditTextField(editField: EditField<T>, label: String, modifier: Modifier = Modifier) {
-	EditTextField(editField, label, guessKeyboardOptions(editField), modifier)
+inline fun <reified T> EditTextField(editFieldViewModel: EditFieldViewModel<T>, label: String, modifier: Modifier = Modifier) {
+	EditTextField(editFieldViewModel, label, guessKeyboardOptions(editFieldViewModel), modifier)
 }
 
-inline fun <reified T> guessKeyboardOptions(editField: EditField<T>): KeyboardOptions {
-	@Suppress("UNCHECKED_CAST") // Hacky workaround. But it seems to run
-	return guessKeyboardOptions(editField, T::class as KClass<Any>)
+inline fun <reified T> guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<T>): KeyboardOptions {
+	return guessKeyboardOptions(editFieldViewModel, typeInfo<T>())
 }
 
-fun <T: Any> guessKeyboardOptions(editField: EditField<*>, clazz: KClass<T>): KeyboardOptions {
-	var type = editField.keyboardType
+fun guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<*>, typeInfo: TypeInfo): KeyboardOptions {
+	var type = editFieldViewModel.keyboardType
 
 	if (type == null) {
-		type = when(clazz) {
+		type = when(typeInfo.type) {
 			Int::class, Long::class -> KeyboardType.Number
 			Double::class, Float::class -> KeyboardType.Decimal
 			else -> null

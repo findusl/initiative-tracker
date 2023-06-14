@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.shared.EditField
-import de.lehrbaum.initiativetracker.ui.shared.EditField.Companion.failedParsing
+import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
+import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel.Companion.failedParsing
 import kotlin.Result.Companion.success
 
 data class EditCombatantViewModelImpl(
@@ -17,20 +17,20 @@ data class EditCombatantViewModelImpl(
 ) : EditCombatantViewModel {
     override val id = combatantViewModel.id
 	override val nameEdit =
-		EditField(combatantViewModel.name, selectOnFirstFocus = firstEdit) { input ->
+		EditFieldViewModel(combatantViewModel.name, selectOnFirstFocus = firstEdit) { input ->
 			if (input.isBlank()) failedParsing() else success(input)
 		}
-	override val initiativeEdit = EditField(
+	override val initiativeEdit = EditFieldViewModel(
 		combatantViewModel.initiative,
-		parseInput = EditField.OptionalIntParser
+		parseInput = EditFieldViewModel.OptionalIntParser
 	)
-	override val maxHpEdit = EditField(
+	override val maxHpEdit = EditFieldViewModel(
 		combatantViewModel.maxHp,
-		parseInput = EditField.OptionalIntParser
+		parseInput = EditFieldViewModel.OptionalIntParser
 	)
-	override val currentHpEdit = EditField(
+	override val currentHpEdit = EditFieldViewModel(
 		combatantViewModel.currentHp,
-		parseInput = EditField.OptionalIntParser
+		parseInput = EditFieldViewModel.OptionalIntParser
 	)
 	override var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
 
