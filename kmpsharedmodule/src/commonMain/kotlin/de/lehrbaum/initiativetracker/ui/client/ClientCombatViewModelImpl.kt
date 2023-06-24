@@ -8,7 +8,8 @@ import de.lehrbaum.initiativetracker.bl.ClientCombatSession
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
-import de.lehrbaum.initiativetracker.bl.model.CombatantModel
+import de.lehrbaum.initiativetracker.bl.model.CharacterModel
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModelImpl
@@ -72,7 +73,7 @@ data class ClientCombatViewModelImpl(
 		val combatant = suspendCancellableCoroutine<CombatantModel> { continuation ->
 			characterChooserViewModel = CharacterChooserViewModel(
 				onChosen = { character, initiative, currentHp ->
-					val combatant = character.run { CombatantModel(ownerId, id = -1, name, initiative, maxHp, currentHp) }
+					val combatant = character.toCombatantModel(initiative, currentHp)
 					snackbarState.value = Text("Requesting to add ${combatant.name}.", SnackbarDuration.Short)
 					characterChooserViewModel = null
 					continuation.resume(combatant)
@@ -107,5 +108,15 @@ data class ClientCombatViewModelImpl(
 		// thereby cancelling the collection which in turn should cancel the Websocket connection
 		// which removes the client from the combat.
 		// If this client added characters to the combat we might have to send a remove command first
+	}
+
+	private fun CharacterModel.toCombatantModel(initiative: Int, currentHp: Int): CombatantModel {
+		return CombatantModel(
+			ownerId = ownerId,
+			name = name,
+			initiative = initiative,
+			maxHp = maxHp,
+			currentHp = currentHp,
+		)
 	}
 }

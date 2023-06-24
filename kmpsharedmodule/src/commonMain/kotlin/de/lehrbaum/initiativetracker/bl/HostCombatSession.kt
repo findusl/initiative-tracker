@@ -4,7 +4,7 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.commands.HostCommand
 import de.lehrbaum.initiativetracker.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.commands.StartCommand
-import de.lehrbaum.initiativetracker.dtos.CombatantDTO
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.buildConfigWebsocket
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -48,8 +48,8 @@ class HostCombatSession(
 		val response = receiveDeserialized<StartCommand.JoinAsHost.Response>()
 		when (response) {
 			is StartCommand.JoinAsHost.JoinedAsHost -> {
-				val combatState = response.combatDTO
-				val combatants = combatState.combatants.map(CombatantDTO::toModel)
+				val combatState = response.combatModel
+				val combatants = combatState.combatants.map(CombatantModel::toModel)
 				combatController.overwriteWithExistingCombat(combatants, combatState.activeCombatantIndex)
 				collector.emit(HostConnectionState.Connected)
 			}

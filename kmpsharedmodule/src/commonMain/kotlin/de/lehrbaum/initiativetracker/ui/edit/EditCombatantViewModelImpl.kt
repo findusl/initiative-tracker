@@ -3,7 +3,7 @@ package de.lehrbaum.initiativetracker.ui.edit
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import de.lehrbaum.initiativetracker.bl.model.CombatantModel
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel.Companion.failedParsing
@@ -39,9 +39,10 @@ data class EditCombatantViewModelImpl(
 			combatantViewModel.ownerId,
 			id,
 			nameEdit.value.getOrThrow(),
-			initiativeEdit.value.getOrThrow(),
+			initiativeEdit.value.getOrThrow(), // TODO implement
 			maxHpEdit.value.getOrThrow(),
 			currentHpEdit.value.getOrThrow(),
+			null,
 			combatantViewModel.disabled,
 			isHidden,
 		))

@@ -1,7 +1,7 @@
 package de.lehrbaum
 
 import de.lehrbaum.initiativetracker.commands.StartCommand
-import de.lehrbaum.initiativetracker.dtos.CombatDTO
+import de.lehrbaum.initiativetracker.dtos.CombatModel
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -25,7 +25,7 @@ suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 }
 
 suspend fun ApplicationCall.handlePostRequest() {
-	val combat = receive<CombatDTO>()
+	val combat = receive<CombatModel>()
 	val session = createSession(combat, hostWebsocketSession = null)
 	respond(HttpStatusCode.Created, session.id)
 }
@@ -36,7 +36,7 @@ suspend fun ApplicationCall.handleDeleteRequest() {
 		sessions.remove(sessionId)
 	}
 	if (removedElement != null) {
-		removedElement.combatState.value = CombatDTO(activeCombatantIndex = -1, emptyList())
+		removedElement.combatState.value = CombatModel(activeCombatantIndex = -1, emptyList())
 		removedElement.hostWebsocketSession?.close(CloseReason(CloseReason.Codes.GOING_AWAY, "Session is deleted"))
 		respond(HttpStatusCode.NoContent)
 	} else {
@@ -44,10 +44,10 @@ suspend fun ApplicationCall.handleDeleteRequest() {
 	}
 }
 
-internal fun createSession(combatDTO: CombatDTO, hostWebsocketSession: DefaultWebSocketServerSession?): Session {
+internal fun createSession(combatModel: CombatModel, hostWebsocketSession: DefaultWebSocketServerSession?): Session {
 	synchronized(sessions) {
 		val sessionId = getAvailableRandomSessionId()
-		val newSession = Session(sessionId, hostWebsocketSession, MutableStateFlow(combatDTO))
+		val newSession = Session(sessionId, hostWebsocketSession, MutableStateFlow(combatModel))
 		sessions[sessionId] = newSession
 		return newSession
 	}
