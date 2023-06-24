@@ -1,8 +1,7 @@
 package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
-import de.lehrbaum.initiativetracker.bl.model.CombatantModel
-import de.lehrbaum.initiativetracker.bl.model.sortByInitiative
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -61,7 +60,7 @@ class CombatController {
 		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
 		initiative: Int? = null // Sorts it to the bottom where the add button is.
 	): CombatantModel {
-		val newCombatant = CombatantModel(ownerId, nextId++, name, initiative)
+		val newCombatant = CombatantModel(ownerId, id = nextId++, name, initiative = initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 		return newCombatant
@@ -148,3 +147,10 @@ private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
 	if (reSort) result = result.sortByInitiative()
 	this.value = result
 }
+
+/**
+ * Sorts predictably. First by initiative then by id. null initiatives are lower than any other initiatives
+ */
+private fun Iterable<CombatantModel>.sortByInitiative() =
+	sortedWith(compareByDescending(CombatantModel::initiative).thenBy(CombatantModel::id))
+

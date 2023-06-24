@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.bl.model.CombatantModel
 import de.lehrbaum.initiativetracker.bl.toCombatDTO
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

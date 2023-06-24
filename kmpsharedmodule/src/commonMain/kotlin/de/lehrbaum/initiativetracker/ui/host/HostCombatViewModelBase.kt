@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
-import de.lehrbaum.initiativetracker.bl.model.CombatantModel
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel

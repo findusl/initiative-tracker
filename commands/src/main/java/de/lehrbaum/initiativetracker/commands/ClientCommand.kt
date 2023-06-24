@@ -1,16 +1,16 @@
 package de.lehrbaum.initiativetracker.commands
 
-import de.lehrbaum.initiativetracker.dtos.CombatantDTO
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface ClientCommand {
 
 	@Serializable
-	data class AddCombatant(val combatant: CombatantDTO) : ClientCommand
+	data class AddCombatant(val combatant: CombatantModel) : ClientCommand
 
 	@Serializable
-	data class EditCombatant(val combatant: CombatantDTO) : ClientCommand
+	data class EditCombatant(val combatant: CombatantModel) : ClientCommand
 
 	@Serializable
 	data class DamageCombatant(val combatantId: Long, val damage: Int, val ownerId: Long) : ClientCommand

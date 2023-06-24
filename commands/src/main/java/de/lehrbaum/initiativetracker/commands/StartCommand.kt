@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.commands
 
-import de.lehrbaum.initiativetracker.dtos.CombatDTO
+import de.lehrbaum.initiativetracker.dtos.CombatModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,7 +17,7 @@ sealed interface StartCommand {
 		sealed interface Response
 
 		@Serializable
-		data class JoinedAsHost(val combatDTO: CombatDTO) : Response
+		data class JoinedAsHost(val combatModel: CombatModel) : Response
 
 		@Serializable
 		object SessionAlreadyHasHost : Response
