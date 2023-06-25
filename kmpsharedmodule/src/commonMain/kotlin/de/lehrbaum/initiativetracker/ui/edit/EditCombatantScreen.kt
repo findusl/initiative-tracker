@@ -9,7 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
+import de.lehrbaum.initiativetracker.ui.composables.AutocompleteTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
+import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -21,12 +23,15 @@ fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 
 @Composable
 private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
-	val canSave by derivedStateOf {
-		!editCombatantViewModel.run {
-			nameEdit.hasError
-				|| initiativeEdit.hasError
-				|| maxHpEdit.hasError
-				|| currentHpEdit.hasError
+	val canSave by remember {
+		derivedStateOf {
+			!editCombatantViewModel.run {
+				nameEdit.hasError
+					|| initiativeEdit.hasError
+					|| maxHpEdit.hasError
+					|| currentHpEdit.hasError
+					|| monsterTypeError
+			}
 		}
 	}
 	val coroutineScope = rememberCoroutineScope()
@@ -76,6 +81,7 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
             .padding(Constants.defaultPadding)
             .fillMaxWidth()
     ) {
+		CreatureTypeField(editCombatantViewModel)
         EditTextField(editCombatantViewModel.nameEdit, "name")
         Spacer(modifier = Modifier.height(Constants.defaultPadding))
 		Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
@@ -95,6 +101,19 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 			Spacer(modifier = Modifier.width(Constants.defaultPadding))
 			EditTextField(editCombatantViewModel.currentHpEdit, "Current Hitpoints", Modifier.weight(1f))
 		}
-
     }
+}
+
+@Composable
+fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
+	val monsters by MainViewModel.monsters.collectAsState()
+	LaunchedEffect(monsters) { editCombatantViewModel.monsters = monsters }
+	AutocompleteTextField(
+		text = editCombatantViewModel.monsterTypeName,
+		label = "Monster Type",
+		onTextChanged = { editCombatantViewModel.monsterTypeName = it },
+		error = editCombatantViewModel.monsterTypeError,
+		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
+		placeholder = "Skeleton (MM)"
+	)
 }
