@@ -6,8 +6,6 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
-import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel.Companion.failedParsing
-import kotlin.Result.Companion.success
 
 data class EditCombatantViewModel(
 	private val combatantViewModel: CombatantViewModel,
@@ -16,10 +14,11 @@ data class EditCombatantViewModel(
 	private val onCancel: () -> Unit,
 ) {
 	val id = combatantViewModel.id
-	val nameEdit =
-		EditFieldViewModel(combatantViewModel.name, selectOnFirstFocus = firstEdit) { input ->
-			if (input.isBlank()) failedParsing() else success(input)
-		}
+	val nameEdit = EditFieldViewModel(
+		combatantViewModel.name,
+		selectOnFirstFocus = firstEdit,
+		parseInput = EditFieldViewModel.RequiredStringParser
+	)
 	val initiativeEdit = EditFieldViewModel(
 		combatantViewModel.initiative,
 		parseInput = EditFieldViewModel.OptionalIntParser
@@ -33,8 +32,6 @@ data class EditCombatantViewModel(
 		parseInput = EditFieldViewModel.OptionalIntParser
 	)
 	var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
-
-
 
 	suspend fun saveCombatant() {
 		onSave(CombatantModel(

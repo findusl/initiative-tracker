@@ -30,6 +30,9 @@ fun <T> EditTextField(
 	var textFieldValue by remember(editFieldViewModel) {
 		mutableStateOf(TextFieldValue(editFieldViewModel.initialValueText))
 	}
+	if (textFieldValue.text != editFieldViewModel.currentState) {
+		textFieldValue = textFieldValue.copy(text = editFieldViewModel.currentState)
+	}
 	var showClearButton by remember { mutableStateOf(false) }
 
     OutlinedTextField(
