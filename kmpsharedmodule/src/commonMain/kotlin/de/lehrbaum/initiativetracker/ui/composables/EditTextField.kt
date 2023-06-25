@@ -2,8 +2,12 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -26,11 +30,12 @@ fun <T> EditTextField(
 	var textFieldValue by remember(editFieldViewModel) {
 		mutableStateOf(TextFieldValue(editFieldViewModel.initialValueText))
 	}
+	var showClearButton by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = textFieldValue,
         onValueChange = {
-			if (selectWhole) {
+			if (selectWhole && it.text.isNotEmpty()) {
 				selectWhole = false
 				textFieldValue = it.copy(selection = TextRange(0, it.text.length))
 			} else {
@@ -43,9 +48,17 @@ fun <T> EditTextField(
         isError = editFieldViewModel.hasError,
         keyboardOptions = keyboardOptions,
         singleLine = editFieldViewModel.singleLine,
+		trailingIcon = {
+			if (showClearButton && textFieldValue.text.isNotEmpty()) {
+				IconButton(onClick = { textFieldValue = TextFieldValue() }) {
+					Icon(imageVector = Icons.Filled.Close, contentDescription = "Clear")
+				}
+			}
+		},
         modifier = modifier
 			.fillMaxWidth()
 			.onFocusChanged {
+				showClearButton = it.hasFocus
 				if (selectAllNextFocus && it.hasFocus) {
 					selectAllNextFocus = false
 					selectWhole = true
