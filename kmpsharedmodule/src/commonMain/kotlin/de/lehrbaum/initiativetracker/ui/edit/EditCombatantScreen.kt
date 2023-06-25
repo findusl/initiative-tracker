@@ -95,5 +95,6 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 			Spacer(modifier = Modifier.width(Constants.defaultPadding))
 			EditTextField(editCombatantViewModel.currentHpEdit, "Current Hitpoints", Modifier.weight(1f))
 		}
+
     }
 }

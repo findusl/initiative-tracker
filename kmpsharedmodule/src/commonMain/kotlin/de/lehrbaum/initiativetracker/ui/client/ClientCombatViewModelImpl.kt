@@ -12,7 +12,6 @@ import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState.Text
@@ -53,7 +52,7 @@ data class ClientCombatViewModelImpl(
 	}
 
 	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
-		editCombatantViewModel = EditCombatantViewModelImpl(
+		editCombatantViewModel = EditCombatantViewModel(
 			combatantViewModel,
 			firstEdit,
 			onSave = {

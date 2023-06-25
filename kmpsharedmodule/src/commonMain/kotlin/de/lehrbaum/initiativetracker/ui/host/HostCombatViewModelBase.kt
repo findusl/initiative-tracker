@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
-import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
@@ -80,7 +79,7 @@ abstract class HostCombatViewModelBase : HostCombatViewModel {
 	}
 
 	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
-		editCombatantViewModel.value = EditCombatantViewModelImpl(
+		editCombatantViewModel.value = EditCombatantViewModel(
 			combatantViewModel,
 			firstEdit,
 			onSave = {

@@ -16,9 +16,9 @@ import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(mainModel: MainModel, widthInt: Int? = null) {
+fun MainScreen(mainViewModel: MainViewModel, widthInt: Int? = null) {
 	val drawerState = rememberDrawerState(DrawerValue.Closed)
-	val drawerItems by mainModel.drawerItems.collectAsState(emptyList())
+	val drawerItems by mainViewModel.drawerItems.collectAsState(emptyList())
 
 	// Workaround for resizing window on desktop
 	LaunchedEffect(widthInt) {
@@ -27,14 +27,18 @@ fun MainScreen(mainModel: MainModel, widthInt: Int? = null) {
 		}
 	}
 
+	LaunchedEffect(mainViewModel) {
+		mainViewModel.initializeCache(this)
+	}
+
 	ModalDrawer(
 		drawerState = drawerState,
 		drawerContent = {
-			Drawer(drawerItems, mainModel.activeDrawerItem, drawerState, mainModel::onDrawerItemSelected)
+			Drawer(drawerItems, mainViewModel.activeDrawerItem, drawerState, mainViewModel::onDrawerItemSelected)
 		},
 		gesturesEnabled = drawerState.isOpen,
 	) {
-		MainScreenContent(mainModel.content, drawerState)
+		MainScreenContent(mainViewModel.content, drawerState)
 	}
 }
 

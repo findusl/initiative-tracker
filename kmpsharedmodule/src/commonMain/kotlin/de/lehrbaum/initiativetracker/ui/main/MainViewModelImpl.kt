@@ -3,15 +3,21 @@ package de.lehrbaum.initiativetracker.ui.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModelImpl
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
-class MainModelImpl: MainModel {
+class MainViewModelImpl: MainViewModel {
 	override var activeDrawerItem by mutableStateOf<DrawerItem>(DrawerItem.HostCombat)
 
 	private val defaultDrawerItems = listOf(
@@ -45,7 +51,15 @@ class MainModelImpl: MainModel {
 		content = newContent
 	}
 
-    private fun hostNewCombat(): ContentState.HostCombat {
+	override fun initializeCache(scope: CoroutineScope) {
+		Napier.i("Initializing Cache")
+		scope.launch {
+			val monsters = BestiaryNetworkClient(GlobalInstances.httpClient).monsters.first()
+			MainViewModel.monsters.emit(monsters)
+		}
+	}
+
+	private fun hostNewCombat(): ContentState.HostCombat {
 		val hostCombatModel = HostLocalCombatViewModelImpl {
 			switchToCombat(it, asHost = true)
 		}

@@ -9,8 +9,8 @@ import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import de.lehrbaum.initiativetracker.ui.main.MainModelImpl
 import de.lehrbaum.initiativetracker.ui.main.MainScreen
+import de.lehrbaum.initiativetracker.ui.main.MainViewModelImpl
 import de.lehrbaum.initiativetracker.ui.shared.ProvideScreenSizeInformation
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -40,7 +40,7 @@ fun main() = application {
 		}
 		ProvideScreenSizeInformation(width, height) {
 			MaterialTheme {
-				MainScreen(MainModelImpl(), widthInt)
+				MainScreen(MainViewModelImpl(), widthInt)
 			}
 		}
 	}
