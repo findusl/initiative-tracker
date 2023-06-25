@@ -5,7 +5,7 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-private const val DEFAULT_COMBATANT_TITLE = "New"
+private const val DEFAULT_COMBATANT_TITLE = ""
 
 /**
  * Not thread safe! Has to be called from a single thread. Currently that is Dispatchers.Main

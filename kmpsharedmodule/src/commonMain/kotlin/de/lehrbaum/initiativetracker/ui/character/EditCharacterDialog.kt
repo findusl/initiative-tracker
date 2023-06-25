@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
@@ -20,8 +21,10 @@ fun EditCharacterScreen(editCharacterModel: EditCharacterModel) {
 
 @Composable
 private fun DialogTopBar(editCharacterModel: EditCharacterModel) {
-	val canSave by derivedStateOf {
-		!editCharacterModel.run { nameEdit.hasError || initiativeModEdit.hasError || maxHpEdit.hasError }
+	val canSave by remember {
+		derivedStateOf {
+			!editCharacterModel.run { nameEdit.hasError || initiativeModEdit.hasError || maxHpEdit.hasError }
+		}
 	}
 	TopAppBar(
 		title = {},
