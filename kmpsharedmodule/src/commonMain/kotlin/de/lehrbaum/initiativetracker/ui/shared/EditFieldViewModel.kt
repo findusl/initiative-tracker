@@ -12,10 +12,9 @@ class EditFieldViewModel<T>(
 	val singleLine: Boolean = true,
 	val placeholder: String? = null,
 	val selectOnFirstFocus: Boolean = false,
-	val parseInput: (String) -> Result<T>
+	val parseInput: (String) -> Result<T>,
 ) {
 	val initialValueText = initialValue?.toString() ?: ""
-	/** Implemented EditTextField lazily, currently this value does not update the UI, only takes updates */
 	var currentState by mutableStateOf(initialValueText)
 	val hasError by derivedStateOf { parseInput(currentState).isFailure }
 	val value: Result<T>
@@ -26,6 +25,9 @@ class EditFieldViewModel<T>(
 
 		val RequiredIntParser: (String) -> Result<Int> =
 			{ input -> input.toIntOrNull()?.let { Result.success(it) } ?: failedParsing() }
+
+		val RequiredStringParser: (String) -> Result<String> =
+			{ input -> if (input.isBlank()) failedParsing() else Result.success(input) }
 
 		val OptionalIntParser: (String) -> Result<Int?> =
 			{ input ->
