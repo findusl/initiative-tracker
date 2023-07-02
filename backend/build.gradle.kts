@@ -74,7 +74,7 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${Version.kotlin}")
 	testImplementation(kotlin("test"))
 	testImplementation("org.mockito:mockito-core:${Version.mockito}")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
 }
 
 tasks.test {
@@ -87,7 +87,6 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
-
 tasks.register<Copy>("buildAndCopyImage") {
 	group = "ktor"
 	dependsOn("buildImage")
@@ -95,4 +94,3 @@ tasks.register<Copy>("buildAndCopyImage") {
 	from("$buildDir/jib-image.tar")
 	into("/Volumes/hspeed/docker_images")
 }
-

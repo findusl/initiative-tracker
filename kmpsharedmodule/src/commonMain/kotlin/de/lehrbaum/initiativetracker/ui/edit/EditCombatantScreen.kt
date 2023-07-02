@@ -9,8 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
+import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.AutocompleteTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
+import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -18,6 +20,21 @@ import kotlinx.coroutines.launch
 fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 	Scaffold(topBar = { DialogTopBar(editCombatantViewModel) }) {
 		EditCombatantContent(editCombatantViewModel, Modifier.padding(it))
+	}
+	editCombatantViewModel.confirmApplyMonsterDialog?.let {  completionLambda ->
+		GeneralDialog(onDismissRequest = { completionLambda(false) }) {
+			Column(
+				modifier = Modifier.padding(16.dp),
+				verticalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				Text(text = "Apply stats of ${editCombatantViewModel.monsterTypeName} where known?")
+				OkCancelButtonRow(
+					mutableStateOf(true),
+					{ completionLambda(false) },
+					onSubmit = { completionLambda(true) }
+				)
+			}
+		}
 	}
 }
 
