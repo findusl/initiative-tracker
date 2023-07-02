@@ -53,7 +53,7 @@ data class EditCombatantViewModel(
 			.toList()
 			.sortedBy { it.length }
 	}
-	var confirmApplyMonsterDialog: String? by mutableStateOf(null)
+	var confirmApplyMonsterDialog: ((Boolean) -> Unit)? by mutableStateOf(null)
 
 	private fun onMonsterTypeNameChanged(@Suppress("UNUSED_PARAMETER") old: String, new: String) {
 		val determinedType = determineMonster(new)
@@ -66,15 +66,18 @@ data class EditCombatantViewModel(
 			) {
 				applyMonsterType()
 			} else {
-				// TODO implement in ui
-				confirmApplyMonsterDialog = new
+				confirmApplyMonsterDialog = { confirmed ->
+					if (confirmed)
+						applyMonsterType()
+					confirmApplyMonsterDialog = null
+				}
 			}
 		}
 	}
 
 	private fun determineMonster(name: String): MonsterDTO? = monsters.firstOrNull { it.displayName == name }
 
-	fun applyMonsterType() {
+	private fun applyMonsterType() {
 		val monsterType = this.monsterType
 		monsterType?.hp?.average?.let { avgHp ->
 			maxHpEdit.currentState = avgHp.toString()

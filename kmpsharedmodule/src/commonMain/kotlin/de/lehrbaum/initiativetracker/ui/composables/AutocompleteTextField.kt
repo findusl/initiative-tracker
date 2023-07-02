@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.ui.shared.DropdownMenu
 
 @Composable
 fun AutocompleteTextField(
