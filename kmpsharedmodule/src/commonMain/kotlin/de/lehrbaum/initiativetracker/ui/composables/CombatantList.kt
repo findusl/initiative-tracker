@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 
@@ -46,7 +47,7 @@ fun CombatantList(
         val itemModifier = Modifier
             .padding(Constants.defaultPadding)
             .fillMaxWidth()
-        items(combatants, key = CombatantViewModel::id) { combatant ->
+        items(combatants, key = CombatantViewModel::id, contentType = { CombatantModel::class }) { combatant ->
             SwipeToDismiss(dismissToEndAction(combatant), dismissToStartAction(combatant), combatant) {
                 CombatantListElement(combatant, itemModifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },
@@ -57,7 +58,12 @@ fun CombatantList(
 
         if (onCreateNewClicked != null) {
             addCreateNewCard(itemModifier, "Add new combatant", onCreateNewClicked)
-        }
+        } else if (combatants.isEmpty()) {
+			// so that it is not completely empty, looks like an error
+			item(key = combatants) {
+				Text("No Combatants in the combat")
+			}
+		}
     }
 }
 

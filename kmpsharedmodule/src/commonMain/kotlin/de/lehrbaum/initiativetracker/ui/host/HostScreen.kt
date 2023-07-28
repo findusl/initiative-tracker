@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.host
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -23,7 +24,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 	val hostCombatModelState = remember { mutableStateOf(hostCombatViewModel) }
 	hostCombatModelState.value = hostCombatViewModel
 
-	val connectionStateState = hostCombatViewModel.hostConnectionState.collectAsState(HostConnectionState.Connecting)
+	val connectionStateState = hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
 
 	ListDetailLayout(
 		list = {
@@ -51,7 +52,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 @Composable
 private fun MainContent(
 	hostCombatViewModel: HostCombatViewModel,
-	connectionStateState: State<HostConnectionState>
+	connectionStateState: ResettableState<HostConnectionState>
 ) {
 	hostCombatViewModel.run {
 		val connectionState = connectionStateState.value
@@ -76,7 +77,15 @@ private fun MainContent(
 			}
 
 			HostConnectionState.Connecting -> Text("Connecting")
-			is HostConnectionState.Disconnected -> Text("Disconnected! Reason: ${connectionState.reason}")
+			is HostConnectionState.Disconnected -> {
+				Column {
+					Text("Disconnected! Reason: ${connectionState.reason}")
+					Button( { connectionStateState.reset() } ) {
+						Text("Restart Connection")
+					}
+					Text("(Server may take up to 30 seconds to notice a missing host)")
+				}
+			}
 		}
 	}
 }

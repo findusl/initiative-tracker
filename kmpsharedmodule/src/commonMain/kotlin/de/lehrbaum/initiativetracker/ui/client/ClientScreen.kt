@@ -1,11 +1,14 @@
 package de.lehrbaum.initiativetracker.ui.client
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.*
@@ -21,7 +24,7 @@ import kotlinx.coroutines.launch
 fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatViewModel) {
 	val clientCombatViewModelState = remember { mutableStateOf(clientCombatViewModel) }
 	clientCombatViewModelState.value = clientCombatViewModel
-	val connectionStateState = clientCombatViewModel.combatState.collectAsState(ClientCombatState.Connecting)
+	val connectionStateState = clientCombatViewModel.combatState.collectAsStateResettable(ClientCombatState.Connecting)
 	val coroutineScope = rememberCoroutineScope(clientCombatViewModel.sessionId)
 
 	ListDetailLayout(
@@ -33,7 +36,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 				scaffoldState = scaffoldState,
 				topBar = { TopBar(drawerState, clientCombatViewModelState.value, coroutineScope) },
 			) {
-				Content(connectionStateState, clientCombatViewModelState.value)
+				Content(clientCombatViewModelState.value, connectionStateState)
 			}
 
 			if (connectionStateState.value is ClientCombatState.Connected) {
@@ -55,8 +58,8 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 @ExperimentalMaterialApi
 @Composable
 private fun Content(
-	connectionStateState: State<ClientCombatState>,
-	clientCombatViewModel: ClientCombatViewModel
+	clientCombatViewModel: ClientCombatViewModel,
+	connectionStateState: ResettableState<ClientCombatState>,
 ) {
 	val connectionState = connectionStateState.value
 	when (connectionState) {
@@ -77,7 +80,14 @@ private fun Content(
 		}
 
 		ClientCombatState.Connecting -> Text("Connecting")
-		is ClientCombatState.Disconnected -> Text("Disconnected. Reason: ${connectionState.reason}")
+		is ClientCombatState.Disconnected -> {
+			Column {
+				Text("Disconnected. Reason: ${connectionState.reason}")
+				Button( { connectionStateState.reset() } ) {
+					Text("Restart Connection")
+				}
+			}
+		}
 	}
 }
 

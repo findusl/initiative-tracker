@@ -89,6 +89,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.register<Copy>("buildAndCopyImage") {
 	group = "ktor"
+	description = "Custom task for my particular backend deployment"
 	dependsOn("buildImage")
 
 	from("$buildDir/jib-image.tar")
