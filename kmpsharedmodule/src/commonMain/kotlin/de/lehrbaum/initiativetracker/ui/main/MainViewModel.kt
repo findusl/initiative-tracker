@@ -46,9 +46,17 @@ sealed interface DrawerItem {
 }
 
 sealed interface ContentState {
+	val keepScreenOn: Boolean
+		get() = false
 	object Empty: ContentState
-	data class HostCombat(val hostCombatViewModel: HostCombatViewModel): ContentState
+	data class HostCombat(val hostCombatViewModel: HostCombatViewModel): ContentState {
+		override val keepScreenOn: Boolean
+			get() = hostCombatViewModel.isSharing
+	}
 	data class JoinCombat(val onJoin: (Int) -> Unit, val onCancel: () -> Unit, val asHost: Boolean): ContentState
-	data class ClientCombat(val clientCombatViewModel: ClientCombatViewModel): ContentState
+	data class ClientCombat(val clientCombatViewModel: ClientCombatViewModel): ContentState {
+		override val keepScreenOn: Boolean
+			get() = true
+	}
 	data class CharacterScreen(val characterListViewModel: CharacterListViewModel) : ContentState
 }
