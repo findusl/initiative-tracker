@@ -13,7 +13,7 @@ pluginManagement {
 	}
 }
 
-rootProject.name = "Initiative Tracker"
+rootProject.name = "initiative-tracker"
 
 include(":app")
 include(":backend")
