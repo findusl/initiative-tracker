@@ -25,12 +25,12 @@ if (localProperties.exists()) {
 }
 
 android {
-	compileSdk = 33
+	compileSdk = 34
 
 	defaultConfig {
 		applicationId = "de.lehrbaum.initiativetracker"
 		minSdk = 28
-		targetSdk = 33
+		targetSdk = 34
 		versionCode = 1
 		versionName = "0.1.0"
 
@@ -40,7 +40,7 @@ android {
 	buildTypes {
 		getByName("release") {
 			isMinifyEnabled = true
-			// proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+			proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 			isDebuggable = false
 		}
 	}
