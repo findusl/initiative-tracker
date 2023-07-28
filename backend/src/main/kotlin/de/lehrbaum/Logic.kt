@@ -55,7 +55,7 @@ internal fun createSession(combatModel: CombatModel, hostWebsocketSession: Defau
 
 internal fun getAvailableRandomSessionId(): Int {
 	while (true) {
-		val sessionId = Random.nextInt(9999)
+		val sessionId = Random.nextInt(10000)
 		if (!sessions.containsKey(sessionId))
 			return sessionId
 	}
