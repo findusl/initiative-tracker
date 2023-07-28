@@ -1,11 +1,11 @@
-package de.lehrbaum.initiativetracker.ui.shared
+package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.material.DropdownMenu as ActualDropdownMenu
-
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.material.DropdownMenu as AndroidDropdownMenu
 
 @Composable
 actual fun DropdownMenu(
@@ -16,5 +16,5 @@ actual fun DropdownMenu(
     offset: DpOffset,
     content: @Composable ColumnScope.() -> Unit
 ) {
-	ActualDropdownMenu(expanded, onDismissRequest, focusable, modifier, offset, content)
+	AndroidDropdownMenu(expanded, onDismissRequest, modifier, offset, PopupProperties(focusable),content)
 }
