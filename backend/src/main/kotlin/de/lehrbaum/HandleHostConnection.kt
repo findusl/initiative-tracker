@@ -30,9 +30,7 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 		println("Server websocket failed somehow $e")
 	} finally {
 		session?.let {
-			synchronized(sessions) {
-				sessions[session.id] = session.copy(hostWebsocketSession = null)
-			}
+			session.hostWebsocketSession = null
 		}
 	}
 	println("Finished host websocket connection ${session?.id}")
@@ -95,7 +93,7 @@ private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: 
 					StartCommand.JoinAsHost.SessionAlreadyHasHost
 				} else {
 					session = localSession
-					sessions[hostingCommand.sessionId] = localSession.copy(hostWebsocketSession = this)
+					localSession.hostWebsocketSession = this
 					StartCommand.JoinAsHost.JoinedAsHost(localSession.combatState.value)
 				}
 			}
