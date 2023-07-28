@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.character.CharacterListScreen
 import de.lehrbaum.initiativetracker.ui.client.ClientScreen
+import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import kotlinx.coroutines.launch
@@ -76,6 +77,9 @@ private fun Drawer(
 @Composable
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
+	if (contentState.keepScreenOn) {
+		KeepScreenOn()
+	}
 	when(contentState) {
 		is ContentState.Empty -> Text("Choose something in the menu.")
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
