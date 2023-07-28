@@ -36,7 +36,7 @@ suspend fun ApplicationCall.handleDeleteRequest() {
 		sessions.remove(sessionId)
 	}
 	if (removedElement != null) {
-		removedElement.combatState.value = CombatModel(activeCombatantIndex = -1, emptyList())
+		println("Deleted session with id $sessionId")
 		removedElement.hostWebsocketSession?.close(CloseReason(CloseReason.Codes.GOING_AWAY, "Session is deleted"))
 		respond(HttpStatusCode.NoContent)
 	} else {
