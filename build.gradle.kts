@@ -20,7 +20,7 @@ buildscript {
 		// https://github.com/google/dagger/issues/3068
 		classpath("com.squareup:javapoet:1.13.0")
 		// https://issuetracker.google.com/issues/240445963
-		classpath("org.apache.commons:commons-compress:1.21")
+		classpath("org.apache.commons:commons-compress:${Version.ApacheCommons.compress}")
 	}
 }
 
