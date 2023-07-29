@@ -75,9 +75,8 @@ inline fun <reified T> EditTextField(editFieldViewModel: EditFieldViewModel<T>, 
 	EditTextField(editFieldViewModel, label, guessKeyboardOptions(editFieldViewModel), modifier)
 }
 
-inline fun <reified T> guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<T>): KeyboardOptions {
-	return guessKeyboardOptions(editFieldViewModel, typeInfo<T>())
-}
+inline fun <reified T> guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<T>) =
+	guessKeyboardOptions(editFieldViewModel, typeInfo<T>())
 
 fun guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<*>, typeInfo: TypeInfo): KeyboardOptions {
 	var type = editFieldViewModel.keyboardType
@@ -92,4 +91,3 @@ fun guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<*>, typeInfo: Ty
 
 	return if (type != null) KeyboardOptions(keyboardType = type) else KeyboardOptions.Default
 }
-

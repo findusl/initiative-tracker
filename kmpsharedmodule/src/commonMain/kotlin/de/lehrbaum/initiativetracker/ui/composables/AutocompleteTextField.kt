@@ -1,6 +1,9 @@
 package de.lehrbaum.initiativetracker.ui.composables
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.requiredHeightIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -10,7 +13,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun AutocompleteTextField(
@@ -50,7 +52,7 @@ fun AutocompleteTextField(
 						)
 					}
 				}
-			}
+			},
         )
         DropdownMenu(
             expanded = expanded,
@@ -70,23 +72,4 @@ fun AutocompleteTextField(
             }
         }
     }
-}
-
-@Composable
-fun TestAutocompleteTextField() {
-	var text by remember { mutableStateOf("") }
-	val predictions by remember { derivedStateOf { (1..20).map { "$text $it" } } }
-
-	Column {
-		Text("What does this do?")
-		AutocompleteTextField(
-			modifier = Modifier.padding(12.dp),
-			text = text,
-			onTextChanged = { text = it },
-			label = "Test Field",
-			error = false,
-			suggestions = predictions
-		)
-		Text("And this?")
-	}
 }
