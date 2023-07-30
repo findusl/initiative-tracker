@@ -38,6 +38,7 @@ fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -
 	var sliderValue by remember { mutableStateOf(1.0f) }
 	val sliderValueInt by remember { derivedStateOf { sliderValue.roundToInt() } }
 	val coroutineScope = rememberCoroutineScope()
+	val textIsValidNumber = remember { mutableStateOf(false) }
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Row(
@@ -59,6 +60,7 @@ fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -
 						sliderValue = it.toFloat()
 				},
 				modifier = Modifier.weight(1.0f),
+				textIsValidNumber = textIsValidNumber,
 			)
 			IconButton(
 				onClick = { sliderValue++ }
@@ -76,7 +78,7 @@ fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -
 			onValueChange = { sliderValue = it }
 		)
 		OkCancelButtonRow(
-			mutableStateOf(true),
+			textIsValidNumber,
 			onCancel,
 			onSubmit = { onSubmit(sliderValueInt) },
 			coroutineScope
