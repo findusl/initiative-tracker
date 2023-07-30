@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Slider
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -14,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
@@ -35,9 +36,7 @@ fun DamageCombatantDialog(onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit)
 @Composable
 fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
 	var sliderValue by remember { mutableStateOf(1.0f) }
-	val sliderValueString by remember { derivedStateOf { sliderValue.roundToInt().toString() } }
-	var textInputValue by remember(sliderValueString) { mutableStateOf(sliderValueString) }
-	val textInputError by remember { derivedStateOf { textInputValue.toIntOrNull() == null } }
+	val sliderValueInt by remember { derivedStateOf { sliderValue.roundToInt() } }
 	val coroutineScope = rememberCoroutineScope()
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
@@ -53,17 +52,13 @@ fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -
 				)
 			}
 			// This text should be centered
-			OutlinedTextField(
-				value = textInputValue,
-				onValueChange =
-				{ currentInput ->
-					textInputValue = currentInput
-					currentInput.toIntOrNull()?.let { sliderValue = it.toFloat() }
+			DiceRollingTextField(
+				initialNumber = sliderValueInt,
+				onNumberChanged = {
+					if (it != sliderValueInt)
+						sliderValue = it.toFloat()
 				},
-				keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-				isError = textInputError,
-				singleLine = true,
-				modifier = Modifier.weight(1.0f)
+				modifier = Modifier.weight(1.0f),
 			)
 			IconButton(
 				onClick = { sliderValue++ }
@@ -83,7 +78,7 @@ fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -
 		OkCancelButtonRow(
 			mutableStateOf(true),
 			onCancel,
-			onSubmit = { onSubmit(sliderValue.roundToInt()) },
+			onSubmit = { onSubmit(sliderValueInt) },
 			coroutineScope
 		)
 	}

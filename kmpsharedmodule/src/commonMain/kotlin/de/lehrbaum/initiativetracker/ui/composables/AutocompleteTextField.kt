@@ -30,18 +30,18 @@ fun AutocompleteTextField(
 
     Column(modifier) {
         OutlinedTextField(
-            value = text,
-            onValueChange = onTextChanged,
-            modifier = Modifier.fillMaxWidth()
-                .onSizeChanged {
-                    textFieldWidth = it.width
+			value = text,
+			onValueChange = onTextChanged,
+			modifier = Modifier.fillMaxWidth()
+				.onSizeChanged {
+					textFieldWidth = it.width
 					textFieldHeight = it.height
-                }.onFocusChanged {
-                    expanded = it.isFocused
-                },
-            label = { Text(label) },
-            isError = error && !expanded,
-            placeholder = placeholder?.let { { Text(it) } },
+				}.onFocusChanged {
+					expanded = it.isFocused
+				},
+			label = { Text(label) },
+			isError = error,
+			placeholder = placeholder?.let { { Text(it) } },
 			trailingIcon = {
 				if (expanded) {
 					IconButton(onClick = { expanded = false }) {
@@ -55,13 +55,13 @@ fun AutocompleteTextField(
 			},
         )
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            focusable = false,
-            modifier = Modifier
-                .width(with(LocalDensity.current) { textFieldWidth.toDp() })
-				.requiredHeightIn(max = with(LocalDensity.current) { (5*textFieldHeight).toDp() }),
-        ) {
+			expanded = expanded && suggestions.isNotEmpty(),
+			onDismissRequest = { expanded = false },
+			focusable = false,
+			modifier = Modifier
+				.width(with(LocalDensity.current) { textFieldWidth.toDp() })
+				.requiredHeightIn(max = with(LocalDensity.current) { (5 * textFieldHeight).toDp() }),
+		) {
             suggestions.forEach { label ->
                 DropdownMenuItem(onClick = {
 					onTextChanged(label)
