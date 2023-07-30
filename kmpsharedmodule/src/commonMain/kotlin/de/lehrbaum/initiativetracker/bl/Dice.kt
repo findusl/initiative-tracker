@@ -6,8 +6,10 @@ object Dice {
 	fun d20() = Random.nextInt(20) + 1
 
 	fun calculateDiceFormula(formula: String, seed: Long): CalculationResult? {
-		val elements = formula.split("+", "-")
-		val operators = formula.toCharArray().filter { it == '+' || it == '-' }
+		val cleanedFormula = formula.trim().replace('#', 'd').replace("\\s".toRegex(), "")
+		if (cleanedFormula.toIntOrNull() != null) return null // A single number is a valid formula but not really a dice formula
+		val elements = cleanedFormula.split("+", "-")
+		val operators = cleanedFormula.toCharArray().filter { it == '+' || it == '-' }
 		if (operators.size != elements.size - 1) return null
 
 		var intermediateStep = ""
@@ -16,13 +18,11 @@ object Dice {
 
 		for (i in elements.indices) {
 			val operator = if (i == 0) null else operators[i - 1]
-			val sign = if (operator  == '-') -1 else +1
+			val sign = if (operator == '-') -1 else +1
 			val element = elements[i]
 			var elementSum = element.toIntOrNull()
 			if (elementSum == null) {
-				val diceSeparator = if (element.contains('d')) 'd' else if (element.contains('#')) '#' else return null
-
-				val parts = element.split(diceSeparator)
+				val parts = if (element.contains('d')) element.split('d') else return null
 				val rolls = parts[0].toIntOrNull() ?: return null
 				val sides = parts[1].toIntOrNull() ?: return null
 
