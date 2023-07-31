@@ -1,2 +1,0 @@
-runtime: java17
-entrypoint: 'java -jar initiative-tracker-backend-1-all.jar'
