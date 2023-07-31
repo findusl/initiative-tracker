@@ -1,10 +1,11 @@
+@file:Suppress("OPT_IN_USAGE", "UnstableApiUsage")
+
 import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
 import io.ktor.plugin.features.JreVersion
 
 plugins {
-	application
-	kotlin("jvm")
+	kotlin("multiplatform")
 	id("org.jetbrains.kotlin.plugin.serialization")
 	id("io.ktor.plugin") version Version.ktor
 }
@@ -14,6 +15,45 @@ version = "2.0.0"
 
 application {
 	mainClass.set("de.lehrbaum.ApplicationKt")
+}
+
+kotlin {
+	jvm() {
+		mainRun {
+			mainClass = "de.lehrbaum.ApplicationKt"
+		}
+	}
+	linuxX64 {
+		binaries {
+			executable { entryPoint = "de.lehrbaum.ApplicationKt" }
+		}
+	}
+
+	sourceSets {
+		named("commonMain") {
+			dependencies {
+				implementation(project(path = ":commands"))
+
+				implementation("io.ktor:ktor-server-core:${Version.ktor}")
+				implementation("io.ktor:ktor-server-cio:${Version.ktor}")
+				implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
+				implementation("io.ktor:ktor-server-content-negotiation:${Version.ktor}")
+				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
+				implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
+			}
+		}
+		named("commonTest") {
+			dependencies {
+				implementation("io.ktor:ktor-server-tests:${Version.ktor}")
+				implementation(kotlin("test"))
+			}
+		}
+		named("jvmMain") {
+			dependencies {
+				implementation("ch.qos.logback:logback-classic:${Version.logback}")
+			}
+		}
+	}
 }
 
 ktor {
@@ -32,30 +72,8 @@ ktor {
 	}
 }
 
-dependencies {
-	implementation(project(path = ":commands"))
-
-	implementation("io.ktor:ktor-server-core:${Version.ktor}")
-	implementation("io.ktor:ktor-server-cio:${Version.ktor}")
-	implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
-	implementation("io.ktor:ktor-server-content-negotiation:${Version.ktor}")
-	implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
-	implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
-	implementation("ch.qos.logback:logback-classic:${Version.logback}")
-
-	testImplementation("io.ktor:ktor-server-tests:${Version.ktor}")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${Version.kotlin}")
-	testImplementation(kotlin("test"))
-	testImplementation("org.mockito:mockito-core:${Version.mockito}")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
-}
-
-tasks.test {
-	useJUnitPlatform()
-}
-
 tasks.register<Copy>("buildAndCopyImage") {
-	group = "distribution"
+	group = "docker"
 	description = "Custom task for my particular backend deployment"
 	dependsOn("buildImage")
 

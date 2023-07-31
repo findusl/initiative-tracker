@@ -25,4 +25,4 @@ jobs:
       - name: Build Android with Gradle
         run: ./gradlew :app:testDebugUnitTest
       - name: Build Backend with Gradle
-        run: ./gradlew :backend:test
+        run: ./gradlew :backend:jvmTest
