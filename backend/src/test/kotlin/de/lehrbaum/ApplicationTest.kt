@@ -13,6 +13,12 @@ class ApplicationTest {
 
 	@Test
 	fun simpleTest() = testApplication {
+		application {
+			configureMonitoring()
+			configureSerialization()
+			configureSockets()
+			configureRouting()
+		}
 		val testContent = """{"combatants":[], "activeCombatantIndex":0 } """
 
 		client.post("/session") {

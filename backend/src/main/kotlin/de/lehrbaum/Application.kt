@@ -30,7 +30,7 @@ fun main() {
 private const val BASE_PATH = "/session"
 internal const val SESSION_ID_PARAMETER = "sessionId"
 
-private fun Application.configureRouting() {
+internal fun Application.configureRouting() {
 	routing {
 		post(BASE_PATH) {
 			call.handlePostRequest()
@@ -44,21 +44,21 @@ private fun Application.configureRouting() {
 	}
 }
 
-private fun Application.configureSockets() {
+internal fun Application.configureSockets() {
 	install(WebSockets) {
 		contentConverter = KotlinxWebsocketSerializationConverter(Json)
 		masking = false
 	}
 }
 
-private fun Application.configureMonitoring() {
+internal fun Application.configureMonitoring() {
 	install(CallLogging) {
 		level = Level.INFO
 		filter { call -> call.request.path().startsWith("/") }
 	}
 }
 
-private fun Application.configureSerialization() {
+internal fun Application.configureSerialization() {
 	install(ContentNegotiation) {
 		json()
 	}
