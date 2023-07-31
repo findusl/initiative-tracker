@@ -1,4 +1,3 @@
-import io.ktor.plugin.features.DockerImageRegistry
 import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
 import io.ktor.plugin.features.JreVersion
@@ -29,14 +28,6 @@ ktor {
 					8080,
 					DockerPortMappingProtocol.TCP
 				)
-			)
-		)
-		externalRegistry.set(
-			// this does not yet seem to work
-			DockerImageRegistry.dockerHub(
-				appName = providers.gradleProperty("dockerhub.app.name"),
-				username = providers.gradleProperty("dockerhub.username"),
-				password = providers.gradleProperty("dockerhub.password")
 			)
 		)
 	}

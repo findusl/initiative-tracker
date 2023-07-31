@@ -1,6 +1,8 @@
 # Backend
 
-You can run the backend with the gradle task `:backend:run`
+You can run the backend with the gradle task `:backend:run`. You can also deploy it as a docker image using the
+ktor tasks from the docker plugin. You might need to change the docker configuration in `/backend/build.gradle.kts`
+and set the port forwarding rules as you'd like them.
 
 # App
 
