@@ -21,15 +21,14 @@ suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCo
 	sendSerialized(JoinSessionResponse.JoinedSession(session.combatState.value) as JoinSessionResponse)
 
 	try {
-		with(ClientSessionState()) {
-			launch {
-				handleClientCommands(session)
-			}
+		val state = ClientSessionState()
+		launch {
+			handleClientCommands(session, state)
+		}
 
-			// This will stop once the session ends
-			session.combatState.collectLatest {
-				sendSerialized(ServerToClientCommand.CombatUpdatedCommand(it) as ServerToClientCommand)
-			}
+		// This will stop once the session ends
+		session.combatState.collectLatest {
+			sendSerialized(ServerToClientCommand.CombatUpdatedCommand(it) as ServerToClientCommand)
 		}
 
 	} catch (e: Exception) {
@@ -38,8 +37,7 @@ suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCo
 	logger.info("Finished client websocket connection for session ${session.id}")
 }
 
-context(ClientSessionState)
-private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: Session) {
+private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: Session, state: ClientSessionState) {
 	try {
 		while (true) {
 			val message = receiveDeserialized<ClientCommand>()
@@ -47,24 +45,25 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 				is ClientCommand.AddCombatant -> {
 					logger.trace("Got addCombatant command $message")
 					val command: ServerToHostCommand = ServerToHostCommand.AddCombatant(message.combatant)
-					forwardCommandAndHandleResponse(session, command)
+					forwardCommandAndHandleResponse(session, command, state)
 				}
+
 				is ClientCommand.EditCombatant -> {
 					logger.trace("Got editCombatant command $message")
 					val command: ServerToHostCommand = ServerToHostCommand.EditCombatant(message.combatant)
-					forwardCommandAndHandleResponse(session, command)
+					forwardCommandAndHandleResponse(session, command, state)
 				}
 				is ClientCommand.DamageCombatant -> {
 					logger.trace("Got damageCombatant command $message")
 					val command: ServerToHostCommand =
 						ServerToHostCommand.DamageCombatant(message.combatantId, message.damage, message.ownerId)
-					forwardCommandAndHandleResponse(session, command)
+					forwardCommandAndHandleResponse(session, command, state)
 				}
 
 				ClientCommand.CancelCommand -> {
 					// don't wait here. Either there is an active command or not.
-					logger.debug("Got Cancel. Active scope is $activeCommandScope")
-					activeCommandScope?.cancel()
+					logger.debug("Got Cancel. Active scope is ${state.activeCommandScope}")
+					state.activeCommandScope?.cancel()
 				}
 			}
 		}
@@ -75,8 +74,11 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 	}
 }
 
-context(ClientSessionState)
-private suspend fun DefaultWebSocketServerSession.forwardCommandAndHandleResponse(session: Session, command: ServerToHostCommand) {
+private suspend fun DefaultWebSocketServerSession.forwardCommandAndHandleResponse(
+	session: Session,
+	command: ServerToHostCommand,
+	state: ClientSessionState
+) = with(state) {
 	assert(activeCommandScope == null) { "This client tried to send two commands!" }
 	activeCommandScope = plus(Job()) // avoids cancelling the whole outer scope on exception
 	activeCommandScope?.launch {

@@ -20,15 +20,14 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 	try {
 		session = obtainSession(hostingCommand) ?: return
 		logger.debug("Host connected ${session.id}")
-		with(HostSessionState()) {
-			val commandForwardingJob = launch {
-				handleOutgoingCommands(session)
-			}
-
-			handleHostCommands(session)
-			// maybe not necessary since it is the same scope, not sure
-			commandForwardingJob.cancel("Websocket closed")
+		val state = HostSessionState()
+		val commandForwardingJob = launch {
+			handleOutgoingCommands(session, state)
 		}
+
+		handleHostCommands(session, state)
+		// maybe not necessary since it is the same scope, not sure
+		commandForwardingJob.cancel("Websocket closed")
 	} catch (e: Exception) {
 		logger.warn("Server websocket failed somehow $e")
 	} finally {
@@ -39,8 +38,7 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 	logger.info("Finished host websocket connection ${session?.id}")
 }
 
-context(HostSessionState)
-private suspend fun DefaultWebSocketServerSession.handleOutgoingCommands(session: Session) {
+private suspend fun DefaultWebSocketServerSession.handleOutgoingCommands(session: Session, state: HostSessionState) {
 	for (outgoing in session.serverCommandQueue) {
 		var responded = false
 		try {
@@ -48,7 +46,7 @@ private suspend fun DefaultWebSocketServerSession.handleOutgoingCommands(session
 			sendSerialized(outgoing.first)
 			logger.trace("Awaiting response")
 			// in case of error on host site this can hang. but then again host could reconnect, should fix
-			val response = commandResponse.receive()
+			val response = state.commandResponse.receive()
 			logger.trace("Got command response $response")
 			outgoing.second(response)
 			responded = true
@@ -60,8 +58,7 @@ private suspend fun DefaultWebSocketServerSession.handleOutgoingCommands(session
 	}
 }
 
-context(HostSessionState)
-private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Session) {
+private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Session, state: HostSessionState) {
 	try {
 		while (true) {
 			val message = receiveDeserialized<HostCommand>()
@@ -73,7 +70,7 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 
 				is HostCommand.CommandCompleted -> {
 					logger.trace("Got command completed ${message.accepted}")
-					commandResponse.send(message.accepted)
+					state.commandResponse.send(message.accepted)
 				}
 			}
 		}
