@@ -1,4 +1,3 @@
-import com.google.cloud.tools.gradle.appengine.appyaml.AppEngineAppYamlExtension
 import io.ktor.plugin.features.DockerImageRegistry
 import io.ktor.plugin.features.DockerPortMapping
 import io.ktor.plugin.features.DockerPortMappingProtocol
@@ -10,29 +9,13 @@ plugins {
 	kotlin("jvm")
 	id("org.jetbrains.kotlin.plugin.serialization")
 	id("io.ktor.plugin") version Version.ktor
-	id("com.google.cloud.tools.appengine") version "2.4.5"
-	id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "de.lehrbaum"
 version = "2.0.0"
 
 application {
-	mainClass.set("io.ktor.server.netty.EngineMain")
-}
-
-configure<AppEngineAppYamlExtension> {
-	val projectVersion = project.version.toString()
-	val projectName = project.name
-	stage {
-		setArtifact("build/libs/$projectName-${project.version}-all.jar")
-	}
-	deploy {
-		projectId = "GCLOUD_CONFIG"
-		version = projectVersion
-		stopPreviousVersion = true
-		promote = true
-	}
+	mainClass.set("de.lehrbaum.ApplicationKt")
 }
 
 ktor {
@@ -63,7 +46,7 @@ dependencies {
 	implementation(project(path = ":commands"))
 
 	implementation("io.ktor:ktor-server-core:${Version.ktor}")
-	implementation("io.ktor:ktor-server-netty:${Version.ktor}")
+	implementation("io.ktor:ktor-server-cio:${Version.ktor}")
 	implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
 	implementation("io.ktor:ktor-server-content-negotiation:${Version.ktor}")
 	implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
@@ -88,7 +71,7 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.register<Copy>("buildAndCopyImage") {
-	group = "ktor"
+	group = "distribution"
 	description = "Custom task for my particular backend deployment"
 	dependsOn("buildImage")
 

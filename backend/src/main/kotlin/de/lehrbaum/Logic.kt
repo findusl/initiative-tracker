@@ -8,10 +8,13 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
+import io.ktor.util.logging.KtorSimpleLogger
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.close
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.random.Random
+
+private val logger = KtorSimpleLogger("main.Logic")
 
 internal val sessions = mutableMapOf<Int, Session>()
 
@@ -36,7 +39,7 @@ suspend fun ApplicationCall.handleDeleteRequest() {
 		sessions.remove(sessionId)
 	}
 	if (removedElement != null) {
-		println("Deleted session with id $sessionId")
+		logger.info("Deleted session with id $sessionId")
 		removedElement.hostWebsocketSession?.close(CloseReason(CloseReason.Codes.GOING_AWAY, "Session is deleted"))
 		respond(HttpStatusCode.NoContent)
 	} else {
