@@ -4,9 +4,12 @@ import de.lehrbaum.initiativetracker.commands.*
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
+import io.ktor.util.logging.KtorSimpleLogger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.collectLatest
+
+private val logger = KtorSimpleLogger("main.ClientConnection")
 
 suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCommand.JoinSession) {
 	val session = sessions[joinSession.sessionId]
@@ -14,7 +17,7 @@ suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCo
 		sendSerialized(JoinSessionResponse.SessionNotFound as JoinSessionResponse)
 		return
 	}
-	println("Client connected session ${session.id}")
+	logger.debug("Client connected session ${session.id}")
 	sendSerialized(JoinSessionResponse.JoinedSession(session.combatState.value) as JoinSessionResponse)
 
 	try {
@@ -30,9 +33,9 @@ suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCo
 		}
 
 	} catch (e: Exception) {
-		println("client websocket failed somehow $e")
+		logger.warn("client websocket failed somehow $e")
 	}
-	println("Finished client websocket connection")
+	logger.info("Finished client websocket connection for session ${session.id}")
 }
 
 context(ClientSessionState)
@@ -42,17 +45,17 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 			val message = receiveDeserialized<ClientCommand>()
 			when (message) {
 				is ClientCommand.AddCombatant -> {
-					println("Got addCombatant command $message")
+					logger.trace("Got addCombatant command $message")
 					val command: ServerToHostCommand = ServerToHostCommand.AddCombatant(message.combatant)
 					forwardCommandAndHandleResponse(session, command)
 				}
 				is ClientCommand.EditCombatant -> {
-					println("Got editCombatant command $message")
+					logger.trace("Got editCombatant command $message")
 					val command: ServerToHostCommand = ServerToHostCommand.EditCombatant(message.combatant)
 					forwardCommandAndHandleResponse(session, command)
 				}
 				is ClientCommand.DamageCombatant -> {
-					println("Got damageCombatant command $message")
+					logger.trace("Got damageCombatant command $message")
 					val command: ServerToHostCommand =
 						ServerToHostCommand.DamageCombatant(message.combatantId, message.damage, message.ownerId)
 					forwardCommandAndHandleResponse(session, command)
@@ -60,15 +63,15 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 
 				ClientCommand.CancelCommand -> {
 					// don't wait here. Either there is an active command or not.
-					println("Got Cancel. Active scope is $activeCommandScope")
+					logger.debug("Got Cancel. Active scope is $activeCommandScope")
 					activeCommandScope?.cancel()
 				}
 			}
 		}
 	} catch (closed: ClosedReceiveChannelException) {
-		println("Client websocket closed.")
+		logger.debug("Client websocket closed.")
 	} catch (e: Exception) {
-		println("Client commands failed with $e")
+		logger.warn("Client commands failed with $e")
 	}
 }
 
@@ -79,13 +82,13 @@ private suspend fun DefaultWebSocketServerSession.forwardCommandAndHandleRespons
 	activeCommandScope?.launch {
 		val scopeReference = activeCommandScope // Keep the scope to launch the response if it was not cancelled
 		val onComplete: (Boolean) -> Unit = { result: Boolean ->
-			println("Lambda command result $result")
+			logger.trace("Lambda command result $result")
 			scopeReference?.launch {
-				println("Sending result to client $result")
+				logger.trace("Sending result to client $result")
 				sendSerialized(ServerToClientCommand.CommandCompleted(result) as ServerToClientCommand)
 			}
 		}
-		println("Sending to server command queue")
+		logger.trace("Sending to server command queue")
 		session.serverCommandQueue.send(Pair(command, onComplete))
 		// Maybe a more object oriented approach could improve this. Then we could call a suspend function here that
 		// will complete completely or throw.

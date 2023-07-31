@@ -5,6 +5,7 @@ import de.lehrbaum.initiativetracker.commands.StartCommand
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
+import io.ktor.util.logging.KtorSimpleLogger
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
@@ -12,11 +13,13 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
+private val logger = KtorSimpleLogger("main.HostConnection")
+
 suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: StartCommand.HostingCommand) {
 	var session: Session? = null
 	try {
 		session = obtainSession(hostingCommand) ?: return
-		println("Host connected ${session.id}")
+		logger.debug("Host connected ${session.id}")
 		with(HostSessionState()) {
 			val commandForwardingJob = launch {
 				handleOutgoingCommands(session)
@@ -27,13 +30,13 @@ suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: S
 			commandForwardingJob.cancel("Websocket closed")
 		}
 	} catch (e: Exception) {
-		println("Server websocket failed somehow $e")
+		logger.warn("Server websocket failed somehow $e")
 	} finally {
 		session?.let {
 			session.hostWebsocketSession = null
 		}
 	}
-	println("Finished host websocket connection ${session?.id}")
+	logger.info("Finished host websocket connection ${session?.id}")
 }
 
 context(HostSessionState)
@@ -41,12 +44,12 @@ private suspend fun DefaultWebSocketServerSession.handleOutgoingCommands(session
 	for (outgoing in session.serverCommandQueue) {
 		var responded = false
 		try {
-			println("Sending out command $outgoing")
+			logger.trace("Sending out command $outgoing")
 			sendSerialized(outgoing.first)
-			println("Awaiting response")
+			logger.trace("Awaiting response")
 			// in case of error on host site this can hang. but then again host could reconnect, should fix
 			val response = commandResponse.receive()
-			println("Got command response $response")
+			logger.trace("Got command response $response")
 			outgoing.second(response)
 			responded = true
 		} finally {
@@ -64,20 +67,20 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 			val message = receiveDeserialized<HostCommand>()
 			when (message) {
 				is HostCommand.CombatUpdatedCommand -> {
-					println("Got Combat update ${message.combat}")
+					logger.trace("Got Combat update ${message.combat}")
 					session.combatState.value = message.combat
 				}
 
 				is HostCommand.CommandCompleted -> {
-					println("Got command completed ${message.accepted}")
+					logger.trace("Got command completed ${message.accepted}")
 					commandResponse.send(message.accepted)
 				}
 			}
 		}
 	} catch (closed: ClosedReceiveChannelException) {
-		println("Host websocket closed.")
+		logger.debug("Host websocket closed.")
 	} catch (e: Exception) {
-		println("Handling Host commands failed $e")
+		logger.warn("Handling Host commands failed $e")
 	}
 }
 
