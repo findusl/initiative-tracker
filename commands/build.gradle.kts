@@ -5,6 +5,7 @@ plugins {
 
 kotlin {
 	jvm()
+	linuxX64()
 	sourceSets {
 		named("commonMain") {
 			dependencies {
