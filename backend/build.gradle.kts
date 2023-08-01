@@ -13,14 +13,10 @@ plugins {
 group = "de.lehrbaum"
 version = "2.0.0"
 
-application {
-	mainClass.set("de.lehrbaum.ApplicationKt")
-}
-
 kotlin {
 	jvm() {
 		mainRun {
-			mainClass = "de.lehrbaum.ApplicationKt"
+			mainClass = "de.lehrbaum.MainKt"
 		}
 	}
 	linuxX64 {
@@ -55,6 +51,11 @@ kotlin {
 		}
 		named("linuxX64Main")
 	}
+}
+
+jib {
+	// TODO check if the resulting docker image actually does something
+	container.mainClass = "de.lehrbaum.MainKt"
 }
 
 ktor {
