@@ -25,7 +25,7 @@ kotlin {
 	}
 	linuxX64 {
 		binaries {
-			executable { entryPoint = "de.lehrbaum.ApplicationKt" }
+			executable { entryPoint = "de.lehrbaum.main" }
 		}
 	}
 
@@ -36,7 +36,6 @@ kotlin {
 
 				implementation("io.ktor:ktor-server-core:${Version.ktor}")
 				implementation("io.ktor:ktor-server-cio:${Version.ktor}")
-				implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
 				implementation("io.ktor:ktor-server-content-negotiation:${Version.ktor}")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 				implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
@@ -51,8 +50,10 @@ kotlin {
 		named("jvmMain") {
 			dependencies {
 				implementation("ch.qos.logback:logback-classic:${Version.logback}")
+				implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
 			}
 		}
+		named("linuxX64Main")
 	}
 }
 

@@ -14,10 +14,10 @@ class ApplicationTest {
 	@Test
 	fun simpleTest() = testApplication {
 		application {
-			configureMonitoring()
 			configureSerialization()
 			configureSockets()
 			configureRouting()
+			platformSpecificSetup()
 		}
 		val testContent = """{"combatants":[], "activeCombatantIndex":0 } """
 
