@@ -4,7 +4,7 @@
     <module name="initiative-tracker.backend.main" />
     <shortenClasspath name="NONE" />
     <method v="2">
-      <option name="Make" enabled="true" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="build" externalProjectPath="$PROJECT_DIR$/backend" vmOptions="" scriptParameters="" />
     </method>
   </configuration>
 </component>
