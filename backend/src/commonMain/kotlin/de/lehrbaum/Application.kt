@@ -7,23 +7,20 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.request.path
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
 import kotlinx.serialization.json.Json
-import org.slf4j.event.Level
 
-fun main() {
+fun startBackend() {
 	embeddedServer(CIO, port = 8080) {
-		configureMonitoring()
 		configureSerialization()
 		configureSockets()
 		configureRouting()
+		platformSpecificSetup()
 	}.start(wait = true)
 }
 
@@ -48,13 +45,6 @@ internal fun Application.configureSockets() {
 	install(WebSockets) {
 		contentConverter = KotlinxWebsocketSerializationConverter(Json)
 		masking = false
-	}
-}
-
-internal fun Application.configureMonitoring() {
-	install(CallLogging) {
-		level = Level.INFO
-		filter { call -> call.request.path().startsWith("/") }
 	}
 }
 

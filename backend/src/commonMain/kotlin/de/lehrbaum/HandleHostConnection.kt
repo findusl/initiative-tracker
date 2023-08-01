@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 private val logger = KtorSimpleLogger("main.HostConnection")
 
@@ -85,9 +86,9 @@ private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: 
 	when (hostingCommand) {
 		is StartCommand.JoinAsHost -> {
 			var session: Session? = null
-			val response: StartCommand.JoinAsHost.Response = synchronized(sessions) {
+			val response: StartCommand.JoinAsHost.Response = sessionMutex.withLock {
 				val localSession = sessions[hostingCommand.sessionId]
-				return@synchronized if (localSession == null) {
+				return@withLock if (localSession == null) {
 					StartCommand.JoinAsHost.SessionNotFound
 				} else if (localSession.hostWebsocketSession?.isActive == true) {
 					StartCommand.JoinAsHost.SessionAlreadyHasHost

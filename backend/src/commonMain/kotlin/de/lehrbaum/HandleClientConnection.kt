@@ -79,7 +79,7 @@ private suspend fun DefaultWebSocketServerSession.forwardCommandAndHandleRespons
 	command: ServerToHostCommand,
 	state: ClientSessionState
 ) = with(state) {
-	assert(activeCommandScope == null) { "This client tried to send two commands!" }
+	require(activeCommandScope == null) { "This client tried to send two commands!" }
 	activeCommandScope = plus(Job()) // avoids cancelling the whole outer scope on exception
 	activeCommandScope?.launch {
 		val scopeReference = activeCommandScope // Keep the scope to launch the response if it was not cancelled

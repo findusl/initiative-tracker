@@ -12,11 +12,14 @@ import io.ktor.util.logging.KtorSimpleLogger
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.close
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.random.Random
 
 private val logger = KtorSimpleLogger("main.Logic")
 
 internal val sessions = mutableMapOf<Int, Session>()
+internal val sessionMutex = Mutex()
 
 suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 	val startCommand = receiveDeserialized<StartCommand>()
@@ -35,7 +38,7 @@ suspend fun ApplicationCall.handlePostRequest() {
 
 suspend fun ApplicationCall.handleDeleteRequest() {
 	val sessionId = parameters[SESSION_ID_PARAMETER]?.toInt()
-	val removedElement = synchronized(sessions) {
+	val removedElement = sessionMutex.withLock {
 		sessions.remove(sessionId)
 	}
 	if (removedElement != null) {
@@ -47,12 +50,12 @@ suspend fun ApplicationCall.handleDeleteRequest() {
 	}
 }
 
-internal fun createSession(combatModel: CombatModel, hostWebsocketSession: DefaultWebSocketServerSession?): Session {
-	synchronized(sessions) {
+internal suspend fun createSession(combatModel: CombatModel, hostWebsocketSession: DefaultWebSocketServerSession?): Session {
+	return sessionMutex.withLock {
 		val sessionId = getAvailableRandomSessionId()
 		val newSession = Session(sessionId, hostWebsocketSession, MutableStateFlow(combatModel))
 		sessions[sessionId] = newSession
-		return newSession
+		newSession
 	}
 }
 

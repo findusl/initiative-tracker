@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run Backend" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="de.lehrbaum.ApplicationKt" />
-    <module name="initiative-tracker.backend.main" />
+    <option name="MAIN_CLASS_NAME" value="de.lehrbaum.MainKt" />
+    <module name="initiative-tracker.backend.jvmMain" />
     <shortenClasspath name="NONE" />
     <method v="2">
-      <option name="Gradle.BeforeRunTask" enabled="true" tasks="build" externalProjectPath="$PROJECT_DIR$/backend" vmOptions="" scriptParameters="" />
+      <option name="Gradle.BeforeRunTask" enabled="false" tasks="build" externalProjectPath="$PROJECT_DIR$/backend" vmOptions="" scriptParameters="" />
     </method>
   </configuration>
 </component>
