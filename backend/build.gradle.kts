@@ -36,6 +36,8 @@ kotlin {
 				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 				implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
 			}
+			project.sourceSets.main.get().java.srcDirs.addAll(kotlin.srcDirs)
+			println("Applied srcDirs ${project.sourceSets.main.get().java.srcDirs}")
 		}
 		named("commonTest") {
 			dependencies {
@@ -48,14 +50,18 @@ kotlin {
 				implementation("ch.qos.logback:logback-classic:${Version.logback}")
 				implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
 			}
+			project.sourceSets.main.get().java.srcDirs.addAll(kotlin.srcDirs)
 		}
 		named("linuxX64Main")
 	}
 }
 
-jib {
-	// TODO check if the resulting docker image actually does something
-	container.mainClass = "de.lehrbaum.MainKt"
+sourceSets {
+	main {
+		println("classpath ${this.compileClasspath}")
+		println("Java sources ${java.sourceDirectories}")
+		println("Java srcdirs ${java.srcDirs.map { it.absolutePath }.reduce(String::plus)}")
+	}
 }
 
 ktor {
