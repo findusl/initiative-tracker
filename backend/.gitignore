@@ -96,3 +96,4 @@ gradle-app.setting
 .idea/misc.xml
 /.idea/jpa-buddy.xml
 /.idea/kotlinc.xml
+/initiative-tracker.backend.tar
