@@ -87,7 +87,7 @@ buildkonfig {
 	defaultConfigs("lan") {
 		buildConfigField(STRING, "environment", "lan")
 
-		val host = localProperties.getProperty("backend.lan.host", "\"10.0.2.2\"")
+		val host = localProperties.getProperty("backend.lan.host", "\"localhost\"")
 		val port = localProperties.getProperty("backend.lan.port", "8080")
 		buildConfigField(STRING, "backendHost", host)
 		buildConfigField(INT, "backendPort", port)

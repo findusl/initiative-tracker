@@ -1,13 +1,8 @@
 @file:Suppress("OPT_IN_USAGE", "UnstableApiUsage")
 
-import io.ktor.plugin.features.DockerPortMapping
-import io.ktor.plugin.features.DockerPortMappingProtocol
-import io.ktor.plugin.features.JreVersion
-
 plugins {
 	kotlin("multiplatform")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	id("io.ktor.plugin") version Version.ktor
 }
 
 group = "de.lehrbaum"
@@ -36,8 +31,6 @@ kotlin {
 				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 				implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
 			}
-			project.sourceSets.main.get().java.srcDirs.addAll(kotlin.srcDirs)
-			println("Applied srcDirs ${project.sourceSets.main.get().java.srcDirs}")
 		}
 		named("commonTest") {
 			dependencies {
@@ -50,41 +43,38 @@ kotlin {
 				implementation("ch.qos.logback:logback-classic:${Version.logback}")
 				implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
 			}
-			project.sourceSets.main.get().java.srcDirs.addAll(kotlin.srcDirs)
 		}
 		named("linuxX64Main")
 	}
 }
 
-sourceSets {
-	main {
-		println("classpath ${this.compileClasspath}")
-		println("Java sources ${java.sourceDirectories}")
-		println("Java srcdirs ${java.srcDirs.map { it.absolutePath }.reduce(String::plus)}")
-	}
-}
+val fullProjectName: String
+	get() = project.parent?.let { "${it.name}." } + name
 
-ktor {
-	docker {
-		jreVersion.set(JreVersion.JRE_17)
-		localImageName.set("initiative-tracker")
-		portMappings.set(
-			listOf(
-				DockerPortMapping(
-					5009,
-					8080,
-					DockerPortMappingProtocol.TCP
-				)
-			)
-		)
-	}
-}
-
-tasks.register<Copy>("buildAndCopyImage") {
+tasks.register<Exec>("publishNativeImageToLocalRegistry") {
 	group = "docker"
-	description = "Custom task for my particular backend deployment"
-	dependsOn("buildImage")
+	description = "Build the native binaries and publish them as an image to the local registry"
+	dependsOn("linuxX64Binaries")
 
-	from("$buildDir/jib-image.tar")
-	into("/Volumes/hspeed/docker_images")
+	commandLine(
+		"docker",
+		"build",
+		"-t",
+		"$fullProjectName:latest",
+		".",// TODO this image is not multiplatform so I cannot use it
+	)
+}
+
+tasks.register<Exec>("buildNativeImageToTarFile") {
+	group = "docker"
+	description = "Save the Docker image as a tar file."
+	dependsOn("publishNativeImageToLocalRegistry")
+
+	commandLine(buildList {// different approach of building the command
+		add("docker")
+		add("save")
+		add("-o")
+		add("$fullProjectName.tar")
+		add("$fullProjectName:latest")
+	})
 }
