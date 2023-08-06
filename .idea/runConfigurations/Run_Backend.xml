@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run Backend" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="de.lehrbaum.MainKt" />
+    <option name="MAIN_CLASS_NAME" value="de.lehrbaum.initiativetracker.backend.MainKt" />
     <module name="initiative-tracker.backend.jvmMain" />
     <shortenClasspath name="NONE" />
     <method v="2">

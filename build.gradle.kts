@@ -2,6 +2,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.util.*
 
 plugins {
+	// Plugin helps find available updates for dependencies https://github.com/ben-manes/gradle-versions-plugin
 	id("com.github.ben-manes.versions") version "0.47.0"
 }
 
@@ -35,17 +36,18 @@ tasks.register("clean", Delete::class) {
 	delete(rootProject.buildDir)
 }
 
-// https://github.com/ben-manes/gradle-versions-plugin
+// What kind of dependencies updates interest me https://github.com/ben-manes/gradle-versions-plugin
 tasks.withType<DependencyUpdatesTask> {
 	rejectVersionIf {
-		isNonStable(candidate.version) && !isNonStable(currentVersion)
+		!isStable(candidate.version) && isStable(currentVersion)
 	}
 }
 
-fun isNonStable(version: String): Boolean {
+/** Helper for dependency update filters */
+fun isStable(version: String): Boolean {
 	val stableKeyword = listOf("RELEASE", "FINAL", "GA")
 		.any { version.uppercase(Locale.getDefault()).contains(it) }
 	val regex = "^[0-9,.v-]+(-r)?$".toRegex()
 	val isStable = stableKeyword || regex.matches(version)
-	return isStable.not()
+	return isStable
 }
