@@ -1,0 +1,3 @@
+# backend.lan.host=10.0.2.2 # for local backend and android emulator
+# backend.lan.host=localhost # for local backend and desktop application
+# backend.remote.host=your.remote.backend.com # for remote hosted backend
