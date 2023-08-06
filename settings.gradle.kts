@@ -15,8 +15,9 @@ pluginManagement {
 
 rootProject.name = "initiative-tracker"
 
-include(":app")
-include(":backend")
-include(":commands")
-include(":kmpsharedmodule")
-include(":desktop")
+include(":frontendandroid")
+include(":frontendshared")
+include(":frontenddesktop")
+include(":dtos")
+include(":backendshared")
+include(":backendjvm")
