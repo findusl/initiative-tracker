@@ -52,7 +52,7 @@ tasks.register<Exec>("publishNativeImageToLocalRegistry") {
 		"build",
 		"-t",
 		"$fullProjectName:latest",
-		".",// TODO this image cannot build on other architectures like mac arm
+		".",
 	)
 }
 
@@ -67,6 +67,7 @@ tasks.register<Exec>("buildNativeImageToTarFile") {
 		add("-o")
 		add("$fullProjectName.tar")
 		add("$fullProjectName:latest")
+		// TODO this image cannot build on other architectures like mac arm
 	})
 }
 
