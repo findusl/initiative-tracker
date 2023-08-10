@@ -35,6 +35,8 @@ kotlin {
 				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
 				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
 
+				implementation("com.aallam.openai:openai-client:3.3.0")
+
 				implementation(Dependency.kotlinxSerialization)
 				implementation(Dependency.kotlinxCoroutines)
 
@@ -82,7 +84,10 @@ buildkonfig {
 	packageName = "de.lehrbaum.initiativetracker"
 	exposeObjectWithName = "BuildKonfig"
 
-	defaultConfigs {}
+	defaultConfigs {
+		val openaiApiKey = localProperties.getProperty("openai.api.key", null) ?: null
+		buildConfigField(STRING, "openaiApiKey", openaiApiKey, nullable = true)
+	}
 
 	defaultConfigs("lan") {
 		buildConfigField(STRING, "environment", "lan")
