@@ -2,28 +2,32 @@ package de.lehrbaum.initiativetracker.networking
 
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.networking.bestiary.BestiaryCollectionDTO
+import de.lehrbaum.initiativetracker.networking.bestiary.HpDTO
+import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.request
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.*
+import java.net.UnknownHostException
 
 private const val TAG = "BestiaryNetworkClient"
 
-@Suppress("OPT_IN_USAGE")
-class BestiaryNetworkClient(httpClient: HttpClient) {
+interface BestiaryNetworkClient {
+	val monsters: Flow<List<MonsterDTO>>
+}
+
+class BestiaryNetworkClientImpl(httpClient: HttpClient): BestiaryNetworkClient {
 
 	private val monsterSources = flow<Map<String, String>> {
 		emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
 	}
 
-	val monsters = monsterSources
+	@ExperimentalCoroutinesApi // interestingly, this is not required to propagate to the parent, no opt-in required
+	override val monsters = monsterSources
 		.mapLatest { spellSources ->
-			coroutineScope {
+			supervisorScope {
 				val result = spellSources.values.map { jsonFileName ->
 					val url = "https://5e.tools/data/bestiary/$jsonFileName"
 					Napier.v("Loading bestiary from $url", tag = TAG)
@@ -44,19 +48,11 @@ class BestiaryNetworkClient(httpClient: HttpClient) {
 		}
 		.catch {
 			Napier.e("Error loading bestiary", it, tag = TAG)
-			emit(emptyList())
+			if (it is UnknownHostException) {
+				emit(listOf(MonsterDTO(name = "Offline Monster", dex = 14, source = "MM", hp = HpDTO(average = 42))))
+			} else {
+				emit(emptyList())
+			}
 		}
 		.flowOn(Dispatchers.IO)
-
-	// To be implemented, moved from old app
-	/*
-	private val bestiaryNetworkClient = BestiaryNetworkClient()
-
-	val allMonsterNamesLiveData = bestiaryNetworkClient.monsters
-		.map { monsters -> monsters.map { it.name }.toTypedArray() }
-		.flowOn(Dispatchers.IO)
-		// immediately start fetching as it takes a while
-		.stateIn(viewModelScope, SharingStarted.Eagerly, arrayOf())
-		.asLiveData()
-	 */
 }
