@@ -5,7 +5,7 @@ object Version {
 	const val kotlinxSerialization = "1.5.1"
 	const val coroutines = "1.7.3"
 	const val ktor = "2.3.2"
-	const val logback = "1.4.8"
+	const val logback = "1.4.11"
 	const val buildKonfig = "0.13.3"
 	const val mppSettings = "1.0.0"
 	const val mockito = "5.4.0"
@@ -15,7 +15,7 @@ object Version {
 	}
 	object Android {
 		const val compose = "1.7.2"
-		const val composeMaterial = "1.4.3"
+		const val composeMaterial = "1.5.0"
 		const val composeCompiler = "1.5.1"
 		const val gradleBuildTools = "8.1.0"
 	}
