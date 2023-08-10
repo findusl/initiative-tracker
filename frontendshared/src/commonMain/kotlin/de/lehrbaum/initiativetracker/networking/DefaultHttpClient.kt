@@ -41,6 +41,6 @@ fun createDefaultHttpClient() =
                     Napier.i(message, null, TAG)
                 }
             }
-            level = LogLevel.INFO // change for debugging, lot of logs
+            level = LogLevel.INFO // change when debugging
         }
     }

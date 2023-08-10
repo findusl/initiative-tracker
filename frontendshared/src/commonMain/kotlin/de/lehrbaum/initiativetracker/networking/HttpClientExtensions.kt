@@ -19,7 +19,7 @@ import kotlinx.coroutines.cancel
  *
  * The websocket coroutineContext is cancelled once the block finishes. Weirdly not standard behaviour.
  */
-suspend inline fun <R> HttpClient.buildConfigWebsocket(
+suspend inline fun <R> HttpClient.buildBackendWebsocket(
     method: HttpMethod = HttpMethod.Get,
     path: String = SESSION_PATH,
     request: HttpRequestBuilder.() -> Unit = {},
@@ -28,7 +28,7 @@ suspend inline fun <R> HttpClient.buildConfigWebsocket(
     plugin(WebSockets)
     val session = prepareRequest {
         this.method = method
-		websocketUrl(path)
+		backendWebsocketUrl(path)
         request()
     }
 
@@ -44,7 +44,7 @@ suspend inline fun <R> HttpClient.buildConfigWebsocket(
 
 const val SESSION_PATH = "/session"
 
-fun HttpRequestBuilder.websocketUrl(path: String) {
+fun HttpRequestBuilder.backendWebsocketUrl(path: String) {
 	val scheme = when (BuildKonfig.environment) {
 		"lan" -> "ws"
 		"remote" -> "wss"
@@ -53,7 +53,7 @@ fun HttpRequestBuilder.websocketUrl(path: String) {
 	url(scheme, BuildKonfig.backendHost, BuildKonfig.backendPort, path)
 }
 
-fun HttpRequestBuilder.httpUrl(path: String) {
+fun HttpRequestBuilder.backendHttpUrl(path: String) {
 	val scheme = when (BuildKonfig.environment) {
 		"lan" -> "http"
 		"remote" -> "https"

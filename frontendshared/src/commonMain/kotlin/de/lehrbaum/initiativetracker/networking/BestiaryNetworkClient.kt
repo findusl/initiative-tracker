@@ -17,33 +17,34 @@ private const val TAG = "BestiaryNetworkClient"
 @Suppress("OPT_IN_USAGE")
 class BestiaryNetworkClient(httpClient: HttpClient) {
 
-	private val spellSources = flow<Map<String, String>> {
-       emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
-   }
+	private val monsterSources = flow<Map<String, String>> {
+		emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
+	}
 
-	val monsters = spellSources
+	val monsters = monsterSources
 		.mapLatest { spellSources ->
-          coroutineScope {
-              val result = spellSources.values.map { jsonFileName ->
-                  val url = "https://5e.tools/data/bestiary/$jsonFileName"
-                  Napier.v("Loading bestiary from $url", tag = TAG)
-                  async {
-                      try {
-                          httpClient.request(url).body<BestiaryCollectionDTO>()
-                      } catch (e: Exception) {
-                          Napier.e("Failed to load from $url", e, TAG)
-                          null
-                      }
-                  }
-              }.awaitAll()
-                  .filterNotNull()
-                  .flatMap(BestiaryCollectionDTO::monster)
-              Napier.i("Loaded ${result.size} monsters ", tag = TAG)
-              result
-          }
+			coroutineScope {
+				val result = spellSources.values.map { jsonFileName ->
+					val url = "https://5e.tools/data/bestiary/$jsonFileName"
+					Napier.v("Loading bestiary from $url", tag = TAG)
+					async {
+						try {
+							httpClient.request(url).body<BestiaryCollectionDTO>()
+						} catch (e: Exception) {
+							Napier.e("Failed to load from $url", e, TAG)
+							null
+						}
+					}
+				}.awaitAll()
+					.filterNotNull()
+					.flatMap(BestiaryCollectionDTO::monster)
+				Napier.i("Loaded ${result.size} monsters ", tag = TAG)
+				result
+			}
 		}
 		.catch {
-          Napier.e("Error loading bestiary", it, tag = TAG)
+			Napier.e("Error loading bestiary", it, tag = TAG)
+			emit(emptyList())
 		}
 		.flowOn(Dispatchers.IO)
 

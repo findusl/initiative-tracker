@@ -23,6 +23,7 @@ fun AutocompleteTextField(
     error: Boolean,
     suggestions: List<String> = emptyList(),
     placeholder: String? = null,
+	enabled: Boolean = true,
 ) {
 	var expanded by remember { mutableStateOf(false) }
 	var textFieldWidth by remember { mutableStateOf(0) }
@@ -53,6 +54,7 @@ fun AutocompleteTextField(
 					}
 				}
 			},
+			enabled = enabled,
         )
         DropdownMenu(
 			expanded = expanded && suggestions.isNotEmpty(),

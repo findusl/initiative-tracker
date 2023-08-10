@@ -131,6 +131,7 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 		onTextChanged = { editCombatantViewModel.monsterTypeName = it },
 		error = editCombatantViewModel.monsterTypeError,
 		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
-		placeholder = "Skeleton (MM)"
+		placeholder = "Skeleton (MM)",
+		enabled = monsters.isNotEmpty()
 	)
 }
