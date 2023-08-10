@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
-import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModelImpl
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
@@ -54,7 +53,7 @@ class MainViewModelImpl: MainViewModel {
 	override fun initializeCache(scope: CoroutineScope) {
 		Napier.i("Initializing Cache")
 		scope.launch {
-			val monsters = BestiaryNetworkClient(GlobalInstances.httpClient).monsters.first()
+			val monsters = GlobalInstances.bestiaryNetworkClient.monsters.first()
 			MainViewModel.monsters.emit(monsters)
 		}
 	}
