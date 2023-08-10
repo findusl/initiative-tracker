@@ -13,11 +13,11 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class BackendApi(private val httpClient: HttpClient) {
+class BackendNetworkClient(private val httpClient: HttpClient) {
 	suspend fun createSession(combatants: List<CombatantModel>, activeCombatantIndex: Int): Int = withContext(Dispatchers.IO) {
 		val combatDTO = toCombatDTO(combatants, activeCombatantIndex)
 		val response = httpClient.post {
-			httpUrl(SESSION_PATH)
+			backendHttpUrl(SESSION_PATH)
 			contentType(ContentType.Application.Json)
 			setBody(combatDTO)
 		}
@@ -27,7 +27,7 @@ class BackendApi(private val httpClient: HttpClient) {
 
 	suspend fun deleteSession(sessionId: Int) = withContext(Dispatchers.IO)  {
 		val response = httpClient.delete {
-			httpUrl("$SESSION_PATH/$sessionId")
+			backendHttpUrl("$SESSION_PATH/$sessionId")
 		}
 		Napier.i("Response for delete Session $sessionId: $response")
 	}

@@ -21,7 +21,7 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Int
 	}
 
 	override suspend fun shareCombat() {
-		val sessionId = GlobalInstances.backendApi
+		val sessionId = GlobalInstances.backendNetworkClient
 			.createSession(combatController.combatants.value, combatController.activeCombatantIndex.value)
 		navigateToSharedCombat(sessionId)
 	}
