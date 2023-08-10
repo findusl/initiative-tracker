@@ -5,7 +5,7 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.commands.HostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.StartCommand
-import de.lehrbaum.initiativetracker.networking.buildConfigWebsocket
+import de.lehrbaum.initiativetracker.networking.buildBackendWebsocket
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
@@ -27,7 +27,7 @@ class HostCombatSession(
 	val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
 		try {
-			GlobalInstances.httpClient.buildConfigWebsocket {
+			GlobalInstances.httpClient.buildBackendWebsocket {
 				if(joinSessionAsHost(this@flow)) {
 					launch { shareCombatUpdates() }
 					receiveEvents()

@@ -8,7 +8,7 @@ import de.lehrbaum.initiativetracker.dtos.commands.ClientCommand
 import de.lehrbaum.initiativetracker.dtos.commands.JoinSessionResponse
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToClientCommand
 import de.lehrbaum.initiativetracker.dtos.commands.StartCommand
-import de.lehrbaum.initiativetracker.networking.buildConfigWebsocket
+import de.lehrbaum.initiativetracker.networking.buildBackendWebsocket
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
@@ -35,7 +35,7 @@ class ClientCombatSession(val sessionId: Int) {
 	val state = flow {
 		emit(Connecting)
 		try {
-			GlobalInstances.httpClient.buildConfigWebsocket {
+			GlobalInstances.httpClient.buildBackendWebsocket {
 				webSocketSession = this
 				if (joinSessionAsClient(this@flow)) {
 					handleUpdates(this@flow)

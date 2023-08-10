@@ -57,7 +57,7 @@ data class HostSharedCombatViewModelImpl(
 
 	override suspend fun closeSession() {
 		// we are actively still hosting it. Whatever
-		GlobalInstances.backendApi.deleteSession(sessionId)
+		GlobalInstances.backendNetworkClient.deleteSession(sessionId)
 		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = true))
 		leaveScreen()
 	}
