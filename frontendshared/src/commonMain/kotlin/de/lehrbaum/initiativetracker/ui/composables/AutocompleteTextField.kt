@@ -67,7 +67,6 @@ fun AutocompleteTextField(
             suggestions.forEach { label ->
                 DropdownMenuItem(onClick = {
 					onTextChanged(label)
-					expanded = false
 				}) {
                     Text(text = label)
                 }

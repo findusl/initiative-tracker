@@ -24,7 +24,7 @@ class BestiaryNetworkClientImpl(httpClient: HttpClient): BestiaryNetworkClient {
 		emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
 	}
 
-	@ExperimentalCoroutinesApi // interestingly, this is not required to propagate to the parent, no opt-in required
+	@ExperimentalCoroutinesApi // interestingly, this is not required to propagate to the interface, no opt-in required
 	override val monsters = monsterSources
 		.mapLatest { spellSources ->
 			supervisorScope {
