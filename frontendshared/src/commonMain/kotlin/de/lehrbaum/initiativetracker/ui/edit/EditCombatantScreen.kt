@@ -15,26 +15,16 @@ import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import kotlinx.coroutines.launch
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
 
 @Composable
 fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 	Scaffold(topBar = { DialogTopBar(editCombatantViewModel) }) {
 		EditCombatantContent(editCombatantViewModel, Modifier.padding(it))
 	}
-	editCombatantViewModel.confirmApplyMonsterDialog?.let {  completionLambda ->
-		GeneralDialog(onDismissRequest = { completionLambda(false) }) {
-			Column(
-				modifier = Modifier.padding(16.dp),
-				verticalArrangement = Arrangement.spacedBy(8.dp)
-			) {
-				Text(text = "Apply stats of ${editCombatantViewModel.monsterTypeName} where known?")
-				OkCancelButtonRow(
-					mutableStateOf(true),
-					{ completionLambda(false) },
-					onSubmit = { completionLambda(true) }
-				)
-			}
-		}
+	editCombatantViewModel.confirmApplyMonsterDialog?.let {  completionContinuation ->
+		confirmApplyMonsterDialog(completionContinuation, editCombatantViewModel)
 	}
 }
 
@@ -123,8 +113,13 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 
 @Composable
 fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
+	// The MainViewModel caches the monsters
 	val monsters by MainViewModel.monsters.collectAsState()
 	LaunchedEffect(monsters) { editCombatantViewModel.monsters = monsters }
+
+	LaunchedEffect(editCombatantViewModel.monsterType) {
+		editCombatantViewModel.onMonsterTypeChanged(editCombatantViewModel.monsterType)
+	}
 	AutocompleteTextField(
 		text = editCombatantViewModel.monsterTypeName,
 		label = "Monster Type",
@@ -134,4 +129,24 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 		placeholder = "Skeleton (MM)",
 		enabled = monsters.isNotEmpty()
 	)
+}
+
+@Composable
+private fun confirmApplyMonsterDialog(
+	continuation: Continuation<Boolean>,
+	editCombatantViewModel: EditCombatantViewModel
+) {
+	GeneralDialog(onDismissRequest = { continuation.resume(false) }) {
+		Column(
+			modifier = Modifier.padding(16.dp),
+			verticalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			Text(text = "Apply stats of ${editCombatantViewModel.monsterTypeName} where known?")
+			OkCancelButtonRow(
+				mutableStateOf(true),
+				{ continuation.resume(false) },
+				onSubmit = { continuation.resume(true) }
+			)
+		}
+	}
 }

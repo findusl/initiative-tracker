@@ -2,10 +2,7 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
@@ -33,7 +30,7 @@ fun <T> EditTextField(
 	if (textFieldValue.text != editFieldViewModel.currentState) {
 		textFieldValue = textFieldValue.copy(text = editFieldViewModel.currentState)
 	}
-	var showClearButton by remember { mutableStateOf(false) }
+	var hasFocus by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = textFieldValue,
@@ -44,7 +41,10 @@ fun <T> EditTextField(
 			} else {
 				textFieldValue = it
 			}
-			editFieldViewModel.currentState = it.text
+			if (editFieldViewModel.currentState != it.text) {
+				editFieldViewModel.cancelLoading()
+				editFieldViewModel.currentState = it.text
+			}
 		},
         label = { Text(label) },
 		placeholder = editFieldViewModel.placeholder?.let { { Text(it) } },
@@ -52,8 +52,12 @@ fun <T> EditTextField(
         keyboardOptions = keyboardOptions,
         singleLine = editFieldViewModel.singleLine,
 		trailingIcon = {
-			if (showClearButton && textFieldValue.text.isNotEmpty()) {
-				IconButton(onClick = { textFieldValue = TextFieldValue() }) {
+			if (editFieldViewModel.loading) {
+				CircularProgressIndicator(
+					color = MaterialTheme.colors.primary,
+				)
+			} else if (hasFocus && textFieldValue.text.isNotEmpty()) {
+				IconButton(onClick = { editFieldViewModel.currentState = "" }) {
 					Icon(imageVector = Icons.Filled.Close, contentDescription = "Clear")
 				}
 			}
@@ -61,7 +65,7 @@ fun <T> EditTextField(
         modifier = modifier
 			.fillMaxWidth()
 			.onFocusChanged {
-				showClearButton = it.hasFocus
+				hasFocus = it.hasFocus
 				if (selectAllNextFocus && it.hasFocus) {
 					selectAllNextFocus = false
 					selectWhole = true

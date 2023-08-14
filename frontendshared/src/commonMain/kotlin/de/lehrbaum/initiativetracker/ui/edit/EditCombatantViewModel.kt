@@ -4,14 +4,17 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.aallam.openai.api.BetaOpenAI
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.Dice
 import de.lehrbaum.initiativetracker.bl.toModifier
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
-import de.lehrbaum.initiativetracker.ui.composables.ObservableMutableState
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 data class EditCombatantViewModel(
 	private val combatantViewModel: CombatantViewModel,
@@ -41,8 +44,8 @@ data class EditCombatantViewModel(
 
 	var monsters by mutableStateOf(MainViewModel.monsters.value)
 
-	var monsterTypeName: String by ObservableMutableState(combatantViewModel.creatureType ?: "", ::onMonsterTypeNameChanged)
-	private var monsterType: MonsterDTO? by mutableStateOf(determineMonster(monsterTypeName))
+	var monsterTypeName: String by mutableStateOf(combatantViewModel.creatureType ?: "")
+	val monsterType: MonsterDTO? by derivedStateOf { determineMonster(monsterTypeName) }
 	val monsterTypeError: Boolean by derivedStateOf { monsterType == null && monsterTypeName.isNotEmpty() }
 	val monsterTypeNameSuggestions: List<String> by derivedStateOf {
 		monsters
@@ -50,15 +53,16 @@ data class EditCombatantViewModel(
 			.filter { it.displayName.contains(monsterTypeName) }
 			.take(30)
 			.map { it.displayName }
+			.filter { it != monsterTypeName } // Don't suggest the existing choice
 			.toList()
 			.sortedBy { it.length }
 	}
-	var confirmApplyMonsterDialog: ((Boolean) -> Unit)? by mutableStateOf(null)
+	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 
-	private fun onMonsterTypeNameChanged(@Suppress("UNUSED_PARAMETER") old: String, new: String) {
-		val determinedType = determineMonster(new)
-		monsterType = determinedType
-		if (determinedType != null) {
+	private fun determineMonster(name: String): MonsterDTO? = monsters.firstOrNull { it.displayName == name }
+
+	suspend fun onMonsterTypeChanged(type: MonsterDTO?) {
+		if (type != null) {
 			if (initiativeEdit.isFailureOrNull()
 				&& maxHpEdit.isFailureOrNull()
 				&& currentHpEdit.isFailureOrNull()
@@ -66,27 +70,31 @@ data class EditCombatantViewModel(
 			) {
 				applyMonsterType()
 			} else {
-				confirmApplyMonsterDialog = { confirmed ->
-					if (confirmed)
-						applyMonsterType()
-					confirmApplyMonsterDialog = null
+				val confirmed = suspendCancellableCoroutine<Boolean> {
+					confirmApplyMonsterDialog = it
+					it.invokeOnCancellation { confirmApplyMonsterDialog = null }
 				}
+				if (confirmed)
+					applyMonsterType()
+				confirmApplyMonsterDialog = null
 			}
 		}
 	}
 
-	private fun determineMonster(name: String): MonsterDTO? = monsters.firstOrNull { it.displayName == name }
-
-	private fun applyMonsterType() {
-		val monsterType = this.monsterType
-		monsterType?.hp?.average?.let { avgHp ->
+	@Suppress("OPT_IN_IS_NOT_ENABLED")
+	@OptIn(BetaOpenAI::class)
+	private suspend fun applyMonsterType() {
+		val monsterType = this.monsterType ?: return
+		monsterType.hp?.average?.let { avgHp ->
 			maxHpEdit.currentState = avgHp.toString()
 			currentHpEdit.currentState = avgHp.toString()
 		}
-		monsterType?.dex?.let { dex ->
+		monsterType.dex?.let { dex ->
 			initiativeEdit.currentState = (Dice.d20() + dex.toModifier()).toString()
 		}
-		monsterType?.name?.let { nameEdit.currentState = it }
+		nameEdit.loadSuggestion {
+			GlobalInstances.openAiNetworkClient?.suggestMonsterDescription(monsterType.name)
+		}
 	}
 
 	suspend fun saveCombatant() {
