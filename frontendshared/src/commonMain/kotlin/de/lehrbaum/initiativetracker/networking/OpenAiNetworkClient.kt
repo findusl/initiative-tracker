@@ -28,16 +28,7 @@ class OpenAiNetworkClient(token: String) {
 			messages = listOf(
 				ChatMessage(
 					role = ChatRole.System,
-					content = """
-						You help a Dungeon and Dragons dungeon master describe his creatures to the players.
-						You are given the name of an existing Dungeon and Dragons creature. 
-						You describe what the creature looks like using 3 words or less. The description should include
-						obvious features of the creature. The description may not include information about the creature
-						that cannot be gained by looking at it. The description may not include the original name of the creature.
-						The description should try to differentiate the creature from other creatures or objects if possible.
-						For example, a Phase Spider could be described as a "blue glowing spider".
-						If the creature is not known to you, you have to invent a description to the best of your abilities.
-						Your response may never be more than 3 words!""".trimIndent()
+					content = nameSuggestionSystemPrompt
 				),
 				ChatMessage(
 					role = ChatRole.User,
@@ -50,3 +41,15 @@ class OpenAiNetworkClient(token: String) {
 		return response.removeSuffix(".")
 	}
 }
+
+private val nameSuggestionSystemPrompt = """
+You help a Dungeon and Dragons dungeon master describe his creatures to the players.
+You are given the name of an existing Dungeon and Dragons creature.
+You describe what the creature looks like using 3 words or less. 
+The description may not include information about the creature that is not readily apparent.
+In particular it may not include information about abilities of the creature! To prevent this avoid using verbs!
+The description can use the name of a well known creature, in that case it should include an adjective to differentiate
+from that creature. Avoid using the actual name of the creature.
+If the creature is not known to you, you have to invent a description to the best of your abilities.
+Your response may never be more than 3 words!
+""".trimIndent()

@@ -50,7 +50,7 @@ data class EditCombatantViewModel(
 	val monsterTypeNameSuggestions: List<String> by derivedStateOf {
 		monsters
 			.asSequence()
-			.filter { it.displayName.contains(monsterTypeName) }
+			.filter { it.displayName.contains(monsterTypeName, ignoreCase = true) }
 			.take(30)
 			.map { it.displayName }
 			.filter { it != monsterTypeName } // Don't suggest the existing choice
