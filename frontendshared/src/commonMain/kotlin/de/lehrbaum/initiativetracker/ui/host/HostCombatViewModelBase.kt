@@ -86,7 +86,11 @@ abstract class HostCombatViewModelBase : HostCombatViewModel {
 				combatController.updateCombatant(it)
 				editCombatantViewModel.value = null
 			},
-			onCancel = { editCombatantViewModel.value = null }
+			onCancel = {
+				if (firstEdit)
+					combatController.deleteCombatant(combatantViewModel.id)
+				editCombatantViewModel.value = null
+			}
 		)
 	}
 
