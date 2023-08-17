@@ -10,9 +10,9 @@ import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand
+import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
 import de.lehrbaum.initiativetracker.ui.composables.DamageOption
 import de.lehrbaum.initiativetracker.ui.composables.DamageOption.*
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.Flow
@@ -27,24 +27,10 @@ data class HostSharedCombatViewModelImpl(
 	private val hostCombatSession = HostCombatSession(sessionId, combatController, this)
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = hostCombatSession.hostConnectionState
-	override var confirmDamage: Pair<Int, CombatantViewModel>? by mutableStateOf(null)
+	override var confirmDamage: ConfirmDamageOptions? by mutableStateOf(null)
 		private set
 	private var confirmDamageContinuation: Continuation<Boolean>? = null
 	override val isSharing = true
-
-	override fun onConfirmDamageDialogSubmit(option: DamageOption) {
-		val (damage, combatant) = confirmDamage ?: return
-		val actualDamage = when (option) {
-			FULL -> damage
-			HALF -> damage / 2
-			DOUBLE -> damage * 2
-			NONE -> 0
-		}
-		if (actualDamage > 0)
-			combatController.damageCombatant(combatant.id, actualDamage)
-		confirmDamageContinuation?.resume(true)
-		confirmDamage = null
-	}
 
 	override fun onConfirmDamageDialogCancel() {
 		confirmDamageContinuation?.resume(false)
@@ -72,9 +58,26 @@ data class HostSharedCombatViewModelImpl(
 			combatController.damageCombatant(combatant.id, command.damage)
 			return true
 		}
+		// I don't have a name of the player, so I take the first combatant they control that is not a creature
+		// I just hope that's their main character
+		val probableSource = combatController.combatants.value.firstOrNull { it.ownerId == command.ownerId && it.creatureType == null }
 		return suspendCancellableCoroutine {
 			confirmDamageContinuation = it
-			confirmDamage = Pair(command.damage, combatant)
+			confirmDamage = ConfirmDamageOptions(command.damage, combatant, probableSource?.name)
 		}
+	}
+
+	override fun onConfirmDamageDialogSubmit(option: DamageOption) {
+		val (damage, combatant) = confirmDamage ?: return
+		val actualDamage = when (option) {
+			FULL -> damage
+			HALF -> damage / 2
+			DOUBLE -> damage * 2
+			NONE -> 0
+		}
+		if (actualDamage > 0)
+			combatController.damageCombatant(combatant.id, actualDamage)
+		confirmDamageContinuation?.resume(true)
+		confirmDamage = null
 	}
 }
