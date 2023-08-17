@@ -11,15 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
+import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 
 enum class DamageOption {
 	FULL, HALF, DOUBLE, NONE
 }
 
+data class ConfirmDamageOptions(
+	val damage: Int,
+	val target: CombatantViewModel,
+	val sourceName: String?,
+) {
+	val targetName
+		get() = target.name
+}
+
 @Composable
 fun ConfirmDamageDialog(
-	playerDamage: Int,
-	combatantName: String,
+	options: ConfirmDamageOptions,
 	onDamageApplied: (DamageOption) -> Unit,
 	onDismiss: () -> Unit
 ) {
@@ -30,8 +39,8 @@ fun ConfirmDamageDialog(
 			modifier = Modifier.padding(16.dp),
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
-			Text("Apply Damage", style = MaterialTheme.typography.h6)
-			Text("Damage $combatantName: $playerDamage")
+			Text("Apply ${options.damage} Damage to ${options.targetName}", style = MaterialTheme.typography.h6)
+			Text("Probable source: ${options.sourceName}", style = MaterialTheme.typography.subtitle2)
 			DamageOption.values().forEach { option ->
 				Button(
 					onClick = { onDamageApplied(option) },

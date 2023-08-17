@@ -100,8 +100,8 @@ private fun Dialogs(
 			assignDamageCombatant.value?.let {
 				DamageCombatantDialog(::onDamageDialogSubmit, ::onDamageDialogCancel)
 			}
-			confirmDamage?.let { (damage, combatant) ->
-				ConfirmDamageDialog(damage, combatant.name, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
+			confirmDamage?.let { options ->
+				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
 			}
 		}
 	}
