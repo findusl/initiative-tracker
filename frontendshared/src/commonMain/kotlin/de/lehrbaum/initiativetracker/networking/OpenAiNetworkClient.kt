@@ -9,6 +9,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
+import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 class OpenAiNetworkClient(token: String) {
@@ -21,7 +22,7 @@ class OpenAiNetworkClient(token: String) {
 	private val openAi = OpenAI(config)
 
 	@BetaOpenAI
-	suspend fun suggestMonsterDescription(monsterType: String): String? {
+	suspend fun suggestMonsterName(monsterType: String): String? {
 		// TODO could provide the fluff from https://5e.tools/data/bestiary/fluff-bestiary-mm.json
 		val request = ChatCompletionRequest(
 			model = ModelId("gpt-3.5-turbo"),
@@ -38,8 +39,15 @@ class OpenAiNetworkClient(token: String) {
 		)
 		val response = openAi.chatCompletion(request).choices.firstOrNull()?.message?.content ?: return null
 		if (response.count { it.isWhitespace() } > 4) return null
-		return response.removeSuffix(".")
+		return response.removeSuffix(".").capitalizeWords()
 	}
+
+	private fun String.capitalizeWords(): String {
+		return this.split(" ").joinToString(" ") { it.capitalizeWord() }
+	}
+
+	private fun String.capitalizeWord(): String =
+		replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }
 
 private val nameSuggestionSystemPrompt = """

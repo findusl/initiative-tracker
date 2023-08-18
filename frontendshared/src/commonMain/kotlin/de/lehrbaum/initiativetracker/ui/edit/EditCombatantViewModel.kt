@@ -93,7 +93,7 @@ data class EditCombatantViewModel(
 			initiativeEdit.currentState = (Dice.d20() + dex.toModifier()).toString()
 		}
 		nameEdit.loadSuggestion {
-			GlobalInstances.openAiNetworkClient?.suggestMonsterDescription(monsterType.name)
+			GlobalInstances.openAiNetworkClient?.suggestMonsterName(monsterType.name)
 		}
 	}
 
