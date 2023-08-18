@@ -4,12 +4,14 @@ object Version {
 	const val kotlin = "1.9.0"
 	const val kotlinxSerialization = "1.5.1"
 	const val coroutines = "1.7.3"
-	const val ktor = "2.3.2"
+	const val ktor = "2.3.3"
 	const val logback = "1.4.11"
 	const val buildKonfig = "0.13.3"
 	const val mppSettings = "1.0.0"
 	const val mockito = "5.4.0"
 	const val napier = "2.6.1"
+	const val openAiClient = "3.3.2"
+
 	object JetbrainsCompose {
 		const val foundation = "1.4.3"
 	}
