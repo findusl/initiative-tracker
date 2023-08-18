@@ -69,18 +69,8 @@ dependencies {
 	implementation(project(":frontendshared"))
 	implementation(project(":dtos"))
 
-	// For theme. not sure if I actually need it, since I have compose material too
+	// For theme apparently needed. Need to look deeper into theming
 	implementation("com.google.android.material:material:1.9.0")
-
-	// Napier allows us to easily log on Kotlin Multiplatform in the future
-	implementation(Dependency.napier)
-
-	// Compose dependencies
-	implementation("androidx.compose.material:material:${Version.Android.composeMaterial}")
-	implementation("androidx.activity:activity-compose:${Version.Android.compose}")
-
-	// To have Dispatchers.Main on Android
-	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
 
 	testImplementation("junit:junit:4.13.2")
 
