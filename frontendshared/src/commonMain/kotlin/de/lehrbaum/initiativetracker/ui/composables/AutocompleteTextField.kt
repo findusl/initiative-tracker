@@ -16,14 +16,14 @@ import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun AutocompleteTextField(
-    modifier: Modifier = Modifier,
-    text: String,
-    label: String,
-    onTextChanged: (String) -> Unit,
-    error: Boolean,
-    suggestions: List<String> = emptyList(),
-    placeholder: String? = null,
+	text: String,
+	label: String,
+	onTextChanged: (String) -> Unit,
+	error: Boolean,
+	suggestions: List<String> = emptyList(),
+	placeholder: String? = null,
 	enabled: Boolean = true,
+	modifier: Modifier = Modifier,
 ) {
 	var expanded by remember { mutableStateOf(false) }
 	var textFieldWidth by remember { mutableStateOf(0) }

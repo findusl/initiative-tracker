@@ -121,13 +121,13 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 		editCombatantViewModel.onMonsterTypeChanged(editCombatantViewModel.monsterType)
 	}
 	AutocompleteTextField(
-		text = editCombatantViewModel.monsterTypeName,
-		label = "Monster Type",
-		onTextChanged = { editCombatantViewModel.monsterTypeName = it },
-		error = editCombatantViewModel.monsterTypeError,
-		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
-		placeholder = "Skeleton (MM)",
-		enabled = monsters.isNotEmpty()
+        text = editCombatantViewModel.monsterTypeName,
+        label = "Monster Type",
+        onTextChanged = { editCombatantViewModel.monsterTypeName = it },
+        error = editCombatantViewModel.monsterTypeError,
+        suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
+        placeholder = "Skeleton (MM)",
+        enabled = monsters.isNotEmpty()
 	)
 }
 
