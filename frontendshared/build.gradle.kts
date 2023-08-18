@@ -35,7 +35,7 @@ kotlin {
 				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
 				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
 
-				implementation("com.aallam.openai:openai-client:3.3.0")
+				implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
 
 				implementation(Dependency.kotlinxSerialization)
 				implementation(Dependency.kotlinxCoroutines)
