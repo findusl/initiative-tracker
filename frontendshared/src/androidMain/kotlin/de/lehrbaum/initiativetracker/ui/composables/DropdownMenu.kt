@@ -16,5 +16,12 @@ actual fun DropdownMenu(
     offset: DpOffset,
     content: @Composable ColumnScope.() -> Unit
 ) {
-	AndroidDropdownMenu(expanded, onDismissRequest, modifier, offset, PopupProperties(focusable),content)
+	AndroidDropdownMenu(
+		expanded,
+		onDismissRequest,
+		modifier,
+		offset,
+		properties = PopupProperties(focusable),
+		content = content
+	)
 }

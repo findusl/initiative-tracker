@@ -64,7 +64,18 @@ kotlin {
 		}
 		named("androidMain") {
 			dependencies {
+				// android specific compose
+				implementation("androidx.compose.material:material:${Version.Android.composeMaterial}")
+				// Android wants to have this on class path or it complains
+				api("androidx.activity:activity-compose:${Version.Android.compose}")
+
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
+
+				// Multiplatform logging
+				implementation(Dependency.napier)
+
+				// To have Dispatchers.Main on Android
+				runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
 			}
 		}
 		named("androidUnitTest")
