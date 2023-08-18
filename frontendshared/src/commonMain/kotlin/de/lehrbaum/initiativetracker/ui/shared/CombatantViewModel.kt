@@ -23,9 +23,5 @@ data class CombatantViewModel(
 }
 
 fun CombatantModel.toCombatantViewModel(active: Boolean = false): CombatantViewModel {
-	return CombatantViewModel(ownerId, id, name,
-        creatureType,
-        initiative,
-        maxHp,
-        currentHp, disabled, isHidden, active)
+	return CombatantViewModel(ownerId, id, name, creatureType, initiative, maxHp, currentHp, disabled, isHidden, active)
 }

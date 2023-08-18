@@ -18,7 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
-import de.lehrbaum.initiativetracker.ui.Constants
+import de.lehrbaum.initiativetracker.ui.Constants.defaultPadding
+import de.lehrbaum.initiativetracker.ui.Constants.smallPadding
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 
 @Composable
@@ -43,10 +44,11 @@ fun CombatantListElement(combatant: CombatantViewModel, modifier: Modifier = Mod
 			){
 				Text(
 					text = combatant.name, modifier = Modifier
-						.padding(Constants.defaultPadding)
+						//.padding(Constants.defaultPadding)
+						.padding(horizontal = defaultPadding, vertical = smallPadding)
 						.weight(1.0f, fill = true)
 				)
-				Text(text = combatant.initiativeString, modifier = Modifier.padding(Constants.defaultPadding))
+				Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
 			}
 		}
 	}
