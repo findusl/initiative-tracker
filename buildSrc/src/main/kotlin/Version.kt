@@ -16,8 +16,7 @@ object Version {
 		const val foundation = "1.4.3"
 	}
 	object Android {
-		const val compose = "1.7.2"
-		const val composeMaterial = "1.5.0"
+		const val composeBom = "2023.08.00"
 		const val composeCompiler = "1.5.1"
 		const val gradleBuildTools = "8.1.0"
 	}
