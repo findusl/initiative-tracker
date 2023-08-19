@@ -23,7 +23,7 @@ fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 	Scaffold(topBar = { DialogTopBar(editCombatantViewModel) }) {
 		EditCombatantContent(editCombatantViewModel, Modifier.padding(it))
 	}
-	editCombatantViewModel.confirmApplyMonsterDialog?.let {  completionContinuation ->
+	editCombatantViewModel.confirmApplyMonsterDialog?.let { completionContinuation ->
 		confirmApplyMonsterDialog(completionContinuation, editCombatantViewModel)
 	}
 }
@@ -43,18 +43,18 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 	}
 	val coroutineScope = rememberCoroutineScope()
 	var showLoadingSpinner by remember { mutableStateOf(false) }
-    TopAppBar(
-        title = { Text(editCombatantViewModel.id.toString()) },
-        navigationIcon = {
-            IconButton(onClick = editCombatantViewModel::cancel) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Cancel edit"
-                )
-            }
-        },
-        actions = {
-            Button(
+	TopAppBar(
+		title = { Text(editCombatantViewModel.id.toString()) },
+		navigationIcon = {
+			IconButton(onClick = editCombatantViewModel::cancel) {
+				Icon(
+					imageVector = Icons.Filled.Close,
+					contentDescription = "Cancel edit"
+				)
+			}
+		},
+		actions = {
+			Button(
 				onClick = {
 					if (showLoadingSpinner) return@Button
 					coroutineScope.launch {
@@ -76,21 +76,21 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 						)
 					}
 				}
-            }
-        }
-    )
+			}
+		}
+	)
 }
 
 @Composable
 private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .padding(Constants.defaultPadding)
-            .fillMaxWidth()
-    ) {
+	Column(
+		modifier = modifier
+			.padding(Constants.defaultPadding)
+			.fillMaxWidth()
+	) {
 		CreatureTypeField(editCombatantViewModel)
-        EditTextField(editCombatantViewModel.nameEdit, "name")
-        Spacer(modifier = Modifier.height(Constants.defaultPadding))
+		EditTextField(editCombatantViewModel.nameEdit, "name")
+		Spacer(modifier = Modifier.height(Constants.defaultPadding))
 		Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
 			EditTextField(editCombatantViewModel.initiativeEdit, "Initiative", Modifier.weight(1f))
 			Spacer(modifier = Modifier.width(Constants.defaultPadding))
@@ -102,13 +102,13 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 				Text(text = "Hidden")
 			}
 		}
-        Spacer(modifier = Modifier.height(Constants.defaultPadding))
+		Spacer(modifier = Modifier.height(Constants.defaultPadding))
 		Row(horizontalArrangement = Arrangement.SpaceEvenly) {
 			EditTextField(editCombatantViewModel.maxHpEdit, "Max Hitpoints", Modifier.weight(1f))
 			Spacer(modifier = Modifier.width(Constants.defaultPadding))
 			EditTextField(editCombatantViewModel.currentHpEdit, "Current Hitpoints", Modifier.weight(1f))
 		}
-    }
+	}
 }
 
 @Composable
@@ -117,17 +117,21 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 	val monsters by MainViewModel.monsters.collectAsState()
 	LaunchedEffect(monsters) { editCombatantViewModel.monsters = monsters }
 
+	var firstRun by remember { mutableStateOf(true) }
 	LaunchedEffect(editCombatantViewModel.monsterType) {
-		editCombatantViewModel.onMonsterTypeChanged(editCombatantViewModel.monsterType)
+		if (firstRun) // skip on first run because user just opened the edit dialog
+			firstRun = false
+		else
+			editCombatantViewModel.onMonsterTypeChanged(editCombatantViewModel.monsterType)
 	}
 	AutocompleteTextField(
-        text = editCombatantViewModel.monsterTypeName,
-        label = "Monster Type",
-        onTextChanged = { editCombatantViewModel.monsterTypeName = it },
-        error = editCombatantViewModel.monsterTypeError,
-        suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
-        placeholder = "Skeleton (MM)",
-        enabled = monsters.isNotEmpty()
+		text = editCombatantViewModel.monsterTypeName,
+		label = "Monster Type",
+		onTextChanged = { editCombatantViewModel.monsterTypeName = it },
+		error = editCombatantViewModel.monsterTypeError,
+		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
+		placeholder = "Skeleton (MM)",
+		enabled = monsters.isNotEmpty()
 	)
 }
 
