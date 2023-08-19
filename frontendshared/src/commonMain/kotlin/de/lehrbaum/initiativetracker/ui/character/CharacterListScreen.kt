@@ -2,8 +2,6 @@ package de.lehrbaum.initiativetracker.ui.character
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -11,11 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
-import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismissAction
-import de.lehrbaum.initiativetracker.ui.composables.addCreateNewCard
-import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
+import de.lehrbaum.initiativetracker.ui.composables.*
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 
 @Composable
@@ -54,17 +48,14 @@ private fun CharacterList(
 	dismissToStartAction: SwipeToDismissAction<CharacterViewModel>? = null,
 ) {
 	LazyColumn {
-		val itemModifier = Modifier
-			.padding(Constants.defaultPadding)
-			.fillMaxWidth()
 		items(characters, key = CharacterViewModel::id) { item ->
-			de.lehrbaum.initiativetracker.ui.composables.SwipeToDismiss(dismissToEndAction, dismissToStartAction, item) {
-				CharacterListElement(item, itemModifier.clickable {
+			SwipeToDismiss(dismissToEndAction, dismissToStartAction, item) {
+				CharacterListElement(item, Modifier.clickable {
 					onCharacterSelected(item)
 				})
 			}
 		}
-		addCreateNewCard(itemModifier, "Add new character", onAddNewPressed)
+		addCreateNewCard("Add new character", onAddNewPressed)
 	}
 }
 
