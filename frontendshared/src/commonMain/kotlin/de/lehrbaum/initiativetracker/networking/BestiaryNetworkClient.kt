@@ -8,7 +8,11 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.request
-import kotlinx.coroutines.*
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.plus
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import java.net.UnknownHostException
 
@@ -26,32 +30,27 @@ class BestiaryNetworkClientImpl(httpClient: HttpClient): BestiaryNetworkClient {
 
 	@ExperimentalCoroutinesApi // interestingly, this is not required to propagate to the interface, no opt-in required
 	override val monsters = monsterSources
-		.mapLatest { spellSources ->
-			supervisorScope {
-				val result = spellSources.values.map { jsonFileName ->
-					val url = "https://5e.tools/data/bestiary/$jsonFileName"
+		.transformLatest { spellSources ->
+			spellSources.values.forEach { jsonFileName ->
+				val url = "https://5e.tools/data/bestiary/$jsonFileName"
+				try {
 					Napier.v("Loading bestiary from $url", tag = TAG)
-					async {
-						try {
-							httpClient.request(url).body<BestiaryCollectionDTO>()
-						} catch (e: Exception) {
-							Napier.e("Failed to load from $url", e, TAG)
-							null
-						}
-					}
-				}.awaitAll()
-					.filterNotNull()
-					.flatMap(BestiaryCollectionDTO::monster)
-				Napier.i("Loaded ${result.size} monsters ", tag = TAG)
-				result
+					val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
+					emit(bestiary.monster)
+				} catch (e: Exception) {
+					Napier.e("Failed to load from $url", e, TAG)
+				}
 			}
+		}
+		.runningFold<List<MonsterDTO>, PersistentList<MonsterDTO>>(persistentListOf()) { accumulated, newResource ->
+			accumulated + newResource
 		}
 		.catch {
 			Napier.e("Error loading bestiary", it, tag = TAG)
-			if (it is UnknownHostException) {
-				emit(listOf(MonsterDTO(name = "Offline Monster", dex = 14, source = "MM", hp = HpDTO(average = 42))))
+			if (it is UnknownHostException) { // for offline testing
+				emit(persistentListOf(MonsterDTO(name = "Offline Monster", dex = 14, source = "MM", hp = HpDTO(average = 42))))
 			} else {
-				emit(emptyList())
+				emit(persistentListOf())
 			}
 		}
 		.flowOn(Dispatchers.IO)

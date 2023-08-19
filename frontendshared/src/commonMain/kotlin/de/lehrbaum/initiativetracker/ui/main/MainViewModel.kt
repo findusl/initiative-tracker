@@ -19,7 +19,7 @@ interface MainViewModel {
 
 	fun initializeCache(scope: CoroutineScope)
 
-	companion object Cache {
+	object Cache {
 		val monsters: MutableStateFlow<List<MonsterDTO>> = MutableStateFlow(emptyList())
 	}
 }

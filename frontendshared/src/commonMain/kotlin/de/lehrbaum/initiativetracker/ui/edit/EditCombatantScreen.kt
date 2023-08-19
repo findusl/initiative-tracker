@@ -114,7 +114,7 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 @Composable
 fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 	// The MainViewModel caches the monsters
-	val monsters by MainViewModel.monsters.collectAsState()
+	val monsters by MainViewModel.Cache.monsters.collectAsState()
 	LaunchedEffect(monsters) { editCombatantViewModel.monsters = monsters }
 
 	var firstRun by remember { mutableStateOf(true) }

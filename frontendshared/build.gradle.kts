@@ -39,6 +39,7 @@ kotlin {
 
 				implementation(Dependency.kotlinxSerialization)
 				implementation(Dependency.kotlinxCoroutines)
+				implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")
 
 				implementation("io.ktor:ktor-client-core:${Version.ktor}")
 				implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
