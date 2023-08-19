@@ -64,10 +64,10 @@ kotlin {
 		}
 		named("androidMain") {
 			dependencies {
-				// android specific compose
-				implementation("androidx.compose.material:material:${Version.Android.composeMaterial}")
-				// Android wants to have this on class path or it complains
-				api("androidx.activity:activity-compose:${Version.Android.compose}")
+				// android specific material design
+				implementation("androidx.compose.material:material")
+				// Android gradle module wants to have this on class path otherwise it complains
+				api("androidx.activity:activity-compose")
 
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
@@ -121,7 +121,7 @@ buildkonfig {
 
 android {
 	namespace = "de.lehrbaum.initiativetracker"
-	compileSdk = 33
+	compileSdk = 34
 	defaultConfig {
 		minSdk = 28
 	}
