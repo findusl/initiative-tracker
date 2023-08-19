@@ -2,7 +2,6 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
@@ -25,31 +24,35 @@ import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 @Composable
 fun CombatantListElement(combatant: CombatantViewModel, modifier: Modifier = Modifier) {
 	val outerBackgroundColor by animateColorAsState(
-		if (combatant.active) MaterialTheme.colors.secondary else MaterialTheme.colors.background
+		if (combatant.active) MaterialTheme.colors.secondary else Color.Transparent
 	)
 	var disabled by remember { mutableStateOf(combatant.disabled) }
 	disabled = combatant.disabled
 	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
 
 	val innerBackgroundColor = combatant.healthPercentage.healthToBrush(enabled = !disabled)
-	Box(modifier = Modifier.background(outerBackgroundColor)) {
-		Card(elevation = 8.dp, modifier = modifier) {
-			Row(Modifier
-				.background(innerBackgroundColor)
-				.drawBehind {
-					if (disabled) {
-						drawDisabledCross(crossRed)
-					}
+	Card(
+		elevation = 8.dp,
+		modifier = modifier
+			.background(outerBackgroundColor)
+			.padding(defaultPadding)
+	) {
+		Row(Modifier
+			.background(innerBackgroundColor)
+			.drawBehind {
+				if (disabled) {
+					drawDisabledCross(crossRed)
 				}
-			){
-				Text(
-					text = combatant.name, modifier = Modifier
-						//.padding(Constants.defaultPadding)
-						.padding(horizontal = defaultPadding, vertical = smallPadding)
-						.weight(1.0f, fill = true)
-				)
-				Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
 			}
+		) {
+			Text(
+				text = combatant.name,
+				modifier = Modifier
+					//.padding(Constants.defaultPadding)
+					.padding(horizontal = defaultPadding, vertical = smallPadding)
+					.weight(1.0f, fill = true)
+			)
+			Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
 		}
 	}
 }

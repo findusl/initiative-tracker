@@ -44,12 +44,9 @@ fun CombatantList(
         }
     }
     LazyColumn(state = listState) {
-        val itemModifier = Modifier
-            .padding(Constants.defaultPadding)
-            .fillMaxWidth()
         items(combatants, key = CombatantViewModel::id, contentType = { CombatantModel::class }) { combatant ->
             SwipeToDismiss(dismissToEndAction(combatant), dismissToStartAction(combatant), combatant) {
-                CombatantListElement(combatant, itemModifier.combinedClickable(
+                CombatantListElement(combatant, Modifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },
                     onLongClick = { onCombatantLongClicked(combatant) }
                 ))
@@ -57,7 +54,7 @@ fun CombatantList(
         }
 
         if (onCreateNewClicked != null) {
-            addCreateNewCard(itemModifier, "Add new combatant", onCreateNewClicked)
+            addCreateNewCard("Add new combatant", onCreateNewClicked)
         } else if (combatants.isEmpty()) {
 			// so that it is not completely empty, looks like an error
 			item(key = combatants) {
@@ -68,12 +65,18 @@ fun CombatantList(
 }
 
 fun LazyListScope.addCreateNewCard(
-    modifier: Modifier,
 	label: String,
     onClicked: () -> Unit,
+	modifier: Modifier = Modifier,
 ) {
     item {
-        Card(elevation = 8.dp, modifier = modifier.clickable { onClicked() }) {
+        Card(
+			elevation = 8.dp,
+			modifier = modifier
+				// the order of modifiers is relevant. If the padding is before clickable only the inner part is clickable
+				.clickable { onClicked() }
+				.padding(Constants.defaultPadding)
+		) {
             Text(
                 text = label,
                 modifier = Modifier
