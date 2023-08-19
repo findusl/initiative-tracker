@@ -3,6 +3,7 @@ object Version {
 	https://github.com/JetBrains/compose-multiplatform/blob/master/VERSIONING.md#kotlin-compatibility*/
 	const val kotlin = "1.9.0"
 	const val kotlinxSerialization = "1.5.1"
+	const val kotlinxCollections = "0.3.5"
 	const val coroutines = "1.7.3"
 	const val ktor = "2.3.3"
 	const val logback = "1.4.11"

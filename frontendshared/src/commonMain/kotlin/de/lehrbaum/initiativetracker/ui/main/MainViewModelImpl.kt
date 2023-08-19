@@ -12,7 +12,6 @@ import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -53,8 +52,9 @@ class MainViewModelImpl: MainViewModel {
 	override fun initializeCache(scope: CoroutineScope) {
 		Napier.i("Initializing Cache")
 		scope.launch {
-			val monsters = GlobalInstances.bestiaryNetworkClient.monsters.first()
-			MainViewModel.monsters.emit(monsters)
+			GlobalInstances.bestiaryNetworkClient.monsters.collect {
+				MainViewModel.Cache.monsters.emit(it)
+			}
 		}
 	}
 
