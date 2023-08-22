@@ -159,15 +159,18 @@ private fun TopBar(
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
 				}
 			}
-			IconButton(onClick = { displayDropdown = !displayDropdown }) {
-				Icon(Icons.Default.MoreVert, "")
-			}
-			DropdownMenu(
-				expanded = displayDropdown,
-				onDismissRequest = { displayDropdown = false }
-			) {
-				DropdownMenuItem(onClick = hostCombatViewModel::showSessionId) {
-					Text(text = "Show Session Id")
+			if (hostCombatViewModel.isSharing) {
+				IconButton(onClick = { displayDropdown = !displayDropdown }) {
+					Icon(Icons.Default.MoreVert, "")
+				}
+				DropdownMenu(
+					expanded = displayDropdown,
+					onDismissRequest = { displayDropdown = false }
+				) {
+					DropdownMenuItem(onClick = hostCombatViewModel::showSessionId) {
+						Text(text = "Show Session Id")
+
+					}
 				}
 			}
 		},
