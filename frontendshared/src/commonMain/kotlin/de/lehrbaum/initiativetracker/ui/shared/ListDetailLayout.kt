@@ -15,7 +15,11 @@ fun ProvideScreenSizeInformation(width: Int, height: Int, content: @Composable (
 }
 
 @Composable
-fun ListDetailLayout(list: @Composable () -> Unit, detail: @Composable (() -> Unit)?) {
+fun ListDetailLayout(
+	list: @Composable () -> Unit,
+	detail: @Composable (() -> Unit)?,
+	onDetailDismissRequest: (() -> Unit)? = null,
+) {
 	val isWidescreen = LocalWidescreen.current
 	if (isWidescreen) {
 		Row(
@@ -34,6 +38,9 @@ fun ListDetailLayout(list: @Composable () -> Unit, detail: @Composable (() -> Un
 		}
 	} else {
 		if (detail != null) {
+			BackHandler {
+				onDetailDismissRequest?.let { it() }
+			}
 			detail()
 		} else {
 			list()

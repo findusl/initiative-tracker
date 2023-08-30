@@ -33,6 +33,9 @@ fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: Charac
 		},
 		detail = characterListViewModel.editCharacterModel.value?.let {
 			{ EditCharacterScreen(it) }
+		},
+		onDetailDismissRequest = {
+			characterListViewModel.editCharacterModel.value?.cancel()
 		}
 	)
 }
