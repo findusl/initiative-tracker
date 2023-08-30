@@ -43,7 +43,8 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
-		} else null
+		} else null,
+		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() }
 	)
 }
 

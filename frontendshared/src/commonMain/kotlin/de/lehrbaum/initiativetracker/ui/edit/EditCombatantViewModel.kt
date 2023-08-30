@@ -55,7 +55,7 @@ data class EditCombatantViewModel(
 			.map { it.displayName }
 			.filter { it != monsterTypeName } // Don't suggest the existing choice
 			.toList()
-			.sortedBy { it.length }
+			.sortedBy{ it.length }
 	}
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 

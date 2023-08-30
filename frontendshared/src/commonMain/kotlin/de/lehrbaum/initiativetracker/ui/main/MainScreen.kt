@@ -14,6 +14,7 @@ import de.lehrbaum.initiativetracker.ui.client.ClientScreen
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.join.JoinScreen
+import de.lehrbaum.initiativetracker.ui.shared.BackHandler
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,10 +33,14 @@ fun MainScreen(mainViewModel: MainViewModel, widthInt: Int? = null) {
 		mainViewModel.initializeCache(this)
 	}
 
+	BackHandler(mainViewModel.canStepBack) {
+		mainViewModel.onBackPressed()
+	}
+
 	ModalDrawer(
 		drawerState = drawerState,
 		drawerContent = {
-			Drawer(drawerItems, mainViewModel.activeDrawerItem, drawerState, mainViewModel::onDrawerItemSelected)
+			Drawer(drawerItems, mainViewModel.content.drawerItem, drawerState, mainViewModel::onDrawerItemSelected)
 		},
 		gesturesEnabled = drawerState.isOpen,
 	) {
@@ -81,7 +86,6 @@ private fun MainScreenContent(contentState: ContentState, drawerState: DrawerSta
 		KeepScreenOn()
 	}
 	when(contentState) {
-		is ContentState.Empty -> Text("Choose something in the menu.")
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
 		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
 		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatViewModel)

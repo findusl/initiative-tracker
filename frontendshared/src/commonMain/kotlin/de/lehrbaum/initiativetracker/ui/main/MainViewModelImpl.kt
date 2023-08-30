@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.main
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
@@ -16,8 +17,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainViewModelImpl: MainViewModel {
-	override var activeDrawerItem by mutableStateOf<DrawerItem>(DrawerItem.HostCombat)
-
 	private val defaultDrawerItems = listOf(
 		DrawerItem.JoinCombat,
 		DrawerItem.HostCombat,
@@ -34,8 +33,13 @@ class MainViewModelImpl: MainViewModel {
 
     override var content by mutableStateOf<ContentState>(hostCombatState)
 
+	private val backstack = mutableStateListOf<ContentState>()
+
+	override val canStepBack: Boolean
+		get() = backstack.isNotEmpty() // since this is backed by a state variable the ui is notified
+
     override fun onDrawerItemSelected(item: DrawerItem) {
-		if (item == activeDrawerItem) return // avoid double click race conditions
+		if (item == content.drawerItem) return // avoid double click race conditions
         val newContent: ContentState = when (item) {
             is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModelImpl())
             is DrawerItem.HostCombat -> hostCombatState
@@ -45,7 +49,7 @@ class MainViewModelImpl: MainViewModel {
 				if(item.isHost) hostCombat(item.id) else clientCombat(item.id)
 			}
         }
-		activeDrawerItem = item
+		backstack.add(index = 0, content)
 		content = newContent
 	}
 
@@ -56,6 +60,10 @@ class MainViewModelImpl: MainViewModel {
 				MainViewModel.Cache.monsters.emit(it)
 			}
 		}
+	}
+
+	override fun onBackPressed() {
+		content = backstack.removeFirstOrNull() ?: return
 	}
 
 	private fun hostNewCombat(): ContentState.HostCombat {
