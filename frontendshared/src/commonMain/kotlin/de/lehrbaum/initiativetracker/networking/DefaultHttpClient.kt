@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient
 import java.time.Duration
 
 private const val TAG = "DefaultHttpClient"
-private val WEBSOCKET_PING_INTERVAL = Duration.ofSeconds(20)
+private val WEBSOCKET_PING_INTERVAL = Duration.ofSeconds(9)
 
 fun createDefaultHttpClient() =
 	// This needs changes for iOS

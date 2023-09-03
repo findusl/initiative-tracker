@@ -47,6 +47,7 @@ kotlin {
 				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 				implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
 				implementation("io.ktor:ktor-client-logging-jvm:${Version.ktor}")
+				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
 				// Multiplatform Logging
 				api(Dependency.napier)
