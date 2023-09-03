@@ -43,7 +43,7 @@ class BestiaryNetworkClientImpl(httpClient: HttpClient): BestiaryNetworkClient {
 			}
 		}
 		.runningFold<List<MonsterDTO>, PersistentList<MonsterDTO>>(persistentListOf()) { accumulated, newResource ->
-			accumulated + newResource
+			accumulated + newResource // this is surprisingly performant due to the Trie implementation of persistent list
 		}
 		.catch {
 			Napier.e("Error loading bestiary", it, tag = TAG)
