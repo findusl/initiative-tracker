@@ -33,7 +33,8 @@ fun AutocompleteTextField(
         OutlinedTextField(
 			value = text,
 			onValueChange = onTextChanged,
-			modifier = Modifier.fillMaxWidth()
+			modifier = Modifier
+				.fillMaxWidth()
 				.onSizeChanged {
 					textFieldWidth = it.width
 					textFieldHeight = it.height
@@ -55,22 +56,21 @@ fun AutocompleteTextField(
 				}
 			},
 			enabled = enabled,
-        )
-        DropdownMenu(
+		)
+		DropdownMenu(
 			expanded = expanded && suggestions.isNotEmpty(),
-			onDismissRequest = { expanded = false },
 			focusable = false,
 			modifier = Modifier
 				.width(with(LocalDensity.current) { textFieldWidth.toDp() })
-				.requiredHeightIn(max = with(LocalDensity.current) { (5 * textFieldHeight).toDp() }),
+				.requiredHeightIn(max = with(LocalDensity.current) { (4 * textFieldHeight).toDp() }),
 		) {
-            suggestions.forEach { label ->
-                DropdownMenuItem(onClick = {
+			suggestions.forEach { label ->
+				DropdownMenuItem(onClick = {
 					onTextChanged(label)
 				}) {
-                    Text(text = label)
-                }
-            }
-        }
-    }
+					Text(text = label)
+				}
+			}
+		}
+	}
 }
