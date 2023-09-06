@@ -38,7 +38,7 @@ fun DiceRollingTextField(
 	remember(initialText) { textIsValidNumber.value = initialText.toIntOrNull() != null }
 	val textFieldContentState = remember(initialText) { mutableStateOf(initialText) }
 	var textFieldContent by textFieldContentState
-	var expanded by remember { mutableStateOf(false) }
+	var isFocussed by remember { mutableStateOf(false) }
 	var textFieldWidth by remember { mutableStateOf(0) }
 	var textFieldHeight by remember { mutableStateOf(0) }
 	val seed = remember { Random.nextLong() }
@@ -58,17 +58,16 @@ fun DiceRollingTextField(
 					textFieldWidth = it.width
 					textFieldHeight = it.height
 				}.onFocusChanged {
-					expanded = it.isFocused
+					isFocussed = it.isFocused
 				},
 			label = label?.let { { Text(it) } },
-			isError = error && !expanded,
+			isError = error && !isFocussed,
 			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, autoCorrect = false),
 			singleLine = true,
 			placeholder = placeholder?.let { { Text(it) } },
 		)
 		DropdownMenu(
-			expanded = expanded && diceCalculationResult != null,
-			onDismissRequest = { expanded = false },
+			expanded = isFocussed && diceCalculationResult != null,
 			focusable = false,
 			modifier = Modifier
 				.width(with(LocalDensity.current) { textFieldWidth.toDp() })

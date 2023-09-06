@@ -5,7 +5,7 @@ import java.util.*
 plugins {
 	kotlin("multiplatform")
 	id("com.android.library")
-	id("org.jetbrains.compose") version Version.JetbrainsCompose.foundation
+	id("org.jetbrains.compose")
 	id("org.jetbrains.kotlin.plugin.serialization")
 	// Used to mimic BuildConfig on Multiplatform
 	id("com.codingfeline.buildkonfig") version Version.buildKonfig
