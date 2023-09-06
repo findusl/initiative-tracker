@@ -14,7 +14,6 @@ application {
 
 ktor {
 	docker {
-		jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
 		localImageName.set("initiative-tracker")
 		portMappings.set(
 			listOf(
