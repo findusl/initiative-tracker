@@ -35,7 +35,7 @@ allprojects {
 }
 
 tasks.register("clean", Delete::class) {
-	delete(rootProject.buildDir)
+	delete(rootProject.layout.buildDirectory)
 }
 
 // What kind of dependencies updates interest me https://github.com/ben-manes/gradle-versions-plugin
