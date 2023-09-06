@@ -14,7 +14,7 @@ object Version {
 	const val openAiClient = "3.3.2"
 
 	object JetbrainsCompose {
-		const val foundation = "1.4.3"
+		const val foundation = "1.5.1"
 	}
 	object Android {
 		const val composeBom = "2023.08.00"
