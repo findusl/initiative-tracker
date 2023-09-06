@@ -11,7 +11,7 @@ object Version {
 	const val mppSettings = "1.0.0"
 	const val mockito = "5.4.0"
 	const val napier = "2.6.1"
-	const val openAiClient = "3.3.2"
+	const val openAiClient = "3.4.1"
 
 	object JetbrainsCompose {
 		const val foundation = "1.5.1"
