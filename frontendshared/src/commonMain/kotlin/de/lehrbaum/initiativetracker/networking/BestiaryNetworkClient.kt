@@ -13,8 +13,8 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.plus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.*
-import java.net.UnknownHostException
 
 private const val TAG = "BestiaryNetworkClient"
 
@@ -47,7 +47,8 @@ class BestiaryNetworkClientImpl(httpClient: HttpClient): BestiaryNetworkClient {
 		}
 		.catch {
 			Napier.e("Error loading bestiary", it, tag = TAG)
-			if (it is UnknownHostException) { // for offline testing
+			if (it is Exception) { // for offline testing
+				// TODO find some way to identify the offline exception platform independent
 				emit(persistentListOf(MonsterDTO(name = "Offline Monster", dex = 14, source = "MM", hp = HpDTO(average = 42))))
 			} else {
 				emit(persistentListOf())
