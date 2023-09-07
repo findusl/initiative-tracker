@@ -9,7 +9,6 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
-import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 class OpenAiNetworkClient(token: String) {
@@ -47,7 +46,7 @@ class OpenAiNetworkClient(token: String) {
 	}
 
 	private fun String.capitalizeWord(): String =
-		replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+		replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
 
 private val nameSuggestionSystemPrompt = """

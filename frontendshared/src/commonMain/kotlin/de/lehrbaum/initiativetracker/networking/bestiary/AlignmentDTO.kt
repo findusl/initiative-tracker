@@ -6,6 +6,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonTransformingSerializer
 
+@Suppress("unused") // No clue why it does not get suppressed by the SerialName annotation
 @Serializable
 enum class AlignmentDTO {
 	@SerialName("A")
