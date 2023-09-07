@@ -7,8 +7,6 @@ data class CharacterViewModel(
 	val name: String,
 	val initiativeMod: Int?,
 	val maxHp: Int?,
-) {
-	fun toModel(): CharacterModel = CharacterModel(id, name, initiativeMod, maxHp)
-}
+)
 
 fun CharacterModel.toCharacterViewModel() = CharacterViewModel(id, name, initiativeMod, maxHp)
