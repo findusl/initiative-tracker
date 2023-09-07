@@ -105,3 +105,8 @@ gradle-app.setting
 # Android apk build folders
 /frontendandroid/release/
 /frontendandroid/debug/
+
+# iOS target
+frontendios/iosApp.xcworkspace/*
+frontendios/iosApp.xcodeproj/*
+!frontendios/iosApp.xcodeproj/project.pbxproj
