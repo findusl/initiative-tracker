@@ -20,6 +20,16 @@ kotlin {
 			}
 		}
 	}
+	listOf(
+		iosX64(),
+		iosArm64(),
+		iosSimulatorArm64()
+	).forEach { iosTarget ->
+		iosTarget.binaries.framework {
+			baseName = "shared"
+			isStatic = true
+		}
+	}
 
 	sourceSets {
 		val commonMain by getting {
@@ -30,7 +40,6 @@ kotlin {
 				implementation(compose.foundation)
 				implementation(compose.material)
 				implementation(compose.runtime)
-				implementation(compose.preview)
 
 				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
 				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
@@ -46,7 +55,7 @@ kotlin {
 				implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
 				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 				implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
-				implementation("io.ktor:ktor-client-logging-jvm:${Version.ktor}")
+				implementation("io.ktor:ktor-client-logging:${Version.ktor}")
 
 				// Multiplatform Logging
 				api(Dependency.napier)
@@ -85,6 +94,18 @@ kotlin {
 			}
 		}
 		val androidUnitTest by getting
+		val iosX64Main by getting
+		val iosArm64Main by getting
+		val iosSimulatorArm64Main by getting
+		val iosMain by creating {
+			dependsOn(commonMain)
+			iosX64Main.dependsOn(this)
+			iosArm64Main.dependsOn(this)
+			iosSimulatorArm64Main.dependsOn(this)
+			dependencies {
+				implementation("io.ktor:ktor-client-darwin:${Version.ktor}")
+			}
+		}
 	}
 }
 
