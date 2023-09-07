@@ -2,7 +2,7 @@ package de.lehrbaum.initiativetracker.networking
 
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -11,20 +11,14 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
 import java.time.Duration
 
 private const val TAG = "DefaultHttpClient"
-private val WEBSOCKET_PING_INTERVAL = Duration.ofSeconds(9)
+val WEBSOCKET_PING_INTERVAL: Duration = Duration.ofSeconds(9)
 
 fun createDefaultHttpClient() =
 	// This needs changes for iOS
-    HttpClient(OkHttp) {
-		engine {
-			preconfigured = OkHttpClient.Builder()
-				.pingInterval(WEBSOCKET_PING_INTERVAL)
-				.build()
-		}
+	createPlatformSpecificHttpClient {
         install(WebSockets) {
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
 			pingInterval = WEBSOCKET_PING_INTERVAL.toMillis()
@@ -44,3 +38,5 @@ fun createDefaultHttpClient() =
             level = LogLevel.INFO // change when debugging
         }
     }
+
+expect fun createPlatformSpecificHttpClient(initializationBlock: HttpClientConfig<*>.() -> Unit): HttpClient

@@ -22,7 +22,7 @@ kotlin {
 	}
 
 	sourceSets {
-		named("commonMain") {
+		val commonMain by getting {
 			dependencies {
 				implementation(project(path = ":dtos"))
 
@@ -47,31 +47,35 @@ kotlin {
 				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
 				implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
 				implementation("io.ktor:ktor-client-logging-jvm:${Version.ktor}")
-				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
 				// Multiplatform Logging
 				api(Dependency.napier)
 			}
 		}
-		named("commonTest") {
+		val commonTest by getting {
 			dependencies {
 				implementation(kotlin("test"))
 			}
 		}
-		named("desktopMain") {
+		val jvmMain by creating {
+			dependsOn(commonMain)
 			dependencies {
-				implementation(compose.desktop.common)
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 			}
 		}
-		named("androidMain") {
+		val desktopMain by getting {
+			dependsOn(jvmMain)
+			dependencies {
+				implementation(compose.desktop.common)
+			}
+		}
+		val androidMain by getting {
+			dependsOn(jvmMain)
 			dependencies {
 				// android specific material design
 				implementation("androidx.compose.material:material")
 				// Android gradle module wants to have this on class path otherwise it complains
 				api("androidx.activity:activity-compose")
-
-				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 
 				// Multiplatform logging
 				implementation(Dependency.napier)
@@ -80,7 +84,7 @@ kotlin {
 				runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
 			}
 		}
-		named("androidUnitTest")
+		val androidUnitTest by getting
 	}
 }
 
