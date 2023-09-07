@@ -19,17 +19,13 @@ object CombatLinkRepository {
 	val combatLinks = MutableStateFlow(loadCombatLinks())
 
 	fun addCombatLink(combatLink: CombatLink) {
-		synchronized(combatLinks) {
-			combatLinks.value += combatLink
-			persistCombatLinks()
-		}
+		combatLinks.value += combatLink
+		persistCombatLinks()
 	}
 
 	fun removeCombatLink(combatLink: CombatLink) {
-		synchronized(combatLinks) {
-			combatLinks.value -= combatLink
-			persistCombatLinks()
-		}
+		combatLinks.value -= combatLink
+		persistCombatLinks()
 	}
 
 	private fun persistCombatLinks() =
