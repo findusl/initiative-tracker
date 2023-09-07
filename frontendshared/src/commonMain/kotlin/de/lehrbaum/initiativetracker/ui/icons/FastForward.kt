@@ -5,6 +5,7 @@ import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.materialPath
 import androidx.compose.ui.graphics.vector.ImageVector
 
+@Suppress("UnusedReceiverParameter") // Standard for icons
 val Icons.Filled.FastForward: ImageVector
 	get() {
 		if (_fastForward != null) {

@@ -11,17 +11,18 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 private const val TAG = "DefaultHttpClient"
-val WEBSOCKET_PING_INTERVAL: Duration = Duration.ofSeconds(9)
+val WEBSOCKET_PING_INTERVAL: Duration = 9.seconds
 
 fun createDefaultHttpClient() =
 	// This needs changes for iOS
 	createPlatformSpecificHttpClient {
         install(WebSockets) {
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
-			pingInterval = WEBSOCKET_PING_INTERVAL.toMillis()
+			pingInterval = WEBSOCKET_PING_INTERVAL.inWholeMilliseconds
         }
         install(ContentNegotiation) {
             json(Json {
