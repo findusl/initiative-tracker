@@ -1,14 +1,8 @@
 package de.lehrbaum.initiativetracker.ui.composables
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Slider
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -22,25 +16,27 @@ import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import kotlin.math.roundToInt
 
 @Composable
-fun DamageCombatantDialog(onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
+fun DamageCombatantDialog(target: String, onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
 	GeneralDialog(onDismissRequest = { onCancel() }) {
 		Surface(
 			shape = RoundedCornerShape(16.dp),
 			color = Color.White
 		) {
-			DamageCombatantDialogContent(onSubmit, onCancel)
+			DamageCombatantDialogContent(target, onSubmit, onCancel)
 		}
 	}
 }
 
 @Composable
-fun DamageCombatantDialogContent(onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
+fun DamageCombatantDialogContent(target: String, onSubmit: suspend (Int) -> Unit, onCancel: () -> Unit) {
 	var sliderValue by remember { mutableStateOf(1.0f) }
 	val sliderValueInt by remember { derivedStateOf { sliderValue.roundToInt() } }
 	val coroutineScope = rememberCoroutineScope()
 	val textIsValidNumber = remember { mutableStateOf(false) }
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
+		Text("Damage $target")
+		Spacer(Modifier.height(Constants.defaultPadding))
 		Row(
 			horizontalArrangement = Arrangement.Center,
 			verticalAlignment = Alignment.CenterVertically

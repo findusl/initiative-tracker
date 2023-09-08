@@ -1,7 +1,5 @@
 package de.lehrbaum.initiativetracker.networking.bestiary
 
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toLowerCase
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonPrimitive
@@ -75,7 +73,4 @@ data class MonsterDTO(
 ) {
 	@kotlinx.serialization.Transient
 	val displayName = "$name ($source)"
-
-	@kotlinx.serialization.Transient
-	val uniqueId = "${name}_$source".toLowerCase(Locale.current)
 }

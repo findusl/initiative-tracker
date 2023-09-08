@@ -16,8 +16,7 @@ fun <T : R, R> Flow<T>.collectAsStateResettable(
 	context: CoroutineContext = EmptyCoroutineContext
 ): ResettableState<R> {
 	var numberOfResets by remember { mutableStateOf(0) }
-	fun coroutineContextWithName() = context + CoroutineName("Restarted $numberOfResets times")
-	val coroutineContext by remember { derivedStateOf { coroutineContextWithName() } }
+	val coroutineContext = remember(context, numberOfResets) { context + CoroutineName("Restarted $numberOfResets times") }
 	val state = collectAsState(initial, coroutineContext)
 	return object : ResettableState<R>, State<R> by state {
 		override fun reset() {

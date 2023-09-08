@@ -42,7 +42,8 @@ data class EditCombatantViewModel(
 	)
 	var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
 
-	var monsters by mutableStateOf(MainViewModel.Cache.monsters.value)
+	val monsters: List<MonsterDTO>
+		get() = MainViewModel.Cache.monsters
 
 	var monsterTypeName: String by mutableStateOf(combatantViewModel.creatureType ?: "")
 	val monsterType: MonsterDTO? by derivedStateOf { determineMonster(monsterTypeName) }

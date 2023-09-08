@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.commands.HostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.StartCommand
@@ -46,7 +46,7 @@ class HostCombatSession(
 		when (response) {
 			is StartCommand.JoinAsHost.JoinedAsHost -> {
 				val combatState = response.combatModel
-				val combatants = combatState.combatants.map(CombatantModel::toModel)
+				val combatants = combatState.combatants
 				combatController.overwriteWithExistingCombat(combatants, combatState.activeCombatantIndex)
 				collector.emit(HostConnectionState.Connected)
 			}
@@ -63,7 +63,7 @@ class HostCombatSession(
 	@Suppress("OPT_IN_IS_NOT_ENABLED")
 	@OptIn(FlowPreview::class)
 	private suspend fun DefaultClientWebSocketSession.shareCombatUpdates() {
-		combine(combatController.combatants, combatController.activeCombatantIndex, ::toCombatDTO)
+		combine(combatController.activeCombatantIndex, combatController.combatants, ::CombatModel)
 			.debounce(200.milliseconds)
 			.distinctUntilChanged()
 			.collectLatest {
@@ -79,14 +79,14 @@ class HostCombatSession(
 			when (incoming) {
 				is ServerToHostCommand.AddCombatant -> {
 					withContext(Dispatchers.Main) {
-						combatController.addCombatant(incoming.combatant.toModel())
+						combatController.addCombatant(incoming.combatant)
 					}
 					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
 				}
 
 				is ServerToHostCommand.EditCombatant -> {
 					withContext(Dispatchers.Main) {
-						combatController.updateCombatant(incoming.combatant.toModel())
+						combatController.updateCombatant(incoming.combatant)
 					}
 					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
 				}

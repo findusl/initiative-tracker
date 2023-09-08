@@ -83,11 +83,11 @@ class ClientCombatSession(val sessionId: Int) {
 	}
 
 	suspend fun requestAddCharacter(combatantModel: CombatantModel): Boolean {
-		return sendClientCommand(ClientCommand.AddCombatant(combatantModel.toDTO()))
+		return sendClientCommand(ClientCommand.AddCombatant(combatantModel))
 	}
 
 	suspend fun requestEditCharacter(combatantModel: CombatantModel): Boolean {
-		return sendClientCommand(ClientCommand.EditCombatant(combatantModel.toDTO()))
+		return sendClientCommand(ClientCommand.EditCombatant(combatantModel))
 	}
 
 	suspend fun requestDamageCharacter(combatantId: Long, damage: Int, ownerId: Long): Boolean {
@@ -117,7 +117,7 @@ sealed interface ClientCombatState {
 	object Connecting: ClientCombatState
 	data class Connected(val activeCombatantIndex: Int, val combatants: List<CombatantModel>): ClientCombatState {
 		constructor(combatModel: CombatModel):
-			this(combatModel.activeCombatantIndex, combatModel.combatants.map(CombatantModel::toModel))
+			this(combatModel.activeCombatantIndex, combatModel.combatants)
 	}
 	data class Disconnected(val reason: String): ClientCombatState
 }
