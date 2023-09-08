@@ -59,8 +59,9 @@ class MainViewModelImpl: MainViewModel {
 		scope.launch {
 			GlobalInstances.bestiaryNetworkClient.monsters.collect {
 				MainViewModel.Cache.monsters = it
-				MainViewModel.Cache.monstersByName = it.associateBy(MonsterDTO::displayName)
 			}
+			// Completely unnecessary optimization, but I was annoyed that the map would be generated too often
+			MainViewModel.Cache.monstersByName = MainViewModel.Cache.monsters.associateBy(MonsterDTO::displayName)
 		}
 	}
 
