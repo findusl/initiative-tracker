@@ -19,5 +19,5 @@ sealed interface ClientCommand {
 	/**
 	 * Attempts to cancel a command. Cancellation is not guaranteed.
 	 */
-	object CancelCommand : ClientCommand
+	data object CancelCommand : ClientCommand
 }
