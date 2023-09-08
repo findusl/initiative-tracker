@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 
 @Composable
-fun DropdownMenu(
+fun MyDropdownMenu(
 	expanded: Boolean,
 	onDismissRequest: () -> Unit = {},
 	focusable: Boolean = true,

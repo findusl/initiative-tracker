@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModelImpl
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
@@ -58,6 +59,7 @@ class MainViewModelImpl: MainViewModel {
 		scope.launch {
 			GlobalInstances.bestiaryNetworkClient.monsters.collect {
 				MainViewModel.Cache.monsters = it
+				MainViewModel.Cache.monstersByName = it.associateBy(MonsterDTO::displayName)
 			}
 		}
 	}

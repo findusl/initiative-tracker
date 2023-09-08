@@ -60,7 +60,8 @@ data class EditCombatantViewModel(
 	}
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 
-	private fun determineMonster(name: String): MonsterDTO? = monsters.firstOrNull { it.displayName == name }
+	private fun determineMonster(name: String): MonsterDTO? =
+		MainViewModel.Cache.monstersByName.getOrElse(name) { null }
 
 	suspend fun onMonsterTypeChanged(type: MonsterDTO?) {
 		if (type != null) {

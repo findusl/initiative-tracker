@@ -163,7 +163,7 @@ private fun TopBar(
 				IconButton(onClick = { displayDropdown = !displayDropdown }) {
 					Icon(Icons.Default.MoreVert, "")
 				}
-				DropdownMenu(
+				MyDropdownMenu(
 					expanded = displayDropdown,
 					onDismissRequest = { displayDropdown = false }
 				) {
