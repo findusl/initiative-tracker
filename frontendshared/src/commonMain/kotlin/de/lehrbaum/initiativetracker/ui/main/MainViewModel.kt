@@ -25,6 +25,7 @@ interface MainViewModel {
 
 	object Cache {
 		var monsters: List<MonsterDTO> by mutableStateOf(emptyList())
+		var monstersByName: Map<String, MonsterDTO> by mutableStateOf(emptyMap())
 	}
 }
 

@@ -57,7 +57,7 @@ fun AutocompleteTextField(
 			},
 			enabled = enabled,
 		)
-		DropdownMenu(
+		MyDropdownMenu(
 			expanded = expanded && suggestions.isNotEmpty(),
 			focusable = false,
 			modifier = Modifier

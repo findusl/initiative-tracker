@@ -66,7 +66,7 @@ fun DiceRollingTextField(
 			singleLine = true,
 			placeholder = placeholder?.let { { Text(it) } },
 		)
-		DropdownMenu(
+		MyDropdownMenu(
 			expanded = isFocussed && diceCalculationResult != null,
 			focusable = false,
 			modifier = Modifier
