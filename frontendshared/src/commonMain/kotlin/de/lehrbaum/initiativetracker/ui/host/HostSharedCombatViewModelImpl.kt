@@ -60,7 +60,8 @@ data class HostSharedCombatViewModelImpl(
 		}
 		// I don't have a name of the player, so I take the first combatant they control that is not a creature
 		// I just hope that's their main character
-		val probableSource = combatController.combatants.value.firstOrNull { it.ownerId == command.ownerId && it.creatureType == null }
+		val probableSource = combatController.combatants.value
+			.firstOrNull { it.ownerId == command.ownerId && it.creatureType == null }
 		return suspendCancellableCoroutine {
 			confirmDamageContinuation = it
 			confirmDamage = ConfirmDamageOptions(command.damage, combatant, probableSource?.name)

@@ -42,7 +42,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 			if (connectionStateState.value is ClientCombatState.Connected) {
 				clientCombatViewModelState.value.run {
 					assignDamageCombatant?.let {
-						DamageCombatantDialog(::onDamageDialogSubmit, ::onDamageDialogCancel)
+						DamageCombatantDialog(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
 					}
 				}
 			}

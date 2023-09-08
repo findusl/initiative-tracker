@@ -13,7 +13,6 @@ import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.AutocompleteTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
-import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import kotlinx.coroutines.launch
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -113,10 +112,6 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 
 @Composable
 fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
-	// The MainViewModel caches the monsters
-	val monsters by MainViewModel.Cache.monsters.collectAsState()
-	LaunchedEffect(monsters) { editCombatantViewModel.monsters = monsters }
-
 	var firstRun by remember { mutableStateOf(true) }
 	LaunchedEffect(editCombatantViewModel.monsterType) {
 		if (firstRun) // skip on first run because user just opened the edit dialog
@@ -131,7 +126,7 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 		error = editCombatantViewModel.monsterTypeError,
 		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
 		placeholder = "Skeleton (MM)",
-		enabled = monsters.isNotEmpty()
+		enabled = editCombatantViewModel.monsters.isNotEmpty()
 	)
 }
 

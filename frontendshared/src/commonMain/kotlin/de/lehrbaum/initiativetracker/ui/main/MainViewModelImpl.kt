@@ -57,7 +57,7 @@ class MainViewModelImpl: MainViewModel {
 		Napier.i("Initializing Cache")
 		scope.launch {
 			GlobalInstances.bestiaryNetworkClient.monsters.collect {
-				MainViewModel.Cache.monsters.emit(it)
+				MainViewModel.Cache.monsters = it
 			}
 		}
 	}

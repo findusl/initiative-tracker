@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.bl.toCombatDTO
+import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 
 class BackendNetworkClient(private val httpClient: HttpClient) {
 	suspend fun createSession(combatants: List<CombatantModel>, activeCombatantIndex: Int): Int = withContext(Dispatchers.IO) {
-		val combatDTO = toCombatDTO(combatants, activeCombatantIndex)
+		val combatDTO = CombatModel(activeCombatantIndex, combatants)
 		val response = httpClient.post {
 			backendHttpUrl(SESSION_PATH)
 			contentType(ContentType.Application.Json)
