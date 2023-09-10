@@ -14,6 +14,7 @@ import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
 fun startBackend() {
 	embeddedServer(CIO, port = 8080) {
@@ -45,6 +46,8 @@ internal fun Application.configureSockets() {
 	install(WebSockets) {
 		contentConverter = KotlinxWebsocketSerializationConverter(Json)
 		masking = false
+		this.pingPeriodMillis = 9.seconds.inWholeMilliseconds
+		this.timeoutMillis = 30.seconds.inWholeMilliseconds
 	}
 }
 
