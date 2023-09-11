@@ -33,6 +33,7 @@ suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 suspend fun ApplicationCall.handlePostRequest() {
 	val combat = receive<CombatModel>()
 	val session = createSession(combat, hostWebsocketSession = null)
+	logger.info("Created session $session")
 	respond(HttpStatusCode.Created, session.id)
 }
 
