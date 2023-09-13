@@ -3,7 +3,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
 import de.lehrbaum.initiativetracker.ui.main.MainScreen
 import de.lehrbaum.initiativetracker.ui.main.MainViewModelImpl
-import de.lehrbaum.initiativetracker.ui.shared.ProvideScreenSizeInformation
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -11,9 +10,7 @@ import io.github.aakira.napier.Napier
 fun MainViewController() = ComposeUIViewController {
 	val mainViewModel = remember { MainViewModelImpl() }
 	Napier.base(DebugAntilog())
-	ProvideScreenSizeInformation(0, 0) {
-		MaterialTheme {
-			MainScreen(mainViewModel)
-		}
+	MaterialTheme {
+		MainScreen(mainViewModel)
 	}
 }

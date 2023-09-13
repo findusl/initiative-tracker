@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.platform.LocalConfiguration
 import de.lehrbaum.initiativetracker.ui.main.MainScreen
 import de.lehrbaum.initiativetracker.ui.main.MainViewModelImpl
-import de.lehrbaum.initiativetracker.ui.shared.ProvideScreenSizeInformation
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -23,13 +21,8 @@ class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContent {
-			ProvideScreenSizeInformation(
-				LocalConfiguration.current.screenWidthDp,
-				LocalConfiguration.current.screenHeightDp,
-			) {
-				MaterialTheme {
-					MainScreen(mainModel)
-				}
+			MaterialTheme {
+				MainScreen(mainModel)
 			}
 		}
 	}

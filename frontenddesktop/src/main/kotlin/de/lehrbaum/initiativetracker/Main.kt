@@ -11,7 +11,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import de.lehrbaum.initiativetracker.ui.main.MainScreen
 import de.lehrbaum.initiativetracker.ui.main.MainViewModelImpl
-import de.lehrbaum.initiativetracker.ui.shared.ProvideScreenSizeInformation
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import java.util.logging.Level
@@ -35,15 +34,11 @@ fun main() = application {
 		state = windowState,
 		title = "InitiativeTracker"
 	) {
-		val width = windowState.size.width.let { if (it.isSpecified) it.value.toInt() else 0 }
-		val height = windowState.size.height.let { if (it.isSpecified) it.value.toInt() else 0 }
 		val widthInt: Int? by derivedStateOf {
 			windowState.size.width.let { if (it.isSpecified) it.value.toInt() else null }
 		}
-		ProvideScreenSizeInformation(width, height) {
-			MaterialTheme {
-				MainScreen(mainViewModel, widthInt)
-			}
+		MaterialTheme {
+			MainScreen(mainViewModel, widthInt)
 		}
 	}
 }
