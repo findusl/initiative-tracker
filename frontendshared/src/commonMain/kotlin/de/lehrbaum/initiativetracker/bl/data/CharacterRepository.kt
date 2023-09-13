@@ -45,7 +45,7 @@ class CharacterRepository {
 		persistCharacters()
 	}
 
-	fun getbyId(id: Long): CharacterModel = characters.value.first { it.id == id }
+	fun getById(id: Long): CharacterModel = characters.value.first { it.id == id }
 
 	private fun nextFreeId(): Long {
 		return characters.value.maxOfOrNull { it.id }?.inc() ?: 0
