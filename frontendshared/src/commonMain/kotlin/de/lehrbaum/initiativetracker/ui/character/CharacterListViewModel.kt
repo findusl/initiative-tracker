@@ -15,7 +15,7 @@ class CharacterListViewModel {
 	val editCharacterModel = mutableStateOf<EditCharacterModel?>(null)
 
 	fun editCharacter(characterViewModel: CharacterViewModel) {
-		val model = characterRepository.getbyId(characterViewModel.id)
+		val model = characterRepository.getById(characterViewModel.id)
 		editCharacter(model)
 	}
 

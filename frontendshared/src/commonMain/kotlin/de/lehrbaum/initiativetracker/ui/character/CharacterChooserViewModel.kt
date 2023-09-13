@@ -17,7 +17,7 @@ class CharacterChooserViewModel(
 	fun cancel() = onCancel()
 
 	fun onChosen(characterViewModel: CharacterViewModel, initiative: Int, currentHp: Int) {
-		val model = characterRepository.getbyId(characterViewModel.id)
+		val model = characterRepository.getById(characterViewModel.id)
 		onChosen(model, initiative, currentHp)
 	}
 }
