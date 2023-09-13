@@ -8,7 +8,7 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
-import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModelImpl
+import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModel
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
@@ -42,7 +42,7 @@ class MainViewModelImpl: MainViewModel {
     override fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == content.drawerItem) return // avoid double click race conditions
         val newContent: ContentState = when (item) {
-            is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModelImpl())
+            is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModel())
             is DrawerItem.HostCombat -> hostCombatState
             is DrawerItem.HostExistingCombat -> joinCombat(asHost = true)
             is DrawerItem.JoinCombat -> joinCombat(asHost = false)
