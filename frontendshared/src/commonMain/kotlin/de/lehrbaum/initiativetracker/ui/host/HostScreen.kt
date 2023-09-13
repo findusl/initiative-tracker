@@ -61,6 +61,7 @@ private fun MainContent(
 			HostConnectionState.Connected -> {
 				CombatantList(
 					combatants.collectAsState(emptyList()).value,
+					isHost = true,
 					::onCombatantClicked,
 					::onCombatantLongClicked,
 					::addNewCombatant,

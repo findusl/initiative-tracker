@@ -53,7 +53,7 @@ data class HostSharedCombatViewModelImpl(
 	}
 
 	override suspend fun handleDamageCombatantCommand(command: ServerToHostCommand.DamageCombatant): Boolean {
-		val combatant = combatController.combatants.value.first { it.id == command.combatantId }.toCombatantViewModel()
+		val combatant = combatController.combatants.value.first { it.id == command.combatantId }.toCombatantViewModel(combatController.ownerId)
 		if (combatant.ownerId == command.ownerId) {
 			combatController.damageCombatant(combatant.id, command.damage)
 			return true
