@@ -25,7 +25,7 @@ fun <T> EditTextField(
 	var selectAllNextFocus by remember(editFieldViewModel) { mutableStateOf(editFieldViewModel.selectOnFirstFocus) }
 	var selectWhole by remember { mutableStateOf(false) } // https://stackoverflow.com/a/70241741/3795043
 	var textFieldValue by remember(editFieldViewModel) {
-		mutableStateOf(TextFieldValue(editFieldViewModel.initialValueText))
+		mutableStateOf(TextFieldValue(editFieldViewModel.currentState))
 	}
 	if (textFieldValue.text != editFieldViewModel.currentState) {
 		textFieldValue = textFieldValue.copy(text = editFieldViewModel.currentState)
@@ -42,8 +42,7 @@ fun <T> EditTextField(
 				textFieldValue = it
 			}
 			if (editFieldViewModel.currentState != it.text) {
-				editFieldViewModel.cancelLoading()
-				editFieldViewModel.currentState = it.text
+				editFieldViewModel.onTextUpdated(it.text)
 			}
 		},
         label = { Text(label) },
@@ -57,7 +56,7 @@ fun <T> EditTextField(
 					color = MaterialTheme.colors.primary,
 				)
 			} else if (hasFocus && textFieldValue.text.isNotEmpty()) {
-				IconButton(onClick = { editFieldViewModel.currentState = "" }) {
+				IconButton(onClick = { editFieldViewModel.onTextUpdated("") }) {
 					Icon(imageVector = Icons.Filled.Close, contentDescription = "Clear")
 				}
 			}

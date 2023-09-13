@@ -9,7 +9,7 @@ import kotlinx.coroutines.job
 
 @Stable
 // cannot be a data class. That breaks stuff if different edit dialogs are shown with the same values.
-// Then compose optimizes and does not actually rerun the composable.
+// Then compose optimizes and does not actually rerun the EditTextField composable.
 class EditFieldViewModel<T>(
 	initialValue: T,
 	val keyboardType: KeyboardType? = null,
@@ -18,18 +18,18 @@ class EditFieldViewModel<T>(
 	val selectOnFirstFocus: Boolean = false,
 	val parseInput: (String) -> Result<T>,
 ) {
-	val initialValueText = initialValue?.toString() ?: ""
-	var currentState by mutableStateOf(initialValueText)
+	var currentState by mutableStateOf(initialValue?.toString() ?: "")
+		private set
 	val hasError by derivedStateOf { parseInput(currentState).isFailure }
 	val value: Result<T>
 		get() = parseInput(currentState)
 	var loading by mutableStateOf(false)
+		private set
 
 	private var loadingJob: Job? = null
 
 	suspend fun loadSuggestion(loader: suspend () -> String?) {
-		// Cancel any ongoing loading job
-		loadingJob?.cancel()
+		cancelLoading()
 
 		coroutineScope {
 			loadingJob = this.coroutineContext.job
@@ -46,7 +46,12 @@ class EditFieldViewModel<T>(
 		}
 	}
 
-	fun cancelLoading() {
+	fun onTextUpdated(newText: String) {
+		cancelLoading()
+		currentState = newText
+	}
+
+	private fun cancelLoading() {
 		loadingJob?.cancel()
 	}
 

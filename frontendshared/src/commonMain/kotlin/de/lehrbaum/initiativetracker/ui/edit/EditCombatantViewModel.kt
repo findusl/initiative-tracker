@@ -88,11 +88,11 @@ data class EditCombatantViewModel(
 	private suspend fun applyMonsterType() {
 		val monsterType = this.monsterType ?: return
 		monsterType.hp?.average?.let { avgHp ->
-			maxHpEdit.currentState = avgHp.toString()
-			currentHpEdit.currentState = avgHp.toString()
+			maxHpEdit.onTextUpdated(avgHp.toString())
+			currentHpEdit.onTextUpdated(avgHp.toString())
 		}
 		monsterType.dex?.let { dex ->
-			initiativeEdit.currentState = (Dice.d20() + dex.toModifier()).toString()
+			initiativeEdit.onTextUpdated((Dice.d20() + dex.toModifier()).toString())
 		}
 		nameEdit.loadSuggestion {
 			GlobalInstances.openAiNetworkClient?.suggestMonsterName(monsterType.name)

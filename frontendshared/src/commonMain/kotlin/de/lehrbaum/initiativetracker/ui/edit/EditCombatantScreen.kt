@@ -112,7 +112,7 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 
 @Composable
 fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
-	var firstRun by remember { mutableStateOf(true) }
+	var firstRun by remember(editCombatantViewModel) { mutableStateOf(true) }
 	LaunchedEffect(editCombatantViewModel.monsterType) {
 		if (firstRun) // skip on first run because user just opened the edit dialog
 			firstRun = false
