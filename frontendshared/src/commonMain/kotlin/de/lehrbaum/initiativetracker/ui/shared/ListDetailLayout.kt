@@ -18,7 +18,7 @@ fun ListDetailLayout(
 				modifier = Modifier.fillMaxWidth()
 			) {
 				val modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1f)
-				Box(modifier = modifier) {
+				Box(modifier) {
 					list()
 				}
 				detail?.let {
