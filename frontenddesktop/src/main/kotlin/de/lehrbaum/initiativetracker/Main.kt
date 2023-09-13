@@ -28,6 +28,8 @@ fun main() = application {
 		Napier.base(DebugAntilog(handler = handlers))
 	}
 
+	val mainViewModel = MainViewModelImpl()
+
 	Window(
 		onCloseRequest = ::exitApplication,
 		state = windowState,
@@ -40,7 +42,7 @@ fun main() = application {
 		}
 		ProvideScreenSizeInformation(width, height) {
 			MaterialTheme {
-				MainScreen(MainViewModelImpl(), widthInt)
+				MainScreen(mainViewModel, widthInt)
 			}
 		}
 	}
