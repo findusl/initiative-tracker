@@ -26,6 +26,7 @@ import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 @ExperimentalFoundationApi
 fun CombatantList(
 	combatants: List<CombatantViewModel>,
+	isHost: Boolean,
 	onCombatantClicked: (CombatantViewModel) -> Unit,
 	onCombatantLongClicked: (CombatantViewModel) -> Unit,
 	onCreateNewClicked: (() -> Unit)? = null,
@@ -46,7 +47,7 @@ fun CombatantList(
     LazyColumn(state = listState) {
         items(combatants, key = CombatantViewModel::id, contentType = { CombatantModel::class }) { combatant ->
             SwipeToDismiss(dismissToEndAction(combatant), dismissToStartAction(combatant), combatant) {
-                CombatantListElement(combatant, Modifier.combinedClickable(
+                CombatantListElement(combatant, isHost, Modifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },
                     onLongClick = { onCombatantLongClicked(combatant) }
                 ))

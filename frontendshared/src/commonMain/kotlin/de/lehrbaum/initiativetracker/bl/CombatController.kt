@@ -30,7 +30,7 @@ class CombatController {
 	val activeCombatantIndex: StateFlow<Int>
 		get() = _activeCombatantIndex
 
-	private val ownerId = GeneralSettingsRepository.installationId
+	val ownerId = GeneralSettingsRepository.installationId
 
 	fun nextTurn() {
 		val startingIndex = activeCombatantIndex.value

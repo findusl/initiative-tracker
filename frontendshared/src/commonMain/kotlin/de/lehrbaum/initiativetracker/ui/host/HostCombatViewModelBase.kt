@@ -18,7 +18,10 @@ abstract class HostCombatViewModelBase : HostCombatViewModel {
 	override val combatants = combatController.combatants
 		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
 			combatants.mapIndexed { index, combatant ->
-				combatant.toCombatantViewModel(index == activeIndex)
+				combatant.toCombatantViewModel(
+					appOwnerId = combatController.ownerId,
+					active = index == activeIndex,
+				)
 			}
 		}
 
@@ -75,7 +78,7 @@ abstract class HostCombatViewModelBase : HostCombatViewModel {
 
 	override fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
-		editCombatant(newCombatant.toCombatantViewModel(), firstEdit = true)
+		editCombatant(newCombatant.toCombatantViewModel(combatController.ownerId), firstEdit = true)
 	}
 
 	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {

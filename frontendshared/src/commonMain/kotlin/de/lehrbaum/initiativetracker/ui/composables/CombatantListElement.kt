@@ -2,12 +2,8 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -18,17 +14,19 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants.defaultPadding
-import de.lehrbaum.initiativetracker.ui.Constants.smallPadding
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CombatantListElement(combatant: CombatantViewModel, modifier: Modifier = Modifier) {
+fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifier: Modifier = Modifier) {
 	val outerBackgroundColor by animateColorAsState(
 		if (combatant.active) MaterialTheme.colors.secondary else Color.Transparent
 	)
 	var disabled by remember { mutableStateOf(combatant.disabled) }
 	disabled = combatant.disabled
 	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
+	val getsAllInformation = combatant.isOwned || isHost
 
 	val innerBackgroundColor = combatant.healthPercentage.healthToBrush(enabled = !disabled)
 	Card(
@@ -37,23 +35,41 @@ fun CombatantListElement(combatant: CombatantViewModel, modifier: Modifier = Mod
 			.background(outerBackgroundColor)
 			.padding(defaultPadding)
 	) {
-		Row(Modifier
-			.background(innerBackgroundColor)
-			.drawBehind {
-				if (disabled) {
-					drawDisabledCross(crossRed)
-				}
-			}
-		) {
-			Text(
-				text = combatant.name,
-				modifier = Modifier
-					//.padding(Constants.defaultPadding)
-					.padding(horizontal = defaultPadding, vertical = smallPadding)
-					.weight(1.0f, fill = true)
-			)
-			Text(text = combatant.initiativeString, modifier = Modifier.padding(defaultPadding))
+		val image by produceState(initialValue = null, key1 = combatant) {
+			combatant.loadImage()
 		}
+		ListItem(
+			modifier = Modifier
+				.background(innerBackgroundColor)
+				.drawBehind {
+					if (disabled) {
+						drawDisabledCross(crossRed)
+					}
+				},
+			icon = {
+			   if (!combatant.isHidden || getsAllInformation) {
+				   image?.let {
+
+				   }
+			   }
+			},
+			secondaryText = {
+				if (getsAllInformation) {
+					combatant.monsterDTO?.let {
+						Text("AC ${it.ac?.firstOrNull()?.ac}")
+					}
+				}
+			},
+			text = {
+				if (combatant.isHidden && !getsAllInformation)
+					Text("<Hidden>")
+				else
+					Text(text = combatant.name)
+			},
+			trailing = {
+				Text(text = combatant.initiativeString)
+			}
+		)
 	}
 }
 
