@@ -2,9 +2,10 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -15,6 +16,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants.defaultPadding
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 
 @Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalMaterialApi::class)
@@ -35,9 +38,6 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 			.background(outerBackgroundColor)
 			.padding(defaultPadding)
 	) {
-		val image by produceState(initialValue = null, key1 = combatant) {
-			combatant.loadImage()
-		}
 		ListItem(
 			modifier = Modifier
 				.background(innerBackgroundColor)
@@ -48,8 +48,15 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 				},
 			icon = {
 			   if (!combatant.isHidden || getsAllInformation) {
-				   image?.let {
-
+				   combatant.imageUrl()?.let {
+					   KamelImage(
+						   asyncPainterResource(it),
+						   contentDescription = "Icon of ${combatant.name}",
+						   contentAlignment = Alignment.CenterStart,
+						   modifier = Modifier
+							   .widthIn(min = 30.dp, max = 48.dp) // guessed the values
+							   .aspectRatio(ratio = 1.0f)
+					   )
 				   }
 			   }
 			},
