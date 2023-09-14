@@ -3,7 +3,7 @@ import java.util.*
 
 plugins {
 	// Plugin helps find available updates for dependencies https://github.com/ben-manes/gradle-versions-plugin
-	id("com.github.ben-manes.versions") version "0.47.0"
+	id("com.github.ben-manes.versions") version Version.versionPlugin
 
 	// this is necessary to avoid the plugins to be loaded multiple times
 	kotlin("multiplatform") version Version.kotlin apply false

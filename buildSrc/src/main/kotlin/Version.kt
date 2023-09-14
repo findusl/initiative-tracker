@@ -7,12 +7,13 @@ object Version {
 	const val coroutines = "1.7.3"
 	const val ktor = "2.3.4"
 	const val logback = "1.4.11"
-	const val buildKonfig = "0.13.3"
+	const val buildKonfig = "0.14.0"
 	const val mppSettings = "1.0.0"
 	const val mockito = "5.4.0"
 	const val napier = "2.6.1"
 	const val openAiClient = "3.4.1"
 	const val kamel = "0.7.3"
+	const val versionPlugin = "0.48.0"
 
 	object JetbrainsCompose {
 		const val foundation = "1.5.1"
