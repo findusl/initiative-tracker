@@ -9,6 +9,7 @@ plugins {
 dependencies {
 	implementation(project(":frontendshared"))
 	implementation(compose.desktop.currentOs)
+	implementation(compose.material3)
 	// For the Dispatchers.Main. Sadly adding in shared module in Desktop.Main was not enough?
 	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Version.coroutines}")
 }

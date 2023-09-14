@@ -2,10 +2,10 @@ package de.lehrbaum.initiativetracker.ui.client
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,9 +18,9 @@ import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@ExperimentalMaterial3Api
 @Composable
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatViewModel) {
 	val clientCombatViewModelState = remember { mutableStateOf(clientCombatViewModel) }
 	clientCombatViewModelState.value = clientCombatViewModel
@@ -29,11 +29,11 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 
 	ListDetailLayout(
 		list = {
-			val scaffoldState = rememberScaffoldState()
-			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatViewModelState.value.snackbarState)
+			val snackbarHostState = remember { SnackbarHostState() }
+			snackbarHostState.bindSnackbarState(clientCombatViewModelState.value.snackbarState)
 
 			Scaffold(
-				scaffoldState = scaffoldState,
+				snackbarHost = { SnackbarHost(snackbarHostState) },
 				topBar = { TopBar(drawerState, clientCombatViewModelState.value, coroutineScope) },
 			) {
 				Content(clientCombatViewModelState.value, connectionStateState)
@@ -54,8 +54,8 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 	)
 }
 
+@ExperimentalMaterial3Api
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 private fun Content(
 	clientCombatViewModel: ClientCombatViewModel,
@@ -90,6 +90,7 @@ private fun Content(
 	}
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
@@ -98,7 +99,7 @@ private fun TopBar(
 ) {
 	TopAppBar(
 		title = {
-			Text("Joined ${clientCombatViewModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			Text("Joined ${clientCombatViewModel.sessionId}", /*color = MaterialTheme.colorScheme.onPrimaryContainer*/)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {
@@ -111,6 +112,6 @@ private fun TopBar(
 				Icon(Icons.Default.Close, contentDescription = "Leave Session")
 			}
 		},
-		backgroundColor = MaterialTheme.colors.primarySurface,
+		//colors = topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
 	)
 }

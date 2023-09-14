@@ -1,9 +1,9 @@
 package de.lehrbaum.initiativetracker.ui.edit
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
+@ExperimentalMaterial3Api
 @Composable
 fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 	Scaffold(topBar = { DialogTopBar(editCombatantViewModel) }) {
@@ -27,6 +28,7 @@ fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 	}
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 	val canSave by remember {
@@ -69,7 +71,7 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 					// Values found by trial and error. Might not work everywhere
 					if (showLoadingSpinner) {
 						CircularProgressIndicator(
-							color = MaterialTheme.colors.onPrimary,
+							color = MaterialTheme.colorScheme.onPrimary,
 							strokeWidth = 3.dp,
 							modifier = Modifier.padding(start = 8.dp).size(28.dp)
 						)

@@ -2,9 +2,9 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -53,7 +53,7 @@ fun <T> EditTextField(
 		trailingIcon = {
 			if (editFieldViewModel.loading) {
 				CircularProgressIndicator(
-					color = MaterialTheme.colors.primary,
+					color = MaterialTheme.colorScheme.primary,
 				)
 			} else if (hasFocus && textFieldValue.text.isNotEmpty()) {
 				IconButton(onClick = { editFieldViewModel.onTextUpdated("") }) {

@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
@@ -16,7 +17,7 @@ fun MyDropdownMenu(
 	offset: DpOffset = DpOffset(0.dp, 0.dp),
 	content: @Composable ColumnScope.() -> Unit
 ) {
-	androidx.compose.material.DropdownMenu(
+	DropdownMenu(
 		expanded,
 		onDismissRequest,
 		modifier,

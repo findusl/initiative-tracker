@@ -76,7 +76,7 @@ dependencies {
 	testImplementation("junit:junit:4.13.2")
 
 	// For previews
-	androidTestImplementation("androidx.compose.material:material")
+	androidTestImplementation("androidx.compose.material3:material3")
 	debugImplementation("androidx.compose.ui:ui-tooling")
 	androidTestImplementation("androidx.compose.ui:ui-tooling-preview")
 

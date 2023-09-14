@@ -13,7 +13,7 @@ plugins {
 
 kotlin {
 	jvm("desktop")
-	android {
+	androidTarget {
 		compilations.all {
 			kotlinOptions {
 				jvmTarget = "17"
@@ -38,7 +38,7 @@ kotlin {
 
 				implementation(compose.ui)
 				implementation(compose.foundation)
-				implementation(compose.material)
+				implementation(compose.material3)
 				implementation(compose.runtime)
 
 				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
@@ -84,7 +84,7 @@ kotlin {
 			dependsOn(jvmMain)
 			dependencies {
 				// android specific material design
-				implementation("androidx.compose.material:material")
+				implementation("androidx.compose.material3:material3")
 				// Android gradle module wants to have this on class path otherwise it complains
 				api("androidx.activity:activity-compose")
 

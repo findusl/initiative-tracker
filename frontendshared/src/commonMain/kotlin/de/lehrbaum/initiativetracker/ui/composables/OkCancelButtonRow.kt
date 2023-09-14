@@ -2,10 +2,10 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,7 +89,7 @@ fun OkCancelButtonRow(
         ) {
 			if (showLoadingSpinner) {
 				CircularProgressIndicator(
-					color = MaterialTheme.colors.onPrimary,
+					color = MaterialTheme.colorScheme.onPrimary,
 					strokeWidth = 3.dp,
 					modifier = Modifier.padding(start = 8.dp).size(28.dp)
 				)

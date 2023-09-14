@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.shared.SwipeResponse
 
+@ExperimentalMaterial3Api
 @Composable
-@ExperimentalMaterialApi
 fun <E> SwipeToDismiss(
 	dismissToEndAction: SwipeToDismissAction<E>? = null,
 	dismissToStartAction: SwipeToDismissAction<E>? = null,
@@ -40,7 +40,7 @@ fun <E> SwipeToDismiss(
 	}
 
 	val dismissState = remember(dismissToEndAction?.action, dismissToStartAction?.action) {
-		DismissState(DismissValue.Default) {
+		DismissState(DismissValue.Default, confirmValueChange =  {
 			when (it) {
 				DismissValue.DismissedToEnd -> dismissToEndAction?.action?.invoke(element)
 
@@ -48,7 +48,7 @@ fun <E> SwipeToDismiss(
 
 				DismissValue.Default -> null // Happens when the user lets go before finishing the slide
 			}?.shouldSlideOut ?: false
-		}
+		})
 	}
 
 	val directions = setOfNotNull(
@@ -63,7 +63,6 @@ fun <E> SwipeToDismiss(
 	SwipeToDismiss(
 		state = dismissState,
 		directions = directions,
-		dismissThresholds = { FractionalThreshold(0.3f) },
 		background = backgroundLambda,
 		dismissContent = { content() }
 	)
@@ -125,8 +124,8 @@ data class SwipeToDismissAction<E>(
 	val action: (element: E) -> SwipeResponse
 )
 
+@ExperimentalMaterial3Api
 @Composable
-@ExperimentalMaterialApi
 private fun SwipeToDismissBackground(
 	dismissToEndAction: SwipeToDismissAction<*>?,
 	dismissToStartAction: SwipeToDismissAction<*>?,

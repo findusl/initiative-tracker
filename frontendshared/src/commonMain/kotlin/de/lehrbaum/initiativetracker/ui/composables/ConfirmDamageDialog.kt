@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -39,8 +39,8 @@ fun ConfirmDamageDialog(
 			modifier = Modifier.padding(16.dp),
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
-			Text("Apply ${options.damage} Damage to ${options.targetName}", style = MaterialTheme.typography.h6)
-			Text("Probable source: ${options.sourceName}", style = MaterialTheme.typography.subtitle2)
+			Text("Apply ${options.damage} Damage to ${options.targetName}", style = MaterialTheme.typography.titleLarge)
+			Text("Probable source: ${options.sourceName}", style = MaterialTheme.typography.titleSmall)
 			DamageOption.values().forEach { option ->
 				Button(
 					onClick = { onDamageApplied(option) },

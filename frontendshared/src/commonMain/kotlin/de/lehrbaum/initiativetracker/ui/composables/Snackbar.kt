@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.composables
 
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.SnackbarResult
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,7 +19,7 @@ fun SnackbarHostState.bindSnackbarState(stateHolder: MutableState<SnackbarState?
                 is SnackbarState.Copyable -> "Copy"
                 else -> null
             }
-            val result = showSnackbar(state.text, label, state.duration)
+            val result = showSnackbar(state.text, label, duration = state.duration)
             if (result == SnackbarResult.ActionPerformed) {
                 when (state) {
                     is SnackbarState.Copyable -> {

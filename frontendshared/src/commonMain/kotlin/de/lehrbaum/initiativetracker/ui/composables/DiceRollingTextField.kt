@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -78,13 +78,13 @@ fun DiceRollingTextField(
 					textFieldContent = result.sum.toString()
 					onNumberChanged(result.sum)
 					textIsValidNumber.value = true
-				}) {
+				}, text = {
 					Column {
 						if (result.intermediateStep != result.sum.toString())
 							Text("=${result.intermediateStep}")
 						Text("=${result.sum}")
 					}
-				}
+				})
 			}
 		}
 	}

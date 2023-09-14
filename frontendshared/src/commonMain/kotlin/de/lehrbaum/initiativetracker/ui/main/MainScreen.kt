@@ -4,8 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
@@ -37,7 +36,7 @@ fun MainScreen(mainViewModel: MainViewModel, widthInt: Int? = null) {
 		mainViewModel.onBackPressed()
 	}
 
-	ModalDrawer(
+	ModalNavigationDrawer(
 		drawerState = drawerState,
 		drawerContent = {
 			Drawer(drawerItems, mainViewModel.content.drawerItem, drawerState, mainViewModel::onDrawerItemSelected)
@@ -59,8 +58,8 @@ private fun Drawer(
 	Column(Modifier.fillMaxSize()) {
 		drawerItems.forEach { item ->
 			val active = item == activeDrawerItem
-			val backgroundColor = if (active) colors.primarySurface else colors.background
-			val textColor = if (active) colors.onPrimary else colors.onBackground
+			val backgroundColor = if (active) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background
+			val textColor = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
 			Box(
 				Modifier
 					.background(backgroundColor)
@@ -78,9 +77,8 @@ private fun Drawer(
 	}
 }
 
-@Suppress("OPT_IN_IS_NOT_ENABLED")
 @Composable
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
 	if (contentState.keepScreenOn) {
 		KeepScreenOn()

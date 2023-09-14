@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -65,11 +65,7 @@ fun AutocompleteTextField(
 				.requiredHeightIn(max = with(LocalDensity.current) { (4 * textFieldHeight).toDp() }),
 		) {
 			suggestions.forEach { label ->
-				DropdownMenuItem(onClick = {
-					onTextChanged(label)
-				}) {
-					Text(text = label)
-				}
+				DropdownMenuItem(onClick = { onTextChanged(label) }, text = { Text(text = label)})
 			}
 		}
 	}

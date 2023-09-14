@@ -1,9 +1,9 @@
 package de.lehrbaum.initiativetracker.ui.character
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 
+@ExperimentalMaterial3Api
 @Composable
 fun EditCharacterScreen(editCharacterModel: EditCharacterModel) {
 	Scaffold(topBar = { DialogTopBar(editCharacterModel) }) {
@@ -19,6 +20,7 @@ fun EditCharacterScreen(editCharacterModel: EditCharacterModel) {
 	}
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun DialogTopBar(editCharacterModel: EditCharacterModel) {
 	val canSave by remember {

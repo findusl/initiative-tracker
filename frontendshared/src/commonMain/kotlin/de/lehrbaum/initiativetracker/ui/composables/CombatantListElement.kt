@@ -2,8 +2,13 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Card
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,20 +24,18 @@ import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifier: Modifier = Modifier) {
 	val outerBackgroundColor by animateColorAsState(
-		if (combatant.active) MaterialTheme.colors.secondary else Color.Transparent
+		if (combatant.active) MaterialTheme.colorScheme.secondary else Color.Transparent
 	)
 	var disabled by remember { mutableStateOf(combatant.disabled) }
 	disabled = combatant.disabled
-	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
+	val crossRed = Color.Red.copy(alpha = 0.38f)
 	val getsAllInformation = combatant.isOwned || isHost
 
 	val innerBackgroundColor = combatant.healthPercentage.healthToBrush(enabled = !disabled)
 	Card(
-		elevation = 8.dp,
 		modifier = modifier
 			.background(outerBackgroundColor)
 			.padding(defaultPadding)
@@ -45,7 +48,7 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 						drawDisabledCross(crossRed)
 					}
 				},
-			icon = {
+			leadingContent = {
 			   if (!combatant.isHidden || getsAllInformation) {
 				   combatant.imageUrl()?.let {
 					   KamelImage(
@@ -59,7 +62,7 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 				   }
 			   }
 			},
-			secondaryText = {
+			supportingContent = {
 				if (getsAllInformation) {
 					combatant.monsterDTO?.let { monster ->
 						val informationItems = listOf(
@@ -70,13 +73,13 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 					}
 				}
 			},
-			text = {
+			headlineContent = {
 				if (combatant.isHidden && !getsAllInformation)
 					Text("<Hidden>")
 				else
 					Text(text = combatant.name)
 			},
-			trailing = {
+			trailingContent = {
 				Text(text = combatant.initiativeString)
 			}
 		)
@@ -111,15 +114,15 @@ private data class HealthColors(
 @Composable
 private fun Double?.healthToBrush(
 	enabled: Boolean,
-	colors: HealthColors = HealthColors(if (enabled) ContentAlpha.medium else ContentAlpha.disabled)
+	colors: HealthColors = HealthColors(if (enabled) 0.6f else 0.38f)
 ): Brush {
 	return when {
-		this == null -> SolidColor(MaterialTheme.colors.background)
+		this == null -> SolidColor(MaterialTheme.colorScheme.background)
 		this > 0.99 -> SolidColor(colors.backgroundGreen)
 		this > 0.75 -> Brush.horizontalGradient(0.75f to colors.backgroundGreen, 1.0f to colors.backgroundRed)
 		this > 0.37 -> Brush.horizontalGradient(0.37f to colors.backgroundGreen, 0.75f to colors.backgroundRed)
 		this > 0.0 -> Brush.horizontalGradient(0.0f to colors.backgroundGreen, 0.37f to colors.backgroundRed)
 		this <= 0.0 -> SolidColor(colors.backgroundRed)
-		else -> SolidColor(MaterialTheme.colors.background)
+		else -> SolidColor(MaterialTheme.colorScheme.background)
 	}
 }

@@ -1,4 +1,4 @@
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
 import de.lehrbaum.initiativetracker.ui.main.MainScreen

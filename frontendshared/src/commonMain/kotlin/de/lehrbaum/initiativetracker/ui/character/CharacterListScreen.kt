@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.composables.*
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 
+@ExperimentalMaterial3Api
 @Composable
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: CharacterListViewModel) {
 	val characters by characterListViewModel.characters.collectAsState(emptyList())
@@ -40,8 +40,8 @@ fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: Charac
 	)
 }
 
+@ExperimentalMaterial3Api
 @Composable
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 private fun CharacterList(
 	characters: List<CharacterViewModel>,
@@ -62,17 +62,18 @@ private fun CharacterList(
 	}
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
 ) {
 	TopAppBar(
 		title = {
-			Text("Manage Characters", color = MaterialTheme.colors.onPrimary)
+			Text("Manage Characters", /*color = MaterialTheme.colorScheme.onPrimaryContainer*/)
 		},
 		navigationIcon = {
 			BurgerMenuButtonForDrawer(drawerState)
 		},
-		backgroundColor = MaterialTheme.colors.primarySurface,
+		//backgroundColor = MaterialTheme.colorScheme.primarySurface,
 	)
 }

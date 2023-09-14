@@ -2,12 +2,12 @@ package de.lehrbaum.initiativetracker.ui.host
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.*
@@ -16,8 +16,8 @@ import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import kotlinx.coroutines.launch
 
+@ExperimentalMaterial3Api
 @Composable
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewModel) {
 	val hostCombatModelState = remember { mutableStateOf(hostCombatViewModel) }
@@ -27,11 +27,11 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 	ListDetailLayout(
 		list = {
-			val scaffoldState = rememberScaffoldState()
-			scaffoldState.snackbarHostState.bindSnackbarState(hostCombatViewModel.snackbarState)
+			val snackbarHostState = remember { SnackbarHostState() }
+			snackbarHostState.bindSnackbarState(hostCombatModelState.value.snackbarState)
 
 			Scaffold(
-				scaffoldState = scaffoldState,
+				snackbarHost = { SnackbarHost(snackbarHostState) },
 				topBar = { TopBar(drawerState, hostCombatModelState.value) },
 				floatingActionButton = { NextCombatantButton(hostCombatModelState.value) },
 			) {
@@ -47,7 +47,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 	)
 }
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
 private fun MainContent(
@@ -117,6 +117,7 @@ private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
 	}
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
@@ -129,9 +130,9 @@ private fun TopBar(
 	TopAppBar(
 		title = {
 			if (hostCombatViewModel.isSharing) {
-				Text("Session ${hostCombatViewModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+				Text("Session ${hostCombatViewModel.sessionId}", color = MaterialTheme.colorScheme.onPrimary)
 			} else {
-				Text("New combat", color = MaterialTheme.colors.onPrimary)
+				Text("New combat", color = MaterialTheme.colorScheme.onPrimary)
 			}
 		},
 		navigationIcon = {
@@ -171,12 +172,12 @@ private fun TopBar(
 					DropdownMenuItem(onClick = {
 						displayDropdown = false
 						hostCombatViewModel.showSessionId()
-					}) {
+					}, text = {
 						Text(text = "Show Session Id")
-					}
+					})
 				}
 			}
 		},
-		backgroundColor = MaterialTheme.colors.primarySurface,
+		//backgroundColor = MaterialTheme.colorScheme.primarySurface,
 	)
 }

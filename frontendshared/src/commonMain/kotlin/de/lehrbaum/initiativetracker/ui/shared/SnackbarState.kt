@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.shared
 
-import androidx.compose.material.SnackbarDuration
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Stable
 
 @Stable

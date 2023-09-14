@@ -4,11 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 
+@ExperimentalMaterial3Api
 @Composable
 fun JoinScreen(drawerState: DrawerState, onJoin: (Int) -> Unit, onCancel: () -> Unit, asHost: Boolean) {
 	Scaffold(
@@ -16,7 +17,7 @@ fun JoinScreen(drawerState: DrawerState, onJoin: (Int) -> Unit, onCancel: () -> 
 			TopAppBar(
 				title = {
 					val text = if(asHost) "Host existing combat" else "Join existing combat"
-					Text(text, color = MaterialTheme.colors.onPrimary)
+					Text(text, color = MaterialTheme.colorScheme.onPrimary)
 				},
 				navigationIcon = { BurgerMenuButtonForDrawer(drawerState) }
 			)
