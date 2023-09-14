@@ -19,7 +19,6 @@ import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
-@Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifier: Modifier = Modifier) {
@@ -62,8 +61,12 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 			},
 			secondaryText = {
 				if (getsAllInformation) {
-					combatant.monsterDTO?.let {
-						Text("AC ${it.ac?.firstOrNull()?.ac}")
+					combatant.monsterDTO?.let { monster ->
+						val informationItems = listOf(
+							monster.ac?.firstOrNull()?.ac?.let { "AC $it" },
+							"${combatant.currentHp}/${combatant.maxHp}"
+						)
+						Text(informationItems.joinToString(", "))
 					}
 				}
 			},

@@ -31,7 +31,8 @@ class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNet
 	@ExperimentalCoroutinesApi // interestingly, this is not required to propagate to the interface, no opt-in required
 	override val monsters = monsterSources
 		.transformLatest { spellSources ->
-			spellSources.values.forEach { jsonFileName ->
+			// reversed because I hate AI coming first
+			spellSources.values.reversed().forEach { jsonFileName ->
 				val url = "https://5e.tools/data/bestiary/$jsonFileName"
 				try {
 					Napier.v("Loading bestiary from $url", tag = TAG)
