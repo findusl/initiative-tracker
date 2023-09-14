@@ -3,10 +3,11 @@ package de.lehrbaum.initiativetracker.ui.shared
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.ImageBitmap
-import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
+import io.ktor.http.URLBuilder
+import io.ktor.http.URLProtocol
+import io.ktor.http.Url
 
 @Stable
 data class CombatantViewModel(
@@ -30,13 +31,15 @@ data class CombatantViewModel(
 	/* This is a derived state since the monsters could still be loading. */
 	val monsterDTO by derivedStateOf { creatureType?.let { MainViewModel.Cache.getMonsterByName(it) } }
 
-	private var cachedImage: ImageBitmap? = null
-
-	suspend fun loadImage(): ImageBitmap? {
+	fun imageUrl(): Url? {
 		val monster = monsterDTO ?: return null
-		cachedImage?.let { return it }
-		cachedImage = GlobalInstances.bestiaryNetworkClient.loadImage(monster)
-		return cachedImage
+		if (!monster.hasToken) return null
+		// like https://5e.tools/img/MM/Air%20Elemental.png
+		return URLBuilder(
+			protocol = URLProtocol.HTTPS,
+			host = "5e.tools",
+			pathSegments = listOf("img", monster.source, monster.name + ".png")
+		).build()
 	}
 }
 

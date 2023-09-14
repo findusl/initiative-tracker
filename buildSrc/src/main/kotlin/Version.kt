@@ -12,6 +12,7 @@ object Version {
 	const val mockito = "5.4.0"
 	const val napier = "2.6.1"
 	const val openAiClient = "3.4.1"
+	const val kamel = "0.7.3"
 
 	object JetbrainsCompose {
 		const val foundation = "1.5.1"

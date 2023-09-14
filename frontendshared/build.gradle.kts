@@ -46,6 +46,8 @@ kotlin {
 
 				implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
 
+				implementation("media.kamel:kamel-image:${Version.kamel}")
+
 				implementation(Dependency.kotlinxSerialization)
 				implementation(Dependency.kotlinxCoroutines)
 				implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")

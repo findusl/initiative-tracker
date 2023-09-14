@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.networking
 
-import androidx.compose.ui.graphics.ImageBitmap
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.networking.bestiary.BestiaryCollectionDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.HpDTO
@@ -8,7 +7,6 @@ import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.get
 import io.ktor.client.request.request
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -22,8 +20,6 @@ private const val TAG = "BestiaryNetworkClient"
 
 interface BestiaryNetworkClient {
 	val monsters: Flow<List<MonsterDTO>>
-
-	suspend fun loadImage(monsterDTO: MonsterDTO): ImageBitmap
 }
 
 class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNetworkClient {
@@ -59,15 +55,5 @@ class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNet
 			}
 		}
 		.flowOn(Dispatchers.IO)
-
-	override suspend fun loadImage(monsterDTO: MonsterDTO): ImageBitmap {
-		val response = httpClient.get {
-
-		}
-		Napier.i("Got response $response", tag = TAG)
-		
-		TODO("Not yet implemented")
-	}
-
 
 }
