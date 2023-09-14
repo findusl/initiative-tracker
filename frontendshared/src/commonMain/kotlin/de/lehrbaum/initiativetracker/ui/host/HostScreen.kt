@@ -168,9 +168,11 @@ private fun TopBar(
 					expanded = displayDropdown,
 					onDismissRequest = { displayDropdown = false }
 				) {
-					DropdownMenuItem(onClick = hostCombatViewModel::showSessionId) {
+					DropdownMenuItem(onClick = {
+						displayDropdown = false
+						hostCombatViewModel.showSessionId()
+					}) {
 						Text(text = "Show Session Id")
-
 					}
 				}
 			}
