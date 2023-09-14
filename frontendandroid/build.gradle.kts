@@ -69,9 +69,6 @@ dependencies {
 	implementation(project(":frontendshared"))
 	implementation(project(":dtos"))
 
-	// For theme apparently needed. Need to look deeper into theming
-	implementation("com.google.android.material:material:1.9.0")
-
 	// Compose versions
 	val composeBom = platform("androidx.compose:compose-bom:${Version.Android.composeBom}")
 	implementation(composeBom)
