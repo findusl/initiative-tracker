@@ -54,7 +54,7 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 						   contentDescription = "Icon of ${combatant.name}",
 						   contentAlignment = Alignment.CenterStart,
 						   modifier = Modifier
-							   .widthIn(min = 30.dp, max = 48.dp) // guessed the values
+							   .widthIn(min = 20.dp, max = 40.dp) // guessed the values
 							   .aspectRatio(ratio = 1.0f)
 					   )
 				   }

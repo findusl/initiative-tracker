@@ -73,7 +73,7 @@ dependencies {
 	implementation("com.google.android.material:material:1.9.0")
 
 	// Compose versions
-	val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
+	val composeBom = platform("androidx.compose:compose-bom:${Version.Android.composeBom}")
 	implementation(composeBom)
 
 	testImplementation("junit:junit:4.13.2")

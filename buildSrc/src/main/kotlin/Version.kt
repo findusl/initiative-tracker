@@ -18,11 +18,11 @@ object Version {
 		const val foundation = "1.5.1"
 	}
 	object Android {
-		const val composeBom = "2023.08.00"
-		const val composeCompiler = "1.5.1"
+		const val composeBom = "2023.09.00"
+		const val composeCompiler = "1.5.3"
 		const val gradleBuildTools = "8.1.1"
 	}
 	object ApacheCommons {
-		const val compress = "1.23.0"
+		const val compress = "1.24.0"
 	}
 }
