@@ -26,6 +26,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 	clientCombatViewModelState.value = clientCombatViewModel
 	val connectionStateState = clientCombatViewModel.combatState.collectAsStateResettable(ClientCombatState.Connecting)
 	val coroutineScope = rememberCoroutineScope(clientCombatViewModel.sessionId)
+	KeepScreenOn()
 
 	ListDetailLayout(
 		list = {

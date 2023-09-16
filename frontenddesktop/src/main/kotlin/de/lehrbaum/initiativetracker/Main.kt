@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -9,8 +8,8 @@ import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import de.lehrbaum.initiativetracker.ui.main.MainScreen
-import de.lehrbaum.initiativetracker.ui.main.MainViewModelImpl
+import de.lehrbaum.initiativetracker.ui.main.MainComposable
+import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import java.util.logging.Level
@@ -27,7 +26,7 @@ fun main() = application {
 		Napier.base(DebugAntilog(handler = handlers))
 	}
 
-	val mainViewModel = MainViewModelImpl()
+	val mainViewModel = MainViewModel()
 
 	Window(
 		onCloseRequest = ::exitApplication,
@@ -37,9 +36,7 @@ fun main() = application {
 		val widthInt: Int? by derivedStateOf {
 			windowState.size.width.let { if (it.isSpecified) it.value.toInt() else null }
 		}
-		MaterialTheme {
-			MainScreen(mainViewModel, widthInt)
-		}
+		MainComposable(mainViewModel, widthInt)
 	}
 }
 
