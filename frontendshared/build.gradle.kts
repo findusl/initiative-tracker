@@ -83,8 +83,6 @@ kotlin {
 		val androidMain by getting {
 			dependsOn(jvmMain)
 			dependencies {
-				// android specific material design
-				implementation("androidx.compose.material:material")
 				// Android gradle module wants to have this on class path otherwise it complains
 				api("androidx.activity:activity-compose")
 

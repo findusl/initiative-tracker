@@ -25,6 +25,8 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 	val connectionStateState = hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
 
+	if (hostCombatViewModel.isSharing) KeepScreenOn()
+
 	ListDetailLayout(
 		list = {
 			val scaffoldState = rememberScaffoldState()

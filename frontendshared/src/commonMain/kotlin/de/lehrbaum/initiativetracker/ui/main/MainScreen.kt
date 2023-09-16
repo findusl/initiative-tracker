@@ -11,14 +11,20 @@ import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.character.CharacterListScreen
 import de.lehrbaum.initiativetracker.ui.client.ClientScreen
-import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import de.lehrbaum.initiativetracker.ui.shared.BackHandler
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(mainViewModel: MainViewModel, widthInt: Int? = null) {
+fun MainComposable(mainViewModel: MainViewModel, widthInt: Int? = null) {
+	MaterialTheme {
+		MainScreen(mainViewModel, widthInt)
+	}
+}
+
+@Composable
+private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 	val drawerState = rememberDrawerState(DrawerValue.Closed)
 	val drawerItems by mainViewModel.drawerItems.collectAsState(emptyList())
 
@@ -78,13 +84,9 @@ private fun Drawer(
 	}
 }
 
-@Suppress("OPT_IN_IS_NOT_ENABLED")
 @Composable
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
-	if (contentState.keepScreenOn) {
-		KeepScreenOn()
-	}
 	when(contentState) {
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
 		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
