@@ -37,6 +37,11 @@ fun CharacterChooserScreen(characterChooserViewModel: CharacterChooserViewModel)
 					chosen = item
 				})
 			}
+			if (characters.isEmpty()) {
+				item {
+					Text("No Characters available")
+				}
+			}
 		}
 	}
 	chosen?.let {
