@@ -101,6 +101,6 @@ private fun MainScreenContent(contentState: ContentState, drawerState: DrawerSta
 		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
 		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatViewModel)
 		is ContentState.JoinCombat ->
-			JoinScreen(drawerState, contentState.onJoin, contentState.onCancel, contentState.asHost)
+			JoinScreen(drawerState, contentState.joinViewModel)
 	}
 }

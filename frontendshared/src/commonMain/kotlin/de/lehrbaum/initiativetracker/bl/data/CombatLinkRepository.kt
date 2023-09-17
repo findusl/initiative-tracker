@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
-private const val SETTINGS_KEY = "links"
+private const val SETTINGS_KEY_V1 = "links"
+private const val SETTINGS_KEY_V2 = "links_v2"
 private const val SETTINGS_NAME = "combatlink"
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
@@ -24,14 +25,19 @@ object CombatLinkRepository {
 	}
 
 	private fun persistCombatLinks() =
-		settings.encodeValue(SETTINGS_KEY, combatLinks.value)
+		settings.encodeValue(SETTINGS_KEY_V2, combatLinks.value)
 
-	private fun loadCombatLinks() =
-		settings.decodeValue(SETTINGS_KEY, emptySet<CombatLink>())
+	private fun loadCombatLinks(): Set<CombatLink> {
+		settings.remove(SETTINGS_KEY_V1) // the old CombatLink did not specify the host, not convertible
+		return settings.decodeValue(SETTINGS_KEY_V2, emptySet())
+	}
 }
 
 @Serializable
 data class CombatLink(
-    val sessionId: Int,
-    val isHost: Boolean
+	val secureConnection: Boolean,
+	val host: String,
+	val port: Int,
+	val isHost: Boolean,
+	val sessionId: Int? = null,
 )

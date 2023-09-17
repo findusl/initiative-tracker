@@ -11,21 +11,22 @@ import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostCombatViewModel
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
+import de.lehrbaum.initiativetracker.ui.join.JoinViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Stable // assumes content is backed by mutableState variable. Hope I don't forget
-open class MainViewModel() {
+open class MainViewModel {
 	private val defaultDrawerItems = listOf(
 		DrawerItem.JoinCombat,
+		DrawerItem.JoinAsHost,
 		DrawerItem.HostCombat,
-		DrawerItem.HostExistingCombat,
 		DrawerItem.Characters
 	)
 	val drawerItems = CombatLinkRepository.combatLinks.map { combatLinks ->
-		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it.sessionId, it.isHost) }
+		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it) }
 	}
 
 	/** Keep a default hostCombatState to return to */
@@ -37,15 +38,15 @@ open class MainViewModel() {
 
 	fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == content.drawerItem) return // avoid double click race conditions
-        val newContent: ContentState = when (item) {
-            is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModel())
-            is DrawerItem.HostCombat -> hostCombatState
-            is DrawerItem.HostExistingCombat -> joinCombat(asHost = true)
-            is DrawerItem.JoinCombat -> joinCombat(asHost = false)
-            is DrawerItem.RememberedCombat -> {
-				if(item.isHost) hostCombat(item.id) else clientCombat(item.id)
+		val newContent: ContentState = when (item) {
+			is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModel())
+			is DrawerItem.HostCombat -> hostCombatState
+			is DrawerItem.JoinAsHost -> joinCombat(asHost = true)
+			is DrawerItem.JoinCombat -> joinCombat(asHost = false)
+			is DrawerItem.RememberedCombat -> {
+				if (item.combatLink.isHost) hostCombat(item.combatLink) else clientCombat(item.combatLink)
 			}
-        }
+		}
 		backstack.add(index = 0, content)
 		content = newContent
 	}
@@ -67,37 +68,34 @@ open class MainViewModel() {
 
 	private fun hostNewCombat(): ContentState.HostCombat {
 		val hostCombatModel = HostLocalCombatViewModelImpl {
-			switchToCombat(it, asHost = true)
+			switchToCombat(it)
 		}
-        return ContentState.HostCombat(hostCombatModel)
-    }
+		return ContentState.HostCombat(hostCombatModel)
+	}
 
-	private fun clientCombat(sessionId: Int): ContentState.ClientCombat {
-		val model = ClientCombatViewModelImpl(sessionId) {
+	private fun clientCombat(combatLink: CombatLink): ContentState.ClientCombat {
+		val model = ClientCombatViewModelImpl(combatLink) {
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
 		return ContentState.ClientCombat(model)
 	}
 
-	private fun hostCombat(sessionId: Int): ContentState.HostCombat {
-		val hostCombatModel = HostSharedCombatViewModelImpl(sessionId){
+	private fun hostCombat(combatLink: CombatLink): ContentState.HostCombat {
+		val hostCombatModel = HostSharedCombatViewModelImpl(combatLink) {
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
 		return ContentState.HostCombat(hostCombatModel)
 	}
 
 	private fun joinCombat(asHost: Boolean): ContentState.JoinCombat {
-		return ContentState.JoinCombat(
-			onJoin = { switchToCombat(it, asHost) },
-			onCancel = { onDrawerItemSelected(DrawerItem.HostCombat) },
-			asHost
-		)
+		val viewModel = JoinViewModel(onJoin = { switchToCombat(it) }, asHost)
+		return ContentState.JoinCombat(viewModel)
 	}
 
-	private fun switchToCombat(sessionId: Int, asHost: Boolean) {
-		CombatLinkRepository.addCombatLink(CombatLink(sessionId, asHost))
+	private fun switchToCombat(combatLink: CombatLink) {
+		CombatLinkRepository.addCombatLink(combatLink)
 		// At this point the item might not yet be visible in the drawer, but that should not matter
-		onDrawerItemSelected(DrawerItem.RememberedCombat(sessionId, asHost))
+		onDrawerItemSelected(DrawerItem.RememberedCombat(combatLink))
 	}
 
 	object Cache {
@@ -115,44 +113,51 @@ open class MainViewModel() {
 sealed interface DrawerItem {
 	val name: String
 
-	object JoinCombat : DrawerItem {
+	data object JoinCombat : DrawerItem {
 		override val name = "Join Combat"
 	}
 
-	object HostCombat : DrawerItem {
+	data object JoinAsHost : DrawerItem {
+		override val name = "Join Combat as Host"
+	}
+
+	data object HostCombat : DrawerItem {
 		override val name = "Host Combat"
 	}
 
-	object HostExistingCombat : DrawerItem {
-		override val name = "Host existing Combat"
-	}
-
-	object Characters : DrawerItem {
+	data object Characters : DrawerItem {
 		override val name = "Characters"
 	}
 
-	data class RememberedCombat(
-		val id: Int,
-		val isHost: Boolean,
-		override val name: String = id.toString() + if (isHost) " Host" else " Client"
-	) : DrawerItem
+	data class RememberedCombat(val combatLink: CombatLink) : DrawerItem {
+		override val name: String = combatLink.run {
+			val stringBuilder = StringBuilder()
+			if (isHost) stringBuilder.append("HOST ")
+			if (sessionId != null) {
+				stringBuilder.append(sessionId)
+				stringBuilder.append('\n')
+			}
+			stringBuilder.append(combatLink.host)
+			stringBuilder.toString()
+		}
+
+	}
 }
 
-sealed class ContentState(
-	val drawerItem: DrawerItem
-) {
+sealed class ContentState(val drawerItem: DrawerItem) {
 
 	data class HostCombat(val hostCombatViewModel: HostCombatViewModel) :
-		// FIXME ugly line, consider changing
-		ContentState(if (hostCombatViewModel.isSharing) DrawerItem.RememberedCombat(hostCombatViewModel.sessionId, isHost = true) else DrawerItem.HostCombat) {
-	}
+	// FIXME ugly line, consider changing
+		ContentState(
+			if (hostCombatViewModel.isSharing) DrawerItem.RememberedCombat(hostCombatViewModel.combatLink!!)
+			else DrawerItem.HostCombat
+		)
 
-	data class JoinCombat(val onJoin: (Int) -> Unit, val onCancel: () -> Unit, val asHost: Boolean) :
-		ContentState(if (asHost) DrawerItem.HostExistingCombat else DrawerItem.JoinCombat)
+	data class JoinCombat(val joinViewModel: JoinViewModel) :
+		ContentState(if (joinViewModel.asHost) DrawerItem.JoinAsHost else DrawerItem.JoinCombat)
 
 	data class ClientCombat(val clientCombatViewModel: ClientCombatViewModel) :
-		ContentState(DrawerItem.RememberedCombat(clientCombatViewModel.sessionId, isHost = false)) {
-	}
+		ContentState(DrawerItem.RememberedCombat(clientCombatViewModel.combatLink))
 
 	data class CharacterScreen(val characterListViewModel: CharacterListViewModel) : ContentState(DrawerItem.Characters)
 }

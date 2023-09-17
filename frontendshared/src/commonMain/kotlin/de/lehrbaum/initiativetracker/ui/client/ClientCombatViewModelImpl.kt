@@ -19,14 +19,19 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 data class ClientCombatViewModelImpl(
-	override val sessionId: Int,
+	override val combatLink: CombatLink,
 	private val leaveScreen: () -> Unit
 ): ClientCombatViewModel {
-	private val combatSession = ClientCombatSession(sessionId)
+	private val combatSession = ClientCombatSession(combatLink)
 
 	override val combatState = combatSession.state
 
 	override val snackbarState = mutableStateOf<SnackbarState?>(null)
+
+	override val title: String
+		get() {
+			return combatLink.sessionId?.let { "Joined $it at ${combatLink.host}" } ?: "Joined ${combatLink.host}"
+		}
 
 	override val ownerId = GeneralSettingsRepository().installationId
 
@@ -101,7 +106,7 @@ data class ClientCombatViewModelImpl(
 	}
 
 	override fun leaveCombat() {
-		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = false))
+		CombatLinkRepository.removeCombatLink(combatLink)
 		leaveScreen()
 		// theoretically by leaving the screen it should remove the flow from the Composition
 		// thereby cancelling the collection which in turn should cancel the Websocket connection

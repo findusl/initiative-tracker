@@ -25,7 +25,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 	val clientCombatViewModelState = remember { mutableStateOf(clientCombatViewModel) }
 	clientCombatViewModelState.value = clientCombatViewModel
 	val connectionStateState = clientCombatViewModel.combatState.collectAsStateResettable(ClientCombatState.Connecting)
-	val coroutineScope = rememberCoroutineScope(clientCombatViewModel.sessionId)
+	val coroutineScope = rememberCoroutineScope(clientCombatViewModel.combatLink)
 	KeepScreenOn()
 
 	ListDetailLayout(
@@ -99,7 +99,7 @@ private fun TopBar(
 ) {
 	TopAppBar(
 		title = {
-			Text("Joined ${clientCombatViewModel.sessionId}", color = MaterialTheme.colors.onPrimary)
+			Text(clientCombatViewModel.title, color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {

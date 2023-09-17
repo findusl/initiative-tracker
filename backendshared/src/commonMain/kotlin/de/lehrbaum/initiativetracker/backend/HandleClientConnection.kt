@@ -11,8 +11,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 private val logger = KtorSimpleLogger("main.ClientConnection")
 
-suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCommand.JoinSession) {
-	val session = sessions[joinSession.sessionId]
+suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCommand.JoiningCommand) {
+	val session = when(joinSession) {
+		is StartCommand.JoinDefaultSession -> defaultSession
+		is StartCommand.JoinSessionById -> sessions[joinSession.sessionId]
+	}
 	if (session == null) {
 		sendSerialized(JoinSessionResponse.SessionNotFound as JoinSessionResponse)
 		return

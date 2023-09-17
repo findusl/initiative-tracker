@@ -1,10 +1,12 @@
 package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.commands.HostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.StartCommand
+import de.lehrbaum.initiativetracker.dtos.commands.StartCommand.HostingCommand
 import de.lehrbaum.initiativetracker.networking.buildBackendWebsocket
 import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -17,7 +19,7 @@ import kotlin.time.Duration.Companion.milliseconds
 private const val TAG = "HostCombatSession"
 
 class HostCombatSession(
-	val sessionId: Int,
+	val combatLink: CombatLink,
 	private val combatController: CombatController,
 	private val delegate: Delegate
 ) {
@@ -40,34 +42,34 @@ class HostCombatSession(
 		.flowOn(Dispatchers.IO)
 
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(collector: FlowCollector<HostConnectionState>): Boolean {
-		val startMessage = StartCommand.JoinAsHost(sessionId) as StartCommand
+		val startMessage: StartCommand =
+			combatLink.sessionId?.let { StartCommand.JoinAsHostById(it) } ?: StartCommand.JoinDefaultSessionAsHost
 		this.sendSerialized(startMessage)
-		val response = receiveDeserialized<StartCommand.JoinAsHost.Response>()
+		val response = receiveDeserialized<HostingCommand.Response>()
 		when (response) {
-			is StartCommand.JoinAsHost.JoinedAsHost -> {
+			is HostingCommand.JoinedAsHost -> {
 				val combatState = response.combatModel
 				val combatants = combatState.combatants
 				combatController.overwriteWithExistingCombat(combatants, combatState.activeCombatantIndex)
 				collector.emit(HostConnectionState.Connected)
 			}
-			StartCommand.JoinAsHost.SessionAlreadyHasHost -> {
-				collector.emit(HostConnectionState.Disconnected("Session $sessionId already has a host."))
+			HostingCommand.SessionAlreadyHasHost -> {
+				collector.emit(HostConnectionState.Disconnected("Session $combatLink already has a host."))
 			}
-			StartCommand.JoinAsHost.SessionNotFound -> {
-				collector.emit(HostConnectionState.Disconnected("Session $sessionId not found."))
+			HostingCommand.SessionNotFound -> {
+				collector.emit(HostConnectionState.Disconnected("Session $combatLink not found."))
 			}
 		}
-		return response is StartCommand.JoinAsHost.JoinedAsHost
+		return response is HostingCommand.JoinedAsHost
 	}
 
-	@Suppress("OPT_IN_IS_NOT_ENABLED")
 	@OptIn(FlowPreview::class)
 	private suspend fun DefaultClientWebSocketSession.shareCombatUpdates() {
 		combine(combatController.activeCombatantIndex, combatController.combatants, ::CombatModel)
 			.debounce(200.milliseconds)
 			.distinctUntilChanged()
 			.collectLatest {
-				Napier.d("Sent combat update for Session $sessionId")
+				Napier.v("Sent combat update for Session $combatLink")
 				sendSerialized(HostCommand.CombatUpdatedCommand(it) as HostCommand)
 			}
 	}
@@ -107,7 +109,7 @@ class HostCombatSession(
 }
 
 sealed interface HostConnectionState {
-	object Connecting: HostConnectionState
-	object Connected: HostConnectionState
+	data object Connecting: HostConnectionState
+	data object Connected: HostConnectionState
 	data class Disconnected(val reason: String): HostConnectionState
 }

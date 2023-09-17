@@ -2,6 +2,7 @@ package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatState.*
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.commands.ClientCommand
@@ -24,7 +25,7 @@ import kotlin.coroutines.resume
 
 private const val TAG = "ClientCombatSession"
 
-class ClientCombatSession(val sessionId: Int) {
+class ClientCombatSession(val combatLink: CombatLink) {
 
 	private val outgoingMutex = Mutex()
 
@@ -50,13 +51,14 @@ class ClientCombatSession(val sessionId: Int) {
 		.flowOn(Dispatchers.IO)
 
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsClient(collector: FlowCollector<ClientCombatState>): Boolean {
-		val joinSessionRequest = StartCommand.JoinSession(sessionId) as StartCommand
+		val joinSessionRequest: StartCommand =
+			combatLink.sessionId?.let { StartCommand.JoinSessionById(it) } ?: StartCommand.JoinDefaultSession
 		sendSerialized(joinSessionRequest)
 		val response = receiveDeserialized<JoinSessionResponse>()
 		when (response) {
 			is JoinSessionResponse.JoinedSession -> collector.emit(Connected(response.combatModel))
 			JoinSessionResponse.SessionNotFound ->
-				collector.emit(Disconnected("Session with id $sessionId not found"))
+				collector.emit(Disconnected("Session for $combatLink not found"))
 		}
 		return response is JoinSessionResponse.JoinedSession
 	}
@@ -64,7 +66,7 @@ class ClientCombatSession(val sessionId: Int) {
 	private suspend fun DefaultClientWebSocketSession.handleUpdates(collector: FlowCollector<ClientCombatState>) {
 		while (true) {
 			val message = receiveDeserialized<ServerToClientCommand>()
-			// different approach with the for message in iterator might be more readable. But requires complex iterator code
+			// different approach with the for(message in collection) might be more readable. But requires complex iterator code
 			// val message = Json.decodeFromString<ServerToClientCommand>((frame as Frame.Text).readText())
 			when (message) {
 				is ServerToClientCommand.CombatUpdatedCommand -> collector.emit(Connected(message.combat))
@@ -94,7 +96,6 @@ class ClientCombatSession(val sessionId: Int) {
 		return sendClientCommand(ClientCommand.DamageCombatant(combatantId, damage, ownerId))
 	}
 
-	@Suppress("OPT_IN_IS_NOT_ENABLED") // The cancellation of a command cannot be bound to any Scope
 	@OptIn(DelicateCoroutinesApi::class)
 	private suspend fun sendClientCommand(command: ClientCommand): Boolean {
 		Napier.d("Attempting to send client command $command. Mutex locked: ${outgoingMutex.isLocked}")
@@ -104,6 +105,7 @@ class ClientCombatSession(val sessionId: Int) {
 			return suspendCancellableCoroutine {
 				outgoingContinuation = it
 				it.invokeOnCancellation {
+					// Using GlobalScope as the cancellation of a command cannot be bound to any Scope
 					GlobalScope.launch {
 						webSocketSession.sendSerialized(ClientCommand.CancelCommand as ClientCommand)
 					}
