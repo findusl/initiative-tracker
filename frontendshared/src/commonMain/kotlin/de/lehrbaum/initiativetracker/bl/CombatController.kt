@@ -5,20 +5,12 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-private const val DEFAULT_COMBATANT_TITLE = ""
-
 /**
  * Not thread safe! Has to be called from a single thread. Currently that is Dispatchers.Main
  * Probably should change that in the future...
  */
 class CombatController {
 	private var nextId = 0L
-
-	/**
-	 * The most recent name set on a combatant. Default for new combatants, as often monsters have the same name.
-	 */
-	// (Should this be in ViewModel rather? It seems like a user helping feature not a logical feature of combat)
-	private var latestName: String? = null
 
 	private var combatantCount = 0
 
@@ -57,7 +49,7 @@ class CombatController {
 	}
 
 	fun addCombatant(
-		name: String = latestName ?: DEFAULT_COMBATANT_TITLE,
+		name: String = "",
 		initiative: Int? = null // Sorts it to the bottom where the add button is.
 	): CombatantModel {
 		val newCombatant = CombatantModel(ownerId, id = nextId++, name, initiative = initiative)
@@ -80,10 +72,7 @@ class CombatController {
 	}
 
 	fun updateCombatant(updatedCombatant: CombatantModel) {
-		_combatants.updateCombatant(updatedCombatant.id, reSort = true) { combatantModel ->
-			if (combatantModel.name != updatedCombatant.name) {
-				latestName = updatedCombatant.name
-			}
+		_combatants.updateCombatant(updatedCombatant.id, reSort = true) {
 			updatedCombatant
 		}
 	}
