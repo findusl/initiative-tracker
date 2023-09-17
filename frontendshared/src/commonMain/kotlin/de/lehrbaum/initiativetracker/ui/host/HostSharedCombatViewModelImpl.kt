@@ -21,16 +21,17 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
 data class HostSharedCombatViewModelImpl(
-	override val sessionId: Int,
+	override val combatLink: CombatLink,
 	private val leaveScreen: () -> Unit
 ) : HostCombatViewModelBase(), HostCombatSession.Delegate {
-	private val hostCombatSession = HostCombatSession(sessionId, combatController, this)
+	private val hostCombatSession = HostCombatSession(combatLink, combatController, this)
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = hostCombatSession.hostConnectionState
 	override var confirmDamage: ConfirmDamageOptions? by mutableStateOf(null)
 		private set
 	private var confirmDamageContinuation: Continuation<Boolean>? = null
 	override val isSharing = true
+	override val title = "Hosting ${combatLink.sessionId}" // TODO handle case without sessionId
 
 	override fun onConfirmDamageDialogCancel() {
 		confirmDamageContinuation?.resume(false)
@@ -43,14 +44,19 @@ data class HostSharedCombatViewModelImpl(
 
 	override suspend fun closeSession() {
 		// failure is hard to handle, since we want it to be gone... This will not actually show as we leave the screen
-		GlobalInstances.backendNetworkClient.deleteSession(sessionId)
+		GlobalInstances.backendNetworkClient.deleteSession(combatLink)
 			.getOrNullAndHandle("Unable to delete combat on server")
-		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = true))
+		CombatLinkRepository.removeCombatLink(combatLink)
 		leaveScreen()
 	}
 
 	override fun showSessionId() {
-		snackbarState.value = SnackbarState.Copyable("SessionId: $sessionId", SnackbarDuration.Long, sessionId.toString())
+		if (combatLink.sessionId == null) return
+		snackbarState.value = SnackbarState.Copyable(
+			"SessionId: ${combatLink.sessionId}",
+			SnackbarDuration.Long,
+			combatLink.sessionId.toString()
+		)
 	}
 
 	override suspend fun handleDamageCombatantCommand(command: ServerToHostCommand.DamageCombatant): Boolean {

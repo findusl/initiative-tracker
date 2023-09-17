@@ -126,17 +126,13 @@ private fun TopBar(
 	drawerState: DrawerState,
 	hostCombatViewModel: HostCombatViewModel
 ) {
-	var displayDropdown by remember(hostCombatViewModel.sessionId) { mutableStateOf(false) }
+	var displayDropdown by remember(hostCombatViewModel.combatLink) { mutableStateOf(false) }
 
 	val coroutineScope = rememberCoroutineScope()
 
 	TopAppBar(
 		title = {
-			if (hostCombatViewModel.isSharing) {
-				Text("Session ${hostCombatViewModel.sessionId}", color = MaterialTheme.colors.onPrimary)
-			} else {
-				Text("New combat", color = MaterialTheme.colors.onPrimary)
-			}
+			Text(hostCombatViewModel.title, color = MaterialTheme.colors.onPrimary)
 		},
 		navigationIcon = {
 			BurgerMenuButtonForDrawer(drawerState)

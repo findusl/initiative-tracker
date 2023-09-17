@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import io.github.aakira.napier.Napier
@@ -13,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 
+const val SESSION_PATH = "/session"
+
 class BackendNetworkClient(private val httpClient: HttpClient) {
 	suspend fun createSession(combatants: List<CombatantModel>, activeCombatantIndex: Int): Result<Int> {
 		val combatDTO = CombatModel(activeCombatantIndex, combatants)
@@ -25,17 +28,20 @@ class BackendNetworkClient(private val httpClient: HttpClient) {
 				}
 				Napier.i("Response for create Session: $response")
 				response.bodyOrFailure()
+				// TODO handle different backends
 			}
 		}
 	}
 
-	suspend fun deleteSession(sessionId: Int): Result<Unit> {
+	suspend fun deleteSession(combatLink: CombatLink): Result<Unit> {
 		return runCatching {
 			withContext(Dispatchers.IO) {
-				val response = httpClient.delete {
-					backendHttpUrl("$SESSION_PATH/$sessionId")
-				}
-				Napier.i("Response for delete Session $sessionId: $response")
+				Napier.v("Attempting to delete Session $combatLink")
+		val response = httpClient.delete {
+			val path = combatLink.sessionId?.let { "$SESSION_PATH/$it" } ?: SESSION_PATH
+			backendHttpUrl(combatLink, path)
+		}
+		Napier.i("Response for delete Session: $response")
 			}
 		}
 	}

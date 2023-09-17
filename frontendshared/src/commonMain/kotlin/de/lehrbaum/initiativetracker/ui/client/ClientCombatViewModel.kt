@@ -3,6 +3,7 @@ package de.lehrbaum.initiativetracker.ui.client
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -13,7 +14,8 @@ import kotlinx.coroutines.flow.Flow
 interface ClientCombatViewModel {
 	val combatState: Flow<ClientCombatState>
 	val snackbarState: MutableState<SnackbarState?>
-	val sessionId: Int
+	val combatLink: CombatLink
+	val title: String
 	val ownerId: Long // TODO this should be hidden in future, it's not really a UI property
 	val characterChooserViewModel: CharacterChooserViewModel?
 	val editCombatantViewModel: EditCombatantViewModel?

@@ -2,6 +2,8 @@ package de.lehrbaum.initiativetracker.backend
 
 import de.lehrbaum.initiativetracker.dtos.commands.HostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.StartCommand
+import de.lehrbaum.initiativetracker.dtos.commands.StartCommand.HostingCommand
+import de.lehrbaum.initiativetracker.dtos.commands.StartCommand.JoinAsHostById
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
@@ -16,7 +18,7 @@ import kotlinx.coroutines.sync.withLock
 
 private val logger = KtorSimpleLogger("main.HostConnection")
 
-suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: StartCommand.HostingCommand) {
+suspend fun DefaultWebSocketServerSession.handleHostingCommand(hostingCommand: HostingCommand) {
 	var session: Session? = null
 	try {
 		session = obtainSession(hostingCommand) ?: return
@@ -82,26 +84,27 @@ private suspend fun DefaultWebSocketServerSession.handleHostCommands(session: Se
 	}
 }
 
-private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: StartCommand.HostingCommand): Session? {
-	when (hostingCommand) {
-		is StartCommand.JoinAsHost -> {
-			var session: Session? = null
-			val response: StartCommand.JoinAsHost.Response = sessionMutex.withLock {
-				val localSession = sessions[hostingCommand.sessionId]
-				return@withLock if (localSession == null) {
-					StartCommand.JoinAsHost.SessionNotFound
-				} else if (localSession.hostWebsocketSession?.isActive == true) {
-					StartCommand.JoinAsHost.SessionAlreadyHasHost
-				} else {
-					session = localSession
-					localSession.hostWebsocketSession = this
-					StartCommand.JoinAsHost.JoinedAsHost(localSession.combatState.value)
-				}
-			}
-			sendSerialized(response)
-			return session
+private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: HostingCommand): Session? {
+	var session: Session? = null
+	val response: HostingCommand.Response = sessionMutex.withLock {
+		val localSession = when (hostingCommand) {
+			is JoinAsHostById -> sessions[hostingCommand.sessionId]
+			StartCommand.JoinDefaultSessionAsHost -> defaultSession
+		}
+		if (localSession == null) {
+			HostingCommand.SessionNotFound
+		}
+		else if (localSession.hostWebsocketSession?.isActive == true) {
+			HostingCommand.SessionAlreadyHasHost
+		}
+		else {
+			session = localSession
+			localSession.hostWebsocketSession = this
+			HostingCommand.JoinedAsHost(localSession.combatState.value)
 		}
 	}
+	sendSerialized(response)
+	return session
 }
 
 private class HostSessionState(
