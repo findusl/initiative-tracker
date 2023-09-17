@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.networking
 
 import de.lehrbaum.initiativetracker.BuildKonfig
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.plugin
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -25,6 +26,7 @@ suspend inline fun <R> HttpClient.buildBackendWebsocket(
     request: HttpRequestBuilder.() -> Unit = {},
     crossinline block: suspend DefaultClientWebSocketSession.() -> R
 ): R {
+	// TODO handle different backends from combatLink
     plugin(WebSockets)
     val session = prepareRequest {
         this.method = method
@@ -41,8 +43,6 @@ suspend inline fun <R> HttpClient.buildBackendWebsocket(
         }
     }
 }
-
-const val SESSION_PATH = "/session"
 
 fun HttpRequestBuilder.backendWebsocketUrl(path: String) {
 	val scheme = when (BuildKonfig.environment) {
@@ -61,3 +61,11 @@ fun HttpRequestBuilder.backendHttpUrl(path: String) {
 	}
 	url(scheme, BuildKonfig.backendHost, BuildKonfig.backendPort, path)
 }
+
+fun HttpRequestBuilder.backendHttpUrl(combatLink: CombatLink, path: String) {
+	val scheme = if (combatLink.secureConnection) "https" else "http"
+	// TODO test when host contains a path
+	url(scheme, combatLink.host, combatLink.port, path)
+}
+
+

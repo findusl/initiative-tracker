@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
 import de.lehrbaum.initiativetracker.ui.composables.DamageOption
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
@@ -22,7 +23,8 @@ interface HostCombatViewModel: ErrorStateHolder {
 	val confirmDamage: ConfirmDamageOptions?
 	val combatStarted: Boolean
     val isSharing: Boolean
-	val sessionId: Int
+	val combatLink: CombatLink?
+	val title: String
 
     fun onCombatantClicked(combatantViewModel: CombatantViewModel)
     fun onCombatantLongClicked(combatant: CombatantViewModel)

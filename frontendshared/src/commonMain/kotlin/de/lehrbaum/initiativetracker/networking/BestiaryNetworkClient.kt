@@ -49,7 +49,7 @@ class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNet
 		.catch {
 			Napier.e("Error loading bestiary", it, tag = TAG)
 			if (it is Exception) { // for offline testing
-				// TODO find some way to identify the offline exception platform independent
+				// I could not find a way to identify the offline exception platform independent
 				emit(persistentListOf(MonsterDTO(name = "Offline Monster", dex = 14, source = "MM", hp = HpDTO(average = 42))))
 			} else {
 				emit(persistentListOf())

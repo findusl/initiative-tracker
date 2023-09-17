@@ -18,6 +18,7 @@ import kotlin.random.Random
 
 private val logger = KtorSimpleLogger("main.Logic")
 
+internal val defaultSession: Session? = null
 internal val sessions = mutableMapOf<Int, Session>()
 internal val sessionMutex = Mutex()
 
@@ -26,7 +27,7 @@ suspend fun DefaultWebSocketServerSession.handleWebsocketRequests() {
 
 	when (startCommand) {
 		is StartCommand.HostingCommand -> handleHostingCommand(startCommand)
-		is StartCommand.JoinSession -> handleJoinSession(startCommand)
+		is StartCommand.JoiningCommand -> handleJoinSession(startCommand)
 	}
 }
 

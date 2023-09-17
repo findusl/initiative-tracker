@@ -1,62 +1,60 @@
 package de.lehrbaum.initiativetracker.ui.join
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 
 @Composable
-fun JoinScreen(drawerState: DrawerState, onJoin: (Int) -> Unit, onCancel: () -> Unit, asHost: Boolean) {
+fun JoinScreen(drawerState: DrawerState, joinViewModel: JoinViewModel) {
 	Scaffold(
 		topBar = {
 			TopAppBar(
 				title = {
-					val text = if(asHost) "Host existing combat" else "Join existing combat"
+					val text = joinViewModel.title
 					Text(text, color = MaterialTheme.colors.onPrimary)
 				},
 				navigationIcon = { BurgerMenuButtonForDrawer(drawerState) }
 			)
 		}
 	) {
-		val sessionIdState = remember { mutableStateOf(0) }
-		val textError = remember { mutableStateOf(false) }
 		Column {
-			Text("Please provide a SessionId")
-			InputSessionIdTextField(sessionIdState, textError)
+			OutlinedTextField(
+				value = joinViewModel.hostFieldContent,
+				onValueChange = { input ->
+					joinViewModel.hostFieldContent = input
+				},
+				label = { Text("Host") },
+				isError = joinViewModel.hostFieldError,
+				modifier = Modifier.fillMaxWidth()
+			)
+			OutlinedTextField(
+				value = joinViewModel.combatIdFieldContent,
+				onValueChange = { input ->
+					joinViewModel.combatIdFieldContent = input
+				},
+				label = { Text("Combat Id (Optional)") },
+				isError = joinViewModel.combatIdFieldError,
+				modifier = Modifier.fillMaxWidth()
+			)
+			Row {
+				Switch(
+					checked = joinViewModel.secureConnectionChosen,
+					onCheckedChange = { joinViewModel.secureConnectionChosen = it }
+				)
+				Text("Use Secure Connection?")
+			}
 			Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-				Button(onClick = onCancel) {
-					Text("Cancel")
-				}
 				Button(
-					onClick = { onJoin(sessionIdState.value) },
-					enabled = !textError.value
+					onClick = { joinViewModel.onConnectPressed() },
+					enabled = joinViewModel.inputsAreValid
 				) {
-					Text("OK")
+					Text("Connect", modifier = Modifier.padding(start = 16.dp).align(CenterVertically))
 				}
 			}
 		}
 	}
-}
-
-@Composable
-fun InputSessionIdTextField(sessionIdState: MutableState<Int>, textError: MutableState<Boolean>) {
-	var text by remember { mutableStateOf("") }
-	OutlinedTextField(
-		value = text,
-		onValueChange = {  input ->
-			text = input
-			val parsedInput = input.toIntOrNull()
-			if (parsedInput != null) {
-				sessionIdState.value = parsedInput
-			}
-			textError.value = parsedInput == null
-		},
-		label = { Text("SessionId") },
-		isError = textError.value,
-		modifier = Modifier.fillMaxWidth()
-	)
 }

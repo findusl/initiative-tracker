@@ -110,4 +110,5 @@ gradle-app.setting
 frontendios/iosApp.xcworkspace/*
 frontendios/iosApp.xcodeproj/*
 !frontendios/iosApp.xcodeproj/project.pbxproj
+/.idea/kotlinScripting.xml
 /.idea/assetWizardSettings.xml
