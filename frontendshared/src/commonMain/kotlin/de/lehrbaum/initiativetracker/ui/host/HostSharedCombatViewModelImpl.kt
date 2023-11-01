@@ -42,8 +42,9 @@ data class HostSharedCombatViewModelImpl(
 	}
 
 	override suspend fun closeSession() {
-		// we are actively still hosting it. Whatever
+		// failure is hard to handle, since we want it to be gone... This will not actually show as we leave the screen
 		GlobalInstances.backendNetworkClient.deleteSession(sessionId)
+			.getOrNullAndHandle("Unable to delete combat on server")
 		CombatLinkRepository.removeCombatLink(CombatLink(sessionId, isHost = true))
 		leaveScreen()
 	}

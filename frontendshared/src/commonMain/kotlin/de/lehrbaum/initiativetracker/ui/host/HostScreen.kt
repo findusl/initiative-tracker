@@ -47,6 +47,8 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 		} else null,
 		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() }
 	)
+
+	hostCombatViewModel.ErrorComposable()
 }
 
 @ExperimentalMaterialApi
