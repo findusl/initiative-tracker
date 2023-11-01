@@ -8,11 +8,12 @@ import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
 import de.lehrbaum.initiativetracker.ui.composables.DamageOption
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 
 @Stable
-interface HostCombatViewModel {
+interface HostCombatViewModel: ErrorStateHolder {
 	val hostConnectionState: Flow<HostConnectionState>
     val combatants: Flow<List<CombatantViewModel>>
 	val editCombatantViewModel: State<EditCombatantViewModel?>

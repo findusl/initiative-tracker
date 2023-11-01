@@ -7,11 +7,13 @@ import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
+import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.combine
 
-abstract class HostCombatViewModelBase : HostCombatViewModel {
+abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder by Impl() {
 
 	protected var combatController: CombatController = CombatController()
 
