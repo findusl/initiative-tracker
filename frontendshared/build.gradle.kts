@@ -34,39 +34,43 @@ kotlin {
 	applyDefaultHierarchyTemplate()
 
 	sourceSets {
-		commonMain.dependencies {
-			implementation(project(path = ":dtos"))
+		commonMain {
+			dependencies {
+				implementation(project(path = ":dtos"))
 
-			implementation(compose.ui)
-			implementation(compose.foundation)
-			implementation(compose.material)
-			implementation(compose.runtime)
+				implementation(compose.ui)
+				implementation(compose.foundation)
+				implementation(compose.material)
+				implementation(compose.runtime)
 
-			implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
-			implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
+				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
+				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
 
-			implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
+				implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
 
-			implementation("media.kamel:kamel-image:${Version.kamel}")
+				implementation("media.kamel:kamel-image:${Version.kamel}")
 
-			implementation(Dependency.kotlinxSerialization)
-			implementation(Dependency.kotlinxCoroutines)
-			implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")
+				implementation(Dependency.kotlinxSerialization)
+				implementation(Dependency.kotlinxCoroutines)
+				implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")
 
-			implementation("io.ktor:ktor-client-core:${Version.ktor}")
-			implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
-			implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
-			implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
-			implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
-			implementation("io.ktor:ktor-client-logging:${Version.ktor}")
+				implementation("io.ktor:ktor-client-core:${Version.ktor}")
+				implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
+				implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
+				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
+				implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
+				implementation("io.ktor:ktor-client-logging:${Version.ktor}")
 
-			// Multiplatform Logging
-			api(Dependency.napier)
+				// Multiplatform Logging
+				api(Dependency.napier)
+			}
 		}
-		commonTest.dependencies {
-			implementation(kotlin("test"))
+		commonTest {
+			dependencies {
+				implementation(kotlin("test"))
+			}
 		}
-		// All jvm targets: Android and Jvm desktop
+		// All jvm targets, including android
 		val jvmTargetsMain by creating {
 			dependsOn(commonMain.get())
 			jvmMain.get().dependsOn(this)
@@ -75,22 +79,28 @@ kotlin {
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 			}
 		}
-		// Jvm non android
-		jvmMain.dependencies {
-			implementation(compose.desktop.common)
+		// non-android jvm targets
+		jvmMain {
+			dependencies {
+				implementation(compose.desktop.common)
+			}
 		}
-		androidMain.dependencies {
-			// Android gradle module wants to have this on class path otherwise it complains
-			api("androidx.activity:activity-compose")
+		androidMain {
+			dependencies {
+				// Android gradle module wants to have this on class path otherwise it complains
+				api("androidx.activity:activity-compose")
 
-			// Multiplatform logging
-			implementation(Dependency.napier)
+				// Multiplatform logging
+				implementation(Dependency.napier)
 
-			// To have Dispatchers.Main on Android
-			runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
+				// To have Dispatchers.Main on Android
+				runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
+			}
 		}
-		appleMain.dependencies {
-			implementation("io.ktor:ktor-client-darwin:${Version.ktor}")
+		appleMain {
+			dependencies {
+				implementation("io.ktor:ktor-client-darwin:${Version.ktor}")
+			}
 		}
 	}
 }
