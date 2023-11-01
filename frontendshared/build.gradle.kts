@@ -7,12 +7,12 @@ plugins {
 	id("com.android.library")
 	id("org.jetbrains.compose")
 	id("org.jetbrains.kotlin.plugin.serialization")
-	// Used to mimic BuildConfig on Multiplatform
+	// Used to mimic BuildConfig from Android on Multiplatform
 	id("com.codingfeline.buildkonfig") version Version.buildKonfig
 }
 
 kotlin {
-	jvm("desktop")
+	jvm()
 	androidTarget {
 		compilations.all {
 			kotlinOptions {
@@ -27,84 +27,70 @@ kotlin {
 	).forEach { iosTarget ->
 		iosTarget.binaries.framework {
 			baseName = "shared"
-			isStatic = true
+			binaryOption("bundleId", "de.lehrbaum.initiativetracker")
 		}
 	}
 
+	applyDefaultHierarchyTemplate()
+
 	sourceSets {
-		val commonMain by getting {
-			dependencies {
-				implementation(project(path = ":dtos"))
+		commonMain.dependencies {
+			implementation(project(path = ":dtos"))
 
-				implementation(compose.ui)
-				implementation(compose.foundation)
-				implementation(compose.material)
-				implementation(compose.runtime)
+			implementation(compose.ui)
+			implementation(compose.foundation)
+			implementation(compose.material)
+			implementation(compose.runtime)
 
-				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
-				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
+			implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
+			implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
 
-				implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
+			implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
 
-				implementation("media.kamel:kamel-image:${Version.kamel}")
+			implementation("media.kamel:kamel-image:${Version.kamel}")
 
-				implementation(Dependency.kotlinxSerialization)
-				implementation(Dependency.kotlinxCoroutines)
-				implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")
+			implementation(Dependency.kotlinxSerialization)
+			implementation(Dependency.kotlinxCoroutines)
+			implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")
 
-				implementation("io.ktor:ktor-client-core:${Version.ktor}")
-				implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
-				implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
-				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
-				implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
-				implementation("io.ktor:ktor-client-logging:${Version.ktor}")
+			implementation("io.ktor:ktor-client-core:${Version.ktor}")
+			implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
+			implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
+			implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
+			implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
+			implementation("io.ktor:ktor-client-logging:${Version.ktor}")
 
-				// Multiplatform Logging
-				api(Dependency.napier)
-			}
+			// Multiplatform Logging
+			api(Dependency.napier)
 		}
-		val commonTest by getting {
-			dependencies {
-				implementation(kotlin("test"))
-			}
+		commonTest.dependencies {
+			implementation(kotlin("test"))
 		}
-		val jvmMain by creating {
-			dependsOn(commonMain)
+		// All jvm targets: Android and Jvm desktop
+		val jvmTargetsMain by creating {
+			dependsOn(commonMain.get())
+			jvmMain.get().dependsOn(this)
+			androidMain.get().dependsOn(this)
 			dependencies {
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
 			}
 		}
-		val desktopMain by getting {
-			dependsOn(jvmMain)
-			dependencies {
-				implementation(compose.desktop.common)
-			}
+		// Jvm non android
+		jvmMain.dependencies {
+			implementation(compose.desktop.common)
 		}
-		val androidMain by getting {
-			dependsOn(jvmMain)
-			dependencies {
-				// Android gradle module wants to have this on class path otherwise it complains
-				api("androidx.activity:activity-compose")
+		androidMain.dependencies {
+			// Android gradle module wants to have this on class path otherwise it complains
+			api("androidx.activity:activity-compose")
 
-				// Multiplatform logging
-				implementation(Dependency.napier)
+			// Multiplatform logging
+			implementation(Dependency.napier)
 
-				// To have Dispatchers.Main on Android
-				runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
-			}
+			// To have Dispatchers.Main on Android
+			runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
 		}
-		val androidUnitTest by getting
-		val iosX64Main by getting
-		val iosArm64Main by getting
-		val iosSimulatorArm64Main by getting
-		val iosMain by creating {
-			dependsOn(commonMain)
-			iosX64Main.dependsOn(this)
-			iosArm64Main.dependsOn(this)
-			iosSimulatorArm64Main.dependsOn(this)
-			dependencies {
-				implementation("io.ktor:ktor-client-darwin:${Version.ktor}")
-			}
+		appleMain.dependencies {
+			implementation("io.ktor:ktor-client-darwin:${Version.ktor}")
 		}
 	}
 }
@@ -148,6 +134,7 @@ buildkonfig {
 
 android {
 	namespace = "de.lehrbaum.initiativetracker"
+	// TODO Might not need the rest anymore
 	compileSdk = 34
 	defaultConfig {
 		minSdk = 28
@@ -156,8 +143,4 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
 	}
-}
-
-fun org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions.enableContextReceivers() {
-	freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
 }
