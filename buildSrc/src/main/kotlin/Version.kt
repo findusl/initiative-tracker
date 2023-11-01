@@ -1,7 +1,7 @@
 object Version {
 	/* Limited by compose multiplatform.
 	https://github.com/JetBrains/compose-multiplatform/blob/master/VERSIONING.md#kotlin-compatibility*/
-	const val kotlin = "1.9.10"
+	const val kotlin = "1.9.20"
 	const val kotlinxSerialization = "1.6.0"
 	const val kotlinxCollections = "0.3.6"
 	const val coroutines = "1.7.3"

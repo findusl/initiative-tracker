@@ -5,7 +5,7 @@ plugins {
 	// Plugin helps find available updates for dependencies https://github.com/ben-manes/gradle-versions-plugin
 	id("com.github.ben-manes.versions") version Version.versionPlugin
 
-	// this is necessary to avoid the plugins to be loaded multiple times
+	// this is necessary to avoid the plugins loaded multiple times
 	kotlin("multiplatform") version Version.kotlin apply false
 	id("org.jetbrains.compose") version Version.JetbrainsCompose.foundation apply false
 }
