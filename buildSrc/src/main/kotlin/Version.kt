@@ -8,18 +8,17 @@ object Version {
 	const val ktor = "2.3.5"
 	const val logback = "1.4.11"
 	const val buildKonfig = "0.14.0"
-	const val mppSettings = "1.0.0"
-	const val mockito = "5.4.0"
+	const val mppSettings = "1.1.0"
 	const val napier = "2.6.1"
 	const val openAiClient = "3.5.0"
-	const val kamel = "0.7.3"
-	const val versionPlugin = "0.48.0"
+	const val kamel = "0.8.2"
+	const val versionPlugin = "0.49.0"
 
 	object JetbrainsCompose {
-		const val foundation = "1.5.3"
+		const val foundation = "1.5.10"
 	}
 	object Android {
-		const val composeBom = "2023.10.00"
+		const val composeBom = "2023.10.01"
 		const val composeCompiler = "1.5.3"
 		const val gradleBuildTools = "8.1.2"
 	}
