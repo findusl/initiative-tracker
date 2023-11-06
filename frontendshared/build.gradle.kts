@@ -27,7 +27,8 @@ kotlin {
 	).forEach { iosTarget ->
 		iosTarget.binaries.framework {
 			baseName = "shared"
-			binaryOption("bundleId", "de.lehrbaum.initiativetracker")
+			// Needs to contain the base bundleId
+			binaryOption("bundleId", "de.lehrbaum.initiativetracker.shared")
 		}
 	}
 
