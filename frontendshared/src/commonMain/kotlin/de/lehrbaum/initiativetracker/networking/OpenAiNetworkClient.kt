@@ -22,7 +22,7 @@ class OpenAiNetworkClient(token: String) {
 
 	@BetaOpenAI
 	suspend fun suggestMonsterName(monsterType: String): String? {
-		// TODO could provide the fluff from https://5e.tools/data/bestiary/fluff-bestiary-mm.json
+		// TASK could provide the fluff from https://5e.tools/data/bestiary/fluff-bestiary-mm.json
 		val request = ChatCompletionRequest(
 			model = ModelId("gpt-3.5-turbo"),
 			messages = listOf(

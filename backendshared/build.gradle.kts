@@ -63,13 +63,13 @@ tasks.register<Exec>("buildNativeImageToTarFile") {
 	description = "Save the Docker image as a tar file."
 	dependsOn("publishNativeImageToLocalRegistry")
 
-	commandLine(buildList {// different approach of building the command
+	commandLine(buildList {
 		add("docker")
 		add("save")
 		add("-o")
 		add("$fullProjectName.tar")
 		add("$fullProjectName:latest")
-		// TODO this image cannot build on other architectures like mac arm
+		// TASK this image cannot build on other architectures like mac arm
 	})
 }
 

@@ -147,7 +147,7 @@ sealed interface DrawerItem {
 sealed class ContentState(val drawerItem: DrawerItem) {
 
 	data class HostCombat(val hostCombatViewModel: HostCombatViewModel) :
-	// FIXME ugly line, consider changing
+	// TASK ugly line, change if possible
 		ContentState(
 			if (hostCombatViewModel.isSharing) DrawerItem.RememberedCombat(hostCombatViewModel.combatLink!!)
 			else DrawerItem.HostCombat

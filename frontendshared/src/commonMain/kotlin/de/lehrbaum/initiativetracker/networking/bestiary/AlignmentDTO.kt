@@ -40,7 +40,7 @@ enum class AlignmentDTO {
 internal object AlignmentDTODeserializer : JsonTransformingSerializer<AlignmentDTO>(AlignmentDTO.serializer()) {
 	override fun transformDeserialize(element: JsonElement): JsonElement {
 		if (element !is JsonPrimitive) {
-			// TODO handle chance alignment:
+			// TASK handle chance alignment:
 			/*
 			"alignment": [
 				{

@@ -52,7 +52,7 @@ abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder b
 
 	override fun deleteCombatant(combatantViewModel: CombatantViewModel) {
 		mostRecentDeleted = combatController.deleteCombatant(combatantViewModel.id)
-		// TODO show dialog with undo option
+		// TASK show dialog with undo option
 	}
 
 	override fun disableCombatant(combatantViewModel: CombatantViewModel) {
