@@ -16,7 +16,7 @@ interface ClientCombatViewModel {
 	val snackbarState: MutableState<SnackbarState?>
 	val combatLink: CombatLink
 	val title: String
-	val ownerId: Long // TODO this should be hidden in future, it's not really a UI property
+	val ownerId: Long // TASK this should be hidden in future, it's not really a UI property
 	val characterChooserViewModel: CharacterChooserViewModel?
 	val editCombatantViewModel: EditCombatantViewModel?
 	val assignDamageCombatant: CombatantViewModel?
