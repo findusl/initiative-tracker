@@ -7,7 +7,7 @@ object Version {
 	const val coroutines = "1.7.3"
 	const val ktor = "2.3.5"
 	const val logback = "1.4.11"
-	const val buildKonfig = "0.14.0"
+	const val buildKonfig = "0.15.0"
 	const val mppSettings = "1.1.0"
 	const val napier = "2.6.1"
 	const val openAiClient = "3.5.0"
