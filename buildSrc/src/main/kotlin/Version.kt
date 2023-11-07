@@ -19,7 +19,7 @@ object Version {
 	}
 	object Android {
 		const val composeBom = "2023.10.01"
-		const val composeCompiler = "1.5.3"
+		const val composeCompiler = "1.5.4"
 		const val gradleBuildTools = "8.1.2"
 	}
 	object ApacheCommons {
