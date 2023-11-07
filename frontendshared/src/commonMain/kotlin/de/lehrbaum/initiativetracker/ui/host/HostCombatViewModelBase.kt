@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.bl.CombatController
+import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.combine
 
 abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder by Impl() {
 
-	protected var combatController: CombatController = CombatController()
+	protected var combatController: CombatController = CombatController(GeneralSettingsRepository())
 
 	override val combatants = combatController.combatants
 		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
