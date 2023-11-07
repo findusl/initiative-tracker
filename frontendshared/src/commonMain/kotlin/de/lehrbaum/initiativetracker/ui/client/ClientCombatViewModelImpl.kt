@@ -28,7 +28,7 @@ data class ClientCombatViewModelImpl(
 
 	override val snackbarState = mutableStateOf<SnackbarState?>(null)
 
-	override val ownerId = GeneralSettingsRepository.installationId
+	override val ownerId = GeneralSettingsRepository().installationId
 
 	override var characterChooserViewModel by mutableStateOf<CharacterChooserViewModel?>(null)
 		private set

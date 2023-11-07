@@ -5,7 +5,7 @@ import kotlin.random.Random
 private const val APP_ID_KEY = "id"
 private const val SETTINGS_NAME = "settings"
 
-object GeneralSettingsRepository {
+class GeneralSettingsRepository {
 	private val settings = createSettingsFactory().create(SETTINGS_NAME)
 
 	val installationId = run {

@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
  * Not thread safe! Has to be called from a single thread. Currently that is Dispatchers.Main
  * Probably should change that in the future...
  */
-class CombatController {
+class CombatController(
+	generalSettingsRepository: GeneralSettingsRepository
+) {
 	private var nextId = 0L
 
 	private var combatantCount = 0
@@ -22,7 +24,7 @@ class CombatController {
 	val activeCombatantIndex: StateFlow<Int>
 		get() = _activeCombatantIndex
 
-	val ownerId = GeneralSettingsRepository.installationId
+	val ownerId = generalSettingsRepository.installationId
 
 	fun nextTurn() {
 		val startingIndex = activeCombatantIndex.value

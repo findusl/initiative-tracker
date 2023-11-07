@@ -1,5 +1,8 @@
 package de.lehrbaum.initiativetracker.bl
 
+import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
+import io.mockk.every
+import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -7,10 +10,12 @@ import kotlin.test.assertTrue
 
 class CombatControllerTest {
 	private lateinit var combatController: CombatController
+	private val generalSettingsRepository = mockk<GeneralSettingsRepository>()
 
 	@BeforeTest
 	fun setUp() {
-		combatController = CombatController()
+		every { generalSettingsRepository.installationId } returns 1
+		combatController = CombatController(generalSettingsRepository)
 	}
 
 	@Test
@@ -93,16 +98,14 @@ class CombatControllerTest {
 
 	@Test
 	fun `combatants should be sorted by initiative`() {
-		// Arrange
-		val controller = CombatController()
 
 		// Add combatants out of order
-		controller.addCombatant(initiative = 10)
-		controller.addCombatant(initiative = 5)
-		controller.addCombatant(initiative = 15)
+		combatController.addCombatant(initiative = 10)
+		combatController.addCombatant(initiative = 5)
+		combatController.addCombatant(initiative = 15)
 
 		// Act
-		val sortedCombatants = controller.combatants.value
+		val sortedCombatants = combatController.combatants.value
 
 		// Assert
 		assertEquals(15, sortedCombatants[0].initiative)
@@ -112,16 +115,14 @@ class CombatControllerTest {
 
 	@Test
 	fun `combatants should be sorted by initiative and then by id if initiative is equal`() {
-		// Arrange
-		val controller = CombatController()
 
 		// Add combatants with equal initiatives
-		controller.addCombatant(initiative = 10)
-		controller.addCombatant(initiative = 10)
-		controller.addCombatant(initiative = 10)
+		combatController.addCombatant(initiative = 10)
+		combatController.addCombatant(initiative = 10)
+		combatController.addCombatant(initiative = 10)
 
 		// Act
-		val sortedCombatants = controller.combatants.value
+		val sortedCombatants = combatController.combatants.value
 
 		// Assert
 		assertEquals(3, sortedCombatants.size)

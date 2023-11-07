@@ -12,14 +12,9 @@ plugins {
 }
 
 kotlin {
+	jvmToolchain(17)
 	jvm()
-	androidTarget {
-		compilations.all {
-			kotlinOptions {
-				jvmTarget = "17"
-			}
-		}
-	}
+	androidTarget()
 	listOf(
 		iosX64(),
 		iosArm64(),
@@ -71,6 +66,7 @@ kotlin {
 				implementation(kotlin("test"))
 			}
 		}
+		val androidUnitTest by getting {  } // not part of the accessors for some reason
 		// All jvm targets, including android
 		val jvmTargetsMain by creating {
 			dependsOn(commonMain.get())
@@ -78,6 +74,15 @@ kotlin {
 			androidMain.get().dependsOn(this)
 			dependencies {
 				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
+			}
+		}
+		val jvmTargetsTest by creating {
+			dependsOn(commonTest.get())
+			jvmTest.get().dependsOn(this)
+			androidUnitTest.dependsOn(this)
+			dependencies {
+				implementation("io.mockk:mockk:${Version.mockk}")
+				implementation(kotlin("test-junit"))
 			}
 		}
 		// non-android jvm targets
@@ -104,6 +109,13 @@ kotlin {
 			}
 		}
 	}
+}
+
+tasks.register("printSourceSets") {
+		println("Defined source sets:")
+		kotlin.sourceSets.forEach {
+			println(it.name)
+		}
 }
 
 // part of BuildKonfig plugin
@@ -145,13 +157,5 @@ buildkonfig {
 
 android {
 	namespace = "de.lehrbaum.initiativetracker"
-	// TODO Might not need the rest anymore
 	compileSdk = 34
-	defaultConfig {
-		minSdk = 28
-	}
-	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
-	}
 }
