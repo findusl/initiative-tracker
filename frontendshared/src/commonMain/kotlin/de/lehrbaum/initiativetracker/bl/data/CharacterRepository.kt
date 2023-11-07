@@ -12,7 +12,6 @@ private const val SETTINGS_NAME = "CHARACTER_PREFERENCES"
 
 private const val SETTINGS_KEY = "CHARACTERS"
 
-@Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
 class CharacterRepository {
 	private val settings = createSettingsFactory().create(SETTINGS_NAME)

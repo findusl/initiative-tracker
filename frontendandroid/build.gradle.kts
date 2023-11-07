@@ -24,6 +24,10 @@ if (localProperties.exists()) {
 	}
 }
 
+kotlin {
+	jvmToolchain(17)
+}
+
 android {
 	compileSdk = 34
 
@@ -31,8 +35,8 @@ android {
 		applicationId = "de.lehrbaum.initiativetracker"
 		minSdk = 28
 		targetSdk = 34
-		versionCode = 1
-		versionName = "0.1.0"
+		versionCode = 2
+		versionName = "1.0.0"
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 	}
@@ -45,10 +49,7 @@ android {
 		}
 	}
 
-	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
-	}
+
 	buildFeatures {
 		dataBinding = true
 		viewBinding = true
@@ -57,10 +58,6 @@ android {
 	}
 	composeOptions {
 		kotlinCompilerExtensionVersion = Version.Android.composeCompiler
-	}
-	kotlinOptions {
-		enableContextReceivers()
-		jvmTarget = "17"
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 }

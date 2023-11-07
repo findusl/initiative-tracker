@@ -1,9 +1,11 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     application
     kotlin("jvm")
     id("org.jetbrains.compose")
+}
+
+kotlin {
+	jvmToolchain(17)
 }
 
 dependencies {
@@ -15,10 +17,4 @@ dependencies {
 
 application {
 	mainClass.set("de.lehrbaum.initiativetracker.MainKt")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }
