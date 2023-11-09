@@ -4,6 +4,7 @@ import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
@@ -28,12 +29,9 @@ data class ClientCombatViewModelImpl(
 
 	override val snackbarState = mutableStateOf<SnackbarState?>(null)
 
-	override val title: String
-		get() {
-			return combatLink.sessionId?.let { "Joined $it at ${combatLink.host}" } ?: "Joined ${combatLink.host}"
-		}
+	override val title = "Joined ${combatLink.userDescription}"
 
-	override val ownerId = GeneralSettingsRepository().installationId
+	override val ownerId = GlobalInstances.generalSettingsRepository.installationId
 
 	override var characterChooserViewModel by mutableStateOf<CharacterChooserViewModel?>(null)
 		private set

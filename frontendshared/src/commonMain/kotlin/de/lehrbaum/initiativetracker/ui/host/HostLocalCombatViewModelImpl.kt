@@ -23,8 +23,7 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 
 	override suspend fun shareCombat() {
 		GlobalInstances.backendNetworkClient
-			.createSession(combatController.combatants.value, combatController.activeCombatantIndex.value)
-		TODO("Request information about server")
+			.createSession(combatController.combatants.value, combatController.activeCombatantIndex.value, TODO())
 			//.getOrNullAndHandle("Unable to create combat on Server.")
 			//?.let { navigateToSharedCombat(it) }
 	}

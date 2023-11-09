@@ -1,7 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.BuildKonfig
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.bl.data.Backend
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.plugin
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -21,16 +20,16 @@ import kotlinx.coroutines.cancel
  * The websocket coroutineContext is cancelled once the block finishes. Weirdly not standard behaviour.
  */
 suspend inline fun <R> HttpClient.buildBackendWebsocket(
+	backend: Backend,
     method: HttpMethod = HttpMethod.Get,
     path: String = SESSION_PATH,
     request: HttpRequestBuilder.() -> Unit = {},
     crossinline block: suspend DefaultClientWebSocketSession.() -> R
 ): R {
-	// TODO handle different backends from combatLink
     plugin(WebSockets)
     val session = prepareRequest {
         this.method = method
-		backendWebsocketUrl(path)
+		backendWebsocketUrl(backend, path)
         request()
     }
 
@@ -44,28 +43,15 @@ suspend inline fun <R> HttpClient.buildBackendWebsocket(
     }
 }
 
-fun HttpRequestBuilder.backendWebsocketUrl(path: String) {
-	val scheme = when (BuildKonfig.environment) {
-		"lan" -> "ws"
-		"remote" -> "wss"
-		else -> throw UnsupportedOperationException("Unsupported build environment ${BuildKonfig.environment}")
-	}
-	url(scheme, BuildKonfig.backendHost, BuildKonfig.backendPort, path)
+fun HttpRequestBuilder.backendWebsocketUrl(backend: Backend, path: String) {
+	val scheme = if(backend.secureConnection) "wss" else "ws"
+	url(scheme, backend.hostUrl, backend.port, path)
 }
 
-fun HttpRequestBuilder.backendHttpUrl(path: String) {
-	val scheme = when (BuildKonfig.environment) {
-		"lan" -> "http"
-		"remote" -> "https"
-		else -> throw UnsupportedOperationException("Unsupported build environment ${BuildKonfig.environment}")
-	}
-	url(scheme, BuildKonfig.backendHost, BuildKonfig.backendPort, path)
-}
-
-fun HttpRequestBuilder.backendHttpUrl(combatLink: CombatLink, path: String) {
-	val scheme = if (combatLink.secureConnection) "https" else "http"
+fun HttpRequestBuilder.backendHttpUrl(backend: Backend, path: String) {
+	val scheme = if (backend.secureConnection) "https" else "http"
 	// TODO test when host contains a path
-	url(scheme, combatLink.host, combatLink.port, path)
+	url(scheme, backend.hostUrl, backend.port, path)
 }
 
 
