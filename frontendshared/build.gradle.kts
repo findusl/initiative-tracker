@@ -1,5 +1,4 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.*
 import java.util.*
 
 plugins {
@@ -118,7 +117,7 @@ tasks.register("printSourceSets") {
 		}
 }
 
-// part of BuildKonfig plugin
+// from BuildKonfig plugin to define some defaults
 buildkonfig {
 	val localProperties = Properties()
 	val localPropertiesFile: File = project.rootProject.file("local.properties")
@@ -134,24 +133,13 @@ buildkonfig {
 	defaultConfigs {
 		val openaiApiKey = localProperties.getProperty("openai.api.key", null) ?: null
 		buildConfigField(STRING, "openaiApiKey", openaiApiKey, nullable = true)
-	}
 
-	defaultConfigs("lan") {
-		buildConfigField(STRING, "environment", "lan")
-
-		val host = localProperties.getProperty("backend.lan.host", "\"localhost\"")
-		val port = localProperties.getProperty("backend.lan.port", "8080")
+		val host = localProperties.getProperty("backend.host", "\"localhost\"")
+		val port = localProperties.getProperty("backend.port", "8080")
+		val secure = localProperties.getProperty("backend.secure", "false")
 		buildConfigField(STRING, "backendHost", host)
 		buildConfigField(INT, "backendPort", port)
-	}
-
-	defaultConfigs("remote") {
-		buildConfigField(STRING, "environment", "remote")
-
-		val host = localProperties.getProperty("backend.remote.host", "\"undefined\"")
-		val port = localProperties.getProperty("backend.remote.port", "443")
-		buildConfigField(STRING, "backendHost", host)
-		buildConfigField(INT, "backendPort", port)
+		buildConfigField(BOOLEAN, "backendSecure", secure)
 	}
 }
 

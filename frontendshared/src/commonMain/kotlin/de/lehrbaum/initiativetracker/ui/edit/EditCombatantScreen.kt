@@ -142,7 +142,7 @@ private fun confirmApplyMonsterDialog(
 		) {
 			Text(text = "Apply stats of ${editCombatantViewModel.monsterTypeName} where known?")
 			OkCancelButtonRow(
-				mutableStateOf(true),
+				true,
 				{ continuation.resume(false) },
 				onSubmit = { continuation.resume(true) }
 			)

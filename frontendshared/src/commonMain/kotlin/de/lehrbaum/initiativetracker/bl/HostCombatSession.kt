@@ -26,7 +26,7 @@ class HostCombatSession(
 	val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
 		try {
-			GlobalInstances.httpClient.buildBackendWebsocket {
+			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backend) {
 				if(joinSessionAsHost(this@flow)) {
 					launch { shareCombatUpdates() }
 					receiveEvents()

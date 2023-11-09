@@ -31,7 +31,7 @@ data class HostSharedCombatViewModelImpl(
 		private set
 	private var confirmDamageContinuation: Continuation<Boolean>? = null
 	override val isSharing = true
-	override val title = "Hosting ${combatLink.sessionId}" // TODO handle case without sessionId
+	override val title = "Hosting ${combatLink.userDescription}"
 
 	override fun onConfirmDamageDialogCancel() {
 		confirmDamageContinuation?.resume(false)
@@ -53,7 +53,7 @@ data class HostSharedCombatViewModelImpl(
 	override fun showSessionId() {
 		if (combatLink.sessionId == null) return
 		snackbarState.value = SnackbarState.Copyable(
-			"SessionId: ${combatLink.sessionId}",
+			"SessionId: ${combatLink.sessionId ?: "default"}",
 			SnackbarDuration.Long,
 			combatLink.sessionId.toString()
 		)

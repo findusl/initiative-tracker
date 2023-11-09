@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OkCancelButtonRow(
-	submittable: State<Boolean>,
+	submittable: Boolean,
 	onCancel: () -> Unit,
 	onSubmit: () -> Unit,
 ) {
@@ -37,7 +37,7 @@ fun OkCancelButtonRow(
         Button(
             onClick = onSubmit,
             shape = RoundedCornerShape(50.dp),
-			enabled = submittable.value,
+			enabled = submittable,
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth()
@@ -50,10 +50,10 @@ fun OkCancelButtonRow(
 
 @Composable
 fun OkCancelButtonRow(
-	submittable: State<Boolean>,
+	submittable: Boolean,
 	onCancel: () -> Unit,
-	onSubmit: suspend () -> Unit,
-	coroutineScope: CoroutineScope,
+	onSubmitSuspend: suspend () -> Unit,
+	coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
 	var showLoadingSpinner by remember { mutableStateOf(false) }
     Row(
@@ -76,12 +76,12 @@ fun OkCancelButtonRow(
 				if (showLoadingSpinner) return@Button
 				coroutineScope.launch {
 					showLoadingSpinner = true
-					onSubmit()
+					onSubmitSuspend()
 					showLoadingSpinner = false
 				}
 			},
             shape = RoundedCornerShape(50.dp),
-			enabled = submittable.value,
+			enabled = submittable,
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth()

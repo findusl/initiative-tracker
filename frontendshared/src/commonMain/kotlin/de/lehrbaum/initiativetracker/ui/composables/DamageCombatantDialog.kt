@@ -74,9 +74,9 @@ fun DamageCombatantDialogContent(target: String, onSubmit: suspend (Int) -> Unit
 			onValueChange = { sliderValue = it }
 		)
 		OkCancelButtonRow(
-			textIsValidNumber,
+			textIsValidNumber.value,
 			onCancel,
-			onSubmit = { onSubmit(sliderValueInt) },
+			onSubmitSuspend = { onSubmit(sliderValueInt) },
 			coroutineScope
 		)
 	}
