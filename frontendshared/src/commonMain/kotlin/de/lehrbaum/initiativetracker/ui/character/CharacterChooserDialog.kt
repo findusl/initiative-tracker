@@ -76,7 +76,7 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 				val submittable = remember { derivedStateOf { initiativeIsValidNumber.value && !currentHpField.hasError } }
 
 				OkCancelButtonRow(
-					submittable,
+					submittable.value,
 					onCancel,
 					onSubmit = { onComplete(chosen, initiativeValue, currentHpField.value.getOrThrow()) }
 				)

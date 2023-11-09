@@ -35,9 +35,16 @@ object CombatLinkRepository {
 
 @Serializable
 data class CombatLink(
-	val secureConnection: Boolean,
-	val host: String,
-	val port: Int,
+	val backend: Backend,
 	val isHost: Boolean,
 	val sessionId: Int? = null,
+) {
+	val userDescription = (sessionId?.let { "$it " } ?: "") + "on ${backend.hostUrl}"
+}
+
+@Serializable
+data class Backend(
+	val secureConnection: Boolean,
+	val hostUrl: String,
+	val port: Int,
 )
