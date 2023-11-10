@@ -110,3 +110,4 @@ gradle-app.setting
 frontendios/iosApp.xcworkspace/*
 frontendios/iosApp.xcodeproj/*
 !frontendios/iosApp.xcodeproj/project.pbxproj
+/.idea/assetWizardSettings.xml
