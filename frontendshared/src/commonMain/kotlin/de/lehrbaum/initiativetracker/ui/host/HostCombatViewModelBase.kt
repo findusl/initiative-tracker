@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.CombatController
-import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -38,6 +37,8 @@ abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder b
 	override var combatStarted by mutableStateOf(false)
 
 	private var mostRecentDeleted: CombatantModel? = null
+
+	override val backendInputViewModel: BackendInputViewModel? = null
 
 	override fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
 		if (combatStarted && !combatantViewModel.disabled) {
