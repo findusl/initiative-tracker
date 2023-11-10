@@ -25,6 +25,7 @@ interface HostCombatViewModel: ErrorStateHolder {
     val isSharing: Boolean
 	val combatLink: CombatLink?
 	val title: String
+	val backendInputViewModel: BackendInputViewModel?
 
     fun onCombatantClicked(combatantViewModel: CombatantViewModel)
     fun onCombatantLongClicked(combatant: CombatantViewModel)

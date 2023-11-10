@@ -134,7 +134,7 @@ buildkonfig {
 		val openaiApiKey = localProperties.getProperty("openai.api.key", null) ?: null
 		buildConfigField(STRING, "openaiApiKey", openaiApiKey, nullable = true)
 
-		val host = localProperties.getProperty("backend.host", "\"localhost\"")
+		val host = localProperties.getProperty("backend.host", "localhost")
 		val port = localProperties.getProperty("backend.port", "8080")
 		val secure = localProperties.getProperty("backend.secure", "false")
 		buildConfigField(STRING, "backendHost", host)
