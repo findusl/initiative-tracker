@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.character.CharacterListScreen
 import de.lehrbaum.initiativetracker.ui.client.ClientScreen
@@ -16,9 +17,17 @@ import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import de.lehrbaum.initiativetracker.ui.shared.BackHandler
 import kotlinx.coroutines.launch
 
+private val lightColors = lightColors(
+	primary = Color(0xFF3F51B5),
+	primaryVariant = Color(0xFF303F9F),
+	secondary = Color(0xFFF1BE72),
+)
+
 @Composable
 fun MainComposable(mainViewModel: MainViewModel, widthInt: Int? = null) {
-	MaterialTheme {
+	MaterialTheme(
+		colors = lightColors
+	) {
 		MainScreen(mainViewModel, widthInt)
 	}
 }
