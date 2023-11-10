@@ -50,7 +50,6 @@ fun HttpRequestBuilder.backendWebsocketUrl(backend: Backend, path: String) {
 
 fun HttpRequestBuilder.backendHttpUrl(backend: Backend, path: String) {
 	val scheme = if (backend.secureConnection) "https" else "http"
-	// TODO test when host contains a path
 	url(scheme, backend.hostUrl, backend.port, path)
 }
 

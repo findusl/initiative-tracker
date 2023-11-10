@@ -42,6 +42,7 @@ data class CombatLink(
 	val userDescription = (sessionId?.let { "$it " } ?: "") + "on ${backend.hostUrl}"
 }
 
+// TASK when host contains a path
 @Serializable
 data class Backend(
 	val secureConnection: Boolean,

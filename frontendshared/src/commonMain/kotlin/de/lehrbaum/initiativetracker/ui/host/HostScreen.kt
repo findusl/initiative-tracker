@@ -49,6 +49,10 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 	)
 
 	hostCombatViewModel.ErrorComposable()
+
+	hostCombatViewModel.backendInputViewModel?.let {
+		BackendInputDialog(it)
+	}
 }
 
 @ExperimentalMaterialApi
