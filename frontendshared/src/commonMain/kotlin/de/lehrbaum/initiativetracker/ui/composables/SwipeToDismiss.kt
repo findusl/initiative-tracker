@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.ui.shared.DarkGreen
 import de.lehrbaum.initiativetracker.ui.shared.SwipeResponse
 
 @Composable
@@ -69,9 +70,10 @@ fun <E> SwipeToDismiss(
 	)
 }
 
+@Composable
 fun <E : Any> swipeToDelete(delete: (E) -> Unit): SwipeToDismissAction<E> {
 	return SwipeToDismissAction(
-		Color.Red,
+		MaterialTheme.colors.error,
 		Icons.Default.Delete,
 		contentDescription = "Delete List element",
 		action = { element ->
@@ -93,9 +95,10 @@ fun <E : Any> swipeToDisable(disable: (E) -> Unit): SwipeToDismissAction<E> {
 	)
 }
 
+@Composable
 fun <E : Any> swipeToEnable(enable: (E) -> Unit): SwipeToDismissAction<E> {
 	return SwipeToDismissAction(
-		Color.Green,
+		Color.DarkGreen,
 		Icons.Default.Check,
 		contentDescription = "Enable List element",
 		action = { element ->
@@ -105,9 +108,10 @@ fun <E : Any> swipeToEnable(enable: (E) -> Unit): SwipeToDismissAction<E> {
 	)
 }
 
+@Composable
 fun <E : Any> swipeToJumpToTurn(jumpToTurn: (E) -> Unit): SwipeToDismissAction<E> {
 	return SwipeToDismissAction(
-		Color.Blue,
+		MaterialTheme.colors.secondary,
 		Icons.Default.Place,
 		contentDescription = "Set list element active",
 		action = { element ->

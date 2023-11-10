@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants.defaultPadding
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
+import de.lehrbaum.initiativetracker.ui.shared.DarkGreen
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
@@ -104,7 +105,7 @@ private fun DrawScope.drawDisabledCross(color: Color) {
 private data class HealthColors(
 	val alpha: Float
 ) {
-	val backgroundGreen = Color.Green.copy(alpha = alpha)
+	val backgroundGreen = Color.DarkGreen.copy(alpha = alpha)
 	val backgroundRed = Color.Red.copy(alpha = alpha)
 }
 

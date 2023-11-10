@@ -30,8 +30,8 @@ fun CombatantList(
 	onCombatantClicked: (CombatantViewModel) -> Unit,
 	onCombatantLongClicked: (CombatantViewModel) -> Unit,
 	onCreateNewClicked: (() -> Unit)? = null,
-	dismissToEndAction: (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
-	dismissToStartAction: (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
+	dismissToEndAction: @Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
+	dismissToStartAction: @Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
 ) {
     val listState = rememberLazyListState()
 
