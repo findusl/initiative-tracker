@@ -16,7 +16,7 @@ class GeneralSettingsRepository {
 	val installationId = settings.getLongOrSet(APP_ID_KEY, Random::nextLong)
 
 	var defaultBackend: Backend =
-		settings.decodeOrSet(DEFAULT_BACKEND_KEY, BuildKonfig::defaultBackend)
+		settings.decodeValue(DEFAULT_BACKEND_KEY, BuildKonfig.defaultBackend())
 		set(value) {
 			field = value
 			settings.encodeValue(DEFAULT_BACKEND_KEY, value)
