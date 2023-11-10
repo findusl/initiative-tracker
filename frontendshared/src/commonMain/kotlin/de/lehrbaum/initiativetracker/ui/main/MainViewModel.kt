@@ -12,6 +12,7 @@ import de.lehrbaum.initiativetracker.ui.host.HostCombatViewModel
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.join.JoinViewModel
+import de.lehrbaum.initiativetracker.ui.settings.SettingsViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
@@ -23,15 +24,20 @@ open class MainViewModel {
 		DrawerItem.JoinCombat,
 		DrawerItem.JoinAsHost,
 		DrawerItem.HostCombat,
-		DrawerItem.Characters
+		DrawerItem.Characters,
+		DrawerItem.Settings
 	)
 	val drawerItems = CombatLinkRepository.combatLinks.map { combatLinks ->
 		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it) }
 	}
 
-	/** Keep a default hostCombatState to return to */
-	private val hostCombatState = hostNewCombat()
-	var content by mutableStateOf<ContentState>(hostCombatState)
+	/* Persistent ViewModels */
+	private val localCombatContentState = hostNewCombat()
+	private val characterContentState = ContentState.CharacterScreen(CharacterListViewModel())
+	private val settingsContentState = ContentState.SettingsScreen(SettingsViewModel())
+	// Task also make join screen persistent but test first
+
+	var content by mutableStateOf<ContentState>(localCombatContentState)
 	private val backstack = mutableStateListOf<ContentState>()
 	val canStepBack: Boolean
 		get() = backstack.isNotEmpty() // since this is backed by a state variable the ui is notified
@@ -39,10 +45,11 @@ open class MainViewModel {
 	fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == content.drawerItem) return // avoid double click race conditions
 		val newContent: ContentState = when (item) {
-			is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModel())
-			is DrawerItem.HostCombat -> hostCombatState
+			is DrawerItem.Characters -> characterContentState
+			is DrawerItem.HostCombat -> localCombatContentState
 			is DrawerItem.JoinAsHost -> joinCombat(asHost = true)
 			is DrawerItem.JoinCombat -> joinCombat(asHost = false)
+			DrawerItem.Settings -> settingsContentState
 			is DrawerItem.RememberedCombat -> {
 				if (item.combatLink.isHost) hostCombat(item.combatLink) else clientCombat(item.combatLink)
 			}
@@ -129,6 +136,10 @@ sealed interface DrawerItem {
 		override val name = "Characters"
 	}
 
+	data object Settings : DrawerItem {
+		override val name = "Settings"
+	}
+
 	data class RememberedCombat(val combatLink: CombatLink) : DrawerItem {
 		override val name: String = combatLink.run {
 			val stringBuilder = StringBuilder()
@@ -160,4 +171,6 @@ sealed class ContentState(val drawerItem: DrawerItem) {
 		ContentState(DrawerItem.RememberedCombat(clientCombatViewModel.combatLink))
 
 	data class CharacterScreen(val characterListViewModel: CharacterListViewModel) : ContentState(DrawerItem.Characters)
+
+	data class SettingsScreen(val settingsViewModel: SettingsViewModel) : ContentState(DrawerItem.Settings)
 }

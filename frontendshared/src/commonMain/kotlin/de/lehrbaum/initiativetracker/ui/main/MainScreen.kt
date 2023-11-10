@@ -14,6 +14,7 @@ import de.lehrbaum.initiativetracker.ui.character.CharacterListScreen
 import de.lehrbaum.initiativetracker.ui.client.ClientScreen
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.join.JoinScreen
+import de.lehrbaum.initiativetracker.ui.settings.SettingsScreen
 import de.lehrbaum.initiativetracker.ui.shared.BackHandler
 import kotlinx.coroutines.launch
 
@@ -100,7 +101,7 @@ private fun MainScreenContent(contentState: ContentState, drawerState: DrawerSta
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
 		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
 		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatViewModel)
-		is ContentState.JoinCombat ->
-			JoinScreen(drawerState, contentState.joinViewModel)
+		is ContentState.JoinCombat -> JoinScreen(drawerState, contentState.joinViewModel)
+		is ContentState.SettingsScreen -> SettingsScreen(drawerState, contentState.settingsViewModel)
 	}
 }

@@ -14,7 +14,7 @@ inline fun <reified T> Settings.encodeValue(
 	key: String,
 	value: T,
 ): Unit =
-	encodeValueRequireSerializer(serializer(), key, value)
+	encodeValueRequireSerializer(serializer<T>(), key, value)
 
 @ExperimentalSerializationApi
 @ExperimentalSettingsApi
@@ -22,14 +22,14 @@ inline fun <reified T> Settings.decodeValue(
 	key: String,
 	default: T,
 ): T =
-	decodeValueRequireSerializer(serializer(), key, default)
+	decodeValueRequireSerializer(serializer<T>(), key, default)
 
 @ExperimentalSerializationApi
 @ExperimentalSettingsApi
 inline fun <reified T> Settings.decodeValueOrNull(
 	key: String,
 ): T? =
-	decodeValueOrNullRequireSerializer(serializer(), key)
+	decodeValueOrNullRequireSerializer(serializer<T>(), key)
 
 inline fun <reified T> Settings.getOrSet(
 	key: String,
@@ -42,8 +42,3 @@ inline fun <reified T> Settings.getOrSet(
 
 inline fun Settings.getLongOrSet(key: String, default: () -> Long): Long =
 	getOrSet(key, Settings::getLongOrNull, Settings::putLong, default)
-
-@ExperimentalSerializationApi
-@ExperimentalSettingsApi
-inline fun <reified T> Settings.decodeOrSet(key: String, default: () -> T): T =
-	getOrSet(key, Settings::decodeValueOrNull, Settings::encodeValue, default)
