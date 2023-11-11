@@ -16,8 +16,6 @@ class InputValidatorTest {
 		assertTrue(InputValidator.isValidHost("domain.com"))
 		assertTrue(InputValidator.isValidHost("sub.domain.com"))
 		assertTrue(InputValidator.isValidHost("sub.domain.com:8080"))
-		assertTrue(InputValidator.isValidHost("sub.domain.com/path"))
-		assertTrue(InputValidator.isValidHost("sub.domain.com:8080/path"))
     }
 
     @Test
@@ -29,12 +27,16 @@ class InputValidatorTest {
 		assertFalse(InputValidator.isValidHost("http://domain.com"))
 		assertFalse(InputValidator.isValidHost("http://sub.domain.com"))
 		assertFalse(InputValidator.isValidHost("http://sub.domain.com:8080"))
-		assertFalse(InputValidator.isValidHost("http://sub.domain.com/path"))
-		assertFalse(InputValidator.isValidHost("http://sub.domain.com:8080/path"))
+    }
+
+    @Test
+    fun testIsValidHostShouldNotAcceptPath() {
+		assertFalse(InputValidator.isValidHost("sub.domain.com/path"))
+		assertFalse(InputValidator.isValidHost("sub.domain.com:8080/path"))
     }
 
     @Test
     fun testIsValidHostShouldNotAcceptInvalidCharacters() {
-		assertFalse(InputValidator.isValidHost("local:host"))
+		assertFalse(InputValidator.isValidHost("local host"))
     }
 }
