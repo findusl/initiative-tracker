@@ -1,9 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.edit
 
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.aallam.openai.api.BetaOpenAI
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.Dice
@@ -14,8 +11,7 @@ import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
-import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.*
 
 data class EditCombatantViewModel(
 	private val combatantViewModel: CombatantViewModel,
@@ -24,11 +20,14 @@ data class EditCombatantViewModel(
 	private val onCancel: () -> Unit,
 ) {
 	val id = combatantViewModel.id
-	val nameEdit = EditFieldViewModel(
-		combatantViewModel.name,
-		selectOnFirstFocus = firstEdit,
-		parseInput = EditFieldViewModel.RequiredStringParser
-	)
+	var name: String by mutableStateOf(combatantViewModel.name)
+	val nameError: Boolean by derivedStateOf { name.isBlank() }
+	var nameSuggestions: List<String> by mutableStateOf(emptyList())
+		private set
+	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name } }
+	var nameLoading: Boolean by mutableStateOf(false)
+	private var nameLoadingJob: Job? = null
+
 	val initiativeEdit = EditFieldViewModel(
 		combatantViewModel.initiative,
 		parseInput = EditFieldViewModel.OptionalIntParser
@@ -69,7 +68,6 @@ data class EditCombatantViewModel(
 			if (initiativeEdit.isFailureOrNull()
 				&& maxHpEdit.isFailureOrNull()
 				&& currentHpEdit.isFailureOrNull()
-				&& nameEdit.isFailureOrNull()
 			) {
 				applyMonsterType()
 			} else {
@@ -81,11 +79,11 @@ data class EditCombatantViewModel(
 					applyMonsterType()
 				confirmApplyMonsterDialog = null
 			}
+			loadNameSuggestions(type)
 		}
 	}
 
-	@OptIn(BetaOpenAI::class)
-	private suspend fun applyMonsterType() {
+	private fun applyMonsterType() {
 		val monsterType = this.monsterType ?: return
 		monsterType.accessWithFallback({ hp?.average }, ::determineMonster)?.let { avgHp ->
 			maxHpEdit.onTextUpdated(avgHp.toString())
@@ -94,16 +92,39 @@ data class EditCombatantViewModel(
 		monsterType.accessWithFallback({ dex }, ::determineMonster)?.let { dex ->
 			initiativeEdit.onTextUpdated((Dice.d20() + dex.toModifier()).toString())
 		}
-		nameEdit.loadSuggestion {
-			GlobalInstances.openAiNetworkClient?.suggestMonsterName(monsterType.name)
+	}
+
+	@OptIn(BetaOpenAI::class)
+	private suspend fun loadNameSuggestions(monsterType: MonsterDTO) {
+		cancelLoading()
+
+		coroutineScope {
+			nameLoadingJob = this.coroutineContext.job
+			try {
+				nameLoading = true
+				val suggestions = GlobalInstances.openAiNetworkClient?.suggestMonsterNames(monsterType.name)
+				if (!isActive) return@coroutineScope
+				if (suggestions != null) {
+					nameSuggestions = suggestions
+					suggestions.firstOrNull()?.let {
+						if (name.isBlank()) name = it
+					}
+				}
+			} finally {
+				nameLoading = false
+			}
 		}
+	}
+
+	private fun cancelLoading() {
+		nameLoadingJob?.cancel()
 	}
 
 	suspend fun saveCombatant() {
 		onSave(CombatantModel(
 			combatantViewModel.ownerId,
 			id,
-			nameEdit.value.getOrThrow(),
+			name,
 			initiativeEdit.value.getOrThrow(),
 			maxHpEdit.value.getOrThrow(),
 			currentHpEdit.value.getOrThrow(),
