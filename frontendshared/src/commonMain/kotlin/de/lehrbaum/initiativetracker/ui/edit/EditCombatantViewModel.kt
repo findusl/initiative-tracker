@@ -10,6 +10,7 @@ import de.lehrbaum.initiativetracker.bl.Dice
 import de.lehrbaum.initiativetracker.bl.toModifier
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
+import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
@@ -72,7 +73,7 @@ data class EditCombatantViewModel(
 			) {
 				applyMonsterType()
 			} else {
-				val confirmed = suspendCancellableCoroutine<Boolean> {
+				val confirmed = suspendCancellableCoroutine {
 					confirmApplyMonsterDialog = it
 					it.invokeOnCancellation { confirmApplyMonsterDialog = null }
 				}
@@ -83,15 +84,14 @@ data class EditCombatantViewModel(
 		}
 	}
 
-	@Suppress("OPT_IN_IS_NOT_ENABLED")
 	@OptIn(BetaOpenAI::class)
 	private suspend fun applyMonsterType() {
 		val monsterType = this.monsterType ?: return
-		monsterType.hp?.average?.let { avgHp ->
+		monsterType.accessWithFallback({ hp?.average }, ::determineMonster)?.let { avgHp ->
 			maxHpEdit.onTextUpdated(avgHp.toString())
 			currentHpEdit.onTextUpdated(avgHp.toString())
 		}
-		monsterType.dex?.let { dex ->
+		monsterType.accessWithFallback({ dex }, ::determineMonster)?.let { dex ->
 			initiativeEdit.onTextUpdated((Dice.d20() + dex.toModifier()).toString())
 		}
 		nameEdit.loadSuggestion {

@@ -45,7 +45,7 @@ fun AutocompleteTextField(
 			isError = error,
 			placeholder = placeholder?.let { { Text(it) } },
 			trailingIcon = {
-				if (expanded) {
+				if (expanded && suggestions.isNotEmpty()) {
 					IconButton(onClick = { expanded = false }) {
 						Icon(
 							Icons.Filled.ArrowDropDown,

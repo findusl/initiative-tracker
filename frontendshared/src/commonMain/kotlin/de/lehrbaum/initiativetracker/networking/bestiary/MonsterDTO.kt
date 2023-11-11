@@ -19,8 +19,8 @@ data class MonsterDTO(
 	val conditionInflict: List<String>? = null,
 	val conditionInflictLegendary: List<String>? = null,
 	val conditionInflictSpell: List<String>? = null,
-	// @SerialName("_copy")
-	// val copy: Any? = null // describes how to generate this unit by copying it from another
+	@SerialName("_copy")
+	val copy: CopyDTO? = null,
 	val cr: @Serializable(with = CrDTODeserializer::class) CrDTO? = null,
 	val damageTags: List<String>? = null,
 	val damageTagsLegendary: List<String>? = null,
@@ -73,4 +73,15 @@ data class MonsterDTO(
 ) {
 	@kotlinx.serialization.Transient
 	val displayName = "$name ($source)"
+}
+
+fun <R> MonsterDTO.accessWithFallback(accessor: MonsterDTO.() -> R?, monsterByName: (String) -> MonsterDTO?): R? {
+	accessor()?.let {
+		return it
+	}
+	if (copy != null) {
+		val fallbackMonster = monsterByName(copy.displayName)
+		return fallbackMonster?.accessWithFallback(accessor, monsterByName)
+	}
+	return null
 }
