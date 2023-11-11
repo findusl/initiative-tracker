@@ -11,10 +11,10 @@ import io.ktor.client.request.request
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.plus
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "BestiaryNetworkClient"
 
@@ -28,18 +28,24 @@ class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNet
 		emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
 	}
 
-	@ExperimentalCoroutinesApi // interestingly, this is not required to propagate to the interface, no opt-in required
+	@ExperimentalCoroutinesApi // this is not required to propagate to the interface, weird
 	override val monsters = monsterSources
 		.transformLatest { spellSources ->
-			// reversed because I hate AI coming first
-			spellSources.values.reversed().forEach { jsonFileName ->
-				val url = "https://5e.tools/data/bestiary/$jsonFileName"
-				try {
-					Napier.v("Loading bestiary from $url", tag = TAG)
-					val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
-					emit(bestiary.monster)
-				} catch (e: Exception) {
-					Napier.e("Failed to load from $url", e, TAG)
+			val flowLock = Mutex()
+			coroutineScope {
+				spellSources.values.sortSourcesByMyPreference().forEach { jsonFileName ->
+					val url = "https://5e.tools/data/bestiary/$jsonFileName"
+					launch {
+						try {
+							Napier.v("Loading bestiary from $url", tag = TAG)
+							val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
+							flowLock.withLock {
+								emit(bestiary.monster)
+							}
+						} catch (e: Exception) {
+							Napier.e("Failed to load from $url", e, TAG)
+						}
+					}
 				}
 			}
 		}
@@ -57,4 +63,5 @@ class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNet
 		}
 		.flowOn(Dispatchers.IO)
 
+	private fun Collection<String>.sortSourcesByMyPreference(): Collection<String> = reversed()
 }
