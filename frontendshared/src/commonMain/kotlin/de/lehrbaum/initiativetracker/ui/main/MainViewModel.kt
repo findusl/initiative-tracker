@@ -7,7 +7,6 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModel
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModel
-import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostCombatViewModel
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
@@ -81,7 +80,7 @@ open class MainViewModel {
 	}
 
 	private fun clientCombat(combatLink: CombatLink): ContentState.ClientCombat {
-		val model = ClientCombatViewModelImpl(combatLink) {
+		val model = ClientCombatViewModel(combatLink) {
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
 		return ContentState.ClientCombat(model)
