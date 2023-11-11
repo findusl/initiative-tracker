@@ -57,7 +57,7 @@ class ClientCombatSession(val combatLink: CombatLink) {
 		val response = receiveDeserialized<JoinSessionResponse>()
 		when (response) {
 			is JoinSessionResponse.JoinedSession -> collector.emit(Connected(response.combatModel))
-			JoinSessionResponse.SessionNotFound ->
+			is JoinSessionResponse.SessionNotFound ->
 				collector.emit(Disconnected("Session for $combatLink not found"))
 		}
 		return response is JoinSessionResponse.JoinedSession
@@ -70,7 +70,7 @@ class ClientCombatSession(val combatLink: CombatLink) {
 			// val message = Json.decodeFromString<ServerToClientCommand>((frame as Frame.Text).readText())
 			when (message) {
 				is ServerToClientCommand.CombatUpdatedCommand -> collector.emit(Connected(message.combat))
-				ServerToClientCommand.CombatEnded -> {
+				is ServerToClientCommand.CombatEnded -> {
 					collector.emit(Disconnected("Combat ended"))
 					return
 				}
