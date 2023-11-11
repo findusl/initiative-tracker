@@ -23,6 +23,7 @@ fun AutocompleteTextField(
 	suggestions: List<String> = emptyList(),
 	placeholder: String? = null,
 	enabled: Boolean = true,
+	trailingIcon: @Composable (() -> Unit)? = null,
 	modifier: Modifier = Modifier,
 ) {
 	var expanded by remember { mutableStateOf(false) }
@@ -45,7 +46,9 @@ fun AutocompleteTextField(
 			isError = error,
 			placeholder = placeholder?.let { { Text(it) } },
 			trailingIcon = {
-				if (expanded && suggestions.isNotEmpty()) {
+				if (trailingIcon != null)
+					trailingIcon()
+				else if (expanded && suggestions.isNotEmpty()) {
 					IconButton(onClick = { expanded = false }) {
 						Icon(
 							Icons.Filled.ArrowDropDown,

@@ -33,7 +33,7 @@ class EditFieldViewModel<T>(
 
 		coroutineScope {
 			loadingJob = this.coroutineContext.job
-				try {
+			try {
 				loading = true
 				val suggestion = loader()
 				if (!isActive) return@coroutineScope

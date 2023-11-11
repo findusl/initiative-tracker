@@ -32,7 +32,7 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 	val canSave by remember {
 		derivedStateOf {
 			!editCombatantViewModel.run {
-				nameEdit.hasError
+				nameError
 					|| initiativeEdit.hasError
 					|| maxHpEdit.hasError
 					|| currentHpEdit.hasError
@@ -88,7 +88,7 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 			.fillMaxWidth()
 	) {
 		CreatureTypeField(editCombatantViewModel)
-		EditTextField(editCombatantViewModel.nameEdit, "name")
+		NameField(editCombatantViewModel)
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))
 		Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
 			EditTextField(editCombatantViewModel.initiativeEdit, "Initiative", Modifier.weight(1f))
@@ -127,6 +127,20 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
 		placeholder = "Skeleton (MM)",
 		enabled = editCombatantViewModel.monsters.isNotEmpty()
+	)
+}
+
+@Composable
+fun NameField(editCombatantViewModel: EditCombatantViewModel) {
+	AutocompleteTextField(
+		text = editCombatantViewModel.name,
+		label = "Name",
+		onTextChanged = { editCombatantViewModel.name = it },
+		error = editCombatantViewModel.nameError,
+		suggestions = editCombatantViewModel.nameSuggestionsToShow,
+		trailingIcon = if (editCombatantViewModel.nameLoading) {
+			{ CircularProgressIndicator(color = MaterialTheme.colors.primary,) }
+		} else null
 	)
 }
 
