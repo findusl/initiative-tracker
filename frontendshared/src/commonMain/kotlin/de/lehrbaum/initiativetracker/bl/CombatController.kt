@@ -1,13 +1,14 @@
 package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
+import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.dtos.UserId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Not thread safe! Has to be called from a single thread. Currently that is Dispatchers.Main
- * Probably should change that in the future...
+ * Not thread safe! Has to be called from main thread.
  */
 class CombatController(
 	generalSettingsRepository: GeneralSettingsRepository
@@ -24,7 +25,7 @@ class CombatController(
 	val activeCombatantIndex: StateFlow<Int>
 		get() = _activeCombatantIndex
 
-	val ownerId = generalSettingsRepository.installationId
+	val hostId = UserId(generalSettingsRepository.installationId)
 
 	fun nextTurn() {
 		val startingIndex = activeCombatantIndex.value
@@ -54,20 +55,20 @@ class CombatController(
 		name: String = "",
 		initiative: Int? = null // Sorts it to the bottom where the add button is.
 	): CombatantModel {
-		val newCombatant = CombatantModel(ownerId, id = nextId++, name, initiative = initiative)
+		val newCombatant = CombatantModel(hostId, id = CombatantId(nextId++), name, initiative = initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 		return newCombatant
 	}
 
 	fun addCombatant(combatantModel: CombatantModel): CombatantModel {
-		val newCombatant = combatantModel.copy(id = nextId++)
+		val newCombatant = combatantModel.copy(id = CombatantId(nextId++))
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
 		return newCombatant
 	}
 
-	fun damageCombatant(id: Long, damage: Int) {
+	fun damageCombatant(id: CombatantId, damage: Int) {
 		_combatants.updateCombatant(id) { combatantModel ->
 			combatantModel.copy(currentHp = combatantModel.currentHp?.minus(damage))
 		}
@@ -79,7 +80,7 @@ class CombatController(
 		}
 	}
 
-	fun deleteCombatant(id: Long): CombatantModel? {
+	fun deleteCombatant(id: CombatantId): CombatantModel? {
 		var oldCombatant: CombatantModel? = null
 		_combatants.value = _combatants.value
 			.filter { combatantModel ->
@@ -97,36 +98,36 @@ class CombatController(
 		return oldCombatant
 	}
 
-	fun disableCombatant(id: Long) {
+	fun disableCombatant(id: CombatantId) {
 		_combatants.updateCombatant(id) { combatantModel ->
 			combatantModel.copy(disabled = true)
 		}
 	}
 
-	fun enableCombatant(id: Long) {
+	fun enableCombatant(id: CombatantId) {
 		_combatants.updateCombatant(id) { combatantModel ->
 			combatantModel.copy(disabled = false)
 		}
 	}
 
-	fun jumpToCombatant(id: Long) {
+	fun jumpToCombatant(id: CombatantId) {
 		_activeCombatantIndex.value = combatants.value.indexOfFirst { it.id == id }
 	}
 
 	/**
-	 * This is not a clean solution. Better would be to create a whole new CombatController with the state.
-	 * But that doesn't fit into the current architecture and I'm not yet sure how to implement the best solution.
+	 * This seems a dirty solution. Better would be to create a whole new CombatController with the state.
+	 * But that doesn't fit into the current architecture and I'm not sure how to implement the best solution.
 	 */
 	fun overwriteWithExistingCombat(combatants: List<CombatantModel>, activeCombatantIndex: Int) {
 		combatantCount = combatants.size
 		_combatants.value = combatants.toList()
-		nextId = combatants.maxOfOrNull { it.id }?.inc() ?: 0
+		nextId = combatants.maxOfOrNull { it.id.id }?.inc() ?: 0
 		_activeCombatantIndex.value = activeCombatantIndex
 	}
 }
 
 private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
-	id: Long,
+	id: CombatantId,
 	reSort: Boolean = false,
 	updater: (CombatantModel) -> CombatantModel
 ) {
@@ -143,5 +144,5 @@ private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
  * Sorts predictably. First by initiative then by id. null initiatives are lower than any other initiatives
  */
 private fun Iterable<CombatantModel>.sortByInitiative() =
-	sortedWith(compareByDescending(CombatantModel::initiative).thenBy(CombatantModel::id))
+	sortedWith(compareByDescending(CombatantModel::initiative).thenBy { it.id })
 

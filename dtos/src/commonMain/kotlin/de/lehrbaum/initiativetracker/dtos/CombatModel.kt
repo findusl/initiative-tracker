@@ -10,8 +10,8 @@ data class CombatModel(
 
 @Serializable
 data class CombatantModel(
-	val ownerId: Long,
-	val id: Long = -1,
+	val ownerId: UserId,
+	val id: CombatantId = CombatantId.UNKNOWN,
 	val name: String,
 	val initiative: Int? = null,
 	val maxHp: Int? = null,

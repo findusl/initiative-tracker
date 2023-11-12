@@ -1,0 +1,14 @@
+package de.lehrbaum.initiativetracker.dtos
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+class CombatantId(val id: Long): Comparable<CombatantId> {
+	companion object {
+		val UNKNOWN = CombatantId(-1)
+	}
+
+	override fun compareTo(other: CombatantId): Int {
+		return this.id.compareTo(other.id)
+	}
+}

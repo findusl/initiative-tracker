@@ -22,7 +22,7 @@ abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder b
 		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
 			combatants.mapIndexed { index, combatant ->
 				combatant.toCombatantViewModel(
-					appOwnerId = combatController.ownerId,
+					thisUser = combatController.hostId,
 					active = index == activeIndex,
 				)
 			}
@@ -83,7 +83,7 @@ abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder b
 
 	override fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
-		editCombatant(newCombatant.toCombatantViewModel(combatController.ownerId), firstEdit = true)
+		editCombatant(newCombatant.toCombatantViewModel(combatController.hostId), firstEdit = true)
 	}
 
 	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {

@@ -59,7 +59,7 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 				is ClientCommand.DamageCombatant -> {
 					logger.trace("Got damageCombatant command $message")
 					val command: ServerToHostCommand =
-						ServerToHostCommand.DamageCombatant(message.combatantId, message.damage, message.ownerId)
+						ServerToHostCommand.DamageCombatant(message.targetId, message.damage, message.ownerId)
 					forwardCommandAndHandleResponse(session, command, state)
 				}
 
