@@ -3,10 +3,12 @@ package de.lehrbaum.initiativetracker.bl
 import kotlin.random.Random
 
 object Dice {
-	fun d20() = Random.nextInt(20) + 1
 
 	fun calculateDiceFormula(formula: String, seed: Long): CalculationResult? {
-		val cleanedFormula = formula.trim().replace('#', 'd').replace("\\s".toRegex(), "")
+		val cleanedFormula = formula.trim()
+			.replace('#', 'd')
+			.replace("\\s".toRegex(), "")
+			.replace("+-", "-")
 		if (cleanedFormula.toIntOrNull() != null) return null // A single number is a valid formula but not what we need here
 		val elements = cleanedFormula.split("+", "-")
 		val operators = cleanedFormula.toCharArray().filter { it == '+' || it == '-' }
@@ -37,3 +39,5 @@ object Dice {
 
 	data class CalculationResult(val intermediateStep: String, val sum: Int)
 }
+
+fun Random.d20() = nextInt(20) + 1

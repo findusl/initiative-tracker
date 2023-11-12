@@ -6,12 +6,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.AOEDecision
 import de.lehrbaum.initiativetracker.bl.AudioCommandController
 import de.lehrbaum.initiativetracker.bl.CombatCommand
 import de.lehrbaum.initiativetracker.bl.CombatController
 import de.lehrbaum.initiativetracker.bl.ConfirmationRequester
 import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.bl.PreliminaryAOEResult
+import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.composables.CombatantListViewModel
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
@@ -28,7 +31,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.job
 
 @Stable
-abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequester {
+abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationRequester {
 
 	@Suppress("LeakingThis") // TASK migrate to the sharedHostCombatViewModel, only necessary there
 	protected var combatController: CombatController =
@@ -187,6 +190,15 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 
 	fun nextCombatant() {
 		combatController.nextTurn()
+	}
+
+	// Even shown for host aoe damage, so not only shared model
+	override suspend fun confirmAoe(
+		aoeOptions: AoeOptions,
+		targetRolls: Map<CombatantModel, PreliminaryAOEResult>,
+		probableSource: String?
+	): Map<CombatantModel, AOEDecision>? {
+		TODO("Not yet implemented")
 	}
 
 	abstract suspend fun closeSession()

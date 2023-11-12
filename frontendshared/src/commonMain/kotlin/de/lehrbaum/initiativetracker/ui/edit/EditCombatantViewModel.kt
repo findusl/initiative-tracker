@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.aallam.openai.api.BetaOpenAI
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.Dice
 import de.lehrbaum.initiativetracker.bl.MonsterCache
+import de.lehrbaum.initiativetracker.bl.d20
 import de.lehrbaum.initiativetracker.bl.toModifier
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
@@ -17,6 +17,7 @@ import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
+import kotlin.random.Random
 
 @Stable
 data class EditCombatantViewModel(
@@ -96,7 +97,7 @@ data class EditCombatantViewModel(
 			currentHpEdit.onTextUpdated(avgHp.toString())
 		}
 		monsterType.accessWithFallback({ dex }, ::determineMonster)?.let { dex ->
-			initiativeEdit.onTextUpdated((Dice.d20() + dex.toModifier()).toString())
+			initiativeEdit.onTextUpdated((Random.d20() + dex.toModifier()).toString())
 		}
 	}
 

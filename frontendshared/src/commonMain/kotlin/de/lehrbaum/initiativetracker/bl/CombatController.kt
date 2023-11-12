@@ -5,19 +5,24 @@ import de.lehrbaum.initiativetracker.bl.DamageDecision.FULL
 import de.lehrbaum.initiativetracker.bl.DamageDecision.HALF
 import de.lehrbaum.initiativetracker.bl.DamageDecision.NONE
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
+import de.lehrbaum.initiativetracker.bl.model.AoeOptions
+import de.lehrbaum.initiativetracker.bl.model.SavingThrow
 import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.random.Random
 
 /**
  * Not thread safe! Has to be called from main thread.
  */
 class CombatController(
 	generalSettingsRepository: GeneralSettingsRepository,
-	private val confirmationRequester: ConfirmationRequester
+	private val confirmationRequester: ConfirmationRequester,
+	seed: Long? = null
 ) {
+	private val random = seed?.let { Random(seed) } ?: Random
 	private var nextId = 0L
 
 	private var combatantCount = 0
@@ -80,12 +85,9 @@ class CombatController(
 			damageCombatant(target.id, damage)
 			return true
 		}
-		// I don't have a name of the player, so I take the first combatant they control that is not a creature
-		// I just hope that's their main character
-		val probableSource = combatants.value
-			.firstOrNull { it.ownerId == sourceId && it.creatureType == null }
+		val probableSourceName = determineSourceName(sourceId)
 
-		confirmationRequester.confirmDamage(damage, target, probableSource?.name)?.let { decision ->
+		confirmationRequester.confirmDamage(damage, target, probableSourceName)?.let { decision ->
 			val actualDamage = when (decision) {
 				FULL -> damage
 				HALF -> damage / 2
@@ -110,6 +112,71 @@ class CombatController(
 		_combatants.updateCombatant(targetId) { combatantModel ->
 			combatantModel.copy(currentHp = combatantModel.currentHp?.minus(damage))
 		}
+	}
+
+	suspend fun handleAoeRequest(
+		aoeOptions: AoeOptions,
+		targetIds: List<CombatantId>,
+		sourceId: UserId,
+	): Boolean {
+		val preliminaryResults = targetIds
+			.mapNotNull { combatantId ->
+				combatants.value.firstOrNull { it.id == combatantId }
+			}.associateWith { combatant ->
+				calculatePreliminaryResult(aoeOptions, combatant)
+			}
+		val probableSourceName = determineSourceName(sourceId)
+
+		val decisions = confirmationRequester.confirmAoe(aoeOptions, preliminaryResults, probableSourceName) ?: return false
+		val results = decisions.mapNotNull { (combatant, decision) ->
+			val result = when (decision) {
+				AOEDecision.KEEP -> preliminaryResults[combatant] as? AOEResult
+				AOEDecision.OVERWRITE_SUCCESS -> AOEResult.SUCCESS(null)
+				AOEDecision.OVERWRITE_FAILURE -> AOEResult.FAILURE(null)
+				AOEDecision.OVERWRITE_IGNORE -> null
+			}
+			result?.let { Pair(combatant, result) }
+		}
+		results.forEach { (combatant, result) ->
+			if (result is AOEResult.FAILURE)
+				damageCombatant(combatant.id, aoeOptions.damage)
+			else if (result is AOEResult.SUCCESS && aoeOptions.halfOnFailure)
+				damageCombatant(combatant.id, aoeOptions.damage / 2)
+		}
+		return true
+	}
+
+	private fun calculatePreliminaryResult(aoeOptions: AoeOptions, combatant: CombatantModel): PreliminaryAOEResult {
+		if (aoeOptions.save == null) {
+			return AOEResult.SUCCESS(null)
+		} else {
+			val (type, dc) = aoeOptions.save
+			val bonus = combatant.saveBonus(type)
+			return if (bonus == null)
+				PreliminaryAOEResult.INDETERMINATE
+			else {
+				val roll = random.d20() + bonus
+				if (roll >= dc) AOEResult.SUCCESS(roll) else AOEResult.FAILURE(roll)
+			}
+		}
+	}
+
+	private fun CombatantModel.saveBonus(type: SavingThrow): Int? =
+		when (type) {
+			SavingThrow.STR -> strSave
+			SavingThrow.DEX -> dexSave
+			SavingThrow.CON -> conSave
+			SavingThrow.INT -> intSave
+			SavingThrow.WIS -> wisSave
+			SavingThrow.CHA -> chaSave
+		}
+
+	private fun determineSourceName(sourceId: UserId): String? {
+		if (sourceId == hostId) return "Host"
+		// I don't have a name of the player, so I take the first combatant they control that is not a creature
+		// I just hope that's their main character
+		return combatants.value
+			.firstOrNull { it.ownerId == sourceId && it.creatureType == null }?.name
 	}
 
 	fun updateCombatant(updatedCombatant: CombatantModel) {
@@ -188,8 +255,29 @@ private fun Iterable<CombatantModel>.sortByInitiative() =
 
 interface ConfirmationRequester {
 	suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision?
+	suspend fun confirmAoe(
+		aoeOptions: AoeOptions,
+		targetRolls: Map<CombatantModel, PreliminaryAOEResult>,
+		probableSource: String?
+	): Map<CombatantModel, AOEDecision>?
 }
 
 enum class DamageDecision {
 	FULL, HALF, DOUBLE, NONE
+}
+
+sealed interface PreliminaryAOEResult {
+	data object INDETERMINATE : PreliminaryAOEResult
+}
+
+sealed interface AOEResult : PreliminaryAOEResult {
+	val rollSum: Int?
+
+	data class SUCCESS(override val rollSum: Int?) : AOEResult
+
+	data class FAILURE(override val rollSum: Int?) : AOEResult
+}
+
+enum class AOEDecision {
+	KEEP, OVERWRITE_SUCCESS, OVERWRITE_FAILURE, OVERWRITE_IGNORE
 }
