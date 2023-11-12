@@ -29,6 +29,7 @@ class SettingsViewModel {
 
 		val protocol = if (secureConnectionChosen) "https" else "http"
 		val url = Url("$protocol://$hostFieldContent")
+		// TASK Should update the text field
 		val backend = Backend(secureConnectionChosen, url.host, url.port)
 		generalSettingsRepository.defaultBackend = backend
 	}
