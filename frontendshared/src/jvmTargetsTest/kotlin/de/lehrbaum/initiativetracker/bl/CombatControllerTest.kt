@@ -16,7 +16,7 @@ class CombatControllerTest {
 	@BeforeTest
 	fun setUp() {
 		every { generalSettingsRepository.installationId } returns 1
-		combatController = CombatController(generalSettingsRepository)
+		combatController = CombatController(generalSettingsRepository, mockk())
 	}
 
 	@Test

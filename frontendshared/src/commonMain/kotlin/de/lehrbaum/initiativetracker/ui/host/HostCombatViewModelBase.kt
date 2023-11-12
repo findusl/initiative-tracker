@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.CombatController
+import de.lehrbaum.initiativetracker.bl.ConfirmationRequester
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -14,9 +15,11 @@ import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.combine
 
-abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder by Impl() {
+abstract class HostCombatViewModelBase : HostCombatViewModel, ErrorStateHolder by Impl(), ConfirmationRequester {
 
-	protected var combatController: CombatController = CombatController(GlobalInstances.generalSettingsRepository)
+	@Suppress("LeakingThis") // TASK migrate to the sharedHostCombatViewModel, only necessary there
+	protected var combatController: CombatController =
+		CombatController(GlobalInstances.generalSettingsRepository, this)
 
 	override val combatants = combatController.combatants
 		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
