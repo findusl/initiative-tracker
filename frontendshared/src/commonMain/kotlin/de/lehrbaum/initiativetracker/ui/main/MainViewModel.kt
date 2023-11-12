@@ -33,8 +33,6 @@ open class MainViewModel {
 
 	/* Persistent ViewModels */
 	private val localCombatContentState = hostNewCombat()
-	private val characterContentState = ContentState.CharacterScreen(CharacterListViewModel())
-	private val settingsContentState = ContentState.SettingsScreen(SettingsViewModel())
 	// Task also make join screen persistent but test first
 
 	var content by mutableStateOf<ContentState>(localCombatContentState)
@@ -45,11 +43,11 @@ open class MainViewModel {
 	fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == content.drawerItem) return // avoid double click race conditions
 		val newContent: ContentState = when (item) {
-			is DrawerItem.Characters -> characterContentState
+			is DrawerItem.Characters -> ContentState.CharacterScreen(CharacterListViewModel())
 			is DrawerItem.HostCombat -> localCombatContentState
 			is DrawerItem.JoinAsHost -> joinCombat(asHost = true)
 			is DrawerItem.JoinCombat -> joinCombat(asHost = false)
-			DrawerItem.Settings -> settingsContentState
+			DrawerItem.Settings -> ContentState.SettingsScreen(SettingsViewModel())
 			is DrawerItem.RememberedCombat -> {
 				if (item.combatLink.isHost) hostCombat(item.combatLink) else clientCombat(item.combatLink)
 			}

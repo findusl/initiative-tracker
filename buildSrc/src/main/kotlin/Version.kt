@@ -5,7 +5,7 @@ object Version {
 	const val kotlinxSerialization = "1.6.0"
 	const val kotlinxCollections = "0.3.6"
 	const val coroutines = "1.7.3"
-	const val ktor = "2.3.5"
+	const val ktor = "2.3.6"
 	const val logback = "1.4.11"
 	const val buildKonfig = "0.15.0"
 	const val mppSettings = "1.1.0"
