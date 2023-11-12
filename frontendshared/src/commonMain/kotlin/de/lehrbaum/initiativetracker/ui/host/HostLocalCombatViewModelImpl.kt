@@ -4,10 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.bl.data.Backend
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
-import de.lehrbaum.initiativetracker.ui.composables.DamageOption
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.flow.flowOf
 
 data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit): HostCombatViewModelBase() {
@@ -20,7 +21,7 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 	override var backendInputViewModel: BackendInputViewModel? by mutableStateOf(null)
 		private set
 
-	override fun onConfirmDamageDialogSubmit(option: DamageOption) {
+	override fun onConfirmDamageDialogSubmit(decision: DamageDecision) {
 		throw IllegalStateException("It should not be possible")
 	}
 
@@ -51,6 +52,10 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 	}
 
 	override fun showSessionId() {
+		throw IllegalStateException("It should not be possible")
+	}
+
+	override suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision? {
 		throw IllegalStateException("It should not be possible")
 	}
 }

@@ -3,10 +3,10 @@ package de.lehrbaum.initiativetracker.ui.host
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
-import de.lehrbaum.initiativetracker.ui.composables.DamageOption
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
@@ -34,7 +34,7 @@ interface HostCombatViewModel: ErrorStateHolder {
 	fun enableCombatant(combatantViewModel: CombatantViewModel)
     fun onDamageDialogSubmit(damage: Int)
     fun onDamageDialogCancel()
-	fun onConfirmDamageDialogSubmit(option: DamageOption)
+	fun onConfirmDamageDialogSubmit(decision: DamageDecision)
 	fun onConfirmDamageDialogCancel()
     fun addNewCombatant()
     fun nextCombatant()

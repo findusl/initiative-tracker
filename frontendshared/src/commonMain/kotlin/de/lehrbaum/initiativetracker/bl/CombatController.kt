@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.bl
 
+import de.lehrbaum.initiativetracker.bl.DamageDecision.*
 import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
  * Not thread safe! Has to be called from main thread.
  */
 class CombatController(
-	generalSettingsRepository: GeneralSettingsRepository
+	generalSettingsRepository: GeneralSettingsRepository,
+	private val confirmationRequester: ConfirmationRequester
 ) {
 	private var nextId = 0L
 
@@ -68,8 +70,32 @@ class CombatController(
 		return newCombatant
 	}
 
-	fun damageCombatant(id: CombatantId, damage: Int) {
-		_combatants.updateCombatant(id) { combatantModel ->
+	suspend fun handleDamageCombatantRequest(targetId: CombatantId, damage: Int, sourceId: UserId): Boolean {
+		val target = combatants.value.first { it.id == targetId }
+		if (sourceId == hostId || target.ownerId == sourceId) {
+			damageCombatant(target.id, damage)
+			return true
+		}
+		// I don't have a name of the player, so I take the first combatant they control that is not a creature
+		// I just hope that's their main character
+		val probableSource = combatants.value
+			.firstOrNull { it.ownerId == sourceId && it.creatureType == null }
+
+		confirmationRequester.confirmDamage(damage, target, probableSource?.name)?.let { decision ->
+			val actualDamage = when (decision) {
+				FULL -> damage
+				HALF -> damage / 2
+				DOUBLE -> damage * 2
+				NONE -> 0
+			}
+			damageCombatant(target.id, actualDamage)
+			return true
+		} ?: return false
+	}
+
+	fun damageCombatant(targetId: CombatantId, damage: Int) {
+		if (damage == 0) return
+		_combatants.updateCombatant(targetId) { combatantModel ->
 			combatantModel.copy(currentHp = combatantModel.currentHp?.minus(damage))
 		}
 	}
@@ -116,7 +142,7 @@ class CombatController(
 
 	/**
 	 * This seems a dirty solution. Better would be to create a whole new CombatController with the state.
-	 * But that doesn't fit into the current architecture and I'm not sure how to implement the best solution.
+	 * But that doesn't fit into the current architecture, and I'm not sure how to implement the best solution.
 	 */
 	fun overwriteWithExistingCombat(combatants: List<CombatantModel>, activeCombatantIndex: Int) {
 		combatantCount = combatants.size
@@ -146,3 +172,10 @@ private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
 private fun Iterable<CombatantModel>.sortByInitiative() =
 	sortedWith(compareByDescending(CombatantModel::initiative).thenBy { it.id })
 
+interface ConfirmationRequester {
+	suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision?
+}
+
+enum class DamageDecision {
+	FULL, HALF, DOUBLE, NONE
+}

@@ -21,7 +21,6 @@ private const val TAG = "HostCombatSession"
 class HostCombatSession(
 	val combatLink: CombatLink,
 	private val combatController: CombatController,
-	private val delegate: Delegate
 ) {
 	val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
@@ -95,16 +94,12 @@ class HostCombatSession(
 
 				is ServerToHostCommand.DamageCombatant -> {
 					val result = withContext(Dispatchers.Main) {
-						delegate.handleDamageCombatantCommand(incoming)
+						combatController.handleDamageCombatantRequest(incoming.targetId, incoming.damage, incoming.ownerId)
 					}
 					sendSerialized(HostCommand.CommandCompleted(result) as HostCommand)
 				}
 			}
 		}
-	}
-
-	interface Delegate {
-		suspend fun handleDamageCombatantCommand(command: ServerToHostCommand.DamageCombatant): Boolean
 	}
 }
 

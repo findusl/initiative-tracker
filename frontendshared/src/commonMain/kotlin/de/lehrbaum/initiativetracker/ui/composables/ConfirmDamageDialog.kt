@@ -10,26 +10,20 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.lehrbaum.initiativetracker.bl.DamageDecision
+import de.lehrbaum.initiativetracker.bl.DamageDecision.*
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
-
-enum class DamageOption {
-	FULL, HALF, DOUBLE, NONE
-}
 
 data class ConfirmDamageOptions(
 	val damage: Int,
-	val target: CombatantViewModel,
+	val targetName: String,
 	val sourceName: String?,
-) {
-	val targetName
-		get() = target.name
-}
+)
 
 @Composable
 fun ConfirmDamageDialog(
 	options: ConfirmDamageOptions,
-	onDamageApplied: (DamageOption) -> Unit,
+	onDamageApplied: (DamageDecision) -> Unit,
 	onDismiss: () -> Unit
 ) {
 	GeneralDialog(
@@ -41,7 +35,7 @@ fun ConfirmDamageDialog(
 		) {
 			Text("Apply ${options.damage} Damage to ${options.targetName}", style = MaterialTheme.typography.h6)
 			Text("Probable source: ${options.sourceName}", style = MaterialTheme.typography.subtitle2)
-			DamageOption.values().forEach { option ->
+			DamageDecision.values().forEach { option ->
 				Button(
 					onClick = { onDamageApplied(option) },
 					modifier = Modifier.fillMaxWidth()
@@ -53,11 +47,11 @@ fun ConfirmDamageDialog(
 	}
 }
 
-private fun DamageOption.getLabel(): String {
+private fun DamageDecision.getLabel(): String {
 	return when (this) {
-		DamageOption.FULL -> "Full"
-		DamageOption.HALF -> "Half"
-		DamageOption.DOUBLE -> "Double"
-		DamageOption.NONE -> "None"
+		FULL -> "Full"
+		HALF -> "Half"
+		DOUBLE -> "Double"
+		NONE -> "None"
 	}
 }
