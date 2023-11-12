@@ -4,7 +4,9 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatState.*
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
+import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.dtos.UserId
 import de.lehrbaum.initiativetracker.dtos.commands.ClientCommand
 import de.lehrbaum.initiativetracker.dtos.commands.JoinSessionResponse
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToClientCommand
@@ -92,8 +94,8 @@ class ClientCombatSession(val combatLink: CombatLink) {
 		return sendClientCommand(ClientCommand.EditCombatant(combatantModel))
 	}
 
-	suspend fun requestDamageCharacter(combatantId: Long, damage: Int, ownerId: Long): Boolean {
-		return sendClientCommand(ClientCommand.DamageCombatant(combatantId, damage, ownerId))
+	suspend fun requestDamageCharacter(targetId: CombatantId, damage: Int, ownerId: UserId): Boolean {
+		return sendClientCommand(ClientCommand.DamageCombatant(targetId, damage, ownerId))
 	}
 
 	@OptIn(DelicateCoroutinesApi::class)

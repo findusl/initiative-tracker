@@ -2,6 +2,7 @@ package de.lehrbaum.initiativetracker.ui.main
 
 import androidx.compose.runtime.*
 import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.MonsterCache
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
@@ -61,10 +62,9 @@ open class MainViewModel {
 		Napier.i("Initializing Cache")
 		scope.launch {
 			GlobalInstances.bestiaryNetworkClient.monsters.collect {
-				Cache.monsters = it
+				MonsterCache.monsters = it
 			}
-			// Completely unnecessary optimization, but I was annoyed that the map would be generated too often
-			Cache.monstersByName = Cache.monsters.associateBy(MonsterDTO::displayName)
+			MonsterCache.monstersByName = MonsterCache.monsters.associateBy(MonsterDTO::displayName)
 		}
 	}
 
@@ -102,17 +102,6 @@ open class MainViewModel {
 		CombatLinkRepository.addCombatLink(combatLink)
 		// At this point the item might not yet be visible in the drawer, but that should not matter
 		onDrawerItemSelected(DrawerItem.RememberedCombat(combatLink))
-	}
-
-	object Cache {
-		var monsters: List<MonsterDTO> by mutableStateOf(emptyList())
-		var monstersByName: Map<String, MonsterDTO>? by mutableStateOf(null)
-		fun getMonsterByName(name: String): MonsterDTO? {
-			// Fallback while map is not yet loaded. Completely unnecessary optimization
-			return monstersByName?.let {
-				it.getOrElse(name) { null }
-			} ?: monsters.firstOrNull { it.displayName == name }
-		}
 	}
 }
 

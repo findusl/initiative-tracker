@@ -10,6 +10,7 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.dtos.UserId
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
@@ -30,7 +31,7 @@ data class ClientCombatViewModel(
 
 	val title = "Joined ${combatLink.userDescription}"
 
-	val ownerId = GlobalInstances.generalSettingsRepository.installationId
+	val ownerId = UserId(GlobalInstances.generalSettingsRepository.installationId)
 
 	var characterChooserViewModel by mutableStateOf<CharacterChooserViewModel?>(null)
 		private set

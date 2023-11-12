@@ -1,14 +1,17 @@
 package de.lehrbaum.initiativetracker.ui.edit
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.aallam.openai.api.BetaOpenAI
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.Dice
+import de.lehrbaum.initiativetracker.bl.MonsterCache
 import de.lehrbaum.initiativetracker.bl.toModifier
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
-import de.lehrbaum.initiativetracker.ui.main.MainViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
 import kotlinx.coroutines.*
@@ -22,8 +25,7 @@ data class EditCombatantViewModel(
 	val id = combatantViewModel.id
 	var name: String by mutableStateOf(combatantViewModel.name)
 	val nameError: Boolean by derivedStateOf { name.isBlank() }
-	var nameSuggestions: List<String> by mutableStateOf(emptyList())
-		private set
+	private var nameSuggestions: List<String> by mutableStateOf(emptyList())
 	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name } }
 	var nameLoading: Boolean by mutableStateOf(false)
 	private var nameLoadingJob: Job? = null
@@ -43,7 +45,7 @@ data class EditCombatantViewModel(
 	var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
 
 	val monsters: List<MonsterDTO>
-		get() = MainViewModel.Cache.monsters
+		get() = MonsterCache.monsters
 
 	var monsterTypeName: String by mutableStateOf(combatantViewModel.creatureType ?: "")
 	val monsterType: MonsterDTO? by derivedStateOf { determineMonster(monsterTypeName) }
@@ -61,7 +63,7 @@ data class EditCombatantViewModel(
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 
 	private fun determineMonster(name: String): MonsterDTO? =
-		MainViewModel.Cache.getMonsterByName(name)
+		MonsterCache.getMonsterByName(name)
 
 	suspend fun onMonsterTypeChanged(type: MonsterDTO?) {
 		if (type != null) {

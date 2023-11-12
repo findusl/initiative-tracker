@@ -10,6 +10,7 @@ import kotlin.test.assertTrue
 
 class CombatControllerTest {
 	private lateinit var combatController: CombatController
+	@Suppress("INLINE_FROM_HIGHER_PLATFORM")
 	private val generalSettingsRepository = mockk<GeneralSettingsRepository>()
 
 	@BeforeTest
