@@ -45,7 +45,7 @@ fun CombatantList(
         }
     }
     LazyColumn(state = listState) {
-        items(combatants, key = CombatantViewModel::id, contentType = { CombatantModel::class }) { combatant ->
+        items(combatants, key = { it.id.id }, contentType = { CombatantModel::class }) { combatant ->
             SwipeToDismiss(dismissToEndAction(combatant), dismissToStartAction(combatant), combatant) {
                 CombatantListElement(combatant, isHost, Modifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },

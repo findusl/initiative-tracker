@@ -8,9 +8,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("INLINE_FROM_HIGHER_PLATFORM") // KTIJ-18375
 class CombatControllerTest {
 	private lateinit var combatController: CombatController
-	@Suppress("INLINE_FROM_HIGHER_PLATFORM")
 	private val generalSettingsRepository = mockk<GeneralSettingsRepository>()
 
 	@BeforeTest

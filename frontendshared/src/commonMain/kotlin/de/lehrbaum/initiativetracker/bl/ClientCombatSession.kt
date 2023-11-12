@@ -45,7 +45,7 @@ class ClientCombatSession(val combatLink: CombatLink) {
 				}
 			}
 		} catch (e: Exception) {
-			Napier.i("Exception in Remote combat: ${e.message}", tag = TAG)
+			Napier.i("Exception in Remote combat: ${e.message}", e, tag = TAG)
 			emit(Disconnected("Exception $e"))
 		}
 	}

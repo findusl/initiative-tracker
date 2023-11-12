@@ -40,6 +40,8 @@ open class MainViewModel {
 	val canStepBack: Boolean
 		get() = backstack.isNotEmpty() // since this is backed by a state variable the ui is notified
 
+	private var cacheInitialized: Boolean = false
+
 	fun onDrawerItemSelected(item: DrawerItem) {
 		if (item == content.drawerItem) return // avoid double click race conditions
 		val newContent: ContentState = when (item) {
@@ -57,12 +59,14 @@ open class MainViewModel {
 	}
 
 	fun initializeCache(scope: CoroutineScope) {
+		if (cacheInitialized) return
 		Napier.i("Initializing Cache")
 		scope.launch {
 			GlobalInstances.bestiaryNetworkClient.monsters.collect {
 				MonsterCache.monsters = it
 			}
 			MonsterCache.monstersByName = MonsterCache.monsters.associateBy(MonsterDTO::displayName)
+			cacheInitialized = true
 		}
 	}
 

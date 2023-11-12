@@ -34,7 +34,7 @@ class HostCombatSession(
 				}
 			}
 		} catch (e: Exception) {
-			Napier.i("Exception in Remote combat: ${e.message}", tag = TAG)
+			Napier.i("Exception in Remote combat: ${e.message}", e, tag = TAG)
 			emit(HostConnectionState.Disconnected("Exception $e"))
 		}
 	}
