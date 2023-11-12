@@ -43,7 +43,7 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 	val coroutineScope = rememberCoroutineScope()
 	var showLoadingSpinner by remember { mutableStateOf(false) }
 	TopAppBar(
-		title = { Text(editCombatantViewModel.id.toString()) },
+		title = { Text(editCombatantViewModel.id.id.toString()) },
 		navigationIcon = {
 			IconButton(onClick = editCombatantViewModel::cancel) {
 				Icon(
