@@ -11,7 +11,7 @@ object Version {
 	const val mppSettings = "1.1.0"
 	const val napier = "2.6.1"
 	const val openAiClient = "3.5.0"
-	const val kamel = "0.8.2"
+	const val kamel = "0.8.3"
 	const val versionPlugin = "0.49.0"
 	const val mockk = "1.13.8"
 
