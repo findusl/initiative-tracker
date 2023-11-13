@@ -59,13 +59,11 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 				}
 			},
 			secondaryText = composableIf(getsAllInformation) {
-				combatant.monsterDTO?.let { monster ->
-					val informationItems = listOf(
-						monster.ac?.firstOrNull()?.ac?.let { "AC $it" },
-						"${combatant.currentHp}/${combatant.maxHp}"
-					)
-					Text(informationItems.joinToString(", "))
-				}
+				val informationItems = listOfNotNull(
+					combatant.monsterDTO?.ac?.firstOrNull()?.ac?.let { "AC $it" },
+					"${combatant.currentHp}/${combatant.maxHp}"
+				)
+				Text(informationItems.joinToString(", "))
 			},
 			text = {
 				if (combatant.isHidden && !getsAllInformation)
