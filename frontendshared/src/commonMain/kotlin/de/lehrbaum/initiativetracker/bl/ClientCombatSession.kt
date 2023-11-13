@@ -17,6 +17,7 @@ import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
@@ -45,7 +46,11 @@ class ClientCombatSession(val combatLink: CombatLink) {
 				}
 			}
 		} catch (e: Exception) {
-			Napier.i("Exception in Remote combat: ${e.message}", e, tag = TAG)
+			if (e is ClosedReceiveChannelException) {
+				Napier.i("Channel was closed.", tag = TAG)
+			} else {
+				Napier.w("Exception in Remote combat: ${e.message}", e, tag = TAG)
+			}
 			emit(Disconnected("Exception $e"))
 		}
 	}
