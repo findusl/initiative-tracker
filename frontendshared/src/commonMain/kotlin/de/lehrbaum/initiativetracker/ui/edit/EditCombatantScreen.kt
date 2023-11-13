@@ -13,6 +13,7 @@ import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.AutocompleteTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
+import de.lehrbaum.initiativetracker.ui.composables.composableIf
 import kotlinx.coroutines.launch
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -138,9 +139,9 @@ fun NameField(editCombatantViewModel: EditCombatantViewModel) {
 		onTextChanged = { editCombatantViewModel.name = it },
 		error = editCombatantViewModel.nameError,
 		suggestions = editCombatantViewModel.nameSuggestionsToShow,
-		trailingIcon = if (editCombatantViewModel.nameLoading) {
-			{ CircularProgressIndicator(color = MaterialTheme.colors.primary,) }
-		} else null
+		trailingIcon = composableIf (editCombatantViewModel.nameLoading) {
+			CircularProgressIndicator(color = MaterialTheme.colors.primary,)
+		}
 	)
 }
 

@@ -46,29 +46,25 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 						drawDisabledCross(crossRed)
 					}
 				},
-			icon = {
-			   if (!combatant.isHidden || getsAllInformation) {
-				   combatant.imageUrl()?.let {
-					   KamelImage(
-						   asyncPainterResource(it),
-						   contentDescription = "Icon of ${combatant.name}",
-						   contentAlignment = Alignment.CenterStart,
-						   modifier = Modifier
-							   .widthIn(min = 20.dp, max = 40.dp) // guessed the values
-							   .aspectRatio(ratio = 1.0f)
-					   )
-				   }
-			   }
+			icon = composableIf(!combatant.isHidden || getsAllInformation) {
+				combatant.imageUrl()?.let {
+					KamelImage(
+						asyncPainterResource(it),
+						contentDescription = "Icon of ${combatant.name}",
+						contentAlignment = Alignment.CenterStart,
+						modifier = Modifier
+							.widthIn(min = 20.dp, max = 40.dp) // guessed the values
+							.aspectRatio(ratio = 1.0f)
+					)
+				}
 			},
-			secondaryText = {
-				if (getsAllInformation) {
-					combatant.monsterDTO?.let { monster ->
-						val informationItems = listOf(
-							monster.ac?.firstOrNull()?.ac?.let { "AC $it" },
-							"${combatant.currentHp}/${combatant.maxHp}"
-						)
-						Text(informationItems.joinToString(", "))
-					}
+			secondaryText = composableIf(getsAllInformation) {
+				combatant.monsterDTO?.let { monster ->
+					val informationItems = listOf(
+						monster.ac?.firstOrNull()?.ac?.let { "AC $it" },
+						"${combatant.currentHp}/${combatant.maxHp}"
+					)
+					Text(informationItems.joinToString(", "))
 				}
 			},
 			text = {
