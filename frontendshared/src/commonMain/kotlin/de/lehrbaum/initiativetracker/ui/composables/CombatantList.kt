@@ -30,8 +30,8 @@ fun CombatantList(
 	onCombatantClicked: (CombatantViewModel) -> Unit,
 	onCombatantLongClicked: (CombatantViewModel) -> Unit,
 	onCreateNewClicked: (() -> Unit)? = null,
-	dismissToEndAction: @Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
-	dismissToStartAction: @Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>? = { null },
+	dismissToEndAction: (@Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>?)? = null,
+	dismissToStartAction: (@Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>?)? = null,
 ) {
     val listState = rememberLazyListState()
 
@@ -46,7 +46,7 @@ fun CombatantList(
     }
     LazyColumn(state = listState) {
         items(combatants, key = { it.id.id }, contentType = { CombatantModel::class }) { combatant ->
-            SwipeToDismiss(dismissToEndAction(combatant), dismissToStartAction(combatant), combatant) {
+            SwipeToDismiss(dismissToEndAction?.invoke(combatant), dismissToStartAction?.invoke(combatant), combatant) {
                 CombatantListElement(combatant, isHost, Modifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },
                     onLongClick = { onCombatantLongClicked(combatant) }
