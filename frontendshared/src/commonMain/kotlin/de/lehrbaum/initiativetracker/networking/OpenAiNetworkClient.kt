@@ -1,9 +1,11 @@
 package de.lehrbaum.initiativetracker.networking
 
 import com.aallam.openai.api.BetaOpenAI
+import com.aallam.openai.api.audio.TranscriptionRequest
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
+import com.aallam.openai.api.file.FileSource
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
@@ -12,6 +14,7 @@ import com.aallam.openai.client.OpenAIConfig
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import okio.Buffer
 import kotlin.time.Duration.Companion.seconds
 
 class OpenAiNetworkClient(token: String) {
@@ -69,6 +72,16 @@ class OpenAiNetworkClient(token: String) {
 		)
 		val response = openAi.chatCompletion(request).choices.firstOrNull()?.message?.content ?: return null
 		return response.removeSuffix(".").capitalizeWords()
+	}
+
+	suspend fun interpretSpokenCommand(buffer: Buffer): String? {
+		val request = TranscriptionRequest(
+			FileSource("input.wav", buffer),
+			model = ModelId("whisper-1"),
+			language = "en"
+		)
+		val response = openAi.transcription(request)
+		return response.text
 	}
 
 	private fun String.capitalizeWords(): String {

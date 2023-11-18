@@ -4,18 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.CombatController
-import de.lehrbaum.initiativetracker.bl.ConfirmationRequester
-import de.lehrbaum.initiativetracker.bl.DamageDecision
-import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.bl.*
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
-import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
+import de.lehrbaum.initiativetracker.ui.shared.*
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
-import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
-import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
@@ -51,6 +45,25 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	abstract val hostConnectionState: Flow<HostConnectionState>
 	abstract val isSharing: Boolean
 	abstract val confirmDamage: ConfirmDamageOptions?
+
+	var isRecording by mutableStateOf(false)
+		private set
+	private val audioCommandController = AudioCommandController()
+
+	fun recordCommand() {
+		if (isRecording) return
+		if (!audioCommandController.isAvailable) {
+			snackbarState.showText("Audio recording unavailable")
+		} else {
+			isRecording = true
+			audioCommandController.startRecordingCommand()
+		}
+	}
+
+	suspend fun finishRecording() {
+		audioCommandController.finishRecordingCommand()
+		isRecording = false
+	}
 
 	fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
 		if (combatStarted && !combatantViewModel.disabled) {
