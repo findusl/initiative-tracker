@@ -11,11 +11,10 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.flow.flowOf
 
-data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit): HostCombatViewModelBase() {
+data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit): HostCombatViewModel() {
 	override val hostConnectionState = flowOf(HostConnectionState.Connected)
 	override val confirmDamage = null
 	override val isSharing = false
-	override val combatLink = null
 	override val title = "New Combat"
 
 	override var backendInputViewModel: BackendInputViewModel? by mutableStateOf(null)

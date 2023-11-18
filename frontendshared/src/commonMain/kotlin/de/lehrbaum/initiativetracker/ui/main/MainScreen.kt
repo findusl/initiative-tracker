@@ -99,7 +99,8 @@ private fun Drawer(
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
 	when(contentState) {
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
-		is ContentState.HostCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
+		is ContentState.HostLocalCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
+		is ContentState.HostSharedCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
 		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatViewModel)
 		is ContentState.JoinCombat -> JoinScreen(drawerState, contentState.joinViewModel)
 		is ContentState.SettingsScreen -> SettingsScreen(drawerState, contentState.settingsViewModel)

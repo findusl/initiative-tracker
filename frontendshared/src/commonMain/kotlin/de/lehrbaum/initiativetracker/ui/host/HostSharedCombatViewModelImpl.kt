@@ -19,9 +19,9 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
 data class HostSharedCombatViewModelImpl(
-	override val combatLink: CombatLink,
+	val combatLink: CombatLink,
 	private val leaveScreen: () -> Unit
-) : HostCombatViewModelBase() {
+) : HostCombatViewModel() {
 	private val hostCombatSession = HostCombatSession(combatLink, combatController)
 	override val hostConnectionState: Flow<HostConnectionState>
 		get() = hostCombatSession.hostConnectionState
@@ -51,7 +51,7 @@ data class HostSharedCombatViewModelImpl(
 	override fun showSessionId() {
 		if (combatLink.sessionId == null) return
 		snackbarState.value = SnackbarState.Copyable(
-			"SessionId: ${combatLink.sessionId ?: "default"}",
+			"SessionId: ${combatLink.sessionId}",
 			SnackbarDuration.Long,
 			combatLink.sessionId.toString()
 		)
