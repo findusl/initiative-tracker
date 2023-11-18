@@ -1,48 +1,145 @@
 package de.lehrbaum.initiativetracker.ui.host
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.CombatController
+import de.lehrbaum.initiativetracker.bl.ConfirmationRequester
 import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
+import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
+import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
-@Stable
-interface HostCombatViewModel: ErrorStateHolder {
-	val hostConnectionState: Flow<HostConnectionState>
-    val combatants: Flow<List<CombatantViewModel>>
-	val editCombatantViewModel: State<EditCombatantViewModel?>
-    val assignDamageCombatant: MutableState<CombatantViewModel?>
-    val snackbarState: MutableState<SnackbarState?>
-	val confirmDamage: ConfirmDamageOptions?
-	val combatStarted: Boolean
-    val isSharing: Boolean
-	val combatLink: CombatLink?
-	val title: String
-	val backendInputViewModel: BackendInputViewModel?
+abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequester {
 
-    fun onCombatantClicked(combatantViewModel: CombatantViewModel)
-    fun onCombatantLongClicked(combatant: CombatantViewModel)
-	fun deleteCombatant(combatantViewModel: CombatantViewModel)
-	fun disableCombatant(combatantViewModel: CombatantViewModel)
-	fun enableCombatant(combatantViewModel: CombatantViewModel)
-    fun onDamageDialogSubmit(damage: Int)
-    fun onDamageDialogCancel()
-	fun onConfirmDamageDialogSubmit(decision: DamageDecision)
-	fun onConfirmDamageDialogCancel()
-    fun addNewCombatant()
-    fun nextCombatant()
-    fun previousCombatant()
-	fun jumpToCombatant(combatantViewModel: CombatantViewModel)
-    fun undoDelete()
-    fun startCombat()
-    suspend fun shareCombat()
-	suspend fun closeSession()
-	fun showSessionId()
+	@Suppress("LeakingThis") // TASK migrate to the sharedHostCombatViewModel, only necessary there
+	protected var combatController: CombatController =
+		CombatController(GlobalInstances.generalSettingsRepository, this)
+
+	val combatants = combatController.combatants
+		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
+			combatants.mapIndexed { index, combatant ->
+				combatant.toCombatantViewModel(
+					thisUser = combatController.hostId,
+					active = index == activeIndex,
+				)
+			}
+		}
+
+	val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)
+
+	val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
+
+	val snackbarState = mutableStateOf<SnackbarState?>(null)
+
+	var combatStarted by mutableStateOf(false)
+
+	private var mostRecentDeleted: CombatantModel? = null
+
+	open val backendInputViewModel: BackendInputViewModel? = null
+
+	abstract val title: String
+	abstract val hostConnectionState: Flow<HostConnectionState>
+	abstract val isSharing: Boolean
+	abstract val confirmDamage: ConfirmDamageOptions?
+
+	fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
+		if (combatStarted && !combatantViewModel.disabled) {
+			damageCombatant(combatantViewModel)
+		} else {
+			editCombatant(combatantViewModel)
+		}
+	}
+
+	fun onCombatantLongClicked(combatant: CombatantViewModel) {
+		editCombatant(combatant)
+	}
+
+	fun deleteCombatant(combatantViewModel: CombatantViewModel) {
+		mostRecentDeleted = combatController.deleteCombatant(combatantViewModel.id)
+		// TASK show dialog with undo option
+	}
+
+	fun disableCombatant(combatantViewModel: CombatantViewModel) {
+		combatController.disableCombatant(combatantViewModel.id)
+	}
+
+	fun enableCombatant(combatantViewModel: CombatantViewModel) {
+		combatController.enableCombatant(combatantViewModel.id)
+	}
+
+	fun jumpToCombatant(combatantViewModel: CombatantViewModel) {
+		combatController.jumpToCombatant(combatantViewModel.id)
+	}
+
+	fun onDamageDialogSubmit(damage: Int) {
+		assignDamageCombatant.value?.apply {
+			if (currentHp != null) // should have never been shown if null
+				combatController.damageCombatant(id, damage)
+		}
+		assignDamageCombatant.value = null
+	}
+
+	fun onDamageDialogCancel() {
+		assignDamageCombatant.value = null
+	}
+
+	fun addNewCombatant() {
+		val newCombatant = combatController.addCombatant()
+		editCombatant(newCombatant.toCombatantViewModel(combatController.hostId), firstEdit = true)
+	}
+
+	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
+		editCombatantViewModel.value = EditCombatantViewModel(
+			combatantViewModel,
+			firstEdit,
+			onSave = {
+				combatController.updateCombatant(it)
+				editCombatantViewModel.value = null
+			},
+			onCancel = {
+				if (firstEdit)
+					combatController.deleteCombatant(combatantViewModel.id)
+				editCombatantViewModel.value = null
+			}
+		)
+	}
+
+	private fun damageCombatant(combatantViewModel: CombatantViewModel) {
+		if (combatantViewModel.currentHp != null) {
+			assignDamageCombatant.value = combatantViewModel
+		} else {
+			snackbarState.value = SnackbarState.Text("Combatant has no current HP")
+		}
+	}
+
+	@Suppress("unused") // TASK implement undo
+	fun undoDelete() {
+		mostRecentDeleted?.let {
+			combatController.addCombatant(it.name, it.initiative)
+		}
+	}
+
+	fun startCombat() {
+		combatStarted = true
+	}
+
+	fun nextCombatant() {
+		combatController.nextTurn()
+	}
+
+	abstract suspend fun closeSession()
+	abstract fun showSessionId()
+	abstract suspend fun shareCombat()
+	abstract fun onConfirmDamageDialogCancel()
+	abstract fun onConfirmDamageDialogSubmit(decision: DamageDecision)
 }

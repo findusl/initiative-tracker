@@ -8,7 +8,6 @@ import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModel
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModel
-import de.lehrbaum.initiativetracker.ui.host.HostCombatViewModel
 import de.lehrbaum.initiativetracker.ui.host.HostLocalCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.join.JoinViewModel
@@ -74,11 +73,11 @@ open class MainViewModel {
 		content = backstack.removeFirstOrNull() ?: return
 	}
 
-	private fun hostNewCombat(): ContentState.HostCombat {
+	private fun hostNewCombat(): ContentState.HostLocalCombat {
 		val hostCombatModel = HostLocalCombatViewModelImpl {
 			switchToCombat(it)
 		}
-		return ContentState.HostCombat(hostCombatModel)
+		return ContentState.HostLocalCombat(hostCombatModel)
 	}
 
 	private fun clientCombat(combatLink: CombatLink): ContentState.ClientCombat {
@@ -88,11 +87,11 @@ open class MainViewModel {
 		return ContentState.ClientCombat(model)
 	}
 
-	private fun hostCombat(combatLink: CombatLink): ContentState.HostCombat {
+	private fun hostCombat(combatLink: CombatLink): ContentState.HostSharedCombat {
 		val hostCombatModel = HostSharedCombatViewModelImpl(combatLink) {
 			onDrawerItemSelected(DrawerItem.HostCombat)
 		}
-		return ContentState.HostCombat(hostCombatModel)
+		return ContentState.HostSharedCombat(hostCombatModel)
 	}
 
 	private fun joinCombat(asHost: Boolean): ContentState.JoinCombat {
@@ -147,12 +146,11 @@ sealed interface DrawerItem {
 
 sealed class ContentState(val drawerItem: DrawerItem) {
 
-	data class HostCombat(val hostCombatViewModel: HostCombatViewModel) :
-	// TASK ugly line, change if possible
-		ContentState(
-			if (hostCombatViewModel.isSharing) DrawerItem.RememberedCombat(hostCombatViewModel.combatLink!!)
-			else DrawerItem.HostCombat
-		)
+	data class HostLocalCombat(val hostCombatViewModel: HostLocalCombatViewModelImpl) :
+		ContentState(DrawerItem.HostCombat)
+
+	data class HostSharedCombat(val hostCombatViewModel: HostSharedCombatViewModelImpl) :
+		ContentState(DrawerItem.RememberedCombat(hostCombatViewModel.combatLink))
 
 	data class JoinCombat(val joinViewModel: JoinViewModel) :
 		ContentState(if (joinViewModel.asHost) DrawerItem.JoinAsHost else DrawerItem.JoinCombat)

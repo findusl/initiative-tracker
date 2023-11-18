@@ -70,7 +70,7 @@ class HostCombatSession(
 	@OptIn(FlowPreview::class)
 	private suspend fun DefaultClientWebSocketSession.shareCombatUpdates() {
 		combine(combatController.activeCombatantIndex, combatController.combatants, ::CombatModel)
-			.debounce(200.milliseconds)
+			.debounce(50.milliseconds)
 			.distinctUntilChanged()
 			.collectLatest {
 				Napier.v("Sent combat update for Session $combatLink")

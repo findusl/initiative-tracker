@@ -130,7 +130,7 @@ private fun TopBar(
 	drawerState: DrawerState,
 	hostCombatViewModel: HostCombatViewModel
 ) {
-	var displayDropdown by remember(hostCombatViewModel.combatLink) { mutableStateOf(false) }
+	var displayDropdown by remember(hostCombatViewModel) { mutableStateOf(false) }
 
 	val coroutineScope = rememberCoroutineScope()
 
