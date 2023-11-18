@@ -18,15 +18,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.primarySurface
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
@@ -45,6 +37,7 @@ import de.lehrbaum.initiativetracker.ui.composables.swipeToJumpToTurn
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -58,6 +51,8 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 	if (hostCombatViewModel.isSharing) KeepScreenOn()
 
+	val coroutineScope = rememberCoroutineScope()
+
 	ListDetailLayout(
 		list = {
 			val scaffoldState = rememberScaffoldState()
@@ -65,13 +60,13 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 			Scaffold(
 				scaffoldState = scaffoldState,
-				topBar = { TopBar(drawerState, hostCombatModelState.value) },
+				topBar = { TopBar(drawerState, coroutineScope, hostCombatModelState.value) },
 				floatingActionButton = { NextCombatantButton(hostCombatModelState.value) },
 			) {
 				MainContent(hostCombatModelState.value, connectionStateState)
 			}
 
-			Dialogs(connectionStateState.value, hostCombatModelState.value)
+			Dialogs(connectionStateState.value, coroutineScope, hostCombatModelState.value)
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
@@ -133,6 +128,7 @@ private fun MainContent(
 @Composable
 private fun Dialogs(
 	connectionState: HostConnectionState,
+	coroutineScope: CoroutineScope,
 	hostCombatViewModel: HostCombatViewModel
 ) {
 	if (connectionState == HostConnectionState.Connected) {
@@ -142,6 +138,17 @@ private fun Dialogs(
 			}
 			confirmDamage?.let { options ->
 				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
+			}
+			if (isRecording) {
+				Dialog(onDismissRequest = { TODO("Cancel recording") }) {
+					Button(onClick = {
+						coroutineScope.launch {
+							hostCombatViewModel.finishRecording()
+						}
+					}) {
+						Text("Finish Recording")
+					}
+				}
 			}
 		}
 	}
@@ -159,11 +166,10 @@ private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
 @Composable
 private fun TopBar(
 	drawerState: DrawerState,
+	coroutineScope: CoroutineScope,
 	hostCombatViewModel: HostCombatViewModel
 ) {
 	var displayDropdown by remember(hostCombatViewModel) { mutableStateOf(false) }
-
-	val coroutineScope = rememberCoroutineScope()
 
 	TopAppBar(
 		title = {
@@ -177,6 +183,9 @@ private fun TopBar(
 				IconButton(onClick = hostCombatViewModel::startCombat) {
 					Icon(Icons.Default.PlayArrow, contentDescription = "Play")
 				}
+			}
+			IconButton(onClick = hostCombatViewModel::recordCommand) {
+				Icon(Icons.Default.LocationOn, contentDescription = "Record")
 			}
 			if (hostCombatViewModel.isSharing) {
 				IconButton(onClick = {
