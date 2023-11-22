@@ -1,6 +1,10 @@
 package de.lehrbaum.initiativetracker.ui.shared
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope

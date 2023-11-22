@@ -11,7 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.bl.DamageDecision
-import de.lehrbaum.initiativetracker.bl.DamageDecision.*
+import de.lehrbaum.initiativetracker.bl.DamageDecision.DOUBLE
+import de.lehrbaum.initiativetracker.bl.DamageDecision.FULL
+import de.lehrbaum.initiativetracker.bl.DamageDecision.HALF
+import de.lehrbaum.initiativetracker.bl.DamageDecision.NONE
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 
 data class ConfirmDamageOptions(
