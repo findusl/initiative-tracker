@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.client
 
 import androidx.compose.material.SnackbarDuration
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
+import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
@@ -39,8 +41,10 @@ data class ClientCombatViewModel(
 	var editCombatantViewModel by mutableStateOf<EditCombatantViewModel?>(null)
 		private set
 
-	var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
-		private set
+	private var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
+	val damageCombatantViewModel by derivedStateOf { assignDamageCombatant?.let {
+		DamageCombatantViewModel(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
+	} }
 
 	fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
 		assignDamageCombatant = combatantViewModel
@@ -92,11 +96,11 @@ data class ClientCombatViewModel(
 	}
 
 	suspend fun onDamageDialogSubmit(damage: Int) {
-		val result = assignDamageCombatant?.let {
-			combatSession.requestDamageCharacter(it.id, damage, ownerId)
-		} ?: true
-		if (result)
-			assignDamageCombatant = null
+		assignDamageCombatant?.let {
+			val result = combatSession.requestDamageCharacter(it.id, damage, ownerId)
+			if (result)
+				assignDamageCombatant = null
+		}
 	}
 
 	fun onDamageDialogCancel() {

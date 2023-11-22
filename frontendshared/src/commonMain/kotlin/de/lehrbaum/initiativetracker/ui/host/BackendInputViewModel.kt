@@ -9,7 +9,7 @@ import de.lehrbaum.initiativetracker.bl.InputValidator
 import de.lehrbaum.initiativetracker.bl.data.Backend
 import io.ktor.http.Url
 
-class BackendInputViewModel(
+data class BackendInputViewModel(
 	private val onBackendConfirmed: suspend (Backend) -> Unit,
 	val onDismiss: () -> Unit
 ) {
@@ -22,16 +22,22 @@ class BackendInputViewModel(
 
 	var secureConnectionChosen by mutableStateOf(defaultBackend.secureConnection)
 
+	var isSubmitting by mutableStateOf(false)
+		private set
+
 	val inputsAreValid by derivedStateOf {
 		(!hostFieldError)
 	}
 
 	suspend fun onConnectPressed() {
 		if (!inputsAreValid) return
+		if (isSubmitting) return
+		isSubmitting = true
 
 		val protocol = if (secureConnectionChosen) "https" else "http"
 		val url = Url("$protocol://$hostFieldContent")
 		val backend = Backend(secureConnectionChosen, url.host, url.port)
 		onBackendConfirmed(backend)
+		isSubmitting = false
 	}
 }

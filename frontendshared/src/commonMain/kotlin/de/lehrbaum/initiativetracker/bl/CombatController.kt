@@ -33,6 +33,7 @@ class CombatController(
 	val hostId = UserId(generalSettingsRepository.installationId)
 
 	fun nextTurn() {
+		if (combatantCount == 0) return
 		val startingIndex = activeCombatantIndex.value
 		var newIndex = (startingIndex + 1) % combatantCount
 		while (combatants.value[newIndex].disabled && newIndex != startingIndex) {
@@ -111,18 +112,20 @@ class CombatController(
 
 	fun deleteCombatant(id: CombatantId): CombatantModel? {
 		var oldCombatant: CombatantModel? = null
+		var oldIndex: Int? = null
 		_combatants.value = _combatants.value
-			.filter { combatantModel ->
+			.filterIndexed { index, combatantModel ->
 				if (combatantModel.id == id) {
 					oldCombatant = combatantModel
+					oldIndex = index
 					false
 				} else true
 			}
 		if (oldCombatant != null) {
 			combatantCount--
 		}
-		if (activeCombatantIndex.value >= combatantCount) {
-			_activeCombatantIndex.value = combatantCount - 1
+		if (oldIndex != null && activeCombatantIndex.value > oldIndex!! || activeCombatantIndex.value >= combatantCount) {
+			_activeCombatantIndex.value--
 		}
 		return oldCombatant
 	}

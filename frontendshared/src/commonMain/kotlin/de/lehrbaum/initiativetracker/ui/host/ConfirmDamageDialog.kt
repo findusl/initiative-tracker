@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.ui.composables
+package de.lehrbaum.initiativetracker.ui.host
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

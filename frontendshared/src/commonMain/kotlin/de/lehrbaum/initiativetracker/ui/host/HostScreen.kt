@@ -18,12 +18,19 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.runtime.*
+import androidx.compose.material.primarySurface
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
-import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageDialog
-import de.lehrbaum.initiativetracker.ui.composables.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.composables.ErrorComposable
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.composables.MyDropdownMenu
@@ -34,8 +41,10 @@ import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
 import de.lehrbaum.initiativetracker.ui.composables.swipeToDisable
 import de.lehrbaum.initiativetracker.ui.composables.swipeToEnable
 import de.lehrbaum.initiativetracker.ui.composables.swipeToJumpToTurn
+import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.icons.FastForward
+import de.lehrbaum.initiativetracker.ui.icons.Mic
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -75,10 +84,6 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 	)
 
 	hostCombatViewModel.ErrorComposable()
-
-	hostCombatViewModel.backendInputViewModel?.let {
-		BackendInputDialog(it)
-	}
 }
 
 @ExperimentalMaterialApi
@@ -133,8 +138,11 @@ private fun Dialogs(
 ) {
 	if (connectionState == HostConnectionState.Connected) {
 		with(hostCombatViewModel) {
-			assignDamageCombatant.value?.let {
-				DamageCombatantDialog(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
+			backendInputViewModel?.let {
+				BackendInputDialog(it)
+			}
+			damageCombatantViewModel?.let {
+				DamageCombatantDialog(it)
 			}
 			confirmDamage?.let { options ->
 				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
@@ -184,8 +192,10 @@ private fun TopBar(
 					Icon(Icons.Default.PlayArrow, contentDescription = "Play")
 				}
 			}
-			IconButton(onClick = hostCombatViewModel::recordCommand) {
-				Icon(Icons.Default.LocationOn, contentDescription = "Record")
+			if (hostCombatViewModel.isRecordActionVisible) {
+				IconButton(onClick = hostCombatViewModel::recordCommand) {
+					Icon(Icons.Default.Mic, contentDescription = "Record")
+				}
 			}
 			if (hostCombatViewModel.isSharing) {
 				IconButton(onClick = {

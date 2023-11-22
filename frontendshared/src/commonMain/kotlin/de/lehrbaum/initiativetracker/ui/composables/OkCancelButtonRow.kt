@@ -12,11 +12,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -63,9 +59,9 @@ fun OkCancelButtonRow(
 	submittable: Boolean,
 	onCancel: () -> Unit,
 	onSubmitSuspend: suspend () -> Unit,
+	showSubmitLoadingSpinner: Boolean,
 	coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
-	var showLoadingSpinner by remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
@@ -83,11 +79,8 @@ fun OkCancelButtonRow(
         }
         Button(
             onClick = {
-				if (showLoadingSpinner) return@Button
 				coroutineScope.launch {
-					showLoadingSpinner = true
 					onSubmitSuspend()
-					showLoadingSpinner = false
 				}
 			},
             shape = RoundedCornerShape(50.dp),
@@ -97,7 +90,7 @@ fun OkCancelButtonRow(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-			if (showLoadingSpinner) {
+			if (showSubmitLoadingSpinner) {
 				CircularProgressIndicator(
 					color = MaterialTheme.colors.onPrimary,
 					strokeWidth = 3.dp,
