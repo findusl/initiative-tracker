@@ -5,7 +5,7 @@ import java.util.*
 
 buildscript {
 	dependencies {
-		classpath("com.android.tools.build:gradle:${Version.Android.gradleBuildTools}")
+		classpath(libs.android.gradle)
 	}
 }
 
@@ -13,7 +13,7 @@ plugins {
 	id("com.android.application")
 	kotlin("android")
 	id("org.jetbrains.kotlin.kapt")
-	id("org.jetbrains.kotlin.plugin.serialization")
+	kotlin("plugin.serialization")
 }
 
 val properties = Properties()
@@ -57,7 +57,7 @@ android {
 		buildConfig = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = Version.Android.composeCompiler
+		kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 }
@@ -67,18 +67,19 @@ dependencies {
 	implementation(project(":dtos"))
 
 	// Compose versions
-	val composeBom = platform("androidx.compose:compose-bom:${Version.Android.composeBom}")
+	val composeBom = platform(libs.androidx.compose.bom)
 	implementation(composeBom)
+	androidTestImplementation(composeBom)
 
-	testImplementation("junit:junit:4.13.2")
+	testImplementation(libs.junit)
 
 	// For previews
 	androidTestImplementation("androidx.compose.material:material")
 	debugImplementation("androidx.compose.ui:ui-tooling")
 	androidTestImplementation("androidx.compose.ui:ui-tooling-preview")
 
-	androidTestImplementation("androidx.test.ext:junit:1.1.5")
-	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+	androidTestImplementation(libs.ext.junit)
+	androidTestImplementation(libs.espresso.core)
 }
 
 // Allow references to generated code

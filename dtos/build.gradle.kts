@@ -1,6 +1,6 @@
 plugins {
 	kotlin("multiplatform")
-	id("org.jetbrains.kotlin.plugin.serialization")
+	kotlin("plugin.serialization")
 }
 
 kotlin {
@@ -12,8 +12,8 @@ kotlin {
 	sourceSets {
 		named("commonMain") {
 			dependencies {
-				api("org.jetbrains.kotlinx:kotlinx-serialization-core:${Version.kotlinxSerialization}")
-				api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}")
+				api(libs.kotlinx.serialization.core)
+				api(libs.kotlinx.serialization.json)
 			}
 		}
 	}

@@ -12,7 +12,7 @@ dependencies {
 	implementation(project(":frontendshared"))
 	implementation(compose.desktop.currentOs)
 	// For the Dispatchers.Main. Sadly adding in shared module in Desktop.Main was not enough?
-	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Version.coroutines}")
+	runtimeOnly(libs.kotlinx.coroutines.swing)
 }
 
 application {
