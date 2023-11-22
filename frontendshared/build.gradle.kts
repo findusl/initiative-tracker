@@ -4,10 +4,10 @@ import java.util.*
 plugins {
 	kotlin("multiplatform")
 	id("com.android.library")
-	id("org.jetbrains.compose")
-	id("org.jetbrains.kotlin.plugin.serialization")
+	alias(libs.plugins.jetbrains.compose)
+	kotlin("plugin.serialization")
 	// Used to mimic BuildConfig from Android on Multiplatform
-	id("com.codingfeline.buildkonfig") version Version.buildKonfig
+	alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -38,26 +38,26 @@ kotlin {
 				implementation(compose.material)
 				implementation(compose.runtime)
 
-				implementation("com.russhwolf:multiplatform-settings:${Version.mppSettings}")
-				implementation("com.russhwolf:multiplatform-settings-serialization:${Version.mppSettings}")
+				implementation(libs.multiplatform.settings)
+				implementation(libs.multiplatform.settings.serialization)
 
-				implementation("com.aallam.openai:openai-client:${Version.openAiClient}")
+				implementation(libs.openai.client)
 
-				implementation("media.kamel:kamel-image:${Version.kamel}")
+				implementation(libs.kamel.image)
 
-				implementation(Dependency.kotlinxSerialization)
-				implementation(Dependency.kotlinxCoroutines)
-				implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:${Version.kotlinxCollections}")
+				implementation(libs.kotlinx.serialization.json)
+				implementation(libs.kotlinx.coroutines.core)
+				implementation(libs.kotlinx.collections.immutable)
 
-				implementation("io.ktor:ktor-client-core:${Version.ktor}")
-				implementation("io.ktor:ktor-client-serialization:${Version.ktor}")
-				implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
-				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
-				implementation("io.ktor:ktor-client-websockets:${Version.ktor}")
-				implementation("io.ktor:ktor-client-logging:${Version.ktor}")
+				implementation(libs.ktor.client.core)
+				implementation(libs.ktor.client.serialization)
+				implementation(libs.ktor.client.content.negotiation)
+				implementation(libs.ktor.serialization.kotlinx.json)
+				implementation(libs.io.ktor.ktor.client.websockets)
+				implementation(libs.io.ktor.ktor.client.logging)
 
 				// Multiplatform Logging
-				api(Dependency.napier)
+				api(libs.napier)
 			}
 		}
 		commonTest {
@@ -72,7 +72,7 @@ kotlin {
 			jvmMain.get().dependsOn(this)
 			androidMain.get().dependsOn(this)
 			dependencies {
-				implementation("io.ktor:ktor-client-okhttp:${Version.ktor}")
+				implementation(libs.ktor.client.okhttp)
 			}
 		}
 		val jvmTargetsTest by creating {
@@ -80,7 +80,7 @@ kotlin {
 			jvmTest.get().dependsOn(this)
 			androidUnitTest.dependsOn(this)
 			dependencies {
-				implementation("io.mockk:mockk:${Version.mockk}")
+				implementation(libs.mockk)
 				implementation(kotlin("test-junit"))
 			}
 		}
@@ -96,15 +96,15 @@ kotlin {
 				api("androidx.activity:activity-compose")
 
 				// Multiplatform logging
-				implementation(Dependency.napier)
+				implementation(libs.napier)
 
 				// To have Dispatchers.Main on Android
-				runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}")
+				runtimeOnly(libs.kotlinx.coroutines.android)
 			}
 		}
 		appleMain {
 			dependencies {
-				implementation("io.ktor:ktor-client-darwin:${Version.ktor}")
+				implementation(libs.ktor.client.darwin)
 			}
 		}
 	}

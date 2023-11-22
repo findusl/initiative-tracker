@@ -1,6 +1,6 @@
 plugins {
 	kotlin("multiplatform")
-	id("org.jetbrains.kotlin.plugin.serialization")
+	kotlin("plugin.serialization")
 }
 
 group = "de.lehrbaum"
@@ -21,23 +21,23 @@ kotlin {
 			dependencies {
 				implementation(project(path = ":dtos"))
 
-				implementation("io.ktor:ktor-server-core:${Version.ktor}")
-				implementation("io.ktor:ktor-server-cio:${Version.ktor}")
-				implementation("io.ktor:ktor-server-content-negotiation:${Version.ktor}")
-				implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
-				implementation("io.ktor:ktor-server-websockets:${Version.ktor}")
+				implementation(libs.ktor.server.core)
+				implementation(libs.ktor.server.cio)
+				implementation(libs.ktor.server.content.negotiation)
+				implementation(libs.ktor.serialization.kotlinx.json)
+				implementation(libs.ktor.server.websockets)
 			}
 		}
 		named("commonTest") {
 			dependencies {
-				implementation("io.ktor:ktor-server-tests:${Version.ktor}")
+				implementation(libs.ktor.server.tests)
 				implementation(kotlin("test"))
 			}
 		}
 		named("jvmMain") {
 			dependencies {
-				implementation("ch.qos.logback:logback-classic:${Version.logback}")
-				implementation("io.ktor:ktor-server-call-logging:${Version.ktor}")
+				implementation(libs.logback.classic)
+				implementation(libs.ktor.server.call.logging)
 			}
 		}
 		named("linuxX64Main")

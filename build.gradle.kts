@@ -3,11 +3,11 @@ import java.util.*
 
 plugins {
 	// Plugin helps find available updates for dependencies https://github.com/ben-manes/gradle-versions-plugin
-	id("com.github.ben-manes.versions") version Version.versionPlugin
+	alias(libs.plugins.ben.manes.versions)
 
 	// this is necessary to avoid the plugins loaded multiple times
-	kotlin("multiplatform") version Version.kotlin apply false
-	id("org.jetbrains.compose") version Version.JetbrainsCompose.foundation apply false
+	alias(libs.plugins.kotlin.multiplatform) apply false
+	alias(libs.plugins.jetbrains.compose) apply false
 }
 
 buildscript {
@@ -19,13 +19,13 @@ buildscript {
 	}
 
 	dependencies {
-		classpath("com.android.tools.build:gradle:${Version.Android.gradleBuildTools}")
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Version.kotlin}")
-		classpath("org.jetbrains.kotlin:kotlin-serialization:${Version.kotlin}")
+		classpath(libs.android.gradle)
+		classpath(libs.kotlin.gradle.plugin)
+		classpath(libs.kotlin.serialization)
 		// https://github.com/google/dagger/issues/3068
-		classpath("com.squareup:javapoet:1.13.0")
+		classpath(libs.javapoet)
 		// https://issuetracker.google.com/issues/240445963
-		classpath("org.apache.commons:commons-compress:${Version.ApacheCommons.compress}")
+		classpath(libs.commons.compress)
 	}
 }
 
