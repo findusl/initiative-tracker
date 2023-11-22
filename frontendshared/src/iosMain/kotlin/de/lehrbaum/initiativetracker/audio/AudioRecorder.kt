@@ -8,7 +8,7 @@ actual class AudioRecorder {
 		TODO("Not yet implemented")
     }
 
-    actual fun stopRecording(): Buffer {
+    actual fun stopRecording(): Result<Buffer>  {
         TODO("Not yet implemented")
     }
 

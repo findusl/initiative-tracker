@@ -7,13 +7,18 @@ import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.file.FileSource
 import com.aallam.openai.api.http.Timeout
+import com.aallam.openai.api.logging.LogLevel
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
+import de.lehrbaum.initiativetracker.bl.CombatCommand
+import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import okio.Buffer
 import kotlin.time.Duration.Companion.seconds
 
@@ -21,10 +26,16 @@ class OpenAiNetworkClient(token: String) {
 	private val config = OpenAIConfig(
 		token = token,
 		timeout = Timeout(socket = 60.seconds),
-		logging = LoggingConfig(),
+		logging = LoggingConfig(LogLevel.Info),
 		// additional configurations...
 	)
 	private val openAi = OpenAI(config)
+	private val parserForJsonFromAI = Json {
+		isLenient = true
+		ignoreUnknownKeys = true
+		allowSpecialFloatingPointValues = true
+		coerceInputValues = true
+	}
 
 	@BetaOpenAI
 	suspend fun suggestMonsterNames(monsterType: String): List<String> = coroutineScope {
@@ -74,15 +85,48 @@ class OpenAiNetworkClient(token: String) {
 		return response.removeSuffix(".").capitalizeWords()
 	}
 
-	suspend fun interpretSpokenCommand(buffer: Buffer): String? {
-		val request = TranscriptionRequest(
+	suspend fun interpretSpokenCombatCommand(buffer: Buffer, combatants: Iterable<CombatantModel>): Result<CombatCommand> {
+		@Suppress("SpellCheckingInspection") // it's german
+		val transcriptionRequest = TranscriptionRequest(
 			FileSource("input.wav", buffer),
 			model = ModelId("whisper-1"),
-			language = "en"
+			prompt = "Kampf zwischen " + combatants.commaSeparatedNameList(),
+			language = "de"
 		)
-		val response = openAi.transcription(request)
-		return response.text
+		val transcriptionResponse = openAi.transcription(transcriptionRequest)
+		return interpretCombatCommand(transcriptionResponse.text, combatants)
 	}
+
+	private suspend fun interpretCombatCommand(command: String, combatants: Iterable<CombatantModel>): Result<CombatCommand> {
+		val interpretationRequest = ChatCompletionRequest(
+			model = ModelId("gpt-4"),
+			temperature = 0.7,
+			topP = 0.8,
+			messages = listOf(
+				ChatMessage(
+					role = ChatRole.System,
+					content = interpretCombatCommandPrompt + combatants.commaSeparatedNameList()
+				),
+				ChatMessage(
+					role = ChatRole.User,
+					content = command
+				)
+			)
+		)
+		val response = openAi.chatCompletion(interpretationRequest).choices.firstOrNull()?.message?.content
+			?: return Result.failure(NoSuchElementException("Got no response from GPT-4 to interpret $command"))
+		try { // Not yet sure how this will generalize for different commands
+			val parsed = parserForJsonFromAI.decodeFromString<DamageCommandDTO>(response)
+			val combatant = combatants.firstOrNull { it.name == parsed.target }
+				?: return Result.failure(RuntimeException("Unable to find combatant for target ${parsed.target}"))
+			return Result.success(CombatCommand.DamageCommand(combatant, parsed.damage))
+		} catch (e: Exception) {
+			return Result.failure(RuntimeException("Unable to interpret response from GPT-4 for command $command", e))
+		}
+	}
+
+	private fun Iterable<CombatantModel>.commaSeparatedNameList(): String =
+		joinToString(separator = ", ", transform = CombatantModel::name)
 
 	private fun String.capitalizeWords(): String {
 		return this.split(" ").joinToString(" ") { it.capitalizeWord() }
@@ -91,6 +135,9 @@ class OpenAiNetworkClient(token: String) {
 	private fun String.capitalizeWord(): String =
 		replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
+
+@Serializable
+private data class DamageCommandDTO(val target: String, val damage: Int)
 
 private val descriptionSuggestionSystemPrompt = """
 You help a Dungeon and Dragons dungeon master describe his creatures to the players.
@@ -112,4 +159,16 @@ If it is an Elf, give it an elven name. And so on.
 If the designation of the creature already contains the name, use it.
 If you do not recognize the designation, return the designation without additional information.
 The output may only contain the name, no additional information.
+""".trimIndent()
+
+@Suppress("SpellCheckingInspection") // it's german
+private val interpretCombatCommandPrompt = """
+	Die Nachrichten sind auf Deutsch. Du hilfst einer Applikation den Befehl eines Nutzers zu interpretieren. Der 
+	Befehl beschreibt schaden den der Nutzer einem Gegner zuweisen will. Der Befehl kann Fehler enthalten. Es ist 
+	deine Aufgabe, ihn bestmöglich in das folgende JSON zu verwandeln:
+
+	{ "target": "", "damage": 0 }
+
+	Jetzt folgt noch eine kommaseparierte Liste aller möglichen Gegner. Das Feld Gegner muss einen dieser Werte 
+	enhalten: 
 """.trimIndent()

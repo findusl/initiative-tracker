@@ -11,7 +11,7 @@ actual class AudioRecorder: AutoCloseable {
 	/**
 	 * @return A Buffer of a WAV formatted byte stream
 	 */
-    actual fun stopRecording(): Buffer {
+    actual fun stopRecording(): Result<Buffer>  {
         TODO("Not yet implemented")
     }
 

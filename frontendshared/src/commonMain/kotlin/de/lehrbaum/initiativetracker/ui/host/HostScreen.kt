@@ -148,7 +148,7 @@ private fun Dialogs(
 				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
 			}
 			if (isRecording) {
-				Dialog(onDismissRequest = { TODO("Cancel recording") }) {
+				Dialog(onDismissRequest = { hostCombatViewModel.cancelRecording() }) {
 					Button(onClick = {
 						coroutineScope.launch {
 							hostCombatViewModel.finishRecording()

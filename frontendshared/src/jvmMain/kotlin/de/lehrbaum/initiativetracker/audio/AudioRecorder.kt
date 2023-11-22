@@ -81,21 +81,22 @@ actual class AudioRecorder: AutoCloseable, CoroutineScope {
 	}
 
 	// Stop recording and return the audio data
-	actual fun stopRecording(): Buffer {
-		if (!isRecording) throw IllegalStateException("AudioRecorder is not recording")
+	actual fun stopRecording(): Result<Buffer> {
+		if (!isRecording) return Result.failure(IllegalStateException("AudioRecorder is not recording"))
 		isRecording = false
 		line.stop()
 		line.flush()
-		val buffer = recordingStream!!
+		val buffer = recordingStream ?: return Result.failure(IllegalStateException("RecordingStream is null"))
+
 		recordingStream = null
-		return convertToWavBuffer(buffer)
+		return Result.success(convertToWavBuffer(buffer))
 	}
 
 	@Suppress("unused")// For debugging purposes
 	private fun Buffer.writeToFile() {
 		val file = File("/Users/slehrbaum/Downloads/tmp.wav")
 		file.sink().buffer().use { sink ->
-			sink.writeAll(this)
+			sink.writeAll(this.copy())
 		}
 	}
 
@@ -111,6 +112,7 @@ actual class AudioRecorder: AutoCloseable, CoroutineScope {
 	actual override fun close() {
 		line.close()
 		recordingStream?.close()
+		recordingStream = null
 		coroutineContext.cancel(CancellationException("AudioRecorder closed"))
 	}
 }
