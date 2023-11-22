@@ -4,12 +4,22 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.DrawerState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import de.lehrbaum.initiativetracker.ui.composables.*
+import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
+import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismiss
+import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismissAction
+import de.lehrbaum.initiativetracker.ui.composables.addCreateNewCard
+import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 
 @Composable

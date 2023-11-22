@@ -1,13 +1,21 @@
 package de.lehrbaum.initiativetracker.backend
 
-import de.lehrbaum.initiativetracker.dtos.commands.*
+import de.lehrbaum.initiativetracker.dtos.commands.ClientCommand
+import de.lehrbaum.initiativetracker.dtos.commands.JoinSessionResponse
+import de.lehrbaum.initiativetracker.dtos.commands.ServerToClientCommand
+import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand
+import de.lehrbaum.initiativetracker.dtos.commands.StartCommand
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.receiveDeserialized
 import io.ktor.server.websocket.sendSerialized
 import io.ktor.util.logging.KtorSimpleLogger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 private val logger = KtorSimpleLogger("main.ClientConnection")
 
