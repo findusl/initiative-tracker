@@ -16,7 +16,6 @@ mockk = "1.13.8"
 napier = "2.6.1"
 openai-client = "3.5.0"
 multiplatform-settings = "1.1.0"
-ben-manes-versions-plugin = "0.50.0"
 jetbrains-compose = "1.5.10"
 build-konfig = "0.15.0"
 androidx-compose-bom = "2023.10.01"
@@ -62,7 +61,6 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", versi
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 
 [plugins]
-ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "ben-manes-versions-plugin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.plugin.serialization", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
