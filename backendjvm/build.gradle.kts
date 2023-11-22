@@ -4,8 +4,8 @@ import io.ktor.plugin.features.DockerPortMappingProtocol
 plugins {
 	application
 	kotlin("jvm")
-	id("org.jetbrains.kotlin.plugin.serialization")
-	id("io.ktor.plugin") version Version.ktor
+	kotlin("plugin.serialization")
+	alias(libs.plugins.ktor)
 }
 
 application {
