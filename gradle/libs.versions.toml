@@ -2,7 +2,7 @@
 androidx-junit = "1.1.5"
 commons-compress = "1.24.0"
 espresso-core = "3.5.1"
-gradle-android-tools = "8.1.2"
+gradle-android-tools = "8.1.4"
 javapoet = "1.13.0"
 junit = "4.13.2"
 kamel-image = "0.8.3"
