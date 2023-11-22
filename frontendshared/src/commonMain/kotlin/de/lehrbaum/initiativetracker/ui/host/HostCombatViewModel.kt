@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.ui.host
 
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,10 +31,8 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 
 	val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)
 
-	private var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
-	val damageCombatantViewModel by derivedStateOf { assignDamageCombatant?.let {
-		DamageCombatantViewModel(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
-	} }
+	var damageCombatantViewModel by mutableStateOf<DamageCombatantViewModel?>(null)
+		private set
 
 	val snackbarState = mutableStateOf<SnackbarState?>(null)
 
@@ -50,12 +47,14 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	abstract val isSharing: Boolean
 	abstract val confirmDamage: ConfirmDamageOptions?
 
-	var isRecording by mutableStateOf(false)
-		private set
-	private val audioCommandController = AudioCommandController()
-
+	private val audioCommandController = AudioCommandController(combatController)
 	val isRecordActionVisible: Boolean
 		get() = audioCommandController.isAvailable
+	var isRecording by mutableStateOf(false)
+		private set
+	@Suppress("MemberVisibilityCanBePrivate") // TODO use
+	var isProcessingRecording by mutableStateOf(false)
+		private set
 
 	fun recordCommand() {
 		if (isRecording) return
@@ -68,7 +67,23 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	}
 
 	suspend fun finishRecording() {
-		audioCommandController.finishRecordingCommand()
+		if (isProcessingRecording) return
+		isProcessingRecording = true
+		isRecording = false
+		val commandResult = audioCommandController.finishRecordingCommand()
+		commandResult.getOrNullAndHandle()?.let { command ->
+			when (command) {
+				is CombatCommand.DamageCommand -> {
+					damageCombatant(command.target.toCombatantViewModel(combatController.hostId), command.damage)
+				}
+			}
+		}
+
+		isProcessingRecording = false
+	}
+
+	fun cancelRecording() {
+		audioCommandController.cancelRecording()
 		isRecording = false
 	}
 
@@ -101,18 +116,6 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 		combatController.jumpToCombatant(combatantViewModel.id)
 	}
 
-	fun onDamageDialogSubmit(damage: Int) {
-		assignDamageCombatant?.apply {
-			if (currentHp != null) // should have never been shown if null
-				combatController.damageCombatant(id, damage)
-		}
-		assignDamageCombatant = null
-	}
-
-	fun onDamageDialogCancel() {
-		assignDamageCombatant = null
-	}
-
 	fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
 		editCombatant(newCombatant.toCombatantViewModel(combatController.hostId), firstEdit = true)
@@ -134,9 +137,17 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 		)
 	}
 
-	private fun damageCombatant(combatantViewModel: CombatantViewModel) {
+	private fun damageCombatant(combatantViewModel: CombatantViewModel, initialDamage: Int = 1) {
 		if (combatantViewModel.currentHp != null) {
-			assignDamageCombatant = combatantViewModel
+			damageCombatantViewModel = DamageCombatantViewModel(
+				combatantViewModel.name,
+				onSubmit = { damage ->
+					combatController.damageCombatant(combatantViewModel.id, damage)
+					damageCombatantViewModel = null
+				},
+				onCancel = { damageCombatantViewModel = null },
+				initialDamage,
+			)
 		} else {
 			snackbarState.value = SnackbarState.Text("Combatant has no current HP")
 		}
