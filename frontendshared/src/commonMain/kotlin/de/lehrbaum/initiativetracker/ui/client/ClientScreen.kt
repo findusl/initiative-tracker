@@ -23,12 +23,12 @@ import de.lehrbaum.initiativetracker.bl.ClientCombatState
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
-import de.lehrbaum.initiativetracker.ui.composables.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.composables.ResettableState
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
 import de.lehrbaum.initiativetracker.ui.composables.collectAsStateResettable
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
@@ -59,8 +59,8 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 
 			if (connectionStateState.value is ClientCombatState.Connected) {
 				clientCombatViewModelState.value.run {
-					assignDamageCombatant?.let {
-						DamageCombatantDialog(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
+					damageCombatantViewModel?.let {
+						DamageCombatantDialog(it)
 					}
 				}
 			}

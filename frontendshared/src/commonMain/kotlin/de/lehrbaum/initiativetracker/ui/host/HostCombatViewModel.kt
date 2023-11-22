@@ -1,12 +1,13 @@
 package de.lehrbaum.initiativetracker.ui.host
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.*
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
-import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
+import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.*
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
@@ -31,7 +32,10 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 
 	val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)
 
-	val assignDamageCombatant = mutableStateOf<CombatantViewModel?>(null)
+	private var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
+	val damageCombatantViewModel by derivedStateOf { assignDamageCombatant?.let {
+		DamageCombatantViewModel(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
+	} }
 
 	val snackbarState = mutableStateOf<SnackbarState?>(null)
 
@@ -49,6 +53,9 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	var isRecording by mutableStateOf(false)
 		private set
 	private val audioCommandController = AudioCommandController()
+
+	val isRecordActionVisible: Boolean
+		get() = audioCommandController.isAvailable
 
 	fun recordCommand() {
 		if (isRecording) return
@@ -95,15 +102,15 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	}
 
 	fun onDamageDialogSubmit(damage: Int) {
-		assignDamageCombatant.value?.apply {
+		assignDamageCombatant?.apply {
 			if (currentHp != null) // should have never been shown if null
 				combatController.damageCombatant(id, damage)
 		}
-		assignDamageCombatant.value = null
+		assignDamageCombatant = null
 	}
 
 	fun onDamageDialogCancel() {
-		assignDamageCombatant.value = null
+		assignDamageCombatant = null
 	}
 
 	fun addNewCombatant() {
@@ -129,7 +136,7 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 
 	private fun damageCombatant(combatantViewModel: CombatantViewModel) {
 		if (combatantViewModel.currentHp != null) {
-			assignDamageCombatant.value = combatantViewModel
+			assignDamageCombatant = combatantViewModel
 		} else {
 			snackbarState.value = SnackbarState.Text("Combatant has no current HP")
 		}

@@ -11,7 +11,6 @@ import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
-import de.lehrbaum.initiativetracker.ui.composables.ConfirmDamageOptions
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.suspendCancellableCoroutine
