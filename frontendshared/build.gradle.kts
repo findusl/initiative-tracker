@@ -1,5 +1,7 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.*
-import java.util.*
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
 
 plugins {
 	kotlin("multiplatform")
@@ -37,6 +39,7 @@ kotlin {
 				implementation(compose.foundation)
 				implementation(compose.material)
 				implementation(compose.runtime)
+				compileOnly(compose.materialIconsExtended) // very big, copy only what is needed
 
 				implementation(libs.multiplatform.settings)
 				implementation(libs.multiplatform.settings.serialization)

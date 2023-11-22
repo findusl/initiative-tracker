@@ -24,7 +24,7 @@ fun BackendInputDialog(backendInputViewModel: BackendInputViewModel) {
 				},
 				label = { Text("Host") },
 				isError = backendInputViewModel.hostFieldError,
-				modifier = Modifier.fillMaxWidth()
+				modifier = Modifier.fillMaxWidth(),
 			)
 			Row {
 				Switch(
@@ -36,7 +36,8 @@ fun BackendInputDialog(backendInputViewModel: BackendInputViewModel) {
 			OkCancelButtonRow(
 				backendInputViewModel.inputsAreValid,
 				backendInputViewModel.onDismiss,
-				backendInputViewModel::onConnectPressed
+				backendInputViewModel::onConnectPressed,
+				backendInputViewModel.isSubmitting,
 			)
 		}
 	}
