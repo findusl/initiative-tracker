@@ -19,6 +19,9 @@ Currently, the frontend does not use a formal dependency injection framework. In
 ### Kotlin Multi-platform - Frontend Targets
 Currently, the frontend targets Android, iOS, and JVM desktop platforms. We are also exploring the possibility of expanding to browser support through WebAssembly in the future, pending the stability and compatibility of the necessary libraries.
 
+## Versioning
+The versioning is controlled in the libs.versions.toml, as this provides a central and typesafe location to define these. Automation of version increase would nice to have.
+
 ## Contributing
 We welcome contributions from anyone interested in improving the project. Whether it's enhancing existing features, suggesting new ones, or refactoring the code, your input is valuable. Feel free to fork the repository, make changes, and submit pull requests. If you have any questions or ideas, don't hesitate to open an issue or contact us.
 

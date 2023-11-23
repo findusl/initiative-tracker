@@ -10,6 +10,7 @@ plugins {
 
 application {
 	mainClass.set("de.lehrbaum.initiativetracker.backend.MainKt")
+	version = libs.versions.backendVersion.get()
 }
 
 ktor {
