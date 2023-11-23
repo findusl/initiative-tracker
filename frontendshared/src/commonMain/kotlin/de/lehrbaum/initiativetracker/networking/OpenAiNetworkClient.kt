@@ -169,6 +169,6 @@ private val interpretCombatCommandPrompt = """
 
 	{ "target": "", "damage": 0 }
 
-	Jetzt folgt noch eine kommaseparierte Liste aller möglichen Gegner. Das Feld Gegner muss einen dieser Werte 
+	Jetzt folgt noch eine kommaseparierte Liste aller möglichen Gegner. Das Feld target muss einen dieser Werte 
 	enhalten: 
 """.trimIndent()
