@@ -17,4 +17,5 @@ dependencies {
 
 application {
 	mainClass.set("de.lehrbaum.initiativetracker.MainKt")
+	version = libs.versions.frontendVersion.get()
 }

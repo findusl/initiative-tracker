@@ -1,4 +1,6 @@
 [versions]
+frontendVersion = "1.1.0"
+backendVersion = "2.0.1"
 androidx-junit = "1.1.5"
 commons-compress = "1.24.0"
 espresso-core = "3.5.1"

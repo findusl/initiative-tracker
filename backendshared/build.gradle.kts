@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.lehrbaum"
-version = "2.0.1"
+version = libs.versions.backendVersion.get()
 
 kotlin {
 	jvm()
