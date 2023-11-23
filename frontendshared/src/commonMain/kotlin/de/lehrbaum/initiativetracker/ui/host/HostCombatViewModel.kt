@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.*
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.ui.composables.CombatantListViewModel
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.*
@@ -22,9 +23,10 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	val combatants = combatController.combatants
 		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
 			combatants.mapIndexed { index, combatant ->
-				combatant.toCombatantViewModel(
-					thisUser = combatController.hostId,
+				CombatantListViewModel(
+					combatant,
 					active = index == activeIndex,
+					isOwned = combatant.ownerId == combatController.hostId
 				)
 			}
 		}
@@ -74,7 +76,7 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 		commandResult.getOrNullAndHandle()?.let { command ->
 			when (command) {
 				is CombatCommand.DamageCommand -> {
-					damageCombatant(command.target.toCombatantViewModel(combatController.hostId), command.damage)
+					damageCombatant(command.target, command.damage)
 				}
 			}
 		}
@@ -87,43 +89,43 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 		isRecording = false
 	}
 
-	fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
-		if (combatStarted && !combatantViewModel.disabled) {
-			damageCombatant(combatantViewModel)
+	fun onCombatantClicked(combatantModel: CombatantModel) {
+		if (combatStarted && !combatantModel.disabled) {
+			damageCombatant(combatantModel)
 		} else {
-			editCombatant(combatantViewModel)
+			editCombatant(combatantModel)
 		}
 	}
 
-	fun onCombatantLongClicked(combatant: CombatantViewModel) {
+	fun onCombatantLongClicked(combatant: CombatantModel) {
 		editCombatant(combatant)
 	}
 
-	fun deleteCombatant(combatantViewModel: CombatantViewModel) {
-		mostRecentDeleted = combatController.deleteCombatant(combatantViewModel.id)
+	fun deleteCombatant(combatantModel: CombatantModel) {
+		mostRecentDeleted = combatController.deleteCombatant(combatantModel.id)
 		// TASK show dialog with undo option
 	}
 
-	fun disableCombatant(combatantViewModel: CombatantViewModel) {
-		combatController.disableCombatant(combatantViewModel.id)
+	fun disableCombatant(combatantModel: CombatantModel) {
+		combatController.disableCombatant(combatantModel.id)
 	}
 
-	fun enableCombatant(combatantViewModel: CombatantViewModel) {
-		combatController.enableCombatant(combatantViewModel.id)
+	fun enableCombatant(combatantModel: CombatantModel) {
+		combatController.enableCombatant(combatantModel.id)
 	}
 
-	fun jumpToCombatant(combatantViewModel: CombatantViewModel) {
-		combatController.jumpToCombatant(combatantViewModel.id)
+	fun jumpToCombatant(combatantModel: CombatantModel) {
+		combatController.jumpToCombatant(combatantModel.id)
 	}
 
 	fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
-		editCombatant(newCombatant.toCombatantViewModel(combatController.hostId), firstEdit = true)
+		editCombatant(newCombatant, firstEdit = true)
 	}
 
-	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
+	private fun editCombatant(combatantModel: CombatantModel, firstEdit: Boolean = false) {
 		editCombatantViewModel.value = EditCombatantViewModel(
-			combatantViewModel,
+			combatantModel,
 			firstEdit,
 			onSave = {
 				combatController.updateCombatant(it)
@@ -131,18 +133,18 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 			},
 			onCancel = {
 				if (firstEdit)
-					combatController.deleteCombatant(combatantViewModel.id)
+					combatController.deleteCombatant(combatantModel.id)
 				editCombatantViewModel.value = null
 			}
 		)
 	}
 
-	private fun damageCombatant(combatantViewModel: CombatantViewModel, initialDamage: Int = 1) {
-		if (combatantViewModel.currentHp != null) {
+	private fun damageCombatant(combatantModel: CombatantModel, initialDamage: Int = 1) {
+		if (combatantModel.currentHp != null) {
 			damageCombatantViewModel = DamageCombatantViewModel(
-				combatantViewModel.name,
+				combatantModel.name,
 				onSubmit = { damage ->
-					combatController.damageCombatant(combatantViewModel.id, damage)
+					combatController.damageCombatant(combatantModel.id, damage)
 					damageCombatantViewModel = null
 				},
 				onCancel = { damageCombatantViewModel = null },

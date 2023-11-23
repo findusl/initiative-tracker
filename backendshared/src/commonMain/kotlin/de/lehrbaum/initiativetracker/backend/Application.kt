@@ -53,6 +53,8 @@ internal fun Application.configureSockets() {
 
 internal fun Application.configureSerialization() {
 	install(ContentNegotiation) {
-		json()
+		json(Json {
+			ignoreUnknownKeys = true
+		})
 	}
 }

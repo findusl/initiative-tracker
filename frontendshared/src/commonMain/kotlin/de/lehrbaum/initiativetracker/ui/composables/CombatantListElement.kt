@@ -15,23 +15,23 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants.defaultPadding
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.DarkGreen
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifier: Modifier = Modifier) {
+fun CombatantListElement(combatantVM: CombatantListViewModel, isHost: Boolean, modifier: Modifier = Modifier) {
+	val combatant = combatantVM.combatant
 	val outerBackgroundColor by animateColorAsState(
-		if (combatant.active) MaterialTheme.colors.secondary else Color.Transparent
+		if (combatantVM.active) MaterialTheme.colors.secondary else Color.Transparent
 	)
-	var disabled by remember { mutableStateOf(combatant.disabled) }
-	disabled = combatant.disabled
+	var disabled by remember { mutableStateOf(combatantVM.disabled) }
+	disabled = combatantVM.disabled
 	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
-	val getsAllInformation = combatant.isOwned || isHost
+	val getsAllInformation = combatantVM.isOwned || isHost
 
-	val innerBackgroundColor = combatant.healthPercentage.healthToBrush(enabled = !disabled)
+	val innerBackgroundColor = combatantVM.healthPercentage.healthToBrush(enabled = !disabled)
 	Card(
 		elevation = 8.dp,
 		modifier = modifier
@@ -47,7 +47,7 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 					}
 				},
 			icon = composableIf(!combatant.isHidden || getsAllInformation) {
-				combatant.imageUrl()?.let {
+				combatantVM.imageUrl()?.let {
 					KamelImage(
 						asyncPainterResource(it),
 						contentDescription = "Icon of ${combatant.name}",
@@ -60,7 +60,7 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 			},
 			secondaryText = composableIf(getsAllInformation) {
 				val informationItems = listOfNotNull(
-					combatant.monsterDTO?.ac?.firstOrNull()?.ac?.let { "AC $it" },
+					combatantVM.monsterDTO?.ac?.firstOrNull()?.ac?.let { "AC $it" },
 					"${combatant.currentHp}/${combatant.maxHp}"
 				)
 				Text(informationItems.joinToString(", "))
@@ -72,7 +72,7 @@ fun CombatantListElement(combatant: CombatantViewModel, isHost: Boolean, modifie
 					Text(text = combatant.name)
 			},
 			trailing = {
-				Text(text = combatant.initiativeString)
+				Text(text = combatantVM.initiativeString)
 			}
 		)
 	}

@@ -15,7 +15,6 @@ import de.lehrbaum.initiativetracker.dtos.UserId
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState.Text
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -41,16 +40,16 @@ data class ClientCombatViewModel(
 	var editCombatantViewModel by mutableStateOf<EditCombatantViewModel?>(null)
 		private set
 
-	private var assignDamageCombatant by mutableStateOf<CombatantViewModel?>(null)
+	private var assignDamageCombatant by mutableStateOf<CombatantModel?>(null)
 	val damageCombatantViewModel by derivedStateOf { assignDamageCombatant?.let {
 		DamageCombatantViewModel(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
 	} }
 
-	fun onCombatantClicked(combatantViewModel: CombatantViewModel) {
+	fun onCombatantClicked(combatantViewModel: CombatantModel) {
 		assignDamageCombatant = combatantViewModel
 	}
 
-	fun onCombatantLongClicked(combatant: CombatantViewModel) {
+	fun onCombatantLongClicked(combatant: CombatantModel) {
 		if (combatant.ownerId == ownerId) {
 			editCombatant(combatant)
 		} else {
@@ -58,7 +57,7 @@ data class ClientCombatViewModel(
 		}
 	}
 
-	private fun editCombatant(combatantViewModel: CombatantViewModel, firstEdit: Boolean = false) {
+	private fun editCombatant(combatantViewModel: CombatantModel, firstEdit: Boolean = false) {
 		editCombatantViewModel = EditCombatantViewModel(
 			combatantViewModel,
 			firstEdit,
@@ -95,7 +94,7 @@ data class ClientCombatViewModel(
 		snackbarState.value = Text(message, SnackbarDuration.Long)
 	}
 
-	suspend fun onDamageDialogSubmit(damage: Int) {
+	private suspend fun onDamageDialogSubmit(damage: Int) {
 		assignDamageCombatant?.let {
 			val result = combatSession.requestDamageCharacter(it.id, damage, ownerId)
 			if (result)
@@ -103,7 +102,7 @@ data class ClientCombatViewModel(
 		}
 	}
 
-	fun onDamageDialogCancel() {
+	private fun onDamageDialogCancel() {
 		assignDamageCombatant = null
 	}
 
