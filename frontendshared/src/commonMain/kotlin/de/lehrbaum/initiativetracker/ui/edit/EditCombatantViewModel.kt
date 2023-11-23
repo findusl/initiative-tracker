@@ -12,18 +12,17 @@ import de.lehrbaum.initiativetracker.bl.toModifier
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
 import kotlinx.coroutines.*
 
 data class EditCombatantViewModel(
-	private val combatantViewModel: CombatantViewModel,
+	private val combatantModel: CombatantModel,
 	private val firstEdit: Boolean,
 	private val onSave: suspend (CombatantModel) -> Unit,
 	private val onCancel: () -> Unit,
 ) {
-	val id = combatantViewModel.id
-	var name: String by mutableStateOf(combatantViewModel.name)
+	val id = combatantModel.id
+	var name: String by mutableStateOf(combatantModel.name)
 	val nameError: Boolean by derivedStateOf { name.isBlank() }
 	private var nameSuggestions: List<String> by mutableStateOf(emptyList())
 	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name } }
@@ -31,23 +30,23 @@ data class EditCombatantViewModel(
 	private var nameLoadingJob: Job? = null
 
 	val initiativeEdit = EditFieldViewModel(
-		combatantViewModel.initiative,
+		combatantModel.initiative,
 		parseInput = EditFieldViewModel.OptionalIntParser
 	)
 	val maxHpEdit = EditFieldViewModel(
-		combatantViewModel.maxHp,
+		combatantModel.maxHp,
 		parseInput = EditFieldViewModel.OptionalIntParser
 	)
 	val currentHpEdit = EditFieldViewModel(
-		combatantViewModel.currentHp,
+		combatantModel.currentHp,
 		parseInput = EditFieldViewModel.OptionalIntParser
 	)
-	var isHidden: Boolean by mutableStateOf(combatantViewModel.isHidden)
+	var isHidden: Boolean by mutableStateOf(combatantModel.isHidden)
 
 	val monsters: List<MonsterDTO>
 		get() = MonsterCache.monsters
 
-	var monsterTypeName: String by mutableStateOf(combatantViewModel.creatureType ?: "")
+	var monsterTypeName: String by mutableStateOf(combatantModel.creatureType ?: "")
 	val monsterType: MonsterDTO? by derivedStateOf { determineMonster(monsterTypeName) }
 	val monsterTypeError: Boolean by derivedStateOf { monsterType == null && monsterTypeName.isNotEmpty() }
 	val monsterTypeNameSuggestions: List<String> by derivedStateOf {
@@ -124,14 +123,14 @@ data class EditCombatantViewModel(
 
 	suspend fun saveCombatant() {
 		onSave(CombatantModel(
-			combatantViewModel.ownerId,
+			combatantModel.ownerId,
 			id,
 			name,
 			initiativeEdit.value.getOrThrow(),
 			maxHpEdit.value.getOrThrow(),
 			currentHpEdit.value.getOrThrow(),
 			monsterType?.displayName,
-			combatantViewModel.disabled,
+			combatantModel.disabled,
 			isHidden,
 		))
     }

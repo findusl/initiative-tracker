@@ -23,6 +23,7 @@ import de.lehrbaum.initiativetracker.bl.ClientCombatState
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
+import de.lehrbaum.initiativetracker.ui.composables.CombatantListViewModel
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.composables.ResettableState
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
@@ -31,7 +32,6 @@ import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
-import de.lehrbaum.initiativetracker.ui.shared.toCombatantViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -83,9 +83,10 @@ private fun Content(
 	when (connectionState) {
 		is ClientCombatState.Connected -> {
 			val combatantList = connectionState.combatants.mapIndexed { index, combatant ->
-				combatant.toCombatantViewModel(
-					clientCombatViewModel.ownerId,
-					active = index == connectionState.activeCombatantIndex
+				CombatantListViewModel(
+					combatant,
+					active = index == connectionState.activeCombatantIndex,
+					isOwned = combatant.ownerId == clientCombatViewModel.ownerId
 				)
 			}
 			CombatantList(
