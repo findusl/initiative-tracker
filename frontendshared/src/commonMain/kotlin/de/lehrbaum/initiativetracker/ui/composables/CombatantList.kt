@@ -19,19 +19,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.shared.CombatantViewModel
 
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun CombatantList(
-	combatants: List<CombatantViewModel>,
+	combatants: List<CombatantListViewModel>,
 	isHost: Boolean,
-	onCombatantClicked: (CombatantViewModel) -> Unit,
-	onCombatantLongClicked: (CombatantViewModel) -> Unit,
+	onCombatantClicked: (CombatantModel) -> Unit,
+	onCombatantLongClicked: (CombatantModel) -> Unit,
 	onCreateNewClicked: (() -> Unit)? = null,
-	dismissToEndAction: (@Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>?)? = null,
-	dismissToStartAction: (@Composable (CombatantViewModel) -> SwipeToDismissAction<CombatantViewModel>?)? = null,
+	dismissToEndAction: (@Composable (CombatantModel) -> SwipeToDismissAction<CombatantModel>?)? = null,
+	dismissToStartAction: (@Composable (CombatantModel) -> SwipeToDismissAction<CombatantModel>?)? = null,
 ) {
     val listState = rememberLazyListState()
 
@@ -45,9 +44,10 @@ fun CombatantList(
         }
     }
     LazyColumn(state = listState) {
-        items(combatants, key = { it.id.id }, contentType = { CombatantModel::class }) { combatant ->
+        items(combatants, key = { it.id.id }, contentType = { CombatantModel::class }) { combatantVM ->
+			val combatant = combatantVM.combatant
             SwipeToDismiss(dismissToEndAction?.invoke(combatant), dismissToStartAction?.invoke(combatant), combatant) {
-                CombatantListElement(combatant, isHost, Modifier.combinedClickable(
+                CombatantListElement(combatantVM, isHost, Modifier.combinedClickable(
                     onClick = { onCombatantClicked(combatant) },
                     onLongClick = { onCombatantLongClicked(combatant) }
                 ))
