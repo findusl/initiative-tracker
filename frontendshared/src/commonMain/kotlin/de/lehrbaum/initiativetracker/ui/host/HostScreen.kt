@@ -19,13 +19,11 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.primarySurface
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
@@ -37,6 +35,8 @@ import de.lehrbaum.initiativetracker.ui.composables.MyDropdownMenu
 import de.lehrbaum.initiativetracker.ui.composables.ResettableState
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
 import de.lehrbaum.initiativetracker.ui.composables.collectAsStateResettable
+import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.composables.rememberScaffoldState
 import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
 import de.lehrbaum.initiativetracker.ui.composables.swipeToDisable
 import de.lehrbaum.initiativetracker.ui.composables.swipeToEnable
@@ -61,11 +61,11 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 	if (hostCombatViewModel.isSharing) KeepScreenOn()
 
-	val coroutineScope = rememberCoroutineScope()
+	val coroutineScope = rememberCoroutineScope(hostCombatViewModel)
 
 	ListDetailLayout(
 		list = {
-			val scaffoldState = rememberScaffoldState()
+			val scaffoldState = rememberScaffoldState(hostCombatViewModel, drawerState)
 			scaffoldState.snackbarHostState.bindSnackbarState(hostCombatViewModel.snackbarState)
 
 			Scaffold(
