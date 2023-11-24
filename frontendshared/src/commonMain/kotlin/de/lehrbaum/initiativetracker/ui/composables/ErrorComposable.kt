@@ -6,12 +6,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import de.lehrbaum.initiativetracker.ui.shared.ErrorState
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
 
 @Composable
-fun ErrorAlertDialog(errorState: ErrorState, onDismissRequest: () -> Unit) {
-	val text = errorState.customMessage ?: errorState.failure?.message ?: "An error occurred"
+fun ErrorAlertDialog(message: String, onDismissRequest: () -> Unit) {
 	AlertDialog(
 		onDismissRequest,
 		buttons = {
@@ -21,14 +19,15 @@ fun ErrorAlertDialog(errorState: ErrorState, onDismissRequest: () -> Unit) {
 			// add option to copy detailed error
 		},
 		text = {
-			Text(text)
+			Text(message)
 		}
 	)
 }
 
 @Composable
 fun ErrorStateHolder.ErrorComposable() {
-	errorState?.let {
-		ErrorAlertDialog(it) { errorState = null }
+	errorState?.let { errorState ->
+		val message = errorState.customMessage ?: errorState.failure?.message ?: "An error occurred"
+		ErrorAlertDialog(message) { this.errorState = null }
 	}
 }

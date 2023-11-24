@@ -28,7 +28,7 @@ import kotlin.coroutines.resume
 
 private const val TAG = "ClientCombatSession"
 
-class ClientCombatSession(val combatLink: CombatLink) {
+class ClientCombatSession(private val combatLink: CombatLink) {
 
 	private val outgoingMutex = Mutex()
 

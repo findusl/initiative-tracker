@@ -8,13 +8,16 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
+import kotlinx.coroutines.launch
 
 @Composable
 fun BackendInputDialog(backendInputViewModel: BackendInputViewModel) {
+	val coroutineScope = rememberCoroutineScope()
 	GeneralDialog(backendInputViewModel.onDismiss) {
 		Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 			OutlinedTextField(
@@ -36,7 +39,7 @@ fun BackendInputDialog(backendInputViewModel: BackendInputViewModel) {
 			OkCancelButtonRow(
 				backendInputViewModel.inputsAreValid,
 				backendInputViewModel.onDismiss,
-				backendInputViewModel::onConnectPressed,
+				onSubmit = { coroutineScope.launch { backendInputViewModel.onConnectPressed() } },
 				backendInputViewModel.isSubmitting,
 			)
 		}
