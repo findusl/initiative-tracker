@@ -32,6 +32,8 @@ import de.lehrbaum.initiativetracker.ui.host.HostScreen
 import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import de.lehrbaum.initiativetracker.ui.settings.SettingsScreen
 import de.lehrbaum.initiativetracker.ui.shared.BackHandler
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 private val lightColors = lightColors(
@@ -52,7 +54,7 @@ fun MainComposable(mainViewModel: MainViewModel, widthInt: Int? = null) {
 @Composable
 private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 	val drawerState = rememberDrawerState(DrawerValue.Closed)
-	val drawerItems by mainViewModel.drawerItems.collectAsState(emptyList())
+	val drawerItems by mainViewModel.drawerItems.collectAsState(persistentListOf())
 
 	// Workaround for resizing window on desktop
 	LaunchedEffect(widthInt) {
@@ -82,7 +84,7 @@ private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 
 @Composable
 private fun Drawer(
-	drawerItems: List<DrawerItem>,
+	drawerItems: ImmutableList<DrawerItem>,
 	activeDrawerItem: DrawerItem,
 	drawerState: DrawerState,
 	onSelected: (DrawerItem) -> Unit

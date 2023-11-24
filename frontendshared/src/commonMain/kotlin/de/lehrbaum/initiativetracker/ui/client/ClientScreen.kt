@@ -32,7 +32,7 @@ import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -52,7 +52,11 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 
 			Scaffold(
 				scaffoldState = scaffoldState,
-				topBar = { TopBar(drawerState, clientCombatViewModelState.value, coroutineScope) },
+				topBar = {
+					TopBar(drawerState, clientCombatViewModelState.value, onAddCharacter = {
+						coroutineScope.launch { clientCombatViewModel.chooseCharacterToAdd() }
+					})
+				 },
 			) {
 				Content(clientCombatViewModelState.value, connectionStateState)
 			}
@@ -88,7 +92,7 @@ private fun Content(
 					active = index == connectionState.activeCombatantIndex,
 					isOwned = combatant.ownerId == clientCombatViewModel.ownerId
 				)
-			}
+			}.toImmutableList()
 			CombatantList(
 				combatantList,
 				isHost = false,
@@ -113,7 +117,7 @@ private fun Content(
 private fun TopBar(
 	drawerState: DrawerState,
 	clientCombatViewModel: ClientCombatViewModel,
-	coroutineScope: CoroutineScope,
+	onAddCharacter: () -> Unit,
 ) {
 	TopAppBar(
 		title = {
@@ -121,9 +125,7 @@ private fun TopBar(
 		},
 		navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 		actions = {
-			IconButton(onClick = {
-				coroutineScope.launch { clientCombatViewModel.chooseCharacterToAdd() }
-			}) {
+			IconButton(onClick = onAddCharacter) {
 				Icon(Icons.Default.Add, contentDescription = "Choose Character to add")
 			}
 			IconButton(onClick = clientCombatViewModel::leaveCombat) {

@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.host
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import de.lehrbaum.initiativetracker.bl.InputValidator
 import de.lehrbaum.initiativetracker.bl.data.Backend
 import io.ktor.http.Url
 
+@Stable
 data class BackendInputViewModel(
 	private val onBackendConfirmed: suspend (Backend) -> Unit,
 	val onDismiss: () -> Unit

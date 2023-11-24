@@ -21,6 +21,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun AutocompleteTextField(
@@ -28,7 +30,7 @@ fun AutocompleteTextField(
 	label: String,
 	onTextChanged: (String) -> Unit,
 	error: Boolean,
-	suggestions: List<String> = emptyList(),
+	suggestions: ImmutableList<String> = persistentListOf(),
 	placeholder: String? = null,
 	enabled: Boolean = true,
 	trailingIcon: @Composable (() -> Unit)? = null,

@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage") // the warning doesn't help
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.util.*
 
 buildscript {
@@ -85,8 +84,4 @@ dependencies {
 // Allow references to generated code
 kapt {
 	correctErrorTypes = true
-}
-
-fun KotlinJvmOptions.enableContextReceivers() {
-	freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
 }

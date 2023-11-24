@@ -1,11 +1,13 @@
 package de.lehrbaum.initiativetracker.ui.damage
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlin.math.roundToInt
 
+@Stable
 data class DamageCombatantViewModel(
 	val target: String,
 	private val onSubmit: suspend (Int) -> Unit,

@@ -2,9 +2,7 @@ package de.lehrbaum.initiativetracker.ui.shared
 
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Stable
 
-@Stable
 sealed interface SnackbarState {
     val text: String
     val duration: SnackbarDuration

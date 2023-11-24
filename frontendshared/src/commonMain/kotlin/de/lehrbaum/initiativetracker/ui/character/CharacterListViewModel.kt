@@ -1,15 +1,19 @@
 package de.lehrbaum.initiativetracker.ui.character
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import de.lehrbaum.initiativetracker.bl.data.CharacterRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 
-class CharacterListViewModel {
-	private val characterRepository = CharacterRepository()
+@Stable
+data class CharacterListViewModel(
+	private val characterRepository: CharacterRepository = CharacterRepository()
+) {
 
 	val characters = characterRepository.characters.map { list ->
-		list.map { it.toCharacterViewModel() }
+		list.map { it.toCharacterViewModel() }.toImmutableList()
 	}
 
 	val editCharacterModel = mutableStateOf<EditCharacterModel?>(null)
