@@ -38,7 +38,6 @@ import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.composableIf
 import kotlinx.coroutines.launch
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
 @Composable
@@ -47,7 +46,11 @@ fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 		EditCombatantContent(editCombatantViewModel, Modifier.padding(it))
 	}
 	editCombatantViewModel.confirmApplyMonsterDialog?.let { completionContinuation ->
-		confirmApplyMonsterDialog(completionContinuation, editCombatantViewModel)
+		confirmApplyMonsterDialog(
+			onDismiss = { completionContinuation.resume(false) },
+			onAccept = { completionContinuation.resume(true) },
+			editCombatantViewModel
+		)
 	}
 }
 
@@ -170,20 +173,17 @@ fun NameField(editCombatantViewModel: EditCombatantViewModel) {
 
 @Composable
 private fun confirmApplyMonsterDialog(
-	continuation: Continuation<Boolean>,
+	onDismiss: () -> Unit,
+	onAccept: () -> Unit,
 	editCombatantViewModel: EditCombatantViewModel
 ) {
-	GeneralDialog(onDismissRequest = { continuation.resume(false) }) {
+	GeneralDialog(onDismissRequest = onDismiss) {
 		Column(
 			modifier = Modifier.padding(16.dp),
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
 			Text(text = "Apply stats of ${editCombatantViewModel.monsterTypeName} where known?")
-			OkCancelButtonRow(
-				true,
-				{ continuation.resume(false) },
-				onSubmit = { continuation.resume(true) }
-			)
+			OkCancelButtonRow(true, onDismiss, onAccept)
 		}
 	}
 }

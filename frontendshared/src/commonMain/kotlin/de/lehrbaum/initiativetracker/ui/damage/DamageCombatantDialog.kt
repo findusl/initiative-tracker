@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +25,7 @@ import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.DiceRollingTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
+import kotlinx.coroutines.launch
 
 @Composable
 fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
@@ -39,6 +41,7 @@ fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 
 @Composable
 fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel) {
+	val coroutineScope = rememberCoroutineScope()
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Text("Damage ${viewModel.target}")
@@ -82,7 +85,7 @@ fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel) {
 		OkCancelButtonRow(
 			viewModel.textIsValidNumber.value,
 			viewModel.onCancel,
-			onSubmitSuspend = viewModel::onSubmit,
+			onSubmit = { coroutineScope.launch { viewModel.onSubmit() } },
 			viewModel.isSubmitting
 		)
 	}

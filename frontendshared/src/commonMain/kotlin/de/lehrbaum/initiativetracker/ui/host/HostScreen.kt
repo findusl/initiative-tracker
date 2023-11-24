@@ -46,6 +46,7 @@ import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import de.lehrbaum.initiativetracker.ui.icons.Mic
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -99,7 +100,7 @@ private fun MainContent(
 		when (connectionState) {
 			HostConnectionState.Connected -> {
 				CombatantList(
-					combatants.collectAsState(emptyList()).value,
+					combatants.collectAsState(persistentListOf()).value,
 					isHost = true,
 					::onCombatantClicked,
 					::onCombatantLongClicked,
@@ -130,7 +131,7 @@ private fun MainContent(
 	}
 }
 
-@Composable
+@Composable // not skippable due to CoroutineScope, but very cheap
 private fun Dialogs(
 	connectionState: HostConnectionState,
 	coroutineScope: CoroutineScope,
@@ -147,7 +148,7 @@ private fun Dialogs(
 			confirmDamage?.let { options ->
 				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
 			}
-			if (isRecording) {
+			if (isRecording || isProcessingRecording) {
 				Dialog(onDismissRequest = { hostCombatViewModel.cancelRecording() }) {
 					Button(onClick = {
 						coroutineScope.launch {
@@ -171,7 +172,7 @@ private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
 	}
 }
 
-@Composable
+@Composable // TASK not skippable due to coroutineScope. should optimize by passing non suspend functions to sub-composable
 private fun TopBar(
 	drawerState: DrawerState,
 	coroutineScope: CoroutineScope,

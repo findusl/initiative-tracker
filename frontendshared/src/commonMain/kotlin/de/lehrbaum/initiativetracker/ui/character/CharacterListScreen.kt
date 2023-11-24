@@ -21,12 +21,14 @@ import de.lehrbaum.initiativetracker.ui.composables.SwipeToDismissAction
 import de.lehrbaum.initiativetracker.ui.composables.addCreateNewCard
 import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: CharacterListViewModel) {
-	val characters by characterListViewModel.characters.collectAsState(emptyList())
+	val characters by characterListViewModel.characters.collectAsState(persistentListOf())
 
 	ListDetailLayout(
 		list = {
@@ -54,7 +56,7 @@ fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: Charac
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 private fun CharacterList(
-	characters: List<CharacterViewModel>,
+	characters: ImmutableList<CharacterViewModel>,
 	onCharacterSelected: (CharacterViewModel) -> Unit,
 	onAddNewPressed: () -> Unit,
 	dismissToEndAction: SwipeToDismissAction<CharacterViewModel>? = null,

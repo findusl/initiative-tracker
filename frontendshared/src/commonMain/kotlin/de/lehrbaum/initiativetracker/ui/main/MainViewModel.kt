@@ -17,13 +17,14 @@ import de.lehrbaum.initiativetracker.ui.host.HostSharedCombatViewModelImpl
 import de.lehrbaum.initiativetracker.ui.join.JoinViewModel
 import de.lehrbaum.initiativetracker.ui.settings.SettingsViewModel
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-@Stable // assumes content is backed by mutableState variable. Hope I don't forget
+@Stable
 open class MainViewModel {
-	private val defaultDrawerItems = listOf(
+	private val defaultDrawerItems = persistentListOf(
 		DrawerItem.JoinCombat,
 		DrawerItem.JoinAsHost,
 		DrawerItem.HostCombat,
@@ -31,7 +32,7 @@ open class MainViewModel {
 		DrawerItem.Settings
 	)
 	val drawerItems = CombatLinkRepository.combatLinks.map { combatLinks ->
-		defaultDrawerItems + combatLinks.map { DrawerItem.RememberedCombat(it) }
+		defaultDrawerItems.addAll(combatLinks.map { DrawerItem.RememberedCombat(it) })
 	}
 
 	/* Persistent ViewModels */

@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.edit
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,8 +14,11 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 
+@Stable
 data class EditCombatantViewModel(
 	private val combatantModel: CombatantModel,
 	private val firstEdit: Boolean,
@@ -25,7 +29,7 @@ data class EditCombatantViewModel(
 	var name: String by mutableStateOf(combatantModel.name)
 	val nameError: Boolean by derivedStateOf { name.isBlank() }
 	private var nameSuggestions: List<String> by mutableStateOf(emptyList())
-	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name } }
+	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name }.toImmutableList() }
 	var nameLoading: Boolean by mutableStateOf(false)
 	private var nameLoadingJob: Job? = null
 
@@ -49,7 +53,7 @@ data class EditCombatantViewModel(
 	var monsterTypeName: String by mutableStateOf(combatantModel.creatureType ?: "")
 	val monsterType: MonsterDTO? by derivedStateOf { determineMonster(monsterTypeName) }
 	val monsterTypeError: Boolean by derivedStateOf { monsterType == null && monsterTypeName.isNotEmpty() }
-	val monsterTypeNameSuggestions: List<String> by derivedStateOf {
+	val monsterTypeNameSuggestions: ImmutableList<String> by derivedStateOf {
 		monsters
 			.asSequence()
 			.filter { it.displayName.contains(monsterTypeName, ignoreCase = true) }
@@ -58,6 +62,7 @@ data class EditCombatantViewModel(
 			.filter { it != monsterTypeName } // Don't suggest the existing choice
 			.toList()
 			.sortedBy{ it.length }
+			.toImmutableList()
 	}
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 

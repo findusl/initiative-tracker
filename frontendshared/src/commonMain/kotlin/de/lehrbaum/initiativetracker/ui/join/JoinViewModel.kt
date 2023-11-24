@@ -1,6 +1,5 @@
 package de.lehrbaum.initiativetracker.ui.join
 
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,7 +10,6 @@ import de.lehrbaum.initiativetracker.bl.data.Backend
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import io.ktor.http.Url
 
-@Stable
 data class JoinViewModel(
 	private val onJoin: (CombatLink) -> Unit,
 	val asHost: Boolean

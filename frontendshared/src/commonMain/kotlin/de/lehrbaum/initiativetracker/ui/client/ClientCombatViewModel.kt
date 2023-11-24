@@ -1,6 +1,7 @@
 package de.lehrbaum.initiativetracker.ui.client
 
 import androidx.compose.material.SnackbarDuration
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import de.lehrbaum.initiativetracker.ui.shared.SnackbarState.Text
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+@Stable
 data class ClientCombatViewModel(
 	val combatLink: CombatLink,
 	private val leaveScreen: () -> Unit

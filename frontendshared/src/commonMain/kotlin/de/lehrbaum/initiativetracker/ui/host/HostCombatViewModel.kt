@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.host
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,9 +12,11 @@ import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.*
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
+@Stable
 abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequester {
 
 	@Suppress("LeakingThis") // TASK migrate to the sharedHostCombatViewModel, only necessary there
@@ -28,7 +31,7 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 					active = index == activeIndex,
 					isOwned = combatant.ownerId == combatController.hostId
 				)
-			}
+			}.toImmutableList()
 		}
 
 	val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)

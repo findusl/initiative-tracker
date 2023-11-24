@@ -19,12 +19,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.Constants
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun CombatantList(
-	combatants: List<CombatantListViewModel>,
+	combatants: ImmutableList<CombatantListViewModel>,
 	isHost: Boolean,
 	onCombatantClicked: (CombatantModel) -> Unit,
 	onCombatantLongClicked: (CombatantModel) -> Unit,

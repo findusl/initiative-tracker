@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.composables
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import de.lehrbaum.initiativetracker.bl.MonsterCache
@@ -15,6 +16,7 @@ import io.ktor.http.Url
  * which fields are part of the viewModel and which fields are part of the actual combatant. But that is extra work
  * of keeping double fields.
  */
+@Stable
 data class CombatantListViewModel(
 	val combatant: CombatantModel,
 	val active: Boolean,
