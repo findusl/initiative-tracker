@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
+import de.lehrbaum.initiativetracker.ui.composables.rememberScaffoldState
 
 @Composable
 fun JoinScreen(drawerState: DrawerState, joinViewModel: JoinViewModel) {
 	Scaffold(
+		scaffoldState = rememberScaffoldState(joinViewModel),
 		topBar = {
 			TopAppBar(
 				title = {

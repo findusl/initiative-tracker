@@ -26,7 +26,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +36,7 @@ import de.lehrbaum.initiativetracker.ui.composables.AutocompleteTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.composableIf
+import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 
@@ -56,7 +56,7 @@ fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 
 @Composable
 private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
-	val canSave by remember {
+	val canSave by remember(editCombatantViewModel) {
 		derivedStateOf {
 			!editCombatantViewModel.run {
 				nameError
@@ -67,8 +67,8 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 			}
 		}
 	}
-	val coroutineScope = rememberCoroutineScope()
-	var showLoadingSpinner by remember { mutableStateOf(false) }
+	val coroutineScope = rememberCoroutineScope(editCombatantViewModel)
+	var showLoadingSpinner by remember(editCombatantViewModel) { mutableStateOf(false) }
 	TopAppBar(
 		title = { Text(editCombatantViewModel.id.id.toString()) },
 		navigationIcon = {

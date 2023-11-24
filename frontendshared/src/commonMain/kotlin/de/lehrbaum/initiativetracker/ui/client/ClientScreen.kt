@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.primarySurface
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +28,7 @@ import de.lehrbaum.initiativetracker.ui.composables.ResettableState
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
 import de.lehrbaum.initiativetracker.ui.composables.collectAsStateResettable
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.composables.rememberScaffoldState
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
@@ -47,7 +47,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 
 	ListDetailLayout(
 		list = {
-			val scaffoldState = rememberScaffoldState()
+			val scaffoldState = rememberScaffoldState(clientCombatViewModel, drawerState)
 			scaffoldState.snackbarHostState.bindSnackbarState(clientCombatViewModelState.value.snackbarState)
 
 			Scaffold(
