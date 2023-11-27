@@ -25,8 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.DiceRollingTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
@@ -64,7 +64,7 @@ fun CharacterChooserScreen(characterChooserViewModel: CharacterChooserViewModel)
 
 @Composable
 private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterViewModel, Int, Int) -> Unit, onCancel: () -> Unit) {
-	GeneralDialog(onDismissRequest = onCancel) {
+	Dialog(onDismissRequest = onCancel) {
 		Surface(
 			shape = RoundedCornerShape(16.dp),
 			color = Color.White
