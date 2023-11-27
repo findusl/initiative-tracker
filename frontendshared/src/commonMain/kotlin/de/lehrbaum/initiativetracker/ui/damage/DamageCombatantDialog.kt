@@ -29,8 +29,8 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.CoroutineWrapper
 import de.lehrbaum.initiativetracker.ui.composables.DiceRollingTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 	val coroutineScope = rememberCoroutineScope(viewModel)
-	GeneralDialog(onDismissRequest = viewModel.onCancel) {
+	Dialog(onDismissRequest = viewModel.onCancel) {
 		Surface(
 			shape = RoundedCornerShape(16.dp),
 			color = Color.White,
