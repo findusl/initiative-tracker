@@ -10,4 +10,3 @@ import androidx.compose.runtime.Composable
  */
 inline fun composableIf(condition: Boolean, noinline content: @Composable () -> Unit): @Composable (() -> Unit)? =
 	if (condition) { content } else null
-
