@@ -7,7 +7,7 @@ object Dice {
 
 	fun calculateDiceFormula(formula: String, seed: Long): CalculationResult? {
 		val cleanedFormula = formula.trim().replace('#', 'd').replace("\\s".toRegex(), "")
-		if (cleanedFormula.toIntOrNull() != null) return null // A single number is a valid formula but not really a dice formula
+		if (cleanedFormula.toIntOrNull() != null) return null // A single number is a valid formula but not what we need here
 		val elements = cleanedFormula.split("+", "-")
 		val operators = cleanedFormula.toCharArray().filter { it == '+' || it == '-' }
 		if (operators.size != elements.size - 1) return null

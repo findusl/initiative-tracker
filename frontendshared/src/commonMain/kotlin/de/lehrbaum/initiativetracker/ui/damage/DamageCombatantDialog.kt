@@ -16,32 +16,50 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
+import de.lehrbaum.initiativetracker.ui.composables.CoroutineWrapper
 import de.lehrbaum.initiativetracker.ui.composables.DiceRollingTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
+import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
+	val coroutineScope = rememberCoroutineScope(viewModel)
 	GeneralDialog(onDismissRequest = viewModel.onCancel) {
 		Surface(
 			shape = RoundedCornerShape(16.dp),
-			color = Color.White
+			color = Color.White,
+			modifier = Modifier
+				.onKeyEvent { keyEvent ->
+					if (viewModel.textIsValidNumber.value && keyEvent.key == Key.Enter && keyEvent.type == KeyEventType.KeyUp) {
+						coroutineScope.launch { viewModel.onSubmit() }
+						true
+					} else false
+				}
 		) {
-			DamageCombatantDialogContent(viewModel)
+			DamageCombatantDialogContent(viewModel, coroutineScope)
 		}
 	}
 }
 
-@Composable
-fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel) {
-	val coroutineScope = rememberCoroutineScope()
+@Composable // not skippable because of coroutineScope but parent is trivial and skippable
+private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, coroutineScope: CoroutineWrapper) {
+	val focusRequester = remember(viewModel) { FocusRequester() }
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Text("Damage ${viewModel.target}")
@@ -64,7 +82,9 @@ fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel) {
 					if (it != viewModel.sliderValueInt)
 						viewModel.sliderValue = it.toFloat()
 				},
-				modifier = Modifier.weight(1.0f),
+				modifier = Modifier
+					.weight(1.0f)
+					.focusRequester(focusRequester),
 				textIsValidNumber = viewModel.textIsValidNumber,
 			)
 			IconButton(
@@ -88,5 +108,9 @@ fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel) {
 			onSubmit = { coroutineScope.launch { viewModel.onSubmit() } },
 			viewModel.isSubmitting
 		)
+	}
+
+	LaunchedEffect(viewModel) {
+		focusRequester.requestFocus()
 	}
 }
