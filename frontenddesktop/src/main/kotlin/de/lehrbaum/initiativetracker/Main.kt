@@ -10,20 +10,18 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import de.lehrbaum.initiativetracker.ui.main.MainComposable
 import de.lehrbaum.initiativetracker.ui.main.MainViewModel
-import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Antilog
+import io.github.aakira.napier.LogLevel
 import io.github.aakira.napier.Napier
-import java.util.logging.Level
-import java.util.logging.LogRecord
-import java.util.logging.SimpleFormatter
-import java.util.logging.StreamHandler
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 fun main() = application {
 	val windowState = rememberWindowState(width = 900.dp, height = 600.dp)
 
 	LaunchedEffect(key1 = this) {
-		val handlers = listOf(StandardConsoleHandler(), ErrorConsoleHandler())
 		// Initialize Logging.
-		Napier.base(DebugAntilog(handler = handlers))
+		Napier.base(CustomAntilog())
 	}
 
 	val mainViewModel = MainViewModel()
@@ -40,31 +38,33 @@ fun main() = application {
 	}
 }
 
-private class StandardConsoleHandler : StreamHandler(System.out, SimpleFormatter()) {
-	override fun publish(record: LogRecord?) {
-		if (record == null) return
-		if (record.level.intValue() >= Level.WARNING.intValue()) return
-		super.publish(record)
-		flush()
+class CustomAntilog(
+	private val defaultTag: String = "App",
+	private val minLogLevel: LogLevel = LogLevel.INFO
+) : Antilog() {
+
+
+	override fun performLog(
+		priority: LogLevel,
+		tag: String?,
+		throwable: Throwable?,
+		message: String?
+	) {
+		if (priority.ordinal < minLogLevel.ordinal) return
+		val formattedTag = tag ?: defaultTag
+		val formattedMessage = buildLogMessage(priority, formattedTag, throwable, message)
+
+		when (priority) {
+			LogLevel.VERBOSE, LogLevel.DEBUG, LogLevel.INFO, LogLevel.WARNING -> println(formattedMessage)
+			LogLevel.ERROR, LogLevel.ASSERT -> System.err.println(formattedMessage)
+		}
 	}
 
-	override fun close() {
-		flush()
-	}
-}
+	private fun buildLogMessage(priority: LogLevel, tag: String, throwable: Throwable?, message: String?): String {
+		val logLevelChar = priority.name.first()
+		val timestamp = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+		val baseMessage = "$logLevelChar $timestamp $tag: $message"
 
-private class ErrorConsoleHandler : StreamHandler(System.err, SimpleFormatter()) {
-
-	init {
-		level = Level.WARNING
-	}
-
-	override fun publish(record: LogRecord?) {
-		super.publish(record)
-		flush()
-	}
-
-	override fun close() {
-		flush()
+		return baseMessage + (throwable?.let { "\n${it.stackTraceToString()}" } ?: "")
 	}
 }
