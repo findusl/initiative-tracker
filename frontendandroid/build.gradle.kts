@@ -61,6 +61,7 @@ android {
 	namespace = "de.lehrbaum.initiativetracker"
 }
 
+//noinspection UseTomlInstead Cannot use version catalog without version, due to compose bom
 dependencies {
 	implementation(project(":frontendshared"))
 	implementation(project(":dtos"))
