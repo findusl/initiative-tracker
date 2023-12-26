@@ -16,12 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -35,6 +31,7 @@ import de.lehrbaum.initiativetracker.ui.composables.CoroutineWrapper
 import de.lehrbaum.initiativetracker.ui.composables.DiceRollingTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
+import de.lehrbaum.initiativetracker.ui.keyevents.defaultFocussed
 import kotlinx.coroutines.launch
 
 @Composable
@@ -59,7 +56,6 @@ fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 
 @Composable // not skippable because of coroutineScope but parent is trivial and skippable
 private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, coroutineScope: CoroutineWrapper) {
-	val focusRequester = remember(viewModel) { FocusRequester() }
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Text("Damage ${viewModel.target}")
@@ -84,7 +80,7 @@ private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, co
 				},
 				modifier = Modifier
 					.weight(1.0f)
-					.focusRequester(focusRequester),
+					.defaultFocussed(viewModel),
 				textIsValidNumber = viewModel.textIsValidNumber,
 			)
 			IconButton(
@@ -108,9 +104,5 @@ private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, co
 			onSubmit = { coroutineScope.launch { viewModel.onSubmit() } },
 			viewModel.isSubmitting
 		)
-	}
-
-	LaunchedEffect(viewModel) {
-		focusRequester.requestFocus()
 	}
 }
