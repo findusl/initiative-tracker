@@ -8,11 +8,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -25,6 +21,7 @@ import de.lehrbaum.initiativetracker.bl.DamageDecision.FULL
 import de.lehrbaum.initiativetracker.bl.DamageDecision.HALF
 import de.lehrbaum.initiativetracker.bl.DamageDecision.NONE
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
+import de.lehrbaum.initiativetracker.ui.keyevents.defaultFocussed
 
 data class ConfirmDamageOptions(
 	val damage: Int,
@@ -38,14 +35,12 @@ fun ConfirmDamageDialog(
 	onDamageApplied: (DamageDecision) -> Unit,
 	onDismiss: () -> Unit
 ) {
-	val focusRequester = remember(options) { FocusRequester() }
 	GeneralDialog(
 		onDismissRequest = onDismiss
 	) {
 		Column(
 			modifier = Modifier
 				.padding(16.dp)
-				.focusRequester(focusRequester)
 				.onKeyEvent {  keyEvent ->
 					if (keyEvent.type != KeyEventType.KeyUp) false
 					else {
@@ -67,18 +62,17 @@ fun ConfirmDamageDialog(
 			Text("Apply ${options.damage} Damage to ${options.targetName}", style = MaterialTheme.typography.h6)
 			Text("Probable source: ${options.sourceName}", style = MaterialTheme.typography.subtitle2)
 			DamageDecision.entries.forEach { option ->
+				var modifier = Modifier.fillMaxWidth()
+				// Focus the default option to accept enter presses
+				if (option == FULL) modifier = modifier.defaultFocussed(options)
 				Button(
 					onClick = { onDamageApplied(option) },
-					modifier = Modifier.fillMaxWidth()
+					modifier = modifier
 				) {
 					Text(option.getLabel())
 				}
 			}
 		}
-	}
-
-	LaunchedEffect(options) {
-		focusRequester.requestFocus()
 	}
 }
 
