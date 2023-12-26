@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VersionDTO(
-	val ac: List<AcDTO>? = null,
+	val ac: List<@Serializable(with = AcDTODeserializer::class) AcDTO>? = null,
 	val action: List<ActionDTO>? = null,
 	val alignment: List<String>? = null,
 	val cr: @Serializable(with = CrDTODeserializer::class) CrDTO? = null,
