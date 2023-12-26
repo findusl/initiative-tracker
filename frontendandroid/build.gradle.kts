@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage") // the warning doesn't help
 
-import java.util.*
+import java.util.Properties
 
 buildscript {
 	dependencies {
@@ -56,7 +56,7 @@ android {
 		buildConfig = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+		kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 }
