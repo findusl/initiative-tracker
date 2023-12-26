@@ -25,6 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
@@ -45,6 +49,9 @@ import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
 import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import de.lehrbaum.initiativetracker.ui.icons.Mic
+import de.lehrbaum.initiativetracker.ui.keyevents.LocalShortcutManager
+import de.lehrbaum.initiativetracker.ui.keyevents.defaultFocussed
+import de.lehrbaum.initiativetracker.ui.keyevents.disposableShortcut
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +70,8 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 	val coroutineScope = rememberCoroutineScope(hostCombatViewModel)
 
+	LocalShortcutManager.current?.disposableShortcut(' ', hostCombatViewModel::recordCommand)
+
 	ListDetailLayout(
 		list = {
 			val scaffoldState = rememberScaffoldState(hostCombatViewModel, drawerState)
@@ -76,12 +85,13 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 				MainContent(hostCombatModelState.value, connectionStateState)
 			}
 
-			Dialogs(connectionStateState.value, coroutineScope, hostCombatModelState.value)
+			val finishRecording: () -> Unit = { coroutineScope.launch { hostCombatViewModel.finishRecording() } }
+			Dialogs(connectionStateState.value, hostCombatModelState.value, finishRecording)
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
 		} else null,
-		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() }
+		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() },
 	)
 
 	hostCombatViewModel.ErrorComposable()
@@ -131,11 +141,11 @@ private fun MainContent(
 	}
 }
 
-@Composable // not skippable due to CoroutineScope, but very cheap
+@Composable
 private fun Dialogs(
 	connectionState: HostConnectionState,
-	coroutineScope: CoroutineScope,
-	hostCombatViewModel: HostCombatViewModel
+	hostCombatViewModel: HostCombatViewModel,
+	finishRecording: () -> Unit,
 ) {
 	if (connectionState == HostConnectionState.Connected) {
 		with(hostCombatViewModel) {
@@ -149,16 +159,29 @@ private fun Dialogs(
 				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
 			}
 			if (isRecording || isProcessingRecording) {
-				Dialog(onDismissRequest = { hostCombatViewModel.cancelRecording() }) {
-					Button(onClick = {
-						coroutineScope.launch {
-							hostCombatViewModel.finishRecording()
-						}
-					}) {
-						Text("Finish Recording")
-					}
-				}
+				FinishRecordingDialog(finishRecording) // TODO change when recording is processing
 			}
+		}
+	}
+}
+
+@Composable
+private fun HostCombatViewModel.FinishRecordingDialog(
+	finishRecording: () -> Unit
+) {
+	Dialog(onDismissRequest = { cancelRecording() }) {
+		Button(
+			onClick = finishRecording,
+			modifier = Modifier
+				.defaultFocussed(this)
+				.onKeyEvent {
+					if (it.key == Key.Spacebar) {
+						finishRecording()
+						true
+					} else false
+				},
+		) {
+			Text("Finish Recording")
 		}
 	}
 }
