@@ -14,6 +14,7 @@ import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
 import de.lehrbaum.initiativetracker.bl.CombatCommand
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -94,6 +95,7 @@ class OpenAiNetworkClient(token: String) {
 			language = "de"
 		)
 		val transcriptionResponse = openAi.transcription(transcriptionRequest)
+		Napier.d("Transcribed command: ${transcriptionResponse.text}")
 		return interpretCombatCommand(transcriptionResponse.text, combatants)
 	}
 
