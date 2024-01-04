@@ -11,7 +11,7 @@ import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
@@ -20,6 +20,9 @@ Some default remember functions do not take a key as parameter. However, since s
 be shown one after the other with different content, the remember functions need to be reset. They need a key.
  */
 
+/**
+ * Remember a [CoroutineScope] with the given [key]. The Scope uses a SupervisorJob.
+ */
 @Composable
 inline fun rememberCoroutineScope(
 	key: Any?,
@@ -31,7 +34,7 @@ inline fun rememberCoroutineScope(
 class CoroutineWrapper(
 	coroutineContext: CoroutineContext
 ) : RememberObserver, CoroutineScope {
-	override val coroutineContext = coroutineContext + Job()
+	override val coroutineContext = coroutineContext + SupervisorJob()
 	override fun onAbandoned() {
 		cancel("Left composition")
 	}
