@@ -6,6 +6,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import de.lehrbaum.initiativetracker.ui.keyevents.defaultFocussed
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
 
 @Composable
@@ -13,7 +14,7 @@ fun ErrorAlertDialog(message: String, onDismissRequest: () -> Unit) {
 	AlertDialog(
 		onDismissRequest,
 		buttons = {
-			Button(onClick = onDismissRequest, modifier = Modifier.fillMaxWidth()) {
+			Button(onClick = onDismissRequest, modifier = Modifier.fillMaxWidth().defaultFocussed(message)) {
 				Text("OK")
 			}
 			// add option to copy detailed error
