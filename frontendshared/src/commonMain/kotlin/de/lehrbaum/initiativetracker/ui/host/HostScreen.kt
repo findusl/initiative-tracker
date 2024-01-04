@@ -28,8 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
@@ -183,7 +185,7 @@ private fun HostCombatViewModel.FinishRecordingDialog(
 			modifier = Modifier
 				.defaultFocussed(this)
 				.onKeyEvent {
-					if (it.key == Key.Spacebar) {
+					if (it.key == Key.Spacebar && it.type == KeyEventType.KeyDown) {
 						finishRecording()
 						true
 					} else false
