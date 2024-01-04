@@ -1,20 +1,31 @@
 package de.lehrbaum.initiativetracker.ui.host
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.*
+import de.lehrbaum.initiativetracker.bl.AudioCommandController
+import de.lehrbaum.initiativetracker.bl.CombatCommand
+import de.lehrbaum.initiativetracker.bl.CombatController
+import de.lehrbaum.initiativetracker.bl.ConfirmationRequester
+import de.lehrbaum.initiativetracker.bl.DamageDecision
+import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.ui.composables.CombatantListViewModel
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
-import de.lehrbaum.initiativetracker.ui.shared.*
+import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
+import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
+import de.lehrbaum.initiativetracker.ui.shared.showText
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.job
 
 @Stable
 abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequester {
@@ -57,9 +68,8 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 		get() = audioCommandController.isAvailable
 	var isRecording by mutableStateOf(false)
 		private set
-	@Suppress("MemberVisibilityCanBePrivate") // TODO use
-	var isProcessingRecording by mutableStateOf(false)
-		private set
+	private var processingRecordingJob by mutableStateOf<Job?>(null)
+	val isProcessingRecording by derivedStateOf { processingRecordingJob != null }
 
 	fun recordCommand() {
 		if (isRecording) return
@@ -73,23 +83,27 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 
 	suspend fun finishRecording() {
 		if (isProcessingRecording) return
-		isProcessingRecording = true
-		isRecording = false
-		val commandResult = audioCommandController.finishRecordingCommand()
-		commandResult.getOrNullAndHandle()?.let { command ->
-			when (command) {
-				is CombatCommand.DamageCommand -> {
-					damageCombatant(command.target, command.damage)
+		coroutineScope {
+			processingRecordingJob = this.coroutineContext.job
+			isRecording = false
+			val commandResult = audioCommandController.processRecording()
+			commandResult.getOrNullAndHandle()?.let { command ->
+				when (command) {
+					is CombatCommand.DamageCommand -> {
+						damageCombatant(command.target, command.damage)
+					}
 				}
 			}
-		}
 
-		isProcessingRecording = false
+			processingRecordingJob = null
+		}
 	}
 
 	fun cancelRecording() {
 		audioCommandController.cancelRecording()
 		isRecording = false
+		processingRecordingJob?.cancel()
+		processingRecordingJob = null
 	}
 
 	fun onCombatantClicked(combatantModel: CombatantModel) {
