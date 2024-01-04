@@ -24,16 +24,16 @@ class AudioCommandController(
 		audioRecorder.startRecording()
 	}
 
-	suspend fun finishRecordingCommand(): Result<CombatCommand> {
+	suspend fun processRecording(): Result<CombatCommand> {
 		val result = audioRecorder.stopRecording()
 			.flatMap { recording ->
 				openAiNetworkClient?.interpretSpokenCombatCommand(recording, combatants)
-					?: Result.failure(IllegalStateException("Finish recording but no openAI available"))
+					?: Result.failure(IllegalStateException("Finish recording but OpenAI is unavailable"))
 			}.onSuccess {
 				Napier.i("Interpreted command as $it", tag = TAG)
 			}
 
-		// free up the resources. This can most likely be improved but not a concern right now
+		// free up the resources. This can most likely be improved for re-use but not a concern right now
 		audioRecorder.close()
 		audioRecorder = AudioRecorder()
 		return result
