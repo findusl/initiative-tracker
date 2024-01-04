@@ -42,11 +42,12 @@ class OpenAiNetworkClient(token: String) {
 	suspend fun suggestMonsterNames(monsterType: String): List<String> = coroutineScope {
 		val descriptionTask = async { suggestMonsterDescription(monsterType) }
 		val nameTask = async { suggestMonsterName(monsterType) }
-		listOf(descriptionTask, nameTask).awaitAll().filterNotNull()
+		// TASK log or otherwise pass on the failures
+		listOf(descriptionTask, nameTask).awaitAll().filterIsSuccess()
 	}
 
 	@BetaOpenAI
-	suspend fun suggestMonsterDescription(monsterType: String): String? {
+	suspend fun suggestMonsterDescription(monsterType: String): Result<String> {
 		// TASK could provide the fluff from https://5e.tools/data/bestiary/fluff-bestiary-mm.json
 		val request = ChatCompletionRequest(
 			model = ModelId("gpt-3.5-turbo"),
@@ -61,13 +62,16 @@ class OpenAiNetworkClient(token: String) {
 				)
 			)
 		)
-		val response = openAi.chatCompletion(request).choices.firstOrNull()?.message?.content ?: return null
-		if (response.count { it.isWhitespace() } > 4) return null
-		return response.removeSuffix(".").capitalizeWords()
+		return runCatching {
+			openAi.chatCompletion(request)
+		}
+			.mapCatching { it.choices.firstOrNull()?.message?.content ?: throw NoSuchElementException("Response has no content") }
+			.filter("Suggestion contains too many words") { suggestion -> suggestion.count { it.isWhitespace() } > 4 }
+			.mapCatching { suggestion -> suggestion.removeSuffix(".").capitalizeWords() }
 	}
 
 	@BetaOpenAI
-	suspend fun suggestMonsterName(monsterType: String): String? {
+	suspend fun suggestMonsterName(monsterType: String): Result<String> {
 		// TASK could provide the fluff from https://5e.tools/data/bestiary/fluff-bestiary-mm.json
 		val request = ChatCompletionRequest(
 			model = ModelId("gpt-3.5-turbo"),
@@ -82,8 +86,11 @@ class OpenAiNetworkClient(token: String) {
 				)
 			)
 		)
-		val response = openAi.chatCompletion(request).choices.firstOrNull()?.message?.content ?: return null
-		return response.removeSuffix(".").capitalizeWords()
+		return runCatching {
+			openAi.chatCompletion(request)
+		}
+			.mapCatching { it.choices.firstOrNull()?.message?.content ?: throw NoSuchElementException("Response has no content") }
+			.mapCatching { suggestion -> suggestion.removeSuffix(".").capitalizeWords() }
 	}
 
 	suspend fun interpretSpokenCombatCommand(buffer: Buffer, combatants: Iterable<CombatantModel>): Result<CombatCommand> {
@@ -94,9 +101,11 @@ class OpenAiNetworkClient(token: String) {
 			prompt = "Kampf zwischen " + combatants.commaSeparatedNameList(),
 			language = "de"
 		)
-		val transcriptionResponse = openAi.transcription(transcriptionRequest)
-		Napier.d("Transcribed command: ${transcriptionResponse.text}")
-		return interpretCombatCommand(transcriptionResponse.text, combatants)
+		return runCatching {
+			openAi.transcription(transcriptionRequest).text
+		}
+			.onSuccess { transcription -> Napier.d("Transcribed command: $transcription") }
+			.flatMap { transcription -> interpretCombatCommand(transcription, combatants) }
 	}
 
 	private suspend fun interpretCombatCommand(command: String, combatants: Iterable<CombatantModel>): Result<CombatCommand> {
@@ -115,9 +124,13 @@ class OpenAiNetworkClient(token: String) {
 				)
 			)
 		)
-		val response = openAi.chatCompletion(interpretationRequest).choices.firstOrNull()?.message?.content
-			?: return Result.failure(NoSuchElementException("Got no response from GPT-4 to interpret $command"))
-		try { // Not yet sure how this will generalize for different commands
+
+		val response = runCatching {
+			openAi.chatCompletion(interpretationRequest).choices.firstOrNull()?.message?.content
+				?: throw NoSuchElementException("Got no response from GPT-4 to interpret $command")
+		}.getOrElse { return Result.failure(it) }
+		try {
+			// Not yet sure how this will generalize for different commands
 			val parsed = parserForJsonFromAI.decodeFromString<DamageCommandDTO>(response)
 			val combatant = combatants.firstOrNull { it.name == parsed.target }
 				?: return Result.failure(RuntimeException("Unable to find combatant for target ${parsed.target}"))
