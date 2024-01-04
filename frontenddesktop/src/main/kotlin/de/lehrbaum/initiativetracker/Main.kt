@@ -96,7 +96,8 @@ private class ShortcutManagerImpl(private val shortcuts: MutableMap<Char, () -> 
 	fun onKeyEvent(keyEvent: KeyEvent): Boolean {
 		println("Got keyEvent $keyEvent")
 		if (keyEvent.isTypedEvent) {
-			val key = keyEvent.awtEventOrNull?.keyChar
+			// Only the typed event has a keyChar
+			val key = keyEvent.awtEventOrNull?.keyChar ?: return false
 			shortcuts[key]?.let {
 				println("Triggered Shortcut $key")
 				it()
