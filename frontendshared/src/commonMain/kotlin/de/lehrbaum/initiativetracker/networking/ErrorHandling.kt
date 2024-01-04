@@ -34,5 +34,19 @@ inline fun <T, R> Result<T>.flatMap(block: (T) -> Result<R>): Result<R> {
 	return block(value)
 }
 
+@OptIn(ExperimentalContracts::class)
+inline fun <T> Result<T>.filter(description: String, condition: (T) -> Boolean): Result<T> {
+	contract {
+		callsInPlace(condition, InvocationKind.AT_MOST_ONCE)
+	}
+	val value = getOrElse {
+		return Result.failure(it)
+	}
+	return if (condition(value)) this else Result.failure(RuntimeException(description))
+}
+
+inline fun <R> Iterable<Result<R>>.filterIsSuccess(): List<R> =
+	filter { it.isSuccess }.map { it.getOrThrow() }
+
 suspend inline fun <reified T> HttpResponse.bodyOrFailure(): Result<T> =
 	if (status.isSuccess()) Result.success(body()) else Result.failure(IOException("ResponseStatus $status"))
