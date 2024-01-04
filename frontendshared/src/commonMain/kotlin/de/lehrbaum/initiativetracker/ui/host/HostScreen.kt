@@ -11,6 +11,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -158,8 +159,15 @@ private fun Dialogs(
 			confirmDamage?.let { options ->
 				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
 			}
-			if (isRecording || isProcessingRecording) {
-				FinishRecordingDialog(finishRecording) // TODO change when recording is processing
+			if (isRecording) {
+				FinishRecordingDialog(finishRecording)
+			}
+			if (isProcessingRecording) {
+				Dialog(onDismissRequest = { cancelRecording() }) {
+					Surface {
+						Text("Processing Recording")
+					}
+				}
 			}
 		}
 	}
