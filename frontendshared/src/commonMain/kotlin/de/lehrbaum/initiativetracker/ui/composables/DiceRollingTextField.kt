@@ -9,7 +9,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,14 +33,12 @@ import kotlin.random.Random
 fun DiceRollingTextField(
 	modifier: Modifier = Modifier,
 	initialNumber: Int? = null,
-	textIsValidNumber: MutableState<Boolean>,
 	initialText: String = initialNumber?.toString() ?: "",
 	label: String? = null,
 	onNumberChanged: (Int) -> Unit,
+	onInputValidChanged: (Boolean) -> Unit,
 	placeholder: String? = null,
 ) {
-	// Not sure if this is the way remember was meant to be used...
-	remember(initialText) { textIsValidNumber.value = initialText.toIntOrNull() != null }
 	val textFieldContentState = remember(initialText) { mutableStateOf(initialText) }
 	var textFieldContent by textFieldContentState
 	var isFocussed by remember { mutableStateOf(false) }
@@ -57,7 +54,7 @@ fun DiceRollingTextField(
 			onValueChange = { newValue ->
 				textFieldContent = newValue
 				val parsed = newValue.toIntOrNull()?.also { onNumberChanged(it) }
-				textIsValidNumber.value = parsed != null
+				onInputValidChanged(parsed != null)
 			},
 			modifier = Modifier.fillMaxWidth()
 				.onSizeChanged {
@@ -83,7 +80,7 @@ fun DiceRollingTextField(
 				DropdownMenuItem(onClick = {
 					textFieldContent = result.sum.toString()
 					onNumberChanged(result.sum)
-					textIsValidNumber.value = true
+					onInputValidChanged(true)
 				}) {
 					Column {
 						if (result.intermediateStep != result.sum.toString())
