@@ -28,10 +28,11 @@ inline fun rememberCoroutineScope(
 	key: Any?,
 	crossinline getContext: @DisallowComposableCalls () -> CoroutineContext =
 		{ Dispatchers.Main }
-) =
+): CoroutineScope =
 	remember(key) { CoroutineWrapper(getContext()) }
 
-class CoroutineWrapper(
+@PublishedApi
+internal class CoroutineWrapper(
 	coroutineContext: CoroutineContext
 ) : RememberObserver, CoroutineScope {
 	override val coroutineContext = coroutineContext + SupervisorJob()
