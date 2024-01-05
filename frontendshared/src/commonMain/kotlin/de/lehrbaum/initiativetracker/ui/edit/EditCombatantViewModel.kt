@@ -15,8 +15,13 @@ import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.*
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.random.Random
 
 @Stable
@@ -30,7 +35,7 @@ data class EditCombatantViewModel(
 	var name: String by mutableStateOf(combatantModel.name)
 	val nameError: Boolean by derivedStateOf { name.isBlank() }
 	private var nameSuggestions: List<String> by mutableStateOf(emptyList())
-	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name }.toImmutableList() }
+	val nameSuggestionsToShow by derivedStateOf { nameSuggestions.filter { it != name }.toPersistentList() }
 	var nameLoading: Boolean by mutableStateOf(false)
 	private var nameLoadingJob: Job? = null
 
@@ -63,7 +68,7 @@ data class EditCombatantViewModel(
 			.filter { it != monsterTypeName } // Don't suggest the existing choice
 			.toList()
 			.sortedBy{ it.length }
-			.toImmutableList()
+			.toPersistentList()
 	}
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 
