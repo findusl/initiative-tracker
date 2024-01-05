@@ -27,11 +27,11 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.ui.Constants
-import de.lehrbaum.initiativetracker.ui.composables.CoroutineWrapper
 import de.lehrbaum.initiativetracker.ui.composables.DiceRollingTextField
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.ui.keyevents.defaultFocussed
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,7 +55,7 @@ fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 }
 
 @Composable // not skippable because of coroutineScope but parent is trivial and skippable
-private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, coroutineScope: CoroutineWrapper) {
+private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, coroutineScope: CoroutineScope) {
 
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Text("Damage ${viewModel.target}")
