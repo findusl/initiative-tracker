@@ -71,12 +71,12 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 		) {
 			Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 				var initiativeValue by remember { mutableStateOf(0) }
-				val initiativeIsValidNumber = remember { mutableStateOf(false) }
+				var initiativeIsValidNumber by remember { mutableStateOf(false) }
 				DiceRollingTextField(
 					label = "Initiative",
 					initialText = "1#20+${chosen.initiativeMod ?: 0}",
 					onNumberChanged = { initiativeValue = it },
-					textIsValidNumber = initiativeIsValidNumber,
+					onInputValidChanged = { initiativeIsValidNumber = it },
 				)
 				//EditTextField(initiativeField, "Initiative")
 				val currentHpField = remember(chosen) {
@@ -84,7 +84,7 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 				}
 				EditTextField(currentHpField, "Current HP")
 
-				val submittable = remember { derivedStateOf { initiativeIsValidNumber.value && !currentHpField.hasError } }
+				val submittable = remember { derivedStateOf { initiativeIsValidNumber && !currentHpField.hasError } }
 
 				OkCancelButtonRow(
 					submittable.value,

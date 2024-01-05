@@ -81,7 +81,7 @@ private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, co
 				modifier = Modifier
 					.weight(1.0f)
 					.defaultFocussed(viewModel),
-				textIsValidNumber = viewModel.textIsValidNumber,
+				onInputValidChanged = { viewModel.textIsValidNumber.value = it }
 			)
 			IconButton(
 				onClick = { viewModel.sliderValue++ }
