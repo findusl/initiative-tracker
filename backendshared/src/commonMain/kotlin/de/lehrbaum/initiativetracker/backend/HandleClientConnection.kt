@@ -76,6 +76,13 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 					logger.debug("Got Cancel. Active scope is ${state.activeCommandScope}")
 					state.activeCommandScope?.cancel()
 				}
+
+				is ClientCommand.FinishTurn -> {
+					logger.debug("Got Finish Turn command $message")
+					val command: ServerToHostCommand =
+						ServerToHostCommand.FinishTurn(message.activeCombatantIndex)
+					forwardCommandAndHandleResponse(session, command, state)
+				}
 			}
 		}
 	} catch (closed: ClosedReceiveChannelException) {

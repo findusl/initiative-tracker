@@ -67,11 +67,15 @@ For more details on how to run the backend, see below.
 ### Running the desktop frontend
 
 You can run the desktop application by running Main.kt in the [desktop](frontenddesktop) module. Either with your favorite IDE
-or with the gradle task `:desktop:run`.
+or with the gradle task `:frontenddesktop:run`.
 
 ### Running the android app
 
 Use Android studio and run the `frontendandroid` target.
+
+### Build the android app (on my computer)
+
+Android Studio -> generate signed apk `Development/my_release.keystore`
 
 ## Technical Details Backend
 

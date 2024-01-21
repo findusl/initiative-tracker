@@ -9,6 +9,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,10 @@ fun DiceRollingTextField(
 ) {
 	val textFieldContentState = remember(initialText) { mutableStateOf(initialText) }
 	var textFieldContent by textFieldContentState
+	LaunchedEffect(initialText) {
+		val parsed = textFieldContent.toIntOrNull()?.also { onNumberChanged(it) }
+		onInputValidChanged(parsed != null)
+	}
 	var isFocussed by remember { mutableStateOf(false) }
 	var textFieldWidth by remember { mutableStateOf(0) }
 	var textFieldHeight by remember { mutableStateOf(0) }
@@ -53,7 +58,8 @@ fun DiceRollingTextField(
 			value = textFieldContent,
 			onValueChange = { newValue ->
 				textFieldContent = newValue
-				val parsed = newValue.toIntOrNull()?.also { onNumberChanged(it) }
+				val parsed = newValue.toIntOrNull()
+				parsed?.let(onNumberChanged)
 				onInputValidChanged(parsed != null)
 			},
 			modifier = Modifier.fillMaxWidth()

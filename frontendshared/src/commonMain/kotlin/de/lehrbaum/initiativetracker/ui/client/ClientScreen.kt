@@ -3,8 +3,10 @@ package de.lehrbaum.initiativetracker.ui.client
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DrawerState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -16,8 +18,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.bl.ClientCombatState
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
@@ -31,6 +36,7 @@ import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.ui.composables.rememberScaffoldState
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
+import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -52,6 +58,11 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 
 			Scaffold(
 				scaffoldState = scaffoldState,
+				floatingActionButton = {
+					(connectionStateState.value as? ClientCombatState.Connected)?.let {
+						NextCombatantButton(clientCombatViewModelState.value, it)
+					}
+				},
 				topBar = {
 					TopBar(drawerState, clientCombatViewModelState.value, onAddCharacter = {
 						coroutineScope.launch { clientCombatViewModel.chooseCharacterToAdd() }
@@ -134,4 +145,30 @@ private fun TopBar(
 		},
 		backgroundColor = MaterialTheme.colors.primarySurface,
 	)
+}
+
+@Composable
+private fun NextCombatantButton(clientCombatViewModel: ClientCombatViewModel, connectionStateState: ClientCombatState.Connected) {
+	val coroutineScope = rememberCoroutineScope(connectionStateState)
+	if (connectionStateState.activeCombatantIndex >= 0 &&
+		connectionStateState.combatants[connectionStateState.activeCombatantIndex].ownerId == clientCombatViewModel.ownerId
+		) {
+		var finishTurnLoading by remember(connectionStateState) { mutableStateOf(false) }
+		FloatingActionButton(onClick = {
+			coroutineScope.launch {
+				finishTurnLoading = true
+				clientCombatViewModel.finishTurn(connectionStateState.activeCombatantIndex)
+				finishTurnLoading = false
+			}
+		}) {
+			if (finishTurnLoading) {
+				CircularProgressIndicator(
+					color = MaterialTheme.colors.onPrimary,
+					strokeWidth = 3.dp,
+				)
+			} else {
+				Icon(Icons.Default.FastForward, contentDescription = "Finish Turn")
+			}
+		}
+	}
 }
