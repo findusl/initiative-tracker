@@ -2,7 +2,9 @@ package de.lehrbaum.initiativetracker.ui.host
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.Checkbox
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -34,6 +36,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.ErrorComposable
@@ -248,7 +251,7 @@ private fun TopBar(
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
 				}
 			}
-			if (hostCombatViewModel.isSharing) {
+			if (hostCombatViewModel.isSharing || hostCombatViewModel.showAutoConfirmDamageToggle) {
 				IconButton(onClick = { displayDropdown = !displayDropdown }) {
 					Icon(Icons.Default.MoreVert, "")
 				}
@@ -256,11 +259,21 @@ private fun TopBar(
 					expanded = displayDropdown,
 					onDismissRequest = { displayDropdown = false }
 				) {
-					DropdownMenuItem(onClick = {
-						displayDropdown = false
-						hostCombatViewModel.showSessionId()
-					}) {
-						Text(text = "Show Session Id")
+					if (hostCombatViewModel.isSharing) {
+						DropdownMenuItem(onClick = {
+							displayDropdown = false
+							hostCombatViewModel.showSessionId()
+						}) {
+							Text(text = "Show Session Id")
+						}
+					}
+					if (hostCombatViewModel.showAutoConfirmDamageToggle) {
+						DropdownMenuItem(onClick = {
+							hostCombatViewModel.autoConfirmDamagePressed()
+						}) {
+							Checkbox(hostCombatViewModel.autoConfirmDamage, onCheckedChange = null)
+							Text(text = "Autoconfirm Damage", modifier = Modifier.padding(start = Constants.defaultPadding))
+						}
 					}
 				}
 			}

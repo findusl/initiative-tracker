@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.flowOf
 data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit): HostCombatViewModel() {
 	override val hostConnectionState = flowOf(HostConnectionState.Connected)
 	override val confirmDamage = null
+	override val showAutoConfirmDamageToggle = false
+	override val autoConfirmDamage = false
 	override val isSharing = false
 	override val title = "New Combat"
 
@@ -21,6 +23,10 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 		private set
 
 	override fun onConfirmDamageDialogSubmit(decision: DamageDecision) {
+		throw IllegalStateException("It should not be possible")
+	}
+
+	override fun autoConfirmDamagePressed() {
 		throw IllegalStateException("It should not be possible")
 	}
 

@@ -26,6 +26,9 @@ data class HostSharedCombatViewModelImpl(
 		get() = hostCombatSession.hostConnectionState
 	override var confirmDamage: ConfirmDamageOptions? by mutableStateOf(null)
 		private set
+	override val showAutoConfirmDamageToggle = true
+	override var autoConfirmDamage by mutableStateOf(false)
+		private set
 	private var confirmDamageContinuation: Continuation<DamageDecision?>? = null
 	override val isSharing = true
 	override val title = "Hosting ${combatLink.userDescription}"
@@ -61,7 +64,14 @@ data class HostSharedCombatViewModelImpl(
 		confirmDamage = null
 	}
 
+	override fun autoConfirmDamagePressed() {
+		autoConfirmDamage = !autoConfirmDamage
+	}
+
 	override suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision? {
+		if (autoConfirmDamage) {
+			return DamageDecision.FULL
+		}
 		return suspendCancellableCoroutine {
 			confirmDamageContinuation = it
 			confirmDamage = ConfirmDamageOptions(damage, target.name, probableSource)
