@@ -117,6 +117,14 @@ data class ClientCombatViewModel(
 		// If this client added characters to the combat we might have to send a remove command first
 	}
 
+	/*
+	 * The active combatant should actually be added in the ViewModel, but since we don't have access to the flow here,
+	 * we have to do it in the Screen. Maybe a StateFlow that is initialized by the view might be an idea.
+	 */
+	suspend fun finishTurn(activeCombatantIndex: Int) {
+		combatSession.requestFinishTurn(activeCombatantIndex)
+	}
+
 	private fun CharacterModel.toCombatantModel(initiative: Int, currentHp: Int): CombatantModel {
 		return CombatantModel(
 			ownerId = ownerId,

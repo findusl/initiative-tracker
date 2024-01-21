@@ -16,4 +16,7 @@ sealed interface ServerToHostCommand {
 
 	@Serializable
 	data class DamageCombatant(val targetId: CombatantId, val damage: Int, val ownerId: UserId) : ServerToHostCommand
+
+	@Serializable
+	data class FinishTurn(val activeCombatantIndex: Int) : ServerToHostCommand
 }

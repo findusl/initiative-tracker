@@ -59,7 +59,7 @@ fun CombatantList(
             addCreateNewCard("Add new combatant", onCreateNewClicked)
         } else if (combatants.isEmpty()) {
 			// so that it is not completely empty, looks like an error
-			item(key = combatants) {
+			item(key = null) {
 				Text("No Combatants in the combat")
 			}
 		}

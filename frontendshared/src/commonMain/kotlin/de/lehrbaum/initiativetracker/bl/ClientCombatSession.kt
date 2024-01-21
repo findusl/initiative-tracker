@@ -1,7 +1,10 @@
 package de.lehrbaum.initiativetracker.bl
 
+import androidx.compose.runtime.Stable
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.ClientCombatState.*
+import de.lehrbaum.initiativetracker.bl.ClientCombatState.Connected
+import de.lehrbaum.initiativetracker.bl.ClientCombatState.Connecting
+import de.lehrbaum.initiativetracker.bl.ClientCombatState.Disconnected
 import de.lehrbaum.initiativetracker.bl.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantId
@@ -16,12 +19,20 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
-import kotlinx.coroutines.*
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.resume
@@ -103,6 +114,10 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 		return sendClientCommand(ClientCommand.DamageCombatant(targetId, damage, ownerId))
 	}
 
+	suspend fun requestFinishTurn(activeCombatantIndex: Int): Boolean {
+		return sendClientCommand(ClientCommand.FinishTurn(activeCombatantIndex))
+	}
+
 	@OptIn(DelicateCoroutinesApi::class)
 	private suspend fun sendClientCommand(command: ClientCommand): Boolean {
 		Napier.d("Attempting to send client command $command. Mutex locked: ${outgoingMutex.isLocked}")
@@ -123,10 +138,11 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 }
 
 sealed interface ClientCombatState {
-	object Connecting: ClientCombatState
-	data class Connected(val activeCombatantIndex: Int, val combatants: List<CombatantModel>): ClientCombatState {
+	data object Connecting: ClientCombatState
+	@Stable
+	data class Connected(val activeCombatantIndex: Int, val combatants: ImmutableList<CombatantModel>): ClientCombatState {
 		constructor(combatModel: CombatModel):
-			this(combatModel.activeCombatantIndex, combatModel.combatants)
+			this(combatModel.activeCombatantIndex, combatModel.combatants.toImmutableList())
 	}
 	data class Disconnected(val reason: String): ClientCombatState
 }

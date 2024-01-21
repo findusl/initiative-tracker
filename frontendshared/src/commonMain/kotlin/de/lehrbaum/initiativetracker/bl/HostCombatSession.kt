@@ -12,15 +12,25 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "HostCombatSession"
 
 class HostCombatSession(
-	val combatLink: CombatLink,
+	private val combatLink: CombatLink,
 	private val combatController: CombatController,
 ) {
 	val hostConnectionState = flow {
@@ -100,6 +110,13 @@ class HostCombatSession(
 				is ServerToHostCommand.DamageCombatant -> {
 					val result = withContext(Dispatchers.Main) {
 						combatController.handleDamageCombatantRequest(incoming.targetId, incoming.damage, incoming.ownerId)
+					}
+					sendSerialized(HostCommand.CommandCompleted(result) as HostCommand)
+				}
+
+				is ServerToHostCommand.FinishTurn -> {
+					val result = withContext(Dispatchers.Main) {
+						combatController.handleFinishTurnRequest(incoming.activeCombatantIndex)
 					}
 					sendSerialized(HostCommand.CommandCompleted(result) as HostCommand)
 				}

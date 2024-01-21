@@ -97,6 +97,14 @@ class CombatController(
 		} ?: return false
 	}
 
+	fun handleFinishTurnRequest(activeCombatantIndex: Int): Boolean {
+		if (activeCombatantIndex == this.activeCombatantIndex.value) {
+			nextTurn()
+			return true
+		}
+		return false
+	}
+
 	fun damageCombatant(targetId: CombatantId, damage: Int) {
 		if (damage == 0) return
 		_combatants.updateCombatant(targetId) { combatantModel ->
