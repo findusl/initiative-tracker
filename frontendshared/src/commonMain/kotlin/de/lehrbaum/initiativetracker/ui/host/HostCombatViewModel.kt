@@ -62,6 +62,8 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	abstract val hostConnectionState: Flow<HostConnectionState>
 	abstract val isSharing: Boolean
 	abstract val confirmDamage: ConfirmDamageOptions?
+	abstract val showAutoConfirmDamageToggle: Boolean
+	abstract val autoConfirmDamage: Boolean
 
 	private val audioCommandController = AudioCommandController(combatController)
 	val isRecordActionVisible: Boolean
@@ -192,4 +194,5 @@ abstract class HostCombatViewModel: ErrorStateHolder by Impl(), ConfirmationRequ
 	abstract suspend fun shareCombat()
 	abstract fun onConfirmDamageDialogCancel()
 	abstract fun onConfirmDamageDialogSubmit(decision: DamageDecision)
+	abstract fun autoConfirmDamagePressed()
 }
