@@ -11,7 +11,6 @@ data class MonsterDTO(
 	val actionTags: List<String>? = null,
 	val alias: List<String>? = null,
 	val alignment: List<@Serializable(with = AlignmentDTODeserializer::class) AlignmentDTO>? = null,
-	val altArt: List<AltArtDTO>? = null,
 	val basicRules: Boolean = false,
 	val cha: Int? = null,
 	val con: Int? = null,
@@ -52,7 +51,6 @@ data class MonsterDTO(
 	val save: SaveDTO? = null,
 	val senseTags: List<String>? = null,
 	val senses: List<String>? = null,
-	val size: List<String>? = null,
 	val skill: SkillDTO? = null,
 	// val soundClip: SoundClipDTO? = null, don't need sound
 	val source: String,
@@ -61,6 +59,7 @@ data class MonsterDTO(
 	val spellcastingTags: List<String>? = null,
 	val srd: Boolean = false,
 	val str: Int? = null,
+	val tokenUrl: String? = null,
 	val trait: List<TraitDTO>? = null,
 	val traitTags: List<String>? = null,
 	@Serializable(with = TypeDTODeserializer::class)

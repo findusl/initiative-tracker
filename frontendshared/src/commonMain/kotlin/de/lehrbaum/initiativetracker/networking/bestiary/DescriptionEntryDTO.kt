@@ -17,6 +17,13 @@ data class SimpleEntryDTO(
 ) : DescriptionEntryDTO()
 
 @Serializable
+@SerialName("itemSub")
+data class ItemSubEntryDTO(
+	val name: String,
+	val entry: String
+) : DescriptionEntryDTO()
+
+@Serializable
 @SerialName("entries")
 data class SubEntries(
 	val name: String? = null,
@@ -59,7 +66,7 @@ data class ListEntryDTO(
 @SerialName("table")
 data class TableEntryDTO(
 	val caption: String? = null,
-	val colLabels: List<String>,
+	val colLabels: List<String>? = null,
 	val colStyles: List<String>,
 	val rows: List<List<@Serializable(with = TableCellSerializer::class) TableCellDTO>>
 ) : DescriptionEntryDTO()

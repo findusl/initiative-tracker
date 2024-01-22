@@ -15,7 +15,6 @@ data class VersionDTO(
 	// val mod: ModDTO? = null, very complicated on how to modify the creature
 	val name: String,
 	val senses: List<String>? = null,
-	val size: String? = null,
 	val skill: SkillDTO? = null,
 	val source: String,
 	val speed: SpeedsDTO? = null,
