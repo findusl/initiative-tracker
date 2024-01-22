@@ -33,12 +33,17 @@ data class CombatantListViewModel(
 
 	fun imageUrl(): Url? {
 		val monster = monsterDTO ?: return null
-		if (!monster.hasToken) return null
-		// like https://5e.tools/img/MM/Air%20Elemental.png
-		return URLBuilder(
-			protocol = URLProtocol.HTTPS,
-			host = "5e.tools",
-			pathSegments = listOf("img", monster.source, monster.name + ".png")
-		).build()
+		if (monster.hasToken) {
+			// like https://5e.tools/img/MM/Air%20Elemental.png
+			return URLBuilder(
+				protocol = URLProtocol.HTTPS,
+				host = "5e.tools",
+				pathSegments = listOf("img", monster.source, monster.name + ".png")
+			).build()
+		}
+		monster.tokenUrl?.let {
+			return Url(it)
+		}
+		return null
 	}
 }

@@ -1,13 +1,15 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.networking.bestiary.BestiaryCollectionDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.HpDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.request
+import io.ktor.http.ContentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.plus
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.json.Json
 
 private const val TAG = "BestiaryNetworkClient"
 
@@ -31,19 +34,37 @@ interface BestiaryNetworkClient {
 	val monsters: Flow<List<MonsterDTO>>
 }
 
-class BestiaryNetworkClientImpl(private val httpClient: HttpClient): BestiaryNetworkClient {
+class BestiaryNetworkClientImpl(defaultClient: HttpClient) : BestiaryNetworkClient {
+
+	private val httpClient = defaultClient.config {
+		install(ContentNegotiation) {
+			val jsonSerializer = Json {
+				isLenient = true
+				ignoreUnknownKeys = true
+			}
+			json(jsonSerializer, ContentType.Text.Plain)
+		}
+	}
 
 	private val monsterSources = flow<Map<String, String>> {
-		emit(GlobalInstances.httpClient.request("https://5e.tools/data/bestiary/index.json").body())
+		val sources =
+			httpClient
+				.request("https://5e.tools/data/bestiary/index.json")
+				.body<Map<String, String>>()
+				.mapValues { (_, fileName) -> "https://5e.tools/data/bestiary/$fileName" }
+				.toMutableMap()
+		sources["ToB"] = "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts.json"
+		sources["ToB2"] = "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts%202.json"
+		sources["ToB3"] = "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts%203.json"
+		emit(sources)
 	}
 
 	@ExperimentalCoroutinesApi // this is not required to propagate to the interface, weird
 	override val monsters = monsterSources
-		.transformLatest { spellSources ->
+		.transformLatest { sources ->
 			val flowLock = Mutex()
 			coroutineScope {
-				spellSources.values.sortSourcesByMyPreference().forEach { jsonFileName ->
-					val url = "https://5e.tools/data/bestiary/$jsonFileName"
+				sources.values.sortSourcesByMyPreference().forEach { url ->
 					launch {
 						try {
 							Napier.v("Loading bestiary from $url", tag = TAG)

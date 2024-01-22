@@ -71,6 +71,7 @@ open class MainViewModel {
 			}
 			MonsterCache.monstersByName = MonsterCache.monsters.associateBy(MonsterDTO::displayName)
 			cacheInitialized = true
+			Napier.i("Cache Initialized")
 		}
 	}
 
