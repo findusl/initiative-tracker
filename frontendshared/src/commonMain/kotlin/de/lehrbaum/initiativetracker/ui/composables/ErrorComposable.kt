@@ -29,6 +29,6 @@ fun ErrorAlertDialog(message: String, onDismissRequest: () -> Unit) {
 fun ErrorStateHolder.ErrorComposable() {
 	errorState?.let { errorState ->
 		val message = errorState.customMessage ?: errorState.failure?.message ?: "An error occurred"
-		ErrorAlertDialog(message) { this.errorState = null }
+		ErrorAlertDialog(message) { this.clearErrorState() }
 	}
 }
