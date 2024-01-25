@@ -9,28 +9,35 @@ import io.github.aakira.napier.Napier
 private const val TAG = "ErrorStateHolder"
 
 interface ErrorStateHolder {
-	var errorState: ErrorState?
+	val errorState: ErrorState?
 
-	/**
-	 * An experimental style, curious how it works out. The idea is to include this interface in classes via delegation.
-	 * e.g. class Foo: ErrorStateHolder by Impl()
-	 */
 	class Impl: ErrorStateHolder {
 		override var errorState: ErrorState? by mutableStateOf(null)
+			private set
+
+		override fun <R> Result<R>.getOrNullAndHandle(customMessage: String?, logLevel: LogLevel?): R? =
+			getOrElse { throwable ->
+				logLevel?.let { Napier.log(it, TAG, throwable, customMessage ?: "no message") }
+				errorState = ErrorState(customMessage, throwable)
+				null
+			}
+
+		override fun Result<Unit>.handle(customMessage: String?, logLevel: LogLevel?) =
+			onFailure { throwable ->
+				logLevel?.let { Napier.log(it, TAG, throwable, customMessage ?: "no message") }
+				errorState = ErrorState(customMessage, throwable)
+			}
+
+		override fun clearErrorState() {
+			errorState = null
+		}
 	}
 
-	fun <R> Result<R>.getOrNullAndHandle(customMessage: String? = null, logLevel: LogLevel? = LogLevel.WARNING): R? =
-		getOrElse { throwable ->
-			logLevel?.let { Napier.log(it, TAG, throwable, customMessage ?: "no message") }
-			errorState = ErrorState(customMessage, throwable)
-			null
-		}
+	fun <R> Result<R>.getOrNullAndHandle(customMessage: String? = null, logLevel: LogLevel? = LogLevel.WARNING): R?
 
-	fun Result<Unit>.handle(customMessage: String? = null, logLevel: LogLevel? = LogLevel.WARNING) =
-		onFailure { throwable ->
-			logLevel?.let { Napier.log(it, TAG, throwable, customMessage ?: "no message") }
-			errorState = ErrorState(customMessage, throwable)
-		}
+	fun Result<Unit>.handle(customMessage: String? = null, logLevel: LogLevel? = LogLevel.WARNING): Result<Unit>
+
+	fun clearErrorState()
 }
 
 data class ErrorState(val customMessage: String? = null, val failure: Throwable? = null)
