@@ -43,7 +43,7 @@ fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 			color = Color.White,
 			modifier = Modifier
 				.onKeyEvent { keyEvent ->
-					if (viewModel.textIsValidNumber.value && keyEvent.key == Key.Enter && keyEvent.type == KeyEventType.KeyUp) {
+					if (viewModel.textIsValidNumber && keyEvent.key == Key.Enter && keyEvent.type == KeyEventType.KeyUp) {
 						coroutineScope.launch { viewModel.onSubmit() }
 						true
 					} else false
@@ -81,7 +81,7 @@ private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, co
 				modifier = Modifier
 					.weight(1.0f)
 					.defaultFocussed(viewModel),
-				onInputValidChanged = { viewModel.textIsValidNumber.value = it }
+				onInputValidChanged = { viewModel.textIsValidNumber = it }
 			)
 			IconButton(
 				onClick = { viewModel.sliderValue++ }
@@ -99,7 +99,7 @@ private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, co
 			onValueChange = { viewModel.sliderValue = it }
 		)
 		OkCancelButtonRow(
-			viewModel.textIsValidNumber.value,
+			viewModel.textIsValidNumber,
 			viewModel.onCancel,
 			onSubmit = { coroutineScope.launch { viewModel.onSubmit() } },
 			viewModel.isSubmitting

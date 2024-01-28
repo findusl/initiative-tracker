@@ -16,12 +16,12 @@ data class DamageCombatantViewModel(
 ) {
 	var sliderValue by mutableStateOf(initialDamage.toFloat())
 	val sliderValueInt by derivedStateOf { sliderValue.roundToInt() }
-	val textIsValidNumber = mutableStateOf(false)
+	var textIsValidNumber by mutableStateOf(false)
 	var isSubmitting by mutableStateOf(false)
 		private set
 
 	suspend fun onSubmit() {
-		if (!textIsValidNumber.value || isSubmitting) return
+		if (!textIsValidNumber || isSubmitting) return
 		isSubmitting = true
 		onSubmit(sliderValueInt)
 		isSubmitting = false
