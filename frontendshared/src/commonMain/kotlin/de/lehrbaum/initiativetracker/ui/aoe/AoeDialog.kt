@@ -78,7 +78,7 @@ private fun GeneralTab(viewModel: AoeDamageViewModel) {
 	// This text should be centered
 	DiceRollingTextField(
 		onNumberChanged = {
-			viewModel.damage = it
+			viewModel.onDamageChanged(it)
 		},
 		modifier = Modifier
 			.defaultFocussed(viewModel),

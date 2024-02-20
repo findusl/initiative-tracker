@@ -24,6 +24,32 @@ import de.lehrbaum.initiativetracker.bl.Dice
 import kotlin.random.Random
 
 /**
+ * I feel like a null number is more usable
+ */
+@Composable
+fun DiceRollingTextField(
+	modifier: Modifier = Modifier,
+	initialNumber: Int? = null,
+	initialText: String = initialNumber?.toString() ?: "",
+	label: String? = null,
+	onNumberChanged: (Int?) -> Unit,
+	placeholder: String? = null,
+) {
+	var mostRecentInputNumber by remember(initialText) { mutableStateOf(initialNumber) }
+	DiceRollingTextField(
+		modifier,
+		initialNumber,
+		initialText,
+		label,
+		onNumberChanged = {
+			mostRecentInputNumber = it
+			onNumberChanged(it)
+		},
+		onInputValidChanged = { onNumberChanged(if (it) mostRecentInputNumber else null) }
+	)
+}
+
+/**
  * Works different from the normal text fields, as it updates its own value without the caller having to do that.
  * Simply to avoid duplicating the code to a caller, who is actually only interested in valid number results.
  *

@@ -5,8 +5,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import de.lehrbaum.initiativetracker.bl.AoeOptions
 import de.lehrbaum.initiativetracker.bl.map
+import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.collections.immutable.ImmutableCollection
@@ -15,11 +15,11 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Stable
 data class AoeDamageViewModel(
-	private val possibleTargets: ImmutableList<CombatantModel>,
+	private val combatants: ImmutableList<CombatantModel>,
 	private val onSubmit: suspend (AoeOptions, ImmutableCollection<CombatantId>) -> Boolean,
 	private val onDismiss: () -> Unit
 ) {
-	var targets by mutableStateOf(possibleTargets.map { TargetViewModel(it.name, false, it.id) })
+	var targets by mutableStateOf(combatants.map { TargetViewModel(it.name, false, it.id) })
 		private set
 
 	var isSubmitting by mutableStateOf(false)
@@ -27,7 +27,12 @@ data class AoeDamageViewModel(
 
 	var activeTab by mutableStateOf(0)
 	var damage by mutableStateOf(0)
+		private set
 	var isDamageValid by mutableStateOf(false)
+
+	fun onDamageChanged(damage: Int) {
+		this.damage = damage
+	}
 
 	fun onTargetPressed(target: TargetViewModel) {
 		targets = targets.map { element ->
