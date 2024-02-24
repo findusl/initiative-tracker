@@ -20,7 +20,7 @@ openai-client = "3.7.0"
 multiplatform-settings = "1.1.1"
 jetbrains-compose = "1.5.12"
 build-konfig = "0.15.1"
-androidx-compose-bom = "2024.02.00"
+androidx-compose-bom = "2024.02.01"
 composeCompiler = "1.5.8"
 
 [libraries]
