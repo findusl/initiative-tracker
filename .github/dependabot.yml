@@ -13,7 +13,6 @@ updates:
     target-branch: "main"
     assignees:
       - "findusl"
-      - "ThHartmannJ"
     reviewers:
       - "findusl"
-      - "ThHartmannJ"
+    open-pull-requests-limit: 10
