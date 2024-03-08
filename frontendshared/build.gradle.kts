@@ -59,6 +59,11 @@ kotlin {
 				implementation(libs.io.ktor.ktor.client.websockets)
 				implementation(libs.io.ktor.ktor.client.logging)
 
+				implementation(libs.ktor.server.core)
+				implementation(libs.ktor.server.cio)
+				implementation(libs.ktor.server.content.negotiation)
+				implementation(libs.ktor.server.websockets)
+
 				// Multiplatform Logging
 				api(libs.napier)
 			}
@@ -76,6 +81,7 @@ kotlin {
 			androidMain.get().dependsOn(this)
 			dependencies {
 				implementation(libs.ktor.client.okhttp)
+				implementation(libs.logback.classic)
 			}
 		}
 		val jvmTargetsTest by creating {
@@ -114,10 +120,10 @@ kotlin {
 }
 
 tasks.register("printSourceSets") {
-		println("Defined source sets:")
-		kotlin.sourceSets.forEach {
-			println(it.name)
-		}
+	println("Defined source sets:")
+	kotlin.sourceSets.forEach {
+		println(it.name)
+	}
 }
 
 // from BuildKonfig plugin to define some defaults
