@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker
 
-import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
+import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.networking.BackendNetworkClient
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClient
 import de.lehrbaum.initiativetracker.networking.BestiaryNetworkClientImpl

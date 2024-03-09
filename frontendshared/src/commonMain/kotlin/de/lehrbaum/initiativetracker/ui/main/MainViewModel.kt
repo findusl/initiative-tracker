@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.MonsterCache
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
-import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.data.CombatLink
+import de.lehrbaum.initiativetracker.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.ui.character.CharacterListViewModel
 import de.lehrbaum.initiativetracker.ui.client.ClientCombatViewModel

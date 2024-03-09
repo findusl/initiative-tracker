@@ -4,7 +4,7 @@ import de.lehrbaum.initiativetracker.bl.AOEDecision.KEEP
 import de.lehrbaum.initiativetracker.bl.AOEDecision.OVERWRITE_FAILURE
 import de.lehrbaum.initiativetracker.bl.AOEDecision.OVERWRITE_IGNORE
 import de.lehrbaum.initiativetracker.bl.AOEDecision.OVERWRITE_SUCCESS
-import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
+import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.bl.model.SaveDC
 import de.lehrbaum.initiativetracker.bl.model.SavingThrow

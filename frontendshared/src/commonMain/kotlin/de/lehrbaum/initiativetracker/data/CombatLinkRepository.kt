@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.bl.data
+package de.lehrbaum.initiativetracker.data
 
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,9 +35,9 @@ object CombatLinkRepository {
 
 @Serializable
 data class CombatLink(
-	val backend: Backend,
-	val isHost: Boolean,
-	val sessionId: Int? = null,
+    val backend: Backend,
+    val isHost: Boolean,
+    val sessionId: Int? = null,
 ) {
 	val userDescription = (sessionId?.let { "$it " } ?: "") + "on ${backend.hostUrl}"
 }

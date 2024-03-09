@@ -4,7 +4,7 @@ import de.lehrbaum.initiativetracker.bl.DamageDecision.DOUBLE
 import de.lehrbaum.initiativetracker.bl.DamageDecision.FULL
 import de.lehrbaum.initiativetracker.bl.DamageDecision.HALF
 import de.lehrbaum.initiativetracker.bl.DamageDecision.NONE
-import de.lehrbaum.initiativetracker.bl.data.GeneralSettingsRepository
+import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.bl.model.SavingThrow
 import de.lehrbaum.initiativetracker.dtos.CombatantId

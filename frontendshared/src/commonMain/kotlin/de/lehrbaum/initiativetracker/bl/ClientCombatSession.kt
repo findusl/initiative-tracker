@@ -5,7 +5,7 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatState.Connected
 import de.lehrbaum.initiativetracker.bl.ClientCombatState.Connecting
 import de.lehrbaum.initiativetracker.bl.ClientCombatState.Disconnected
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel

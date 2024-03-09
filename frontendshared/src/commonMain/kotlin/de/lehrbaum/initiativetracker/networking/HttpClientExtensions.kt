@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.bl.data.Backend
+import de.lehrbaum.initiativetracker.data.Backend
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.plugin
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -20,7 +20,7 @@ import kotlinx.coroutines.cancel
  * The websocket coroutineContext is cancelled once the block finishes. Weirdly not standard behaviour.
  */
 suspend inline fun <R> HttpClient.buildBackendWebsocket(
-	backend: Backend,
+    backend: Backend,
     method: HttpMethod = HttpMethod.Get,
     path: String = SESSION_PATH,
     request: HttpRequestBuilder.() -> Unit = {},
