@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.BackendUri
 import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
@@ -21,13 +21,13 @@ class BackendNetworkClient(private val httpClient: HttpClient) {
 	suspend fun createSession(
 		combatants: List<CombatantModel>,
 		activeCombatantIndex: Int,
-		backend: Backend
+		backendUri: BackendUri
 	): Result<Int> {
 		val combatDTO = CombatModel(activeCombatantIndex, combatants)
 		return runCatchingNested {
 			withContext(Dispatchers.IO) {
 				val response = httpClient.post {
-					backendHttpUrl(backend, SESSION_PATH)
+					backendHttpUrl(backendUri, SESSION_PATH)
 					contentType(ContentType.Application.Json)
 					setBody(combatDTO)
 				}
@@ -43,7 +43,7 @@ class BackendNetworkClient(private val httpClient: HttpClient) {
 				Napier.v("Attempting to delete Session $combatLink")
 		val response = httpClient.delete {
 			val path = combatLink.sessionId?.let { "$SESSION_PATH/$it" } ?: SESSION_PATH
-			backendHttpUrl(combatLink.backend, path)
+			backendHttpUrl(combatLink.backendUri, path)
 		}
 		Napier.i("Response for delete Session: $response")
 			}

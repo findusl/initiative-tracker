@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
-import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.BackendUri
 import de.lehrbaum.initiativetracker.data.CombatLink
 import io.ktor.http.Url
 
@@ -14,10 +14,10 @@ data class JoinViewModel(
     private val onJoin: (CombatLink) -> Unit,
     val asHost: Boolean
 ) {
-	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackend
+	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackendUri
 	val title = if(asHost) "Host existing combat" else "Join existing combat"
 
-	var hostFieldContent by mutableStateOf("${defaultBackend.hostUrl}:${defaultBackend.port}")
+	var hostFieldContent by mutableStateOf("${defaultBackend.hostName}:${defaultBackend.port}")
 	val hostFieldError by derivedStateOf { !InputValidator.isValidHost(hostFieldContent) }
 
 	var combatIdFieldContent by mutableStateOf("")
@@ -35,8 +35,8 @@ data class JoinViewModel(
 
 		val protocol = if (secureConnectionChosen) "https" else "http"
 		val url = Url("$protocol://$hostFieldContent")
-		val backend = Backend(secureConnectionChosen, url.host, url.port)
-		val combatLink = CombatLink(backend, asHost, combatIdFieldParsed)
+		val backendUri = BackendUri(secureConnectionChosen, url.host, url.port)
+		val combatLink = CombatLink(backendUri, asHost, combatIdFieldParsed)
 		onJoin(combatLink)
 	}
 }

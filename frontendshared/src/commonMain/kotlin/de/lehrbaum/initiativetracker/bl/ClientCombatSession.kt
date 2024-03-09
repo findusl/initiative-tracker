@@ -50,7 +50,7 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 	val state = flow {
 		emit(Connecting)
 		try {
-			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backend) {
+			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backendUri) {
 				webSocketSession = this
 				if (joinSessionAsClient(this@flow)) {
 					handleUpdates(this@flow)

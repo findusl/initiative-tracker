@@ -42,7 +42,7 @@ class RemoteHostCombatShare(
 	override val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
 		try {
-			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backend) {
+			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backendUri) {
 				if(joinSessionAsHost(this@flow)) {
 					launch { shareCombatUpdates() }
 					receiveEvents()

@@ -7,19 +7,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
-import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.BackendUri
 import io.ktor.http.Url
 
 @Stable
 data class BackendInputViewModel(
-    private val onBackendConfirmed: suspend (Backend) -> Unit,
+	private val onBackendConfirmed: suspend (BackendUri) -> Unit,
     val onDismiss: () -> Unit
 ) {
 
-	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackend
+	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackendUri
 	val title = "On which backend do you want to share?"
 
-	var hostFieldContent by mutableStateOf("${defaultBackend.hostUrl}:${defaultBackend.port}")
+	var hostFieldContent by mutableStateOf("${defaultBackend.hostName}:${defaultBackend.port}")
 	val hostFieldError by derivedStateOf { !InputValidator.isValidHost(hostFieldContent) }
 
 	var secureConnectionChosen by mutableStateOf(defaultBackend.secureConnection)
@@ -38,8 +38,8 @@ data class BackendInputViewModel(
 
 		val protocol = if (secureConnectionChosen) "https" else "http"
 		val url = Url("$protocol://$hostFieldContent")
-		val backend = Backend(secureConnectionChosen, url.host, url.port)
-		onBackendConfirmed(backend)
+		val backendUri = BackendUri(secureConnectionChosen, url.host, url.port)
+		onBackendConfirmed(backendUri)
 		isSubmitting = false
 	}
 }
