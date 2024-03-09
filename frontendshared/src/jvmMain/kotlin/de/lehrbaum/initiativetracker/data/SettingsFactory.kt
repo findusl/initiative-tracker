@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.bl.data
+package de.lehrbaum.initiativetracker.data
 
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
