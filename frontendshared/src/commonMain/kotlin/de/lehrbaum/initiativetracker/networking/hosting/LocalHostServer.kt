@@ -1,6 +1,5 @@
-package de.lehrbaum.initiativetracker.networking.server
+package de.lehrbaum.initiativetracker.networking.hosting
 
-import de.lehrbaum.initiativetracker.bl.HostCombatSession
 import io.github.aakira.napier.Napier
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
@@ -21,9 +20,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 
-private val TAG = Server::class.simpleName
+private val TAG = LocalHostServer::class.simpleName
 
-class Server {
+class LocalHostServer {
 
 	var port: Int? = null
 		private set
@@ -36,7 +35,7 @@ class Server {
 	val isRunning: Boolean
 		get() = engineScope?.isActive == true
 
-	fun hostCombat(hostCombatSession: HostCombatSession) {
+	fun hostCombat(localHostCombatShare: LocalHostCombatShare) {
 
 	}
 
@@ -48,7 +47,7 @@ class Server {
 			configureRouting()
 		}.also {
 			it.start()
-			Napier.i("Started Server", tag = TAG)
+			Napier.i("Started LocalHostServer", tag = TAG)
 			it.application.launch {
 				port = it.resolvedConnectors().first().port
 				Napier.i("Got $port", tag = TAG)
@@ -58,7 +57,7 @@ class Server {
 	}
 
 	fun stopServer() {
-		Napier.i("Stop Server", tag = TAG)
+		Napier.i("Stop LocalHostServer", tag = TAG)
 		engine?.stop()
 	}
 

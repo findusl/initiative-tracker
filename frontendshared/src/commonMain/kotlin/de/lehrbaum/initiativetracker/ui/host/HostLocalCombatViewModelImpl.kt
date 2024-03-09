@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.DamageDecision
-import de.lehrbaum.initiativetracker.bl.HostConnectionState
 import de.lehrbaum.initiativetracker.data.Backend
 import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import kotlinx.coroutines.flow.flowOf
 
 data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit): HostCombatViewModel() {
@@ -47,7 +47,7 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 	private suspend fun shareCombat(backend: Backend): Boolean {
 		val sessionId = GlobalInstances.backendNetworkClient
 			.createSession(combatController.combatants.value, combatController.activeCombatantIndex.value, backend)
-			.getOrNullAndHandle("Unable to create combat on Server.")
+			.getOrNullAndHandle("Unable to create combat on LocalHostServer.")
 			?.also { navigateToSharedCombat(CombatLink(backend, isHost = true, sessionId = it)) }
 		return sessionId != null
 	}

@@ -35,7 +35,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.Dialog
-import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
@@ -70,7 +70,8 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 	val hostCombatModelState = remember { mutableStateOf(hostCombatViewModel) }
 	hostCombatModelState.value = hostCombatViewModel
 
-	val connectionStateState = hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
+	val connectionStateState =
+		hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
 
 	if (hostCombatViewModel.isSharing) KeepScreenOn()
 
@@ -137,10 +138,10 @@ private fun MainContent(
 			is HostConnectionState.Disconnected -> {
 				Column {
 					Text("Disconnected! Reason: ${connectionState.reason}")
-					Button( { connectionStateState.reset() } ) {
+					Button({ connectionStateState.reset() }) {
 						Text("Restart Connection")
 					}
-					Text("(Server may take up to 30 seconds to notice a missing host)")
+					Text("(LocalHostServer may take up to 30 seconds to notice a missing host)")
 				}
 			}
 		}
