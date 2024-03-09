@@ -1,5 +1,7 @@
 package de.lehrbaum.initiativetracker.networking.server
 
+import de.lehrbaum.initiativetracker.bl.HostCombatSession
+import io.github.aakira.napier.Napier
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -13,13 +15,15 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 
-class Server() {
+private val TAG = Server::class.simpleName
+
+class Server {
 
 	var port: Int? = null
 		private set
@@ -27,26 +31,34 @@ class Server() {
 	// Need some way to get port blocking
 
 	private var engine: ApplicationEngine? = null
+	private var engineScope: CoroutineScope? = null
 
 	val isRunning: Boolean
-		get() = engine?.application?.isActive == true
+		get() = engineScope?.isActive == true
+
+	fun hostCombat(hostCombatSession: HostCombatSession) {
+
+	}
 
 	fun startServer() {
 		engine?.stop()
-		val server = embeddedServer(CIO, port = 0) {
+		engine = embeddedServer(CIO, port = 0) {
 			configureSerialization()
-			//configureSockets()
+			configureSockets()
 			configureRouting()
-
-		}.start()
-		GlobalScope.launch {
-			println("Getting Connectors")
-			port = server.resolvedConnectors().first().port
-			println("Got connectors $port")
+		}.also {
+			it.start()
+			Napier.i("Started Server", tag = TAG)
+			it.application.launch {
+				port = it.resolvedConnectors().first().port
+				Napier.i("Got $port", tag = TAG)
+			}
+			engineScope = it.application
 		}
 	}
 
 	fun stopServer() {
+		Napier.i("Stop Server", tag = TAG)
 		engine?.stop()
 	}
 
