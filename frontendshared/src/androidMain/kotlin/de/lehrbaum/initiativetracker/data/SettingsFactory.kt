@@ -1,4 +1,4 @@
-package de.lehrbaum.initiativetracker.bl.data
+package de.lehrbaum.initiativetracker.data
 
 import android.content.Context
 import com.russhwolf.settings.Settings
