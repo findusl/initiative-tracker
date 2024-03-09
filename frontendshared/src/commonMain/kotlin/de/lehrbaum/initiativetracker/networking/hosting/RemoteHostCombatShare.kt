@@ -1,6 +1,9 @@
-package de.lehrbaum.initiativetracker.bl
+package de.lehrbaum.initiativetracker.networking.hosting
 
 import de.lehrbaum.initiativetracker.GlobalInstances
+import de.lehrbaum.initiativetracker.bl.CombatController
+import de.lehrbaum.initiativetracker.bl.HostCombatShare
+import de.lehrbaum.initiativetracker.bl.HostEventHandler
 import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.commands.HostCommand
@@ -27,13 +30,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val TAG = "HostCombatSession"
+private const val TAG = "RemoteHostCombatShare"
 
-class HostCombatSession(
+class RemoteHostCombatShare(
 	private val combatLink: CombatLink,
 	private val combatController: CombatController,
-) {
-	val hostConnectionState = flow {
+) : HostCombatShare {
+
+	private val hostEventHandler = HostEventHandler(combatController)
+
+	override val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
 		try {
 			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backend) {
@@ -91,35 +97,9 @@ class HostCombatSession(
 	private suspend fun DefaultClientWebSocketSession.receiveEvents() {
 		while (true) {
 			val incoming = receiveDeserialized<ServerToHostCommand>()
-			Napier.d("Received command $incoming")
-			when (incoming) {
-				is ServerToHostCommand.AddCombatant -> {
-					withContext(Dispatchers.Main) {
-						combatController.addCombatant(incoming.combatant)
-					}
-					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
-				}
-
-				is ServerToHostCommand.EditCombatant -> {
-					withContext(Dispatchers.Main) {
-						combatController.updateCombatant(incoming.combatant)
-					}
-					sendSerialized(HostCommand.CommandCompleted(true) as HostCommand)
-				}
-
-				is ServerToHostCommand.DamageCombatant -> {
-					val result = withContext(Dispatchers.Main) {
-						combatController.handleDamageCombatantRequest(incoming.targetId, incoming.damage, incoming.ownerId)
-					}
-					sendSerialized(HostCommand.CommandCompleted(result) as HostCommand)
-				}
-
-				is ServerToHostCommand.FinishTurn -> {
-					val result = withContext(Dispatchers.Main) {
-						combatController.handleFinishTurnRequest(incoming.activeCombatantIndex)
-					}
-					sendSerialized(HostCommand.CommandCompleted(result) as HostCommand)
-				}
+			withContext(Dispatchers.Main) {
+				val response = hostEventHandler.handleEvent(incoming)
+				sendSerialized(response)
 			}
 		}
 	}

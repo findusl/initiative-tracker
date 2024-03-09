@@ -6,11 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.DamageDecision
-import de.lehrbaum.initiativetracker.bl.HostCombatSession
-import de.lehrbaum.initiativetracker.bl.HostConnectionState
+import de.lehrbaum.initiativetracker.bl.HostCombatShare
 import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
+import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
+import de.lehrbaum.initiativetracker.networking.hosting.RemoteHostCombatShare
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -21,9 +22,9 @@ data class HostSharedCombatViewModelImpl(
 	val combatLink: CombatLink,
 	private val leaveScreen: () -> Unit
 ) : HostCombatViewModel() {
-	private val hostCombatSession = HostCombatSession(combatLink, combatController)
+	private val remoteHostCombatShare: HostCombatShare = RemoteHostCombatShare(combatLink, combatController)
 	override val hostConnectionState: Flow<HostConnectionState>
-		get() = hostCombatSession.hostConnectionState
+		get() = remoteHostCombatShare.hostConnectionState
 	override var confirmDamage: ConfirmDamageOptions? by mutableStateOf(null)
 		private set
 	override val showAutoConfirmDamageToggle = true
