@@ -3,7 +3,6 @@ package de.lehrbaum.initiativetracker.data
 import com.russhwolf.settings.ExperimentalSettingsApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
 
 private const val SETTINGS_KEY_V1 = "links"
 private const val SETTINGS_KEY_V2 = "links_v2"
@@ -32,20 +31,3 @@ object CombatLinkRepository {
 		return settings.decodeValue(SETTINGS_KEY_V2, emptySet())
 	}
 }
-
-@Serializable
-data class CombatLink(
-    val backend: Backend,
-    val isHost: Boolean,
-    val sessionId: Int? = null,
-) {
-	val userDescription = (sessionId?.let { "$it " } ?: "") + "on ${backend.hostUrl}"
-}
-
-// TASK when host contains a path
-@Serializable
-data class Backend(
-	val secureConnection: Boolean,
-	val hostUrl: String,
-	val port: Int,
-)

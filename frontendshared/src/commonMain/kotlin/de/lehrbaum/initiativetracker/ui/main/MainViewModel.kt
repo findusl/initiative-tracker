@@ -143,7 +143,7 @@ sealed interface DrawerItem {
 				stringBuilder.append(sessionId)
 				stringBuilder.append('\n')
 			}
-			stringBuilder.append(combatLink.backend.hostUrl)
+			stringBuilder.append(combatLink.backendUri.hostName)
 			stringBuilder.toString()
 		}
 

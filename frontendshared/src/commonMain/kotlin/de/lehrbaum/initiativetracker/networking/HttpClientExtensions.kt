@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.BackendUri
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.plugin
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -20,16 +20,16 @@ import kotlinx.coroutines.cancel
  * The websocket coroutineContext is cancelled once the block finishes. Weirdly not standard behaviour.
  */
 suspend inline fun <R> HttpClient.buildBackendWebsocket(
-    backend: Backend,
-    method: HttpMethod = HttpMethod.Get,
-    path: String = SESSION_PATH,
-    request: HttpRequestBuilder.() -> Unit = {},
-    crossinline block: suspend DefaultClientWebSocketSession.() -> R
+	backendUri: BackendUri,
+	method: HttpMethod = HttpMethod.Get,
+	path: String = SESSION_PATH,
+	request: HttpRequestBuilder.() -> Unit = {},
+	crossinline block: suspend DefaultClientWebSocketSession.() -> R
 ): R {
     plugin(WebSockets)
     val session = prepareRequest {
         this.method = method
-		backendWebsocketUrl(backend, path)
+		backendWebsocketUrl(backendUri, path)
         request()
     }
 
@@ -43,14 +43,14 @@ suspend inline fun <R> HttpClient.buildBackendWebsocket(
     }
 }
 
-fun HttpRequestBuilder.backendWebsocketUrl(backend: Backend, path: String) {
-	val scheme = if(backend.secureConnection) "wss" else "ws"
-	url(scheme, backend.hostUrl, backend.port, path)
+fun HttpRequestBuilder.backendWebsocketUrl(backendUri: BackendUri, path: String) {
+	val scheme = if (backendUri.secureConnection) "wss" else "ws"
+	url(scheme, backendUri.hostName, backendUri.port, path)
 }
 
-fun HttpRequestBuilder.backendHttpUrl(backend: Backend, path: String) {
-	val scheme = if (backend.secureConnection) "https" else "http"
-	url(scheme, backend.hostUrl, backend.port, path)
+fun HttpRequestBuilder.backendHttpUrl(backendUri: BackendUri, path: String) {
+	val scheme = if (backendUri.secureConnection) "https" else "http"
+	url(scheme, backendUri.hostName, backendUri.port, path)
 }
 
 
