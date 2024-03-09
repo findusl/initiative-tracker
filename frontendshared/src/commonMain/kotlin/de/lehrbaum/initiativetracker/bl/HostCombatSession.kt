@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.bl
 
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.commands.HostCommand
 import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand

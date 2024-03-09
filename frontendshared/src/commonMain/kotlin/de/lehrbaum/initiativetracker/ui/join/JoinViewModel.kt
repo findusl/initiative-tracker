@@ -6,13 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
-import de.lehrbaum.initiativetracker.bl.data.Backend
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.CombatLink
 import io.ktor.http.Url
 
 data class JoinViewModel(
-	private val onJoin: (CombatLink) -> Unit,
-	val asHost: Boolean
+    private val onJoin: (CombatLink) -> Unit,
+    val asHost: Boolean
 ) {
 	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackend
 	val title = if(asHost) "Host existing combat" else "Join existing combat"

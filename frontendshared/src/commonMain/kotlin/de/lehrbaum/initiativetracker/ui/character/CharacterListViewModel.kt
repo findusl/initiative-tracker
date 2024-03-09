@@ -2,7 +2,7 @@ package de.lehrbaum.initiativetracker.ui.character
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
-import de.lehrbaum.initiativetracker.bl.data.CharacterRepository
+import de.lehrbaum.initiativetracker.data.CharacterRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map

@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
-import de.lehrbaum.initiativetracker.bl.data.CombatLinkRepository
+import de.lehrbaum.initiativetracker.data.CombatLink
+import de.lehrbaum.initiativetracker.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
@@ -23,8 +23,8 @@ import kotlin.coroutines.resume
 
 @Stable
 data class ClientCombatViewModel(
-	val combatLink: CombatLink,
-	private val leaveScreen: () -> Unit
+    val combatLink: CombatLink,
+    private val leaveScreen: () -> Unit
 ) {
 	private val combatSession = ClientCombatSession(combatLink)
 

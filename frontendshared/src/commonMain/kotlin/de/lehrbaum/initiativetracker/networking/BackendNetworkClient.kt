@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.networking
 
-import de.lehrbaum.initiativetracker.bl.data.Backend
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import io.github.aakira.napier.Napier

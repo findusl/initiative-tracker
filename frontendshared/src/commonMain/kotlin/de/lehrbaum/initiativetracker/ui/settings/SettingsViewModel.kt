@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
-import de.lehrbaum.initiativetracker.bl.data.Backend
+import de.lehrbaum.initiativetracker.data.Backend
 import io.ktor.http.Url
 
 class SettingsViewModel {

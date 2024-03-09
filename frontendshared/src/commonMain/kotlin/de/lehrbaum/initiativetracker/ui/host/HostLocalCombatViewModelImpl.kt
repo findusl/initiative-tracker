@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.bl.HostConnectionState
-import de.lehrbaum.initiativetracker.bl.data.Backend
-import de.lehrbaum.initiativetracker.bl.data.CombatLink
+import de.lehrbaum.initiativetracker.data.Backend
+import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import kotlinx.coroutines.flow.flowOf
 
