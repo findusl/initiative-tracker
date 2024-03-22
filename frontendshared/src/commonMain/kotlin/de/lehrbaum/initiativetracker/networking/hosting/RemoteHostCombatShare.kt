@@ -63,7 +63,7 @@ class RemoteHostCombatShare(
 
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(collector: FlowCollector<HostConnectionState>): Boolean {
 		val startMessage: StartCommand =
-			combatLink.sessionId?.let { StartCommand.JoinAsHostById(it) } ?: StartCommand.JoinDefaultSessionAsHost
+			combatLink.sessionId?.let { StartCommand.JoinAsHostById(it.id) } ?: StartCommand.JoinDefaultSessionAsHost
 		this.sendSerialized(startMessage)
 		val response = receiveDeserialized<HostingCommand.Response>()
 		when (response) {

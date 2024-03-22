@@ -70,7 +70,7 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsClient(collector: FlowCollector<ClientCombatState>): Boolean {
 		val joinSessionRequest: StartCommand =
-			combatLink.sessionId?.let { StartCommand.JoinSessionById(it) } ?: StartCommand.JoinDefaultSession
+			combatLink.sessionId?.let { StartCommand.JoinSessionById(it.id) } ?: StartCommand.JoinDefaultSession
 		sendSerialized(joinSessionRequest)
 		val response = receiveDeserialized<JoinSessionResponse>()
 		when (response) {

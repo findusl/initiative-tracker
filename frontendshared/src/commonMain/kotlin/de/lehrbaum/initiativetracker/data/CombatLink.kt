@@ -6,10 +6,13 @@ import kotlinx.serialization.Serializable
 data class CombatLink(
 	val backendUri: BackendUri,
 	val isHost: Boolean,
-	val sessionId: Int? = null,
+	val sessionId: SessionId? = null,
 ) {
 	val userDescription = (sessionId?.let { "$it " } ?: "") + "on ${backendUri.hostName}"
 }
+
+@Serializable
+data class SessionId(val id: Int)
 
 // TASK when host contains a path
 @Serializable
