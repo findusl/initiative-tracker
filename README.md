@@ -58,9 +58,9 @@ ssl is used or not. This is configured by setting the property `buildkonfig.flav
 [gradle.properties](gradle.properties) to `lan` or `remote`.
 
 For default values see the section `buildkonfig` in
-[kmpsharedmodule/build.gradle.kts](kmpsharedmodule/build.gradle.kts). Custom values can be set in
+[frontendshared/build.gradle.kts](frontendshared/build.gradle.kts). Custom values can be set in
 local.properties see [local.properties.template](local.properties.template). The associated code is in
-[HTTPClient code](kmpsharedmodule/src/commonMain/kotlin/de/lehrbaum/initiativetracker/networking/HttpClientExtensions.kt).
+[HTTPClient code](frontendshared/src/commonMain/kotlin/de/lehrbaum/initiativetracker/networking/HttpClientExtensions.kt).
 
 For more details on how to run the backend, see below.
 
