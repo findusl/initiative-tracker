@@ -8,6 +8,7 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
 import de.lehrbaum.initiativetracker.data.BackendUri
 import de.lehrbaum.initiativetracker.data.CombatLink
+import de.lehrbaum.initiativetracker.data.SessionId
 import io.ktor.http.Url
 
 data class JoinViewModel(
@@ -36,7 +37,7 @@ data class JoinViewModel(
 		val protocol = if (secureConnectionChosen) "https" else "http"
 		val url = Url("$protocol://$hostFieldContent")
 		val backendUri = BackendUri(secureConnectionChosen, url.host, url.port)
-		val combatLink = CombatLink(backendUri, asHost, combatIdFieldParsed)
+		val combatLink = CombatLink(backendUri, asHost, combatIdFieldParsed?.let { SessionId(it) })
 		onJoin(combatLink)
 	}
 }
