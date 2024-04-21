@@ -34,7 +34,7 @@ android {
 		applicationId = "de.lehrbaum.initiativetracker"
 		minSdk = 28
 		targetSdk = 34
-		versionCode = 2
+		versionCode = 3
 		version = libs.versions.frontendVersion.get()
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -59,6 +59,9 @@ android {
 		kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
 	}
 	namespace = "de.lehrbaum.initiativetracker"
+	packaging {
+		resources.excludes.add("META-INF/INDEX.LIST")
+	}
 }
 
 //noinspection UseTomlInstead Cannot use version catalog without version, due to compose bom
