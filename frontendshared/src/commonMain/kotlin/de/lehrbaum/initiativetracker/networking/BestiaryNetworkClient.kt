@@ -16,16 +16,15 @@ import kotlinx.collections.immutable.plus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningFold
-import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 
 private const val TAG = "BestiaryNetworkClient"
@@ -60,25 +59,22 @@ class BestiaryNetworkClientImpl(defaultClient: HttpClient) : BestiaryNetworkClie
 	}
 
 	@ExperimentalCoroutinesApi // this is not required to propagate to the interface, weird
-	override val monsters = monsterSources
-		.transformLatest { sources ->
-			val flowLock = Mutex()
-			coroutineScope {
-				sources.values.sortSourcesByMyPreference().forEach { url ->
-					launch {
-						try {
-							Napier.v("Loading bestiary from $url", tag = TAG)
-							val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
-							flowLock.withLock {
-								emit(bestiary.monster)
-							}
-						} catch (e: Exception) {
-							Napier.e("Failed to load from $url", e, TAG)
-						}
+	override val monsters = channelFlow {
+		Napier.i("Start bestiary loading", tag = TAG)
+		monsterSources.collect { sources ->
+			sources.values.sortSourcesByMyPreference().forEach { url ->
+				launch {
+					try {
+						Napier.v("Loading bestiary from $url", tag = TAG)
+						val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
+						send(bestiary.monster)
+					} catch (e: Exception) {
+						Napier.e("Failed to load from $url", e, TAG)
 					}
 				}
 			}
 		}
+	}
 		.runningFold<List<MonsterDTO>, PersistentList<MonsterDTO>>(persistentListOf()) { accumulated, newResource ->
 			accumulated + newResource // this is surprisingly performant due to the Trie implementation of persistent list
 		}
