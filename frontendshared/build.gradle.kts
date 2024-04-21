@@ -4,7 +4,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import java.util.Properties
 
 plugins {
-	kotlin("multiplatform")
+	alias(libs.plugins.kotlin.multiplatform)
 	id("com.android.library")
 	alias(libs.plugins.jetbrains.compose)
 	kotlin("plugin.serialization")
@@ -81,7 +81,6 @@ kotlin {
 			androidMain.get().dependsOn(this)
 			dependencies {
 				implementation(libs.ktor.client.okhttp)
-				implementation(libs.logback.classic)
 			}
 		}
 		val jvmTargetsTest by creating {
@@ -97,6 +96,7 @@ kotlin {
 		jvmMain {
 			dependencies {
 				implementation(compose.desktop.common)
+				implementation(libs.logback.classic)
 			}
 		}
 		androidMain {
