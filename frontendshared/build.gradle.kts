@@ -1,6 +1,7 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.util.Properties
 
 plugins {
@@ -28,7 +29,15 @@ kotlin {
 		}
 	}
 
-	applyDefaultHierarchyTemplate()
+	@OptIn(ExperimentalKotlinGradlePluginApi::class)
+	applyDefaultHierarchyTemplate {
+		common {
+			group("jvmTargets") {
+				withAndroidTarget()
+				withJvm()
+			}
+		}
+	}
 
 	sourceSets {
 		commonMain {
@@ -75,18 +84,14 @@ kotlin {
 		}
 		val androidUnitTest by getting {  } // not part of the accessors for some reason
 		// All jvm targets, including android
-		val jvmTargetsMain by creating {
+		val jvmTargetsMain by getting {
 			dependsOn(commonMain.get())
-			jvmMain.get().dependsOn(this)
-			androidMain.get().dependsOn(this)
 			dependencies {
 				implementation(libs.ktor.client.okhttp)
 			}
 		}
-		val jvmTargetsTest by creating {
+		val jvmTargetsTest by getting {
 			dependsOn(commonTest.get())
-			jvmTest.get().dependsOn(this)
-			androidUnitTest.dependsOn(this)
 			dependencies {
 				implementation(libs.mockk)
 				implementation(kotlin("test-junit"))
@@ -102,6 +107,7 @@ kotlin {
 		androidMain {
 			dependencies {
 				// Android gradle module wants to have this on class path otherwise it complains
+				//noinspection UseTomlInstead I want this special case to be clearly visible
 				api("androidx.activity:activity-compose")
 
 				// Multiplatform logging
