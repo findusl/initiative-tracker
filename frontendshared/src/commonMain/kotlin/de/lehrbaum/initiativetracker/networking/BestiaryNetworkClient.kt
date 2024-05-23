@@ -19,10 +19,9 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -87,6 +86,7 @@ class BestiaryNetworkClientImpl(defaultClient: HttpClient) : BestiaryNetworkClie
 				emit(persistentListOf())
 			}
 		}
+		.conflate()
 		.flowOn(Dispatchers.IO)
 
 	private fun Collection<String>.sortSourcesByMyPreference(): Collection<String> = reversed()
