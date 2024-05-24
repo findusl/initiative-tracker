@@ -1,21 +1,25 @@
 plugins {
-    application
-    kotlin("jvm")
-    id("org.jetbrains.compose")
+	alias(libs.plugins.kotlin.multiplatform)
+	alias(libs.plugins.jetbrains.compose)
 }
 
 kotlin {
 	jvmToolchain(17)
+	jvm()
+	sourceSets {
+		val jvmMain by getting {
+			dependencies {
+				implementation(project(":frontendshared"))
+				implementation(compose.desktop.currentOs)
+				// For the Dispatchers.Main. Sadly adding in shared module in Desktop.Main was not enough?
+				runtimeOnly(libs.kotlinx.coroutines.swing)
+			}
+		}
+	}
 }
 
-dependencies {
-	implementation(project(":frontendshared"))
-	implementation(compose.desktop.currentOs)
-	// For the Dispatchers.Main. Sadly adding in shared module in Desktop.Main was not enough?
-	runtimeOnly(libs.kotlinx.coroutines.swing)
-}
-
-application {
-	mainClass.set("de.lehrbaum.initiativetracker.MainKt")
-	version = libs.versions.frontendVersion.get()
+compose.desktop {
+	application {
+		mainClass = "de.lehrbaum.initiativetracker.MainKt"
+	}
 }

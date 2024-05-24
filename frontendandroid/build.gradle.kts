@@ -56,7 +56,7 @@ android {
 		buildConfig = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+		kotlinCompilerExtensionVersion = "1.5.14"
 	}
 	namespace = "de.lehrbaum.initiativetracker"
 	packaging {
