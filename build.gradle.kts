@@ -7,8 +7,8 @@ plugins {
 buildscript {
 
 	repositories {
-		google()
 		mavenCentral()
+		google()
 		gradlePluginPortal()
 	}
 
@@ -25,8 +25,8 @@ buildscript {
 
 allprojects {
 	repositories {
-		google()
 		mavenCentral()
+		google()
 	}
 }
 
