@@ -1,7 +1,7 @@
 [versions]
 frontendVersion = "1.1.0"
 backendVersion = "2.0.1"
-androidx-junit = "1.1.5"
+androidx-junit = "1.2.1"
 commons-compress = "1.26.1"
 espresso-core = "3.5.1"
 gradle-android-tools = "8.2.2"
