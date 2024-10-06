@@ -15,6 +15,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -22,43 +23,40 @@ import kotlin.time.Duration.Companion.seconds
 
 private val TAG = LocalHostServer::class.simpleName
 
-class LocalHostServer {
+class LocalHostServer(private val localHostCombatShare: LocalHostCombatShare) {
 
-	var port: Int? = null
-		private set
+	init {
+	    startServer()
+	}
+
+	val port = MutableStateFlow<Int?>(null)
 
 	// Need some way to get port blocking
 
-	private var engine: ApplicationEngine? = null
-	private var engineScope: CoroutineScope? = null
-
-	val isRunning: Boolean
-		get() = engineScope?.isActive == true
-
-	fun hostCombat(localHostCombatShare: LocalHostCombatShare) {
-
-	}
-
-	fun startServer() {
-		engine?.stop()
-		engine = embeddedServer(CIO, port = 0) {
+	private var server =
+		embeddedServer(CIO, port = 0) {
 			configureSerialization()
 			configureSockets()
 			configureRouting()
-		}.also {
-			it.start()
-			Napier.i("Started LocalHostServer", tag = TAG)
-			it.application.launch {
-				port = it.engine.resolvedConnectors().first().port
-				Napier.i("Got $port", tag = TAG)
-			}
-			engineScope = it.application
-		}.engine
+		}
+	private var engineScope = server.application
+
+	private val isRunning: Boolean
+		get() = engineScope.isActive
+
+	private fun startServer() {
+		if (isRunning) return
+		server.start()
+		Napier.i("Started LocalHostServer", tag = TAG)
+		server.application.launch {
+			port.value = server.engine.resolvedConnectors().first().port
+			Napier.i("Got $port", tag = TAG)
+		}
 	}
 
 	fun stopServer() {
 		Napier.i("Stop LocalHostServer", tag = TAG)
-		engine?.stop()
+		server.stop()
 	}
 
 	private fun Application.configureRouting() {

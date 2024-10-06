@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -25,11 +27,13 @@ be shown one after the other with different content, the remember functions need
  */
 @Composable
 inline fun rememberCoroutineScope(
-	key: Any?,
+	someKey: Any?,
 	crossinline getContext: @DisallowComposableCalls () -> CoroutineContext =
 		{ Dispatchers.Main }
 ): CoroutineScope =
-	remember(key) { CoroutineWrapper(getContext()) }
+	key(someKey) {
+		rememberCoroutineScope(getContext)
+	}
 
 @PublishedApi
 internal class CoroutineWrapper(

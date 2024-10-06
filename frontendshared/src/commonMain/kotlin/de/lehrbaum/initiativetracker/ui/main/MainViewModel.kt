@@ -106,7 +106,6 @@ open class MainViewModel {
 	}
 
 	private fun switchToCombat(combatLink: CombatLink) {
-		CombatLinkRepository.addCombatLink(combatLink)
 		// At this point the item might not yet be visible in the drawer, but that should not matter
 		onDrawerItemSelected(DrawerItem.RememberedCombat(combatLink))
 	}
