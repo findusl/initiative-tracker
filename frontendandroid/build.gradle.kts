@@ -31,7 +31,7 @@ android {
 	compileSdk = 34
 
 	defaultConfig {
-		applicationId = "de.lehrbaum.initiativetracker"
+		applicationId = "de.lehrbaum.initiativetracker.remote"
 		minSdk = 28
 		targetSdk = 34
 		versionCode = 3

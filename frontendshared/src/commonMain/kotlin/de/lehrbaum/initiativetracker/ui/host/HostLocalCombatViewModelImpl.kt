@@ -7,6 +7,7 @@ import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.data.BackendUri
 import de.lehrbaum.initiativetracker.data.CombatLink
+import de.lehrbaum.initiativetracker.data.CombatLinkRepository
 import de.lehrbaum.initiativetracker.data.SessionId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
@@ -49,7 +50,17 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 		val sessionId = GlobalInstances.backendNetworkClient
 			.createSession(combatController.combatants.value, combatController.activeCombatantIndex.value, backendUri)
 			.getOrNullAndHandle("Unable to create combat on LocalHostServer.")
-			?.also { navigateToSharedCombat(CombatLink(backendUri, isHost = true, sessionId = SessionId(it))) }
+			?.also {
+				val combatLink = CombatLink(backendUri, isHost = true, sessionId = SessionId(it))
+				// TODO option to create combat for local uri. Maybe Uri is a sealed class.
+				// No wait, there is no sense in storing a combat link for a local combat
+				// I need to store the whole combat if I want to store something.
+				// Maybe add the option to have multiple local combats in future and then they are served locally
+				// But since I cannot control the port on restarts I have to try and keep the port somehow
+				// Maybe I remember the port and try to reuse it
+				CombatLinkRepository.addCombatLink(combatLink)
+				navigateToSharedCombat(combatLink)
+			}
 		return sessionId != null
 	}
 
