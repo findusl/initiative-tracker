@@ -49,12 +49,11 @@ fun CombatantListElement(combatantVM: CombatantListViewModel, isHost: Boolean, m
 			icon = composableIf(!combatant.isHidden || getsAllInformation) {
 				combatantVM.imageUrl()?.let {
 					KamelImage(
-						asyncPainterResource(it),
-						contentDescription = "Icon of ${combatant.name}",
-						contentAlignment = Alignment.CenterStart,
+						{ asyncPainterResource(it) }, contentDescription = "Icon of ${combatant.name}",
 						modifier = Modifier
 							.widthIn(min = 20.dp, max = 40.dp) // guessed the values
-							.aspectRatio(ratio = 1.0f)
+							.aspectRatio(ratio = 1.0f),
+						contentAlignment = Alignment.CenterStart
 					)
 				}
 			},

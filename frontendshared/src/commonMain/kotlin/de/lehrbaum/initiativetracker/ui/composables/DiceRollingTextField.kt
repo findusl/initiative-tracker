@@ -97,7 +97,7 @@ fun DiceRollingTextField(
 				},
 			label = label?.let { { Text(it) } },
 			isError = error && !isFocussed,
-			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, autoCorrect = false),
+			keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, keyboardType = KeyboardType.Number),
 			singleLine = true,
 			placeholder = placeholder?.let { { Text(it) } },
 		)

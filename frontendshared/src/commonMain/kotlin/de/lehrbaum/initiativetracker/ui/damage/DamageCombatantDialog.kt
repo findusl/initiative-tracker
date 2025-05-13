@@ -13,6 +13,7 @@ import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
@@ -66,7 +67,7 @@ private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, co
 		) {
 			IconButton(onClick = { viewModel.sliderValue-- }) {
 				Icon(
-					imageVector = Icons.Filled.ArrowBack,
+					imageVector = Icons.AutoMirrored.Filled.ArrowBack,
 					contentDescription = "Decrement",
 					tint = Color.Black
 				)

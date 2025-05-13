@@ -8,5 +8,5 @@ import androidx.compose.runtime.Composable
  *
  * `if (condition) {{ content }} else null`
  */
-inline fun composableIf(condition: Boolean, noinline content: @Composable () -> Unit): @Composable (() -> Unit)? =
+fun composableIf(condition: Boolean, content: @Composable () -> Unit): @Composable (() -> Unit)? =
 	if (condition) { content } else null
