@@ -49,11 +49,11 @@ class LocalHostServer {
 			it.start()
 			Napier.i("Started LocalHostServer", tag = TAG)
 			it.application.launch {
-				port = it.resolvedConnectors().first().port
+				port = it.engine.resolvedConnectors().first().port
 				Napier.i("Got $port", tag = TAG)
 			}
 			engineScope = it.application
-		}
+		}.engine
 	}
 
 	fun stopServer() {
