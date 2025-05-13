@@ -114,3 +114,6 @@ frontendios/iosApp.xcodeproj/*
 !frontendios/iosApp.xcodeproj/project.pbxproj
 /.idea/kotlinScripting.xml
 /.idea/assetWizardSettings.xml
+
+# Some Kotlin metadata
+.kotlin/
