@@ -2,6 +2,7 @@ plugins {
 	// this is necessary to avoid the plugins loaded multiple times
 	alias(libs.plugins.kotlin.multiplatform) apply false
 	alias(libs.plugins.jetbrains.compose) apply false
+	alias(libs.plugins.compose.compiler) apply false
 }
 
 buildscript {

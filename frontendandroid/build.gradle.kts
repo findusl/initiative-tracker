@@ -13,6 +13,7 @@ plugins {
 	kotlin("android")
 	id("org.jetbrains.kotlin.kapt")
 	kotlin("plugin.serialization")
+	alias(libs.plugins.compose.compiler)
 }
 
 val properties = Properties()
@@ -24,7 +25,7 @@ if (localProperties.exists()) {
 }
 
 kotlin {
-	jvmToolchain(17)
+	jvmToolchain(21)
 }
 
 android {

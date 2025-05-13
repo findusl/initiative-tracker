@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-	jvmToolchain(17)
+	jvmToolchain(21)
 	jvm()
 	linuxX64()
 	iosX64()

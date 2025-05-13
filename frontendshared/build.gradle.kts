@@ -8,13 +8,14 @@ plugins {
 	alias(libs.plugins.kotlin.multiplatform)
 	id("com.android.library")
 	alias(libs.plugins.jetbrains.compose)
+	alias(libs.plugins.compose.compiler)
 	kotlin("plugin.serialization")
 	// Used to mimic BuildConfig from Android on Multiplatform
 	alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
-	jvmToolchain(17)
+	jvmToolchain(21)
 	jvm()
 	androidTarget()
 	listOf(
