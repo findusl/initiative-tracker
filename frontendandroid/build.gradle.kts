@@ -29,12 +29,12 @@ kotlin {
 }
 
 android {
-	compileSdk = 34
+	compileSdk = 35
 
 	defaultConfig {
 		applicationId = "de.lehrbaum.initiativetracker"
 		minSdk = 28
-		targetSdk = 34
+		targetSdk = 35
 		versionCode = 3
 		version = libs.versions.frontendVersion.get()
 

@@ -49,7 +49,7 @@ kotlin {
 				implementation(compose.foundation)
 				implementation(compose.material)
 				implementation(compose.runtime)
-				compileOnly(compose.materialIconsExtended) // very big, copy only what is needed
+				implementation(compose.materialIconsExtended) // TODO very big, copy only what is needed
 
 				implementation(libs.multiplatform.settings)
 				implementation(libs.multiplatform.settings.serialization)
@@ -161,7 +161,7 @@ buildkonfig {
 
 android {
 	namespace = "de.lehrbaum.initiativetracker"
-	compileSdk = 34
+	compileSdk = 35
 	defaultConfig {
 		minSdk = 28 // to avoid warnings, the actual minSdk is set in frontendandroid/build.gradle.kts
 	}
