@@ -3,7 +3,7 @@ package de.lehrbaum.initiativetracker.networking
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
-import io.ktor.utils.io.errors.IOException
+import kotlinx.io.IOException
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -45,7 +45,7 @@ inline fun <T> Result<T>.filter(description: String, condition: (T) -> Boolean):
 	return if (condition(value)) this else Result.failure(RuntimeException(description))
 }
 
-inline fun <R> Iterable<Result<R>>.filterIsSuccess(): List<R> =
+fun <R> Iterable<Result<R>>.filterIsSuccess(): List<R> =
 	filter { it.isSuccess }.map { it.getOrThrow() }
 
 suspend inline fun <reified T> HttpResponse.bodyOrFailure(): Result<T> =
