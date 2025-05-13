@@ -4,9 +4,8 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import okio.Buffer
-import okio.buffer
-import okio.sink
+import kotlinx.io.Buffer
+import kotlinx.io.asOutputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -92,20 +91,12 @@ actual class AudioRecorder: AutoCloseable, CoroutineScope {
 		return Result.success(convertToWavBuffer(buffer))
 	}
 
-	@Suppress("unused")// For debugging purposes
-	private fun Buffer.writeToFile() {
-		val file = File("/Users/slehrbaum/Downloads/tmp.wav")
-		file.sink().buffer().use { sink ->
-			sink.writeAll(this.copy())
-		}
-	}
-
 	private fun convertToWavBuffer(rawBuffer: ByteArrayOutputStream): Buffer {
 		val audioBytes = rawBuffer.toByteArray()
 		val bais = ByteArrayInputStream(audioBytes)
 		val audioInputStream = AudioInputStream(bais, format, audioBytes.size.toLong() / format.frameSize)
 		val out = Buffer()
-		AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, out.outputStream())
+		AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, out.asOutputStream())
 		return out
 	}
 

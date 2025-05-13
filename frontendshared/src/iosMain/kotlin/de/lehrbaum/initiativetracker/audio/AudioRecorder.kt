@@ -1,6 +1,6 @@
 package de.lehrbaum.initiativetracker.audio
 
-import okio.Buffer
+import kotlinx.io.Buffer
 
 actual class AudioRecorder {
 	actual val isAvailable = false
@@ -8,7 +8,7 @@ actual class AudioRecorder {
 		TODO("Not yet implemented")
     }
 
-    actual fun stopRecording(): Result<Buffer>  {
+    actual fun stopRecording(): Result<Buffer> {
         TODO("Not yet implemented")
     }
 

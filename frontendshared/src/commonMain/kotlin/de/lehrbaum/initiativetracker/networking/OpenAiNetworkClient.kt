@@ -18,9 +18,9 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.io.Buffer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import okio.Buffer
 import kotlin.time.Duration.Companion.seconds
 
 class OpenAiNetworkClient(token: String) {
