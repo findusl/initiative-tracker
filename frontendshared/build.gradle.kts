@@ -86,13 +86,11 @@ kotlin {
 		val androidUnitTest by getting {  } // not part of the accessors for some reason
 		// All jvm targets, including android
 		val jvmTargetsMain by getting {
-			dependsOn(commonMain.get())
 			dependencies {
 				implementation(libs.ktor.client.okhttp)
 			}
 		}
 		val jvmTargetsTest by getting {
-			dependsOn(commonTest.get())
 			dependencies {
 				implementation(libs.mockk)
 				implementation(kotlin("test-junit"))
