@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -77,6 +78,7 @@ private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 			Drawer(drawerItems, mainViewModel.content.drawerItem, drawerState, mainViewModel::onDrawerItemSelected)
 		},
 		gesturesEnabled = drawerState.isOpen,
+		modifier = Modifier.background(MaterialTheme.colors.primarySurface).systemBarsPadding()
 	) {
 		MainScreenContent(mainViewModel.content, drawerState)
 	}
