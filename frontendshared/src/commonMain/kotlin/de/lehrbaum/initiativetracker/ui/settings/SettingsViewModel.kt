@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker.ui.settings
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import de.lehrbaum.initiativetracker.bl.InputValidator
 import de.lehrbaum.initiativetracker.data.BackendUri
 import io.ktor.http.Url
 
+@Stable
 class SettingsViewModel {
 	private val generalSettingsRepository
 		get() = GlobalInstances.generalSettingsRepository
@@ -20,8 +22,13 @@ class SettingsViewModel {
 
 	var secureConnectionChosen by mutableStateOf(defaultBackend.secureConnection)
 
+	var apiKeyFieldContent by mutableStateOf(generalSettingsRepository.openAiApiKey ?: "")
+	val apiKeyFieldError by derivedStateOf { 
+		apiKeyFieldContent.isNotBlank() && !InputValidator.isValidOpenAiApiKey(apiKeyFieldContent) 
+	}
+
 	val inputsAreValid by derivedStateOf {
-		(!hostFieldError)
+		(!hostFieldError) && (!apiKeyFieldError)
 	}
 
 	fun onSavePressed() {
@@ -32,6 +39,10 @@ class SettingsViewModel {
 		// TASK Should update the text field
 		val backendUri = BackendUri(secureConnectionChosen, url.host, url.port)
 		generalSettingsRepository.defaultBackendUri = backendUri
+
+		// Save API key (or remove it if blank)
+		val apiKey = apiKeyFieldContent.trim()
+		generalSettingsRepository.openAiApiKey = apiKey.ifBlank { null }
 	}
 
 }
