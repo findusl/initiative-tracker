@@ -110,17 +110,17 @@ data class EditCombatantViewModel(
 	private suspend fun loadNameSuggestions(monsterType: MonsterDTO) {
 		cancelLoading()
 
+		val client = GlobalInstances.openAiNetworkClientProvider.getClient() ?: return
+
 		coroutineScope {
 			nameLoadingJob = this.coroutineContext.job
 			try {
 				nameLoading = true
-				val suggestions = GlobalInstances.openAiNetworkClient?.suggestMonsterNames(monsterType.name)
+				val suggestions = client.suggestMonsterNames(monsterType.name)
 				if (!isActive) return@coroutineScope
-				if (suggestions != null) {
-					nameSuggestions = suggestions
-					suggestions.firstOrNull()?.let {
-						if (name.isBlank()) name = it
-					}
+				nameSuggestions = suggestions
+				suggestions.firstOrNull()?.let {
+					if (name.isBlank()) name = it
 				}
 			} finally {
 				nameLoading = false
