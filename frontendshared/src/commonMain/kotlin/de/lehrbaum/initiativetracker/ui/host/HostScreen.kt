@@ -20,7 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.QueuePlayNext
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -204,7 +206,7 @@ private fun HostCombatViewModel.FinishRecordingDialog(
 private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
 	if (hostCombatViewModel.combatStarted) {
 		FloatingActionButton(onClick = hostCombatViewModel::nextCombatant) {
-			Icon(Icons.Default.FastForward, contentDescription = "Next Combatant")
+			Icon(Icons.Default.SkipNext, contentDescription = "Next Combatant")
 		}
 	}
 }
