@@ -12,23 +12,25 @@ class AudioCommandController(
 	private val combatController: CombatController
 ) {
 	private var audioRecorder = AudioRecorder()
-	private val openAiNetworkClient = GlobalInstances.openAiNetworkClient
+	private val openAiNetworkClientProvider = GlobalInstances.openAiNetworkClientProvider
 
 	private val combatants: Iterable<CombatantModel>
 		get() = combatController.combatants.value
 
 	val isAvailable: Boolean
-		get() = audioRecorder.isAvailable && openAiNetworkClient != null
+		get() = audioRecorder.isAvailable && openAiNetworkClientProvider.isAvailable()
 
 	fun startRecordingCommand() {
 		audioRecorder.startRecording()
 	}
 
 	suspend fun processRecording(): Result<CombatCommand> {
+		val client = openAiNetworkClientProvider.getClient()
+			?: return Result.failure(IllegalStateException("OpenAI is unavailable"))
+
 		val result = audioRecorder.stopRecording()
 			.flatMap { recording ->
-				openAiNetworkClient?.interpretSpokenCombatCommand(recording, combatants)
-					?: Result.failure(IllegalStateException("Finish recording but OpenAI is unavailable"))
+				client.interpretSpokenCombatCommand(recording, combatants)
 			}.onSuccess {
 				Napier.i("Interpreted command as $it", tag = TAG)
 			}

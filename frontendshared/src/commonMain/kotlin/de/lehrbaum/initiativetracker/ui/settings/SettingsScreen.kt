@@ -2,7 +2,9 @@ package de.lehrbaum.initiativetracker.ui.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.DrawerState
@@ -14,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 
@@ -51,6 +54,31 @@ fun SettingsScreen(drawerState: DrawerState, settingsViewModel: SettingsViewMode
 					onCheckedChange = { settingsViewModel.secureConnectionChosen = it }
 				)
 				Text("Use Secure Connection?")
+			}
+
+			Spacer(modifier = Modifier.height(16.dp))
+
+			Text("OpenAI API Key")
+			OutlinedTextField(
+				value = settingsViewModel.apiKeyFieldContent,
+				onValueChange = { input ->
+					settingsViewModel.apiKeyFieldContent = input
+				},
+				label = { Text("API Key") },
+				isError = settingsViewModel.apiKeyFieldError,
+				modifier = Modifier.fillMaxWidth()
+			)
+			if (settingsViewModel.apiKeyFieldError) {
+				Text(
+					"API key must start with 'sk-' followed by letters and digits, at least 10 characters long",
+					color = MaterialTheme.colors.error,
+					style = MaterialTheme.typography.caption
+				)
+			} else {
+				Text(
+					"Leave blank to remove the API key",
+					style = MaterialTheme.typography.caption
+				)
 			}
 		}
 	}

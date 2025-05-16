@@ -42,3 +42,6 @@ inline fun <reified T> Settings.getOrSet(
 
 inline fun Settings.getLongOrSet(key: String, default: () -> Long): Long =
 	getOrSet(key, Settings::getLongOrNull, Settings::putLong, default)
+
+inline fun Settings.getStringOrSet(key: String, default: () -> String): String =
+	getOrSet(key, Settings::getStringOrNull, Settings::putString, default)
