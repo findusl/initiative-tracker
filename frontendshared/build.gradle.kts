@@ -1,8 +1,9 @@
+
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import java.util.Properties
+import java.util.*
 
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
@@ -81,6 +82,8 @@ kotlin {
 		commonTest {
 			dependencies {
 				implementation(kotlin("test"))
+				implementation(libs.multiplatform.settings.test)
+				implementation(libs.kotlinx.coroutines.test)
 			}
 		}
 		val androidUnitTest by getting {  } // not part of the accessors for some reason

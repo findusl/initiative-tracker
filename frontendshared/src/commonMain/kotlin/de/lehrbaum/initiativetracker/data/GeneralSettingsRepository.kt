@@ -1,7 +1,12 @@
 package de.lehrbaum.initiativetracker.data
 
+import androidx.annotation.VisibleForTesting
 import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.ObservableSettings
 import de.lehrbaum.initiativetracker.BuildKonfig
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.random.Random
 
@@ -9,10 +14,19 @@ private const val APP_ID_KEY = "id"
 private const val DEFAULT_BACKEND_KEY = "defaultBackend"
 private const val OPENAI_API_KEY = "openaiApiKey"
 private const val SETTINGS_NAME = "settings"
+private const val SHOW_GUIDE_PREFIX = "showGuide"
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
-class GeneralSettingsRepository {
-	private val settings = createSettingsFactory().create(SETTINGS_NAME)
+class GeneralSettingsRepository(
+	@VisibleForTesting
+	private val settings: ObservableSettings = createSettings(SETTINGS_NAME)
+) {
+
+	init {
+	    settings.clear() // TODO remove just for testing
+	}
+
+	private var showGuideDefault = true
 
 	val installationId = settings.getLongOrSet(APP_ID_KEY, Random::nextLong)
 
@@ -33,6 +47,38 @@ class GeneralSettingsRepository {
 			}
 		}
 
+	fun showGuideFlow(guideKey: String): Flow<Boolean> {
+		return callbackFlow {
+			val key = "$SHOW_GUIDE_PREFIX$guideKey"
+			trySend(settings.getBooleanOrSet(key, { showGuideDefault }))
+			val listener = settings.addBooleanListener(key, defaultValue = true) { value ->
+				println("Guide dismissal changed to $value")
+				trySend(value)
+			}
+			awaitClose { listener.deactivate() }
+		}
+	}
+
+	fun hideGuide(guideKey: String) {
+		settings.putBoolean("$SHOW_GUIDE_PREFIX$guideKey", false)
+	}
+
+	fun hideAllGuides() {
+		applyToAllGuides(false)
+	}
+
+	fun showAllGuides() {
+		applyToAllGuides(true)
+	}
+
+	private fun applyToAllGuides(value: Boolean) {
+		showGuideDefault = value
+		settings.keys.forEach { key ->
+			if (key.startsWith(SHOW_GUIDE_PREFIX)) {
+				settings.putBoolean(key, value)
+			}
+		}
+	}
 }
 
 private fun BuildKonfig.defaultBackendUri(): BackendUri =

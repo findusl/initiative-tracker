@@ -45,4 +45,12 @@ class SettingsViewModel {
 		generalSettingsRepository.openAiApiKey = apiKey.ifBlank { null }
 	}
 
+	fun hideAllGuides() {
+		generalSettingsRepository.hideAllGuides()
+	}
+
+	fun showAllGuides() {
+		generalSettingsRepository.showAllGuides()
+	}
+
 }

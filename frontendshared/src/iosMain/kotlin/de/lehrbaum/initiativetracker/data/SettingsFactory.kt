@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.data
 
 import com.russhwolf.settings.NSUserDefaultsSettings
-import com.russhwolf.settings.Settings
+import com.russhwolf.settings.ObservableSettings
 
-actual fun createSettingsFactory(): Settings.Factory =
-	NSUserDefaultsSettings.Factory()
+actual fun createSettings(name: String): ObservableSettings =
+	NSUserDefaultsSettings.Factory().create(name)
