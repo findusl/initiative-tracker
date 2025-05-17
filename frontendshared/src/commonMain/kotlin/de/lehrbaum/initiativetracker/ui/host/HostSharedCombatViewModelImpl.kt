@@ -76,6 +76,10 @@ data class HostSharedCombatViewModelImpl(
 		return suspendCancellableCoroutine {
 			confirmDamageContinuation = it
 			confirmDamage = ConfirmDamageOptions(damage, target.name, probableSource)
+			it.invokeOnCancellation {
+				confirmDamageContinuation = null
+				confirmDamage = null
+			}
 		}
 	}
 }

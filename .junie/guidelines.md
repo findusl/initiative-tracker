@@ -27,7 +27,7 @@ To run tests using JVM tasks:
 ./gradlew jvmTest --tests "de.lehrbaum.initiativetracker.bl.InputValidatorTest.testIsValidHostGoodCase"
 ```
 
-Avoid using:
+Do not use use:
 ```bash
 # DON'T use these Android-specific tasks
 ./gradlew androidTest

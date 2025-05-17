@@ -29,6 +29,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.job
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
 
 @Stable
 abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationRequester {
@@ -75,6 +78,10 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 		private set
 	private var processingRecordingJob by mutableStateOf<Job?>(null)
 	val isProcessingRecording by derivedStateOf { processingRecordingJob != null }
+
+	private var resetConfirmationContinuation: Continuation<Boolean>? = null
+	var showResetConfirmation by mutableStateOf(false)
+		private set
 
 	fun recordCommand() {
 		if (isRecording) return
@@ -207,4 +214,27 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 	abstract fun onConfirmDamageDialogCancel()
 	abstract fun onConfirmDamageDialogSubmit(decision: DamageDecision)
 	abstract fun autoConfirmDamagePressed()
+
+	fun onResetResponse(response: Boolean) {
+		resetConfirmationContinuation?.resume(response)
+		showResetConfirmation = false
+		resetConfirmationContinuation = null
+	}
+
+	suspend fun resetCombat() {
+		val confirmation = suspendCancellableCoroutine { continuation ->
+			resetConfirmationContinuation = continuation
+			showResetConfirmation = true
+			// TASK this style is also used for the confirm damage dialog and others.
+			// It can probably be extracted to a more generic variant
+			continuation.invokeOnCancellation {
+				showResetConfirmation = false
+				resetConfirmationContinuation = null
+			}
+		}
+		if (confirmation) {
+			combatController.reset()
+			combatStarted = false
+		}
+	}
 }
