@@ -10,7 +10,7 @@ private const val SETTINGS_NAME = "combatlink"
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
 object CombatLinkRepository {
-	private val settings = createSettingsFactory().create(SETTINGS_NAME)
+	private val settings = createSettings(SETTINGS_NAME)
 	val combatLinks = MutableStateFlow(loadCombatLinks())
 
 	fun addCombatLink(combatLink: CombatLink) {

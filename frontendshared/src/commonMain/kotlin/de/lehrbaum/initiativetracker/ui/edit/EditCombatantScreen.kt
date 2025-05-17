@@ -34,6 +34,7 @@ import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.AutocompleteTextField
 import de.lehrbaum.initiativetracker.ui.composables.EditTextField
+import de.lehrbaum.initiativetracker.ui.composables.Guide
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.composableIf
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
@@ -117,6 +118,16 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 		CreatureTypeField(editCombatantViewModel)
 		NameField(editCombatantViewModel)
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))
+
+		// Show guide about initiative calculation for fixed monster types
+		if (editCombatantViewModel.monsterType != null) {
+			Guide(
+				text = "When using a prepared monster type, the initiative is calculated by rolling a d20 and adding the monster's initiative bonus.",
+				guideKey = "initiative_calculation"
+			)
+			Spacer(modifier = Modifier.height(Constants.defaultPadding))
+		}
+
 		Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
 			EditTextField(editCombatantViewModel.initiativeEdit, "Initiative", Modifier.weight(1f))
 			Spacer(modifier = Modifier.width(Constants.defaultPadding))

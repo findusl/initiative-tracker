@@ -1,8 +1,5 @@
 package de.lehrbaum.initiativetracker.data
 
-import com.russhwolf.settings.Settings
+import com.russhwolf.settings.ObservableSettings
 
-/**
- * In this app the SettingsFactories prefix every settings with de.lehrbaum.initiativetracker
- */
-expect fun createSettingsFactory(): Settings.Factory
+expect fun createSettings(name: String): ObservableSettings

@@ -11,7 +11,7 @@ private const val SETTINGS_KEY = "CHARACTERS"
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
 class CharacterRepository {
-	private val settings = createSettingsFactory().create(SETTINGS_NAME)
+	private val settings = createSettings(SETTINGS_NAME)
 
 	val characters = MutableStateFlow(loadCharacters())
 

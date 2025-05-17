@@ -101,6 +101,7 @@ gradle-app.setting
 /.idea/deploymentTargetDropDown.xml
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/migrations.xml
+/.idea/AndroidProjectSystem.xml
 /.idea/misc.xml
 /app/remote/release/app-remote-release.aab
 
@@ -117,3 +118,4 @@ frontendios/iosApp.xcodeproj/*
 
 # Some Kotlin metadata
 .kotlin/
+/.idea/deploymentTargetSelector.xml

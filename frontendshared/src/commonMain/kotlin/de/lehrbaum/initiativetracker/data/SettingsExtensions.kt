@@ -45,3 +45,8 @@ inline fun Settings.getLongOrSet(key: String, default: () -> Long): Long =
 
 inline fun Settings.getStringOrSet(key: String, default: () -> String): String =
 	getOrSet(key, Settings::getStringOrNull, Settings::putString, default)
+
+inline fun Settings.getBooleanOrSet(key: String, default: () -> Boolean): Boolean =
+	getOrSet(key, Settings::getBooleanOrNull, Settings::putBoolean, default)
+
+
