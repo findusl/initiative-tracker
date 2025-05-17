@@ -80,7 +80,32 @@ fun SettingsScreen(drawerState: DrawerState, settingsViewModel: SettingsViewMode
 					style = MaterialTheme.typography.caption
 				)
 			}
+
+			Spacer(modifier = Modifier.height(24.dp))
+
+			// Guide management section
+			Text("Guide Management", style = MaterialTheme.typography.h6)
+			Text(
+				"Control the visibility of all beginner guides in the application",
+				style = MaterialTheme.typography.caption
+			)
+			Spacer(modifier = Modifier.height(8.dp))
+
+			Row(modifier = Modifier.fillMaxWidth()) {
+				Button(
+					onClick = settingsViewModel::hideAllGuides,
+					modifier = Modifier.weight(1f).padding(end = 8.dp)
+				) {
+					Text("Hide All Guides")
+				}
+
+				Button(
+					onClick = settingsViewModel::showAllGuides,
+					modifier = Modifier.weight(1f).padding(start = 8.dp)
+				) {
+					Text("Show All Guides")
+				}
+			}
 		}
 	}
-
 }

@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.QueuePlayNext
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.primarySurface
@@ -42,6 +41,7 @@ import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.ErrorComposable
+import de.lehrbaum.initiativetracker.ui.composables.Guide
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.composables.MyDropdownMenu
 import de.lehrbaum.initiativetracker.ui.composables.ResettableState
@@ -55,7 +55,6 @@ import de.lehrbaum.initiativetracker.ui.composables.swipeToEnable
 import de.lehrbaum.initiativetracker.ui.composables.swipeToJumpToTurn
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantDialog
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantScreen
-import de.lehrbaum.initiativetracker.ui.icons.FastForward
 import de.lehrbaum.initiativetracker.ui.icons.Mic
 import de.lehrbaum.initiativetracker.ui.keyevents.LocalShortcutManager
 import de.lehrbaum.initiativetracker.ui.keyevents.defaultFocussed
@@ -118,22 +117,29 @@ private fun MainContent(
 
 		when (connectionState) {
 			HostConnectionState.Connected -> {
-				CombatantList(
-					combatants.collectAsState(persistentListOf()).value,
-					isHost = true,
-					::onCombatantClicked,
-					::onCombatantLongClicked,
-					::addNewCombatant,
-					dismissToStartAction = {
-						if (combatStarted && !it.disabled) swipeToDisable(::disableCombatant)
-						else swipeToDelete(::deleteCombatant)
-					},
-					dismissToEndAction = {
-						if (it.disabled) swipeToEnable(::enableCombatant)
-						else if (combatStarted) swipeToJumpToTurn(::jumpToCombatant)
-						else null
-					}
-				)
+				val combatantsList = combatants.collectAsState(persistentListOf()).value
+
+				Column {
+
+					guideBanners(combatantsList.isNotEmpty())
+
+					CombatantList(
+						combatantsList,
+						isHost = true,
+						::onCombatantClicked,
+						::onCombatantLongClicked,
+						::addNewCombatant,
+						dismissToStartAction = {
+							if (combatStarted && !it.disabled) swipeToDisable(::disableCombatant)
+							else swipeToDelete(::deleteCombatant)
+						},
+						dismissToEndAction = {
+							if (it.disabled) swipeToEnable(::enableCombatant)
+							else if (combatStarted) swipeToJumpToTurn(::jumpToCombatant)
+							else null
+						}
+					)
+				}
 			}
 
 			HostConnectionState.Connecting -> Text("Connecting")
@@ -147,6 +153,23 @@ private fun MainContent(
 				}
 			}
 		}
+	}
+}
+
+@Composable
+private fun HostCombatViewModel.guideBanners(hasCombatants: Boolean) {
+	if (hasCombatants && !combatStarted) {
+		Guide(
+			text = "Start the combat for initiative and damaging to work.",
+			guideKey = "start_combat_guide"
+		)
+	}
+
+	if (combatStarted) {
+		Guide(
+			text = "You can swipe combatants right and left",
+			guideKey = "swipe_combatants_guide"
+		)
 	}
 }
 
