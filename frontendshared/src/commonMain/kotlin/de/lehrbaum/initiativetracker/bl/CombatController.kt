@@ -4,9 +4,9 @@ import de.lehrbaum.initiativetracker.bl.DamageDecision.DOUBLE
 import de.lehrbaum.initiativetracker.bl.DamageDecision.FULL
 import de.lehrbaum.initiativetracker.bl.DamageDecision.HALF
 import de.lehrbaum.initiativetracker.bl.DamageDecision.NONE
-import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.bl.model.SavingThrow
+import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
@@ -87,7 +87,7 @@ class CombatController(
 		}
 		val probableSourceName = determineSourceName(sourceId)
 
-		confirmationRequester.confirmDamage(damage, target, probableSourceName)?.let { decision ->
+		return confirmationRequester.confirmDamage(damage, target, probableSourceName)?.let { decision ->
 			val actualDamage = when (decision) {
 				FULL -> damage
 				HALF -> damage / 2
@@ -95,8 +95,8 @@ class CombatController(
 				NONE -> 0
 			}
 			damageCombatant(target.id, actualDamage)
-			return true
-		} ?: return false
+			true
+		} ?: false
 	}
 
 	fun handleFinishTurnRequest(activeCombatantIndex: Int): Boolean {
@@ -199,7 +199,7 @@ class CombatController(
 		if (oldCombatant != null) {
 			combatantCount--
 		}
-		if (oldIndex != null && activeCombatantIndex.value > oldIndex!! || activeCombatantIndex.value >= combatantCount) {
+		if (oldIndex != null && activeCombatantIndex.value > oldIndex || activeCombatantIndex.value >= combatantCount) {
 			_activeCombatantIndex.value--
 		}
 		return oldCombatant
@@ -230,6 +230,13 @@ class CombatController(
 		_combatants.value = combatants.toList()
 		nextId = combatants.maxOfOrNull { it.id.id }?.inc() ?: 0
 		_activeCombatantIndex.value = activeCombatantIndex
+	}
+
+	fun reset() {
+		combatantCount = 0
+		_combatants.value = emptyList()
+		nextId = 0
+		_activeCombatantIndex.value = 0
 	}
 }
 

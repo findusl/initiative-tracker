@@ -2,6 +2,8 @@ package de.lehrbaum.initiativetracker.ui.host
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
@@ -18,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
@@ -35,15 +38,18 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.Constants
+import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.ErrorComposable
 import de.lehrbaum.initiativetracker.ui.composables.Guide
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.composables.MyDropdownMenu
+import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.ResettableState
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
 import de.lehrbaum.initiativetracker.ui.composables.collectAsStateResettable
@@ -121,7 +127,7 @@ private fun MainContent(
 
 				Column {
 
-					guideBanners(combatantsList.isNotEmpty())
+					GuideBanners(combatantsList.isNotEmpty())
 
 					CombatantList(
 						combatantsList,
@@ -157,7 +163,7 @@ private fun MainContent(
 }
 
 @Composable
-private fun HostCombatViewModel.guideBanners(hasCombatants: Boolean) {
+private fun HostCombatViewModel.GuideBanners(hasCombatants: Boolean) {
 	if (hasCombatants && !combatStarted) {
 		Guide(
 			text = "Start the combat for initiative and damaging to work.",
@@ -188,7 +194,11 @@ private fun Dialogs(
 				DamageCombatantDialog(it)
 			}
 			confirmDamage?.let { options ->
-				ConfirmDamageDialog(options, ::onConfirmDamageDialogSubmit, ::onConfirmDamageDialogCancel)
+				ConfirmDamageDialog(
+					options,
+					onDamageApplied = ::onConfirmDamageDialogSubmit,
+					onDismiss = ::onConfirmDamageDialogCancel
+				)
 			}
 			if (isRecording) {
 				FinishRecordingDialog(finishRecording)
@@ -199,6 +209,11 @@ private fun Dialogs(
 						Text("Processing Recording")
 					}
 				}
+			}
+			if (showResetConfirmation) {
+				ResetConfirmationDialog(
+					onConfirm = { onResetResponse(true) }
+				) { onResetResponse(false) }
 			}
 		}
 	}
@@ -221,6 +236,32 @@ private fun HostCombatViewModel.FinishRecordingDialog(
 				},
 		) {
 			Text("Finish Recording")
+		}
+	}
+}
+
+@Composable
+private fun ResetConfirmationDialog(
+	onConfirm: () -> Unit,
+	onCancel: () -> Unit
+) {
+	GeneralDialog(onDismissRequest = onCancel) {
+		Column(modifier = Modifier.padding(16.dp)) {
+			Text(
+				text = "Reset Combat",
+				style = MaterialTheme.typography.h6
+			)
+			Spacer(modifier = Modifier.height(8.dp))
+			Text(
+				text = "Are you sure you want to reset the combat? This will remove all monsters, stop initiative, and return to a not running combat state.",
+				style = MaterialTheme.typography.body1
+			)
+			Spacer(modifier = Modifier.height(16.dp))
+			OkCancelButtonRow(
+				submittable = true,
+				onCancel = onCancel,
+				onSubmit = onConfirm
+			)
 		}
 	}
 }
@@ -253,6 +294,14 @@ private fun TopBar(
 			if (!hostCombatViewModel.combatStarted) {
 				IconButton(onClick = hostCombatViewModel::startCombat) {
 					Icon(Icons.Default.PlayArrow, contentDescription = "Play")
+				}
+			} else {
+				IconButton(onClick = {
+					coroutineScope.launch {
+						hostCombatViewModel.resetCombat()
+					}
+				}) {
+					Icon(Icons.Default.Delete, contentDescription = "Reset Combat")
 				}
 			}
 			if (hostCombatViewModel.isRecordActionVisible) {
