@@ -29,7 +29,7 @@ fun createDefaultHttpClient() =
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {
-                    Napier.d(message, null, TAG)
+                    Napier.v(message, null, TAG)
                 }
             }
             level = LogLevel.INFO // change when debugging

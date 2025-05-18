@@ -1,5 +1,7 @@
 package de.lehrbaum.initiativetracker.bl
 
+import io.ktor.http.Url
+
 object InputValidator {
 	fun isValidHost(input: String): Boolean {
 		// Just some simple verifications. The app currently cannot handle paths, so slash is not allowed
@@ -14,5 +16,14 @@ object InputValidator {
 
 		val regex = Regex("^sk-[a-zA-Z0-9_-]+$")
 		return regex.matches(input) && input.length >= 10
+	}
+
+	fun isValidUrl(url: String): Boolean {
+		return try {
+			Url(url)
+			url.endsWith("json")
+		} catch (e: Exception) {
+			false
+		}
 	}
 }

@@ -14,6 +14,7 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CancellableContinuation
@@ -23,6 +24,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.random.Random
+import kotlin.time.measureTimedValue
 
 @Stable
 data class EditCombatantViewModel(
@@ -60,15 +62,19 @@ data class EditCombatantViewModel(
 	val monsterType: MonsterDTO? by derivedStateOf { determineMonster(monsterTypeName) }
 	val monsterTypeError: Boolean by derivedStateOf { monsterType == null && monsterTypeName.isNotEmpty() }
 	val monsterTypeNameSuggestions: ImmutableList<String> by derivedStateOf {
-		monsters
-			.asSequence()
-			.filter { it.displayName.contains(monsterTypeName, ignoreCase = true) }
-			.take(30)
-			.map { it.displayName }
-			.filter { it != monsterTypeName } // Don't suggest the existing choice
-			.toList()
-			.sortedBy{ it.length }
-			.toPersistentList()
+		measureTimedValue {
+			monsters // TASK possibly use a Suffix tree to improve performance
+				.asSequence()
+				.filter { it.displayName.contains(monsterTypeName, ignoreCase = true) }
+				.take(30)
+				.map { it.displayName }
+				.filter { it != monsterTypeName } // Don't suggest the existing choice
+				.toList()
+				.sortedBy{ it.length }
+				.toPersistentList()
+		}
+			.also { Napier.d("Took ${it.duration.inWholeMilliseconds} to calculate monster type name suggestions") }
+			.value
 	}
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 

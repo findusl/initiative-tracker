@@ -3,7 +3,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import java.util.*
+import java.util.Properties
 
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
@@ -148,7 +148,7 @@ buildkonfig {
 	exposeObjectWithName = "BuildKonfig"
 
 	defaultConfigs {
-		val openaiApiKey = localProperties.getProperty("openai.api.key", null) ?: null
+		val openaiApiKey = localProperties.getProperty("openai.api.key", null)
 		buildConfigField(STRING, "openaiApiKey", openaiApiKey, nullable = true)
 
 		val host = localProperties.getProperty("backend.host", "localhost")
@@ -169,17 +169,17 @@ android {
 }
 
 // https://developer.android.com/jetpack/compose/performance/stability/diagnose#kotlin
-@Suppress("DEPRECATION") // Used until documentation is updated
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-	kotlinOptions {
+	compilerOptions {
+		// Add flag to suppress 'expect'/'actual' classes Beta warning
 		if (project.findProperty("composeCompilerReports") == "true") {
-			freeCompilerArgs += listOf(
+			freeCompilerArgs.addAll(
 				"-P",
 				"plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_compiler"
 			)
 		}
 		if (project.findProperty("composeCompilerMetrics") == "true") {
-			freeCompilerArgs += listOf(
+			freeCompilerArgs.addAll(
 				"-P",
 				"plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_compiler"
 			)

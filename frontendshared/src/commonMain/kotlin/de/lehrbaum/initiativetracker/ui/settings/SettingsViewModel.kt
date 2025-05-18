@@ -5,6 +5,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
 import de.lehrbaum.initiativetracker.data.BackendUri
@@ -27,8 +29,24 @@ class SettingsViewModel {
 		apiKeyFieldContent.isNotBlank() && !InputValidator.isValidOpenAiApiKey(apiKeyFieldContent) 
 	}
 
+	var isBestiarySubmenuOpen by mutableStateOf(false)
+
+	fun openSourcesSubmenu() {
+		isBestiarySubmenuOpen = true
+	}
+
+	fun closeSourcesSubmenu() {
+		isBestiarySubmenuOpen = false
+	}
+
+	var homebrewLinks: SnapshotStateList<String> = generalSettingsRepository.homebrewLinks.toMutableStateList()
+	var newHomebrewLinkContent by mutableStateOf("")
+	val newHomebrewLinkError by derivedStateOf {
+		newHomebrewLinkContent.isNotBlank() && !InputValidator.isValidUrl(newHomebrewLinkContent)
+	}
+
 	val inputsAreValid by derivedStateOf {
-		(!hostFieldError) && (!apiKeyFieldError)
+		(!hostFieldError) && (!apiKeyFieldError) && (!newHomebrewLinkError)
 	}
 
 	fun onSavePressed() {
@@ -36,13 +54,24 @@ class SettingsViewModel {
 
 		val protocol = if (secureConnectionChosen) "https" else "http"
 		val url = Url("$protocol://$hostFieldContent")
-		// TASK Should update the text field
 		val backendUri = BackendUri(secureConnectionChosen, url.host, url.port)
 		generalSettingsRepository.defaultBackendUri = backendUri
 
-		// Save API key (or remove it if blank)
 		val apiKey = apiKeyFieldContent.trim()
 		generalSettingsRepository.openAiApiKey = apiKey.ifBlank { null }
+
+		generalSettingsRepository.homebrewLinks = homebrewLinks.toList()
+	}
+
+	fun addHomebrewLink() {
+		if (newHomebrewLinkContent.isBlank() || newHomebrewLinkError) return
+
+		homebrewLinks.add(newHomebrewLinkContent.trim())
+		newHomebrewLinkContent = ""
+	}
+
+	fun removeHomebrewLink(link: String) {
+		homebrewLinks.remove(link)
 	}
 
 	fun hideAllGuides() {
