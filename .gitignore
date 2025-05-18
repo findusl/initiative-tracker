@@ -103,6 +103,8 @@ gradle-app.setting
 /.idea/migrations.xml
 /.idea/AndroidProjectSystem.xml
 /.idea/misc.xml
+/.idea/caches/deviceStreaming.xml
+/.idea/runConfigurations.xml
 /app/remote/release/app-remote-release.aab
 
 # Android apk build folders
