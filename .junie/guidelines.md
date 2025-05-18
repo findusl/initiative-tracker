@@ -27,7 +27,9 @@ To run tests using JVM tasks:
 ./gradlew jvmTest --tests "de.lehrbaum.initiativetracker.bl.InputValidatorTest.testIsValidHostGoodCase"
 ```
 
-Do not use use:
+**Important:** Do not run tests via IntelliJ's test runner. It tries to use Android which may not have the SDK configured properly, leading to build failures. Always use Gradle from the command line as shown above.
+
+Do not use:
 ```bash
 # DON'T use these Android-specific tasks
 ./gradlew androidTest
@@ -89,6 +91,34 @@ Test source sets follow a similar structure:
    ./gradlew :backendjvm:test
    ./gradlew :backendshared:jvmTest
    ```
+
+## Logging
+
+For all logging in the application, use Napier. Napier is a multiplatform logging library that provides consistent logging across all platforms.
+
+### Logging Levels
+
+Napier provides different functions for various logging levels:
+
+- `Napier.v()` - Verbose: For detailed debugging information
+- `Napier.d()` - Debug: For general debugging information
+- `Napier.i()` - Info: For important information
+- `Napier.w()` - Warning: For potential issues that aren't errors
+- `Napier.e()` - Error: For errors and exceptions
+
+Example usage:
+```kotlin
+// Log a debug message
+Napier.d("Debug message")
+
+// Log an error with exception
+Napier.e("An error occurred", throwable)
+```
+
+Remember to import Napier in your Kotlin files:
+```
+io.github.aakira.napier.Napier
+```
 
 ## Troubleshooting
 
