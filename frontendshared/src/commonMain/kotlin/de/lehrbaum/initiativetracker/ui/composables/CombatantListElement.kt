@@ -2,9 +2,17 @@ package de.lehrbaum.initiativetracker.ui.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Card
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ListItem
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -26,8 +34,7 @@ fun CombatantListElement(combatantVM: CombatantListViewModel, isHost: Boolean, m
 	val outerBackgroundColor by animateColorAsState(
 		if (combatantVM.active) MaterialTheme.colors.secondary else Color.Transparent
 	)
-	var disabled by remember { mutableStateOf(combatantVM.disabled) }
-	disabled = combatantVM.disabled
+	val disabled = combatantVM.disabled
 	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
 	val getsAllInformation = combatantVM.isOwned || isHost
 

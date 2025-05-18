@@ -74,8 +74,6 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewModel) {
-	val hostCombatModelState = remember { mutableStateOf(hostCombatViewModel) }
-	hostCombatModelState.value = hostCombatViewModel
 
 	val connectionStateState =
 		hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
@@ -93,14 +91,14 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 
 			Scaffold(
 				scaffoldState = scaffoldState,
-				topBar = { TopBar(drawerState, coroutineScope, hostCombatModelState.value) },
-				floatingActionButton = { NextCombatantButton(hostCombatModelState.value) },
+				topBar = { TopBar(drawerState, coroutineScope, hostCombatViewModel) },
+				floatingActionButton = { NextCombatantButton(hostCombatViewModel) },
 			) {
-				MainContent(hostCombatModelState.value, connectionStateState)
+				MainContent(hostCombatViewModel, connectionStateState)
 			}
 
 			val finishRecording: () -> Unit = { coroutineScope.launch { hostCombatViewModel.finishRecording() } }
-			Dialogs(connectionStateState.value, hostCombatModelState.value, finishRecording)
+			Dialogs(connectionStateState.value, hostCombatViewModel, finishRecording)
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
