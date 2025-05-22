@@ -16,6 +16,7 @@ import de.lehrbaum.initiativetracker.bl.PreliminaryAOEResult
 import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
+import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.composables.CombatantListViewModel
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
@@ -54,6 +55,9 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 	val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)
 
 	var damageCombatantViewModel by mutableStateOf<DamageCombatantViewModel?>(null)
+		private set
+
+	var characterChooserViewModel by mutableStateOf<CharacterChooserViewModel?>(null)
 		private set
 
 	val snackbarState = mutableStateOf<SnackbarState?>(null)
@@ -150,6 +154,19 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 	fun addNewCombatant() {
 		val newCombatant = combatController.addCombatant()
 		editCombatant(newCombatant, firstEdit = true)
+	}
+
+	fun addExistingCharacter() {
+		characterChooserViewModel = CharacterChooserViewModel(
+			onChosen = { character, initiative, currentHp ->
+				val combatant = combatController.addCombatant(character.name, initiative)
+				combatController.updateCombatant(combatant.copy(currentHp = currentHp, maxHp = character.maxHp))
+				characterChooserViewModel = null
+			},
+			onCancel = {
+				characterChooserViewModel = null
+			}
+		)
 	}
 
 	private fun editCombatant(combatantModel: CombatantModel, firstEdit: Boolean = false) {
