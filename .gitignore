@@ -121,3 +121,4 @@ frontendios/iosApp.xcodeproj/*
 # Some Kotlin metadata
 .kotlin/
 /.idea/deploymentTargetSelector.xml
+/.idea/xcode.xml
