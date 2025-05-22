@@ -21,16 +21,12 @@ import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.character.CharacterListScreen
-import de.lehrbaum.initiativetracker.ui.client.ClientScreen
 import de.lehrbaum.initiativetracker.ui.host.HostScreen
-import de.lehrbaum.initiativetracker.ui.join.JoinScreen
 import de.lehrbaum.initiativetracker.ui.settings.SettingsScreen
 import de.lehrbaum.initiativetracker.ui.shared.BackHandler
 import kotlinx.collections.immutable.ImmutableList
@@ -55,7 +51,11 @@ fun MainComposable(mainViewModel: MainViewModel, widthInt: Int? = null) {
 @Composable
 private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 	val drawerState = rememberDrawerState(DrawerValue.Closed)
-	val drawerItems by mainViewModel.drawerItems.collectAsState(persistentListOf())
+	val drawerItems = persistentListOf(
+		DrawerItem.Combat,
+		DrawerItem.Characters,
+		DrawerItem.Settings
+	)
 
 	// Workaround for resizing window on desktop
 	LaunchedEffect(widthInt) {
@@ -78,7 +78,7 @@ private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 			Drawer(drawerItems, mainViewModel.content.drawerItem, drawerState, mainViewModel::onDrawerItemSelected)
 		},
 		gesturesEnabled = drawerState.isOpen,
-		modifier = Modifier.background(MaterialTheme.colors.primarySurface).systemBarsPadding()
+		modifier = Modifier.background(colors.primarySurface).systemBarsPadding()
 	) {
 		MainScreenContent(mainViewModel.content, drawerState)
 	}
@@ -120,9 +120,6 @@ private fun MainScreenContent(contentState: ContentState, drawerState: DrawerSta
 	when(contentState) {
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
 		is ContentState.HostLocalCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
-		is ContentState.HostSharedCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
-		is ContentState.ClientCombat -> ClientScreen(drawerState, contentState.clientCombatViewModel)
-		is ContentState.JoinCombat -> JoinScreen(drawerState, contentState.joinViewModel)
 		is ContentState.SettingsScreen -> SettingsScreen(drawerState, contentState.settingsViewModel)
 	}
 }

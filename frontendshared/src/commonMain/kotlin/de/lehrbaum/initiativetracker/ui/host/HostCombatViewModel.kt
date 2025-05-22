@@ -15,7 +15,6 @@ import de.lehrbaum.initiativetracker.bl.DamageDecision
 import de.lehrbaum.initiativetracker.bl.PreliminaryAOEResult
 import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
-import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
 import de.lehrbaum.initiativetracker.ui.composables.CombatantListViewModel
 import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
@@ -27,7 +26,6 @@ import de.lehrbaum.initiativetracker.ui.shared.showText
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.job
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -66,10 +64,7 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 
 	private var mostRecentDeleted: CombatantModel? = null
 
-	open val backendInputViewModel: BackendInputViewModel? = null
-
 	abstract val title: String
-	abstract val hostConnectionState: Flow<HostConnectionState>
 	abstract val isSharing: Boolean
 	abstract val confirmDamage: ConfirmDamageOptions?
 	abstract val showAutoConfirmDamageToggle: Boolean

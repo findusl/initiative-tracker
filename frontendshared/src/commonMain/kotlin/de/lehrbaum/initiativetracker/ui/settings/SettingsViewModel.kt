@@ -9,20 +9,12 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.InputValidator
-import de.lehrbaum.initiativetracker.data.BackendUri
-import io.ktor.http.Url
 
 @Stable
 class SettingsViewModel {
 	private val generalSettingsRepository
 		get() = GlobalInstances.generalSettingsRepository
 
-	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackendUri
-
-	var hostFieldContent by mutableStateOf("${defaultBackend.hostName}:${defaultBackend.port}")
-	val hostFieldError by derivedStateOf { !InputValidator.isValidHost(hostFieldContent) }
-
-	var secureConnectionChosen by mutableStateOf(defaultBackend.secureConnection)
 
 	var apiKeyFieldContent by mutableStateOf(generalSettingsRepository.openAiApiKey ?: "")
 	val apiKeyFieldError by derivedStateOf { 
@@ -46,16 +38,11 @@ class SettingsViewModel {
 	}
 
 	val inputsAreValid by derivedStateOf {
-		(!hostFieldError) && (!apiKeyFieldError) && (!newHomebrewLinkError)
+		(!apiKeyFieldError) && (!newHomebrewLinkError)
 	}
 
 	fun onSavePressed() {
 		if (!inputsAreValid) return
-
-		val protocol = if (secureConnectionChosen) "https" else "http"
-		val url = Url("$protocol://$hostFieldContent")
-		val backendUri = BackendUri(secureConnectionChosen, url.host, url.port)
-		generalSettingsRepository.defaultBackendUri = backendUri
 
 		val apiKey = apiKeyFieldContent.trim()
 		generalSettingsRepository.openAiApiKey = apiKey.ifBlank { null }

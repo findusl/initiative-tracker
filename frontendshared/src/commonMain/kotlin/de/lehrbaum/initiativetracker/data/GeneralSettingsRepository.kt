@@ -2,7 +2,6 @@ package de.lehrbaum.initiativetracker.data
 
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
-import de.lehrbaum.initiativetracker.BuildKonfig
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +11,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.random.Random
 
 private const val APP_ID_KEY = "id"
-private const val DEFAULT_BACKEND_KEY = "defaultBackend"
 private const val OPENAI_API_KEY = "openaiApiKey"
 private const val HOMEBREW_LINKS_KEY = "homebrewLinks"
 private const val SETTINGS_NAME = "settings"
@@ -27,12 +25,6 @@ class GeneralSettingsRepository(
 
 	val installationId = settings.getLongOrSet(APP_ID_KEY, Random::nextLong)
 
-	var defaultBackendUri: BackendUri =
-		settings.decodeValue(DEFAULT_BACKEND_KEY, BuildKonfig.defaultBackendUri())
-		set(value) {
-			field = value
-			settings.encodeValue(DEFAULT_BACKEND_KEY, value)
-		}
 
 	var openAiApiKey: String? = settings.getStringOrNull(OPENAI_API_KEY)
 		set(value) {
@@ -97,5 +89,3 @@ class GeneralSettingsRepository(
 	}
 }
 
-private fun BuildKonfig.defaultBackendUri(): BackendUri =
-	BackendUri(backendSecure, backendHost, backendPort)
