@@ -14,7 +14,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -65,24 +64,6 @@ private fun TopBar(
 @Composable
 fun MainSettingsScreen(settingsViewModel: SettingsViewModel) {
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
-		Text("Specify default backend")
-		OutlinedTextField(
-			value = settingsViewModel.hostFieldContent,
-			onValueChange = { input ->
-				settingsViewModel.hostFieldContent = input
-			},
-			label = { Text("Host") },
-			isError = settingsViewModel.hostFieldError,
-			modifier = Modifier.fillMaxWidth()
-		)
-		Row {
-			Switch(
-				checked = settingsViewModel.secureConnectionChosen,
-				onCheckedChange = { settingsViewModel.secureConnectionChosen = it }
-			)
-			Text("Use Secure Connection?")
-		}
-
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))
 
 		OutlinedTextField(

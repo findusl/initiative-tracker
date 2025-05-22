@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -19,11 +18,9 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
@@ -40,8 +37,6 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
-import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
@@ -51,9 +46,7 @@ import de.lehrbaum.initiativetracker.ui.composables.Guide
 import de.lehrbaum.initiativetracker.ui.composables.KeepScreenOn
 import de.lehrbaum.initiativetracker.ui.composables.MyDropdownMenu
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
-import de.lehrbaum.initiativetracker.ui.composables.ResettableState
 import de.lehrbaum.initiativetracker.ui.composables.bindSnackbarState
-import de.lehrbaum.initiativetracker.ui.composables.collectAsStateResettable
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
 import de.lehrbaum.initiativetracker.ui.composables.rememberScaffoldState
 import de.lehrbaum.initiativetracker.ui.composables.swipeToDelete
@@ -76,9 +69,6 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewModel) {
 
-	val connectionStateState =
-		hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
-
 	if (hostCombatViewModel.isSharing) KeepScreenOn()
 
 	val coroutineScope = rememberCoroutineScope(hostCombatViewModel)
@@ -95,16 +85,14 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 				topBar = { TopBar(drawerState, coroutineScope, hostCombatViewModel) },
 				floatingActionButton = { NextCombatantButton(hostCombatViewModel) },
 			) {
-				MainContent(hostCombatViewModel, connectionStateState)
+				MainContent(hostCombatViewModel)
 			}
 
 			val finishRecording: () -> Unit = { coroutineScope.launch { hostCombatViewModel.finishRecording() } }
-			Dialogs(connectionStateState.value, hostCombatViewModel, finishRecording)
+			Dialogs(hostCombatViewModel, finishRecording)
 		},
-		detail = if (connectionStateState.value == HostConnectionState.Connected) {
-			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
-				?: hostCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } }
-		} else null,
+		detail = hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
+			?: hostCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } },
 		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() },
 	)
 
@@ -115,49 +103,30 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 @ExperimentalFoundationApi
 @Composable
 private fun MainContent(
-	hostCombatViewModel: HostCombatViewModel,
-	connectionStateState: ResettableState<HostConnectionState>
+	hostCombatViewModel: HostCombatViewModel
 ) {
 	hostCombatViewModel.run {
-		val connectionState = connectionStateState.value
+		val combatantsList = combatants.collectAsState(persistentListOf()).value
 
-		when (connectionState) {
-			HostConnectionState.Connected -> {
-				val combatantsList = combatants.collectAsState(persistentListOf()).value
+		Column {
+			GuideBanners(combatantsList.isNotEmpty())
 
-				Column {
-
-					GuideBanners(combatantsList.isNotEmpty())
-
-					CombatantList(
-						combatantsList,
-						isHost = true,
-						::onCombatantClicked,
-						::onCombatantLongClicked,
-						::addNewCombatant,
-						dismissToStartAction = {
-							if (combatStarted && !it.disabled) swipeToDisable(::disableCombatant)
-							else swipeToDelete(::deleteCombatant)
-						},
-						dismissToEndAction = {
-							if (it.disabled) swipeToEnable(::enableCombatant)
-							else if (combatStarted) swipeToJumpToTurn(::jumpToCombatant)
-							else null
-						}
-					)
+			CombatantList(
+				combatantsList,
+				isHost = true,
+				::onCombatantClicked,
+				::onCombatantLongClicked,
+				::addNewCombatant,
+				dismissToStartAction = {
+					if (combatStarted && !it.disabled) swipeToDisable(::disableCombatant)
+					else swipeToDelete(::deleteCombatant)
+				},
+				dismissToEndAction = {
+					if (it.disabled) swipeToEnable(::enableCombatant)
+					else if (combatStarted) swipeToJumpToTurn(::jumpToCombatant)
+					else null
 				}
-			}
-
-			HostConnectionState.Connecting -> Text("Connecting")
-			is HostConnectionState.Disconnected -> {
-				Column {
-					Text("Disconnected! Reason: ${connectionState.reason}")
-					Button({ connectionStateState.reset() }) {
-						Text("Restart Connection")
-					}
-					Text("(LocalHostServer may take up to 30 seconds to notice a missing host)")
-				}
-			}
+			)
 		}
 	}
 }
@@ -181,40 +150,34 @@ private fun HostCombatViewModel.GuideBanners(hasCombatants: Boolean) {
 
 @Composable
 private fun Dialogs(
-	connectionState: HostConnectionState,
 	hostCombatViewModel: HostCombatViewModel,
 	finishRecording: () -> Unit,
 ) {
-	if (connectionState == HostConnectionState.Connected) {
-		with(hostCombatViewModel) {
-			backendInputViewModel?.let {
-				BackendInputDialog(it)
-			}
-			damageCombatantViewModel?.let {
-				DamageCombatantDialog(it)
-			}
-			confirmDamage?.let { options ->
-				ConfirmDamageDialog(
-					options,
-					onDamageApplied = ::onConfirmDamageDialogSubmit,
-					onDismiss = ::onConfirmDamageDialogCancel
-				)
-			}
-			if (isRecording) {
-				FinishRecordingDialog(finishRecording)
-			}
-			if (isProcessingRecording) {
-				Dialog(onDismissRequest = { cancelRecording() }) {
-					Surface {
-						Text("Processing Recording")
-					}
+	with(hostCombatViewModel) {
+		damageCombatantViewModel?.let {
+			DamageCombatantDialog(it)
+		}
+		confirmDamage?.let { options ->
+			ConfirmDamageDialog(
+				options,
+				onDamageApplied = ::onConfirmDamageDialogSubmit,
+				onDismiss = ::onConfirmDamageDialogCancel
+			)
+		}
+		if (isRecording) {
+			FinishRecordingDialog(finishRecording)
+		}
+		if (isProcessingRecording) {
+			Dialog(onDismissRequest = { cancelRecording() }) {
+				Surface {
+					Text("Processing Recording")
 				}
 			}
-			if (showResetConfirmation) {
-				ResetConfirmationDialog(
-					onConfirm = { onResetResponse(true) }
-				) { onResetResponse(false) }
-			}
+		}
+		if (showResetConfirmation) {
+			ResetConfirmationDialog(
+				onConfirm = { onResetResponse(true) }
+			) { onResetResponse(false) }
 		}
 	}
 }
@@ -309,23 +272,6 @@ private fun TopBar(
 					Icon(Icons.Default.Mic, contentDescription = "Record")
 				}
 			}
-			if (hostCombatViewModel.isSharing) {
-				IconButton(onClick = {
-					coroutineScope.launch {
-						hostCombatViewModel.closeSession()
-					}
-				}) {
-					Icon(Icons.Default.Close, contentDescription = "Close Session")
-				}
-			} else {
-				IconButton(onClick = {
-					coroutineScope.launch {
-						hostCombatViewModel.shareCombat()
-					}
-				}) {
-					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
-				}
-			}
 			IconButton(onClick = { displayDropdown = !displayDropdown }) {
 				Icon(Icons.Default.MoreVert, "")
 			}
@@ -333,22 +279,6 @@ private fun TopBar(
 				expanded = displayDropdown,
 				onDismissRequest = { displayDropdown = false }
 			) {
-				if (hostCombatViewModel.isSharing) {
-					DropdownMenuItem(onClick = {
-						displayDropdown = false
-						hostCombatViewModel.showSessionId()
-					}) {
-						Text(text = "Show Session Id")
-					}
-				}
-				if (hostCombatViewModel.showAutoConfirmDamageToggle) {
-					DropdownMenuItem(onClick = {
-						hostCombatViewModel.autoConfirmDamagePressed()
-					}) {
-						Checkbox(hostCombatViewModel.autoConfirmDamage, onCheckedChange = null)
-						Text(text = "Autoconfirm Damage", modifier = Modifier.padding(start = Constants.defaultPadding))
-					}
-				}
 				DropdownMenuItem(onClick = {
 					displayDropdown = false
 					hostCombatViewModel.addExistingCharacter()
