@@ -43,6 +43,7 @@ import androidx.compose.ui.window.Dialog
 import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import de.lehrbaum.initiativetracker.ui.Constants
 import de.lehrbaum.initiativetracker.ui.GeneralDialog
+import de.lehrbaum.initiativetracker.ui.character.CharacterChooserScreen
 import de.lehrbaum.initiativetracker.ui.composables.BurgerMenuButtonForDrawer
 import de.lehrbaum.initiativetracker.ui.composables.CombatantList
 import de.lehrbaum.initiativetracker.ui.composables.ErrorComposable
@@ -102,6 +103,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 		},
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
+				?: hostCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } }
 		} else null,
 		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() },
 	)
@@ -324,30 +326,34 @@ private fun TopBar(
 					Icon(Icons.Default.Share, contentDescription = "Start Sharing")
 				}
 			}
-			if (hostCombatViewModel.isSharing || hostCombatViewModel.showAutoConfirmDamageToggle) {
-				IconButton(onClick = { displayDropdown = !displayDropdown }) {
-					Icon(Icons.Default.MoreVert, "")
+			IconButton(onClick = { displayDropdown = !displayDropdown }) {
+				Icon(Icons.Default.MoreVert, "")
+			}
+			MyDropdownMenu(
+				expanded = displayDropdown,
+				onDismissRequest = { displayDropdown = false }
+			) {
+				if (hostCombatViewModel.isSharing) {
+					DropdownMenuItem(onClick = {
+						displayDropdown = false
+						hostCombatViewModel.showSessionId()
+					}) {
+						Text(text = "Show Session Id")
+					}
 				}
-				MyDropdownMenu(
-					expanded = displayDropdown,
-					onDismissRequest = { displayDropdown = false }
-				) {
-					if (hostCombatViewModel.isSharing) {
-						DropdownMenuItem(onClick = {
-							displayDropdown = false
-							hostCombatViewModel.showSessionId()
-						}) {
-							Text(text = "Show Session Id")
-						}
+				if (hostCombatViewModel.showAutoConfirmDamageToggle) {
+					DropdownMenuItem(onClick = {
+						hostCombatViewModel.autoConfirmDamagePressed()
+					}) {
+						Checkbox(hostCombatViewModel.autoConfirmDamage, onCheckedChange = null)
+						Text(text = "Autoconfirm Damage", modifier = Modifier.padding(start = Constants.defaultPadding))
 					}
-					if (hostCombatViewModel.showAutoConfirmDamageToggle) {
-						DropdownMenuItem(onClick = {
-							hostCombatViewModel.autoConfirmDamagePressed()
-						}) {
-							Checkbox(hostCombatViewModel.autoConfirmDamage, onCheckedChange = null)
-							Text(text = "Autoconfirm Damage", modifier = Modifier.padding(start = Constants.defaultPadding))
-						}
-					}
+				}
+				DropdownMenuItem(onClick = {
+					displayDropdown = false
+					hostCombatViewModel.addExistingCharacter()
+				}) {
+					Text(text = "Add Character")
 				}
 			}
 		},
