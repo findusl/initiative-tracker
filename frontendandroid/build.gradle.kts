@@ -32,10 +32,10 @@ android {
 	compileSdk = 35
 
 	defaultConfig {
-		applicationId = "de.lehrbaum.initiativetracker"
+		applicationId = "de.lehrbaum.initiativetracker.remote"
 		minSdk = 28
 		targetSdk = 35
-		versionCode = 3
+		versionCode = 4
 		version = libs.versions.frontendVersion.get()
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
