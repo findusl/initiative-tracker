@@ -37,16 +37,17 @@ class BackendNetworkClient(private val httpClient: HttpClient) {
 		}
 	}
 
-	suspend fun deleteSession(combatLink: CombatLink): Result<Unit> {
-		return runCatching {
-			withContext(Dispatchers.IO) {
-				Napier.v("Attempting to delete Session $combatLink")
-		val response = httpClient.delete {
-			val path = combatLink.sessionId?.let { "$SESSION_PATH/$it" } ?: SESSION_PATH
-			backendHttpUrl(combatLink.backendUri, path)
-		}
-		Napier.i("Response for delete Session: $response")
-			}
-		}
-	}
+        suspend fun deleteSession(combatLink: CombatLink): Result<Unit> {
+                return runCatchingNested {
+                        withContext(Dispatchers.IO) {
+                                Napier.v("Attempting to delete Session $combatLink")
+                                val response = httpClient.delete {
+                                        val path = combatLink.sessionId?.let { "$SESSION_PATH/$it" } ?: SESSION_PATH
+                                        backendHttpUrl(combatLink.backendUri, path)
+                                }
+                                Napier.i("Response for delete Session: $response")
+                                response.bodyOrFailure()
+                        }
+                }
+        }
 }
