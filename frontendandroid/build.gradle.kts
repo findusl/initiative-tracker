@@ -33,7 +33,7 @@ android {
 
 	defaultConfig {
 		applicationId = "de.lehrbaum.initiativetracker.remote"
-		minSdk = 28
+		minSdk = 30
 		targetSdk = 35
 		versionCode = 4
 		version = libs.versions.frontendVersion.get()
