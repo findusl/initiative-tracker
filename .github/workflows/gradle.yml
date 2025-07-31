@@ -23,10 +23,4 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Test shared frontend Android Code
-        run: ./gradlew :frontendshared:testDebugUnitTest
-      - name: Test shared frontend JVM Code
-        run: ./gradlew :frontendshared:jvmTest
-      - name: Test frontend Code Android
-        run: ./gradlew :frontendandroid:testDebugUnitTest
-      - name: Test shared backend Code JVM
-        run: ./gradlew :backendshared:jvmTest
+        run: ./gradlew check
