@@ -110,7 +110,7 @@ kotlin {
 			dependencies {
 				// Android gradle module wants to have this on class path otherwise it complains
 				//noinspection UseTomlInstead I want this special case to be clearly visible
-				api("androidx.activity:activity-compose")
+				api("androidx.activity:activity-compose:1.9.3")
 
 				// Multiplatform logging
 				implementation(libs.napier)
@@ -164,7 +164,7 @@ android {
 	namespace = "de.lehrbaum.initiativetracker"
 	compileSdk = 35
 	defaultConfig {
-		minSdk = 28 // to avoid warnings, the actual minSdk is set in frontendandroid/build.gradle.kts
+		minSdk = 30 // to avoid warnings, the actual minSdk is set in frontendandroid/build.gradle.kts
 	}
 }
 
