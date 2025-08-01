@@ -21,7 +21,7 @@ class BackendNetworkClient(private val httpClient: HttpClient) {
 	suspend fun createSession(
 		combatants: List<CombatantModel>,
 		activeCombatantIndex: Int,
-		backendUri: BackendUri
+		backendUri: BackendUri,
 	): Result<Int> {
 		val combatDTO = CombatModel(activeCombatantIndex, combatants)
 		return runCatchingNested {
@@ -37,17 +37,16 @@ class BackendNetworkClient(private val httpClient: HttpClient) {
 		}
 	}
 
-        suspend fun deleteSession(combatLink: CombatLink): Result<Unit> {
-                return runCatchingNested {
-                        withContext(Dispatchers.IO) {
-                                Napier.v("Attempting to delete Session $combatLink")
-                                val response = httpClient.delete {
-                                        val path = combatLink.sessionId?.let { "$SESSION_PATH/$it" } ?: SESSION_PATH
-                                        backendHttpUrl(combatLink.backendUri, path)
-                                }
-                                Napier.i("Response for delete Session: $response")
-                                response.bodyOrFailure()
-                        }
-                }
-        }
+	suspend fun deleteSession(combatLink: CombatLink): Result<Unit> =
+		runCatchingNested {
+			withContext(Dispatchers.IO) {
+				Napier.v("Attempting to delete Session $combatLink")
+				val response = httpClient.delete {
+					val path = combatLink.sessionId?.let { "$SESSION_PATH/$it" } ?: SESSION_PATH
+					backendHttpUrl(combatLink.backendUri, path)
+				}
+				Napier.i("Response for delete Session: $response")
+				response.bodyOrFailure()
+			}
+		}
 }

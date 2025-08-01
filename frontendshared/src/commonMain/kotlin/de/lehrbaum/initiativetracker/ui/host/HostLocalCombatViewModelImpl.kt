@@ -12,7 +12,7 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import kotlinx.coroutines.flow.flowOf
 
-data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit): HostCombatViewModel() {
+data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (CombatLink) -> Unit) : HostCombatViewModel() {
 	override val hostConnectionState = flowOf(HostConnectionState.Connected)
 	override val confirmDamage = null
 	override val showAutoConfirmDamageToggle = false
@@ -23,25 +23,20 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 	override var backendInputViewModel: BackendInputViewModel? by mutableStateOf(null)
 		private set
 
-	override fun onConfirmDamageDialogSubmit(decision: DamageDecision) {
-		throw IllegalStateException("It should not be possible")
-	}
+	override fun onConfirmDamageDialogSubmit(decision: DamageDecision): Unit = throw IllegalStateException("It should not be possible")
 
-	override fun autoConfirmDamagePressed() {
-		throw IllegalStateException("It should not be possible")
-	}
+	override fun autoConfirmDamagePressed(): Unit = throw IllegalStateException("It should not be possible")
 
-	override fun onConfirmDamageDialogCancel() {
-		throw IllegalStateException("It should not be possible")
-	}
+	override fun onConfirmDamageDialogCancel(): Unit = throw IllegalStateException("It should not be possible")
 
 	override suspend fun shareCombat() {
 		backendInputViewModel = BackendInputViewModel(
 			onBackendConfirmed = {
-				if (shareCombat(it))
+				if (shareCombat(it)) {
 					backendInputViewModel = null
+				}
 			},
-			onDismiss = { backendInputViewModel = null }
+			onDismiss = { backendInputViewModel = null },
 		)
 	}
 
@@ -53,15 +48,13 @@ data class HostLocalCombatViewModelImpl(private val navigateToSharedCombat: (Com
 		return sessionId != null
 	}
 
-	override suspend fun closeSession() {
-		throw IllegalStateException("It should not be possible")
-	}
+	override suspend fun closeSession(): Unit = throw IllegalStateException("It should not be possible")
 
-	override fun showSessionId() {
-		throw IllegalStateException("It should not be possible")
-	}
+	override fun showSessionId(): Unit = throw IllegalStateException("It should not be possible")
 
-	override suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision? {
-		throw IllegalStateException("It should not be possible")
-	}
+	override suspend fun confirmDamage(
+		damage: Int,
+		target: CombatantModel,
+		probableSource: String?,
+	): DamageDecision? = throw IllegalStateException("It should not be possible")
 }

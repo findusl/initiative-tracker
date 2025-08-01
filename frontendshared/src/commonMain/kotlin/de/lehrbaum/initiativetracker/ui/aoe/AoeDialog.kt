@@ -31,7 +31,6 @@ fun AoeDamageDialog(aoeDamageViewModel: AoeDamageViewModel) {
 private fun Content(aoeDamageViewModel: AoeDamageViewModel) {
 	val coroutineScope = rememberCoroutineScope(aoeDamageViewModel)
 	Column {
-
 		TabRow(selectedTabIndex = aoeDamageViewModel.activeTab) {
 			Tab(text = { Text("Targets") }, selected = aoeDamageViewModel.activeTab == 0, onClick = { aoeDamageViewModel.activeTab = 0 })
 			Tab(text = { Text("General") }, selected = aoeDamageViewModel.activeTab == 1, onClick = { aoeDamageViewModel.activeTab = 1 })
@@ -43,7 +42,7 @@ private fun Content(aoeDamageViewModel: AoeDamageViewModel) {
 			submittable = true,
 			onCancel = aoeDamageViewModel::onDismiss,
 			onSubmit = { coroutineScope.launch { aoeDamageViewModel.onSubmitPressed() } },
-			showSubmitLoadingSpinner = aoeDamageViewModel.isSubmitting
+			showSubmitLoadingSpinner = aoeDamageViewModel.isSubmitting,
 		)
 	}
 }
@@ -61,9 +60,11 @@ private fun TabContent(aoeDamageViewModel: AoeDamageViewModel) {
 private fun TargetsTab(aoeDamageViewModel: AoeDamageViewModel) {
 	LazyColumn {
 		items(aoeDamageViewModel.targets, key = TargetViewModel::id) { target ->
-			ListItem(modifier = Modifier.clickable {
-				aoeDamageViewModel.onTargetPressed(target)
-			}) {
+			ListItem(
+				modifier = Modifier.clickable {
+					aoeDamageViewModel.onTargetPressed(target)
+				},
+			) {
 				Row {
 					Checkbox(target.isSelected, onCheckedChange = null)
 					Text(target.name)

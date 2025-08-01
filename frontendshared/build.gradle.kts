@@ -2,8 +2,8 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
@@ -22,7 +22,7 @@ kotlin {
 	listOf(
 		iosX64(),
 		iosArm64(),
-		iosSimulatorArm64()
+		iosSimulatorArm64(),
 	).forEach { iosTarget ->
 		iosTarget.binaries.framework {
 			baseName = "shared"
@@ -86,7 +86,7 @@ kotlin {
 				implementation(libs.kotlinx.coroutines.test)
 			}
 		}
-		val androidUnitTest by getting {  } // not part of the accessors for some reason
+		val androidUnitTest by getting { } // not part of the accessors for some reason
 		// All jvm targets, including android
 		val jvmTargetsMain by getting {
 			dependencies {
@@ -175,13 +175,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 		if (project.findProperty("composeCompilerReports") == "true") {
 			freeCompilerArgs.addAll(
 				"-P",
-				"plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_compiler"
+				"plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_compiler",
 			)
 		}
 		if (project.findProperty("composeCompilerMetrics") == "true") {
 			freeCompilerArgs.addAll(
 				"-P",
-				"plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_compiler"
+				"plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_compiler",
 			)
 		}
 	}

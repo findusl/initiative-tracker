@@ -1,21 +1,25 @@
 package de.lehrbaum.initiativetracker.audio
 
 import io.github.aakira.napier.Napier
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.util.concurrent.CancellationException
+import javax.sound.sampled.AudioFileFormat
+import javax.sound.sampled.AudioFormat
+import javax.sound.sampled.AudioInputStream
+import javax.sound.sampled.AudioSystem
+import javax.sound.sampled.DataLine
+import javax.sound.sampled.TargetDataLine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.io.Buffer
 import kotlinx.io.asOutputStream
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
-import java.util.concurrent.CancellationException
-import javax.sound.sampled.*
 
 private const val TAG = "AudioRecorder"
 
-actual class AudioRecorder: AutoCloseable, CoroutineScope {
+actual class AudioRecorder : AutoCloseable, CoroutineScope {
 	override val coroutineContext: Job = SupervisorJob()
 	private lateinit var line: TargetDataLine
 	private lateinit var format: AudioFormat
@@ -56,8 +60,9 @@ actual class AudioRecorder: AutoCloseable, CoroutineScope {
 	// Start recording audio
 	actual fun startRecording() {
 		isRecording = true
-		if (!line.isOpen)
+		if (!line.isOpen) {
 			line.open(format)
+		}
 		line.start()
 		recordingStream = ByteArrayOutputStream()
 		Thread {
@@ -74,7 +79,7 @@ actual class AudioRecorder: AutoCloseable, CoroutineScope {
 			} catch (e: IOException) {
 				Napier.w("Exception while recording audio", e, tag = TAG)
 			} finally {
-			    line.close()
+				line.close()
 			}
 		}.start()
 	}

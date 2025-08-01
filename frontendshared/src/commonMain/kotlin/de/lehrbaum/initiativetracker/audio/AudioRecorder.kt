@@ -6,7 +6,9 @@ import kotlinx.io.Buffer
 // This way there would be no need to implement stubs on all platforms for every function, just for one
 expect class AudioRecorder() {
 	val isAvailable: Boolean
+
 	fun startRecording()
+
 	fun stopRecording(): Result<Buffer>
 
 	fun close()

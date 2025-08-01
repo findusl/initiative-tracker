@@ -15,11 +15,9 @@ class CharacterRepository {
 
 	val characters = MutableStateFlow(loadCharacters())
 
-	private fun loadCharacters(): List<CharacterModel> =
-		settings.decodeValue(SETTINGS_KEY, emptyList())
+	private fun loadCharacters(): List<CharacterModel> = settings.decodeValue(SETTINGS_KEY, emptyList())
 
-	private fun persistCharacters() =
-		settings.encodeValue(SETTINGS_KEY, characters.value)
+	private fun persistCharacters() = settings.encodeValue(SETTINGS_KEY, characters.value)
 
 	fun addCharacter(): CharacterModel {
 		val defaultCharacter = CharacterModel(nextFreeId(), "New Character", initiativeMod = null, maxHp = null)
@@ -42,7 +40,5 @@ class CharacterRepository {
 
 	fun getById(id: Long): CharacterModel = characters.value.first { it.id == id }
 
-	private fun nextFreeId(): Long {
-		return characters.value.maxOfOrNull { it.id }?.inc() ?: 0
-	}
+	private fun nextFreeId(): Long = characters.value.maxOfOrNull { it.id }?.inc() ?: 0
 }

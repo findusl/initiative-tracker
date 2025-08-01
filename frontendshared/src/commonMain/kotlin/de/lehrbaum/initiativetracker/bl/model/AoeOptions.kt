@@ -9,5 +9,5 @@ data class AoeOptions(
 
 data class SaveDC(
 	val type: SavingThrow,
-	val difficultyClass: Int
+	val difficultyClass: Int,
 )

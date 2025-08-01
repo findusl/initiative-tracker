@@ -13,14 +13,14 @@ import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.hosting.HostConnectionState
 import de.lehrbaum.initiativetracker.networking.hosting.RemoteHostCombatShare
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 data class HostSharedCombatViewModelImpl(
 	val combatLink: CombatLink,
-	private val leaveScreen: () -> Unit
+	private val leaveScreen: () -> Unit,
 ) : HostCombatViewModel() {
 	private val remoteHostCombatShare: HostCombatShare = RemoteHostCombatShare(combatLink, combatController)
 	override val hostConnectionState: Flow<HostConnectionState>
@@ -39,13 +39,12 @@ data class HostSharedCombatViewModelImpl(
 		confirmDamage = null
 	}
 
-	override suspend fun shareCombat() {
-		throw IllegalStateException("It should not be possible")
-	}
+	override suspend fun shareCombat(): Unit = throw IllegalStateException("It should not be possible")
 
 	override suspend fun closeSession() {
 		// failure is hard to handle, since we want it to be gone... This will not actually show as we leave the screen
-		GlobalInstances.backendNetworkClient.deleteSession(combatLink)
+		GlobalInstances.backendNetworkClient
+			.deleteSession(combatLink)
 			.getOrNullAndHandle("Unable to delete combat on server")
 		CombatLinkRepository.removeCombatLink(combatLink)
 		leaveScreen()
@@ -56,7 +55,7 @@ data class HostSharedCombatViewModelImpl(
 		snackbarState.value = SnackbarState.Copyable(
 			"SessionId: ${combatLink.sessionId}",
 			SnackbarDuration.Long,
-			combatLink.sessionId.toString()
+			combatLink.sessionId.toString(),
 		)
 	}
 
@@ -69,7 +68,11 @@ data class HostSharedCombatViewModelImpl(
 		autoConfirmDamage = !autoConfirmDamage
 	}
 
-	override suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision? {
+	override suspend fun confirmDamage(
+		damage: Int,
+		target: CombatantModel,
+		probableSource: String?,
+	): DamageDecision? {
 		if (autoConfirmDamage) {
 			return DamageDecision.FULL
 		}

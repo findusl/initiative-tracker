@@ -15,6 +15,7 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.IO
@@ -28,7 +29,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "RemoteHostCombatShare"
 
@@ -36,14 +36,13 @@ class RemoteHostCombatShare(
 	private val combatLink: CombatLink,
 	private val combatController: CombatController,
 ) : HostCombatShare {
-
 	private val hostEventHandler = HostEventHandler(combatController)
 
 	override val hostConnectionState = flow {
 		emit(HostConnectionState.Connecting)
 		try {
 			GlobalInstances.httpClient.buildBackendWebsocket(combatLink.backendUri) {
-				if(joinSessionAsHost(this@flow)) {
+				if (joinSessionAsHost(this@flow)) {
 					launch { shareCombatUpdates() }
 					receiveEvents()
 					emit(HostConnectionState.Disconnected("Event receiving ended normally"))
@@ -57,8 +56,7 @@ class RemoteHostCombatShare(
 			}
 			emit(HostConnectionState.Disconnected("Exception $e"))
 		}
-	}
-		.distinctUntilChanged()
+	}.distinctUntilChanged()
 		.flowOn(Dispatchers.IO)
 
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsHost(collector: FlowCollector<HostConnectionState>): Boolean {
@@ -106,7 +104,9 @@ class RemoteHostCombatShare(
 }
 
 sealed interface HostConnectionState {
-	data object Connecting: HostConnectionState
-	data object Connected: HostConnectionState
-	data class Disconnected(val reason: String): HostConnectionState
+	data object Connecting : HostConnectionState
+
+	data object Connected : HostConnectionState
+
+	data class Disconnected(val reason: String) : HostConnectionState
 }

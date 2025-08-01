@@ -5,10 +5,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class DiceTest {
-
 	private val seed = 1234L
 
-    @Test
+	@Test
 	fun calculateDiceFormulaInvalidFormula() {
 		assertNull(Dice.calculateDiceFormula("8d6-2d", seed))
 	}

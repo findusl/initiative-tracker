@@ -9,7 +9,7 @@ import kotlinx.serialization.json.JsonTransformingSerializer
 @Serializable
 data class TagDTO(
 	val tag: String,
-	val prefix: String? = null
+	val prefix: String? = null,
 )
 
 internal object TagDTODeserializer : JsonTransformingSerializer<TagDTO>(TagDTO.serializer()) {

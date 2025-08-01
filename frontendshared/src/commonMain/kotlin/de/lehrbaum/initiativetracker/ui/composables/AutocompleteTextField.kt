@@ -40,8 +40,8 @@ fun AutocompleteTextField(
 	var textFieldWidth by remember { mutableStateOf(0) }
 	var textFieldHeight by remember { mutableStateOf(0) }
 
-    Column(modifier) {
-        OutlinedTextField(
+	Column(modifier) {
+		OutlinedTextField(
 			value = text,
 			onValueChange = onTextChanged,
 			modifier = Modifier
@@ -56,14 +56,14 @@ fun AutocompleteTextField(
 			isError = error,
 			placeholder = placeholder?.let { { Text(it) } },
 			trailingIcon = {
-				if (trailingIcon != null)
+				if (trailingIcon != null) {
 					trailingIcon()
-				else if (expanded && suggestions.isNotEmpty()) {
+				} else if (expanded && suggestions.isNotEmpty()) {
 					IconButton(onClick = { expanded = false }) {
 						Icon(
 							Icons.Filled.ArrowDropDown,
 							contentDescription = "Close Dropdown",
-							modifier = Modifier.graphicsLayer(scaleY = -1f)
+							modifier = Modifier.graphicsLayer(scaleY = -1f),
 						)
 					}
 				}

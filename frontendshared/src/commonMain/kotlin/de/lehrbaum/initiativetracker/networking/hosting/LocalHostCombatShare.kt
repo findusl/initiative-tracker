@@ -13,11 +13,9 @@ class LocalHostCombatShare(
 ) : HostCombatShare {
 	override val hostConnectionState: Flow<HostConnectionState> = flow {
 		try {
-
 		} finally {
 			// TODO remove from server
 		}
 		TODO()
 	}
-
 }

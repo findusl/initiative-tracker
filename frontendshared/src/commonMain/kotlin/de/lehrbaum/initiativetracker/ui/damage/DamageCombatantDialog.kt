@@ -15,8 +15,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,8 +46,10 @@ fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 					if (viewModel.textIsValidNumber && keyEvent.key == Key.Enter && keyEvent.type == KeyEventType.KeyUp) {
 						coroutineScope.launch { viewModel.onSubmit() }
 						true
-					} else false
-				}
+					} else {
+						false
+					}
+				},
 		) {
 			DamageCombatantDialogContent(viewModel, coroutineScope)
 		}
@@ -58,53 +58,53 @@ fun DamageCombatantDialog(viewModel: DamageCombatantViewModel) {
 
 @Composable // not skippable because of coroutineScope but parent is trivial and skippable
 private fun DamageCombatantDialogContent(viewModel: DamageCombatantViewModel, coroutineScope: CoroutineScope) {
-
 	Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 		Text("Damage ${viewModel.target}")
 		Spacer(Modifier.height(Constants.defaultPadding))
 		Row(
 			horizontalArrangement = Arrangement.Center,
-			verticalAlignment = Alignment.CenterVertically
+			verticalAlignment = Alignment.CenterVertically,
 		) {
 			IconButton(onClick = { viewModel.sliderValue-- }) {
 				Icon(
 					imageVector = Icons.AutoMirrored.Filled.ArrowBack,
 					contentDescription = "Decrement",
-					tint = Color.Black
+					tint = Color.Black,
 				)
 			}
 			// This text should be centered
 			DiceRollingTextField(
 				initialNumber = viewModel.sliderValueInt,
 				onNumberChanged = {
-					if (it != viewModel.sliderValueInt)
+					if (it != viewModel.sliderValueInt) {
 						viewModel.sliderValue = it.toFloat()
+					}
 				},
 				modifier = Modifier
 					.weight(1.0f)
 					.defaultFocussed(viewModel),
-				onInputValidChanged = { viewModel.textIsValidNumber = it }
+				onInputValidChanged = { viewModel.textIsValidNumber = it },
 			)
 			IconButton(
-				onClick = { viewModel.sliderValue++ }
+				onClick = { viewModel.sliderValue++ },
 			) {
 				Icon(
 					imageVector = Icons.AutoMirrored.Filled.ArrowForward,
 					contentDescription = "Increment",
-					tint = Color.Black
+					tint = Color.Black,
 				)
 			}
 		}
 		Slider(
 			value = viewModel.sliderValue,
 			valueRange = 0f..100f,
-			onValueChange = { viewModel.sliderValue = it }
+			onValueChange = { viewModel.sliderValue = it },
 		)
 		OkCancelButtonRow(
 			viewModel.textIsValidNumber,
 			viewModel.onCancel,
 			onSubmit = { coroutineScope.launch { viewModel.onSubmit() } },
-			viewModel.isSubmitting
+			viewModel.isSubmitting,
 		)
 	}
 }

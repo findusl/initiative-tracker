@@ -9,7 +9,7 @@ import io.github.aakira.napier.Napier
 private const val TAG = "AudioCommandController"
 
 class AudioCommandController(
-	private val combatController: CombatController
+	private val combatController: CombatController,
 ) {
 	private var audioRecorder = AudioRecorder()
 	private val openAiNetworkClientProvider = GlobalInstances.openAiNetworkClientProvider
@@ -28,7 +28,8 @@ class AudioCommandController(
 		val client = openAiNetworkClientProvider.getClient()
 			?: return Result.failure(IllegalStateException("OpenAI is unavailable"))
 
-		val result = audioRecorder.stopRecording()
+		val result = audioRecorder
+			.stopRecording()
 			.flatMap { recording ->
 				client.interpretSpokenCombatCommand(recording, combatants)
 			}.onSuccess {
@@ -45,5 +46,4 @@ class AudioCommandController(
 		audioRecorder.close()
 		audioRecorder = AudioRecorder()
 	}
-
 }

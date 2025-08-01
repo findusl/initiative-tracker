@@ -44,7 +44,7 @@ private fun DialogTopBar(editCharacterModel: EditCharacterModel) {
 			IconButton(onClick = editCharacterModel::cancel) {
 				Icon(
 					imageVector = Icons.Filled.Close,
-					contentDescription = "Cancel edit"
+					contentDescription = "Cancel edit",
 				)
 			}
 		},
@@ -52,7 +52,7 @@ private fun DialogTopBar(editCharacterModel: EditCharacterModel) {
 			Button(onClick = editCharacterModel::saveCharacter, enabled = canSave) {
 				Text("Save")
 			}
-		}
+		},
 	)
 }
 
@@ -61,7 +61,7 @@ private fun EditCharacterContent(editCharacterModel: EditCharacterModel, modifie
 	Column(
 		modifier = modifier
 			.padding(Constants.defaultPadding)
-			.fillMaxWidth()
+			.fillMaxWidth(),
 	) {
 		EditTextField(editCharacterModel.nameEdit, "name")
 		Spacer(modifier = Modifier.height(Constants.defaultPadding))

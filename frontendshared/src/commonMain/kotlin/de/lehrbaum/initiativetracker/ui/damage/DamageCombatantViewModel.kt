@@ -12,7 +12,7 @@ data class DamageCombatantViewModel(
 	val target: String,
 	private val onSubmit: suspend (Int) -> Unit,
 	val onCancel: () -> Unit,
-	val initialDamage: Int = 1
+	val initialDamage: Int = 1,
 ) {
 	var sliderValue by mutableStateOf(initialDamage.toFloat())
 	val sliderValueInt by derivedStateOf { sliderValue.roundToInt() }
@@ -26,5 +26,4 @@ data class DamageCombatantViewModel(
 		onSubmit(sliderValueInt)
 		isSubmitting = false
 	}
-
 }

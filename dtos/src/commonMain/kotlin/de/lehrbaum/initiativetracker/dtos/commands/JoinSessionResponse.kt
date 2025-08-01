@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface JoinSessionResponse {
-
 	@Serializable
 	data class JoinedSession(val combatModel: CombatModel) : JoinSessionResponse
 

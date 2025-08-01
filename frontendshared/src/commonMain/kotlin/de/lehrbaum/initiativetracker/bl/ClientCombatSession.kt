@@ -19,6 +19,7 @@ import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.receiveDeserialized
 import io.ktor.client.plugins.websocket.sendSerialized
+import kotlin.coroutines.resume
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellableContinuation
@@ -35,12 +36,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.coroutines.resume
 
 private const val TAG = "ClientCombatSession"
 
 class ClientCombatSession(private val combatLink: CombatLink) {
-
 	private val outgoingMutex = Mutex()
 
 	private var outgoingContinuation: CancellableContinuation<Boolean>? = null
@@ -64,8 +63,7 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 			}
 			emit(Disconnected("Exception $e"))
 		}
-	}
-		.distinctUntilChanged()
+	}.distinctUntilChanged()
 		.flowOn(Dispatchers.IO)
 
 	private suspend fun DefaultClientWebSocketSession.joinSessionAsClient(collector: FlowCollector<ClientCombatState>): Boolean {
@@ -102,26 +100,23 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 		}
 	}
 
-	suspend fun requestAddCharacter(combatantModel: CombatantModel): Boolean {
-		return sendClientCommand(ClientCommand.AddCombatant(combatantModel))
-	}
+	suspend fun requestAddCharacter(combatantModel: CombatantModel): Boolean = sendClientCommand(ClientCommand.AddCombatant(combatantModel))
 
-	suspend fun requestEditCharacter(combatantModel: CombatantModel): Boolean {
-		return sendClientCommand(ClientCommand.EditCombatant(combatantModel))
-	}
+	suspend fun requestEditCharacter(combatantModel: CombatantModel): Boolean = sendClientCommand(ClientCommand.EditCombatant(combatantModel))
 
-	suspend fun requestDamageCharacter(targetId: CombatantId, damage: Int, ownerId: UserId): Boolean {
-		return sendClientCommand(ClientCommand.DamageCombatant(targetId, damage, ownerId))
-	}
+	suspend fun requestDamageCharacter(
+		targetId: CombatantId,
+		damage: Int,
+		ownerId: UserId,
+	): Boolean = sendClientCommand(ClientCommand.DamageCombatant(targetId, damage, ownerId))
 
-	suspend fun requestFinishTurn(activeCombatantIndex: Int): Boolean {
-		return sendClientCommand(ClientCommand.FinishTurn(activeCombatantIndex))
-	}
+	suspend fun requestFinishTurn(activeCombatantIndex: Int): Boolean = sendClientCommand(ClientCommand.FinishTurn(activeCombatantIndex))
 
 	@OptIn(DelicateCoroutinesApi::class)
 	private suspend fun sendClientCommand(command: ClientCommand): Boolean {
 		Napier.d("Attempting to send client command $command. Mutex locked: ${outgoingMutex.isLocked}")
-		outgoingMutex.withLock { // only one command at a time
+		outgoingMutex.withLock {
+			// only one command at a time
 			val webSocketSession = this.webSocketSession ?: return false
 			webSocketSession.sendSerialized(command)
 			return suspendCancellableCoroutine {
@@ -138,11 +133,13 @@ class ClientCombatSession(private val combatLink: CombatLink) {
 }
 
 sealed interface ClientCombatState {
-	data object Connecting: ClientCombatState
+	data object Connecting : ClientCombatState
+
 	@Stable
-	data class Connected(val activeCombatantIndex: Int, val combatants: ImmutableList<CombatantModel>): ClientCombatState {
-		constructor(combatModel: CombatModel):
+	data class Connected(val activeCombatantIndex: Int, val combatants: ImmutableList<CombatantModel>) : ClientCombatState {
+		constructor(combatModel: CombatModel) :
 			this(combatModel.activeCombatantIndex, combatModel.combatants.toImmutableList())
 	}
-	data class Disconnected(val reason: String): ClientCombatState
+
+	data class Disconnected(val reason: String) : ClientCombatState
 }

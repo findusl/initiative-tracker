@@ -15,6 +15,8 @@ import de.lehrbaum.initiativetracker.networking.bestiary.MonsterDTO
 import de.lehrbaum.initiativetracker.networking.bestiary.accessWithFallback
 import de.lehrbaum.initiativetracker.ui.shared.EditFieldViewModel
 import io.github.aakira.napier.Napier
+import kotlin.random.Random
+import kotlin.time.measureTimedValue
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CancellableContinuation
@@ -23,8 +25,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.random.Random
-import kotlin.time.measureTimedValue
 
 @Stable
 data class EditCombatantViewModel(
@@ -43,15 +43,15 @@ data class EditCombatantViewModel(
 
 	val initiativeEdit = EditFieldViewModel(
 		combatantModel.initiative,
-		parseInput = EditFieldViewModel.OptionalIntParser
+		parseInput = EditFieldViewModel.OptionalIntParser,
 	)
 	val maxHpEdit = EditFieldViewModel(
 		combatantModel.maxHp,
-		parseInput = EditFieldViewModel.OptionalIntParser
+		parseInput = EditFieldViewModel.OptionalIntParser,
 	)
 	val currentHpEdit = EditFieldViewModel(
 		combatantModel.currentHp,
-		parseInput = EditFieldViewModel.OptionalIntParser
+		parseInput = EditFieldViewModel.OptionalIntParser,
 	)
 	var isHidden: Boolean by mutableStateOf(combatantModel.isHidden)
 
@@ -70,22 +70,20 @@ data class EditCombatantViewModel(
 				.map { it.displayName }
 				.filter { it != monsterTypeName } // Don't suggest the existing choice
 				.toList()
-				.sortedBy{ it.length }
+				.sortedBy { it.length }
 				.toPersistentList()
-		}
-			.also { Napier.d("Took ${it.duration.inWholeMilliseconds} to calculate monster type name suggestions") }
+		}.also { Napier.d("Took ${it.duration.inWholeMilliseconds} to calculate monster type name suggestions") }
 			.value
 	}
 	var confirmApplyMonsterDialog: CancellableContinuation<Boolean>? by mutableStateOf(null)
 
-	private fun determineMonster(name: String): MonsterDTO? =
-		MonsterCache.getMonsterByName(name)
+	private fun determineMonster(name: String): MonsterDTO? = MonsterCache.getMonsterByName(name)
 
 	suspend fun onMonsterTypeChanged(type: MonsterDTO?) {
 		if (type != null) {
-			if (initiativeEdit.isFailureOrNull()
-				&& maxHpEdit.isFailureOrNull()
-				&& currentHpEdit.isFailureOrNull()
+			if (initiativeEdit.isFailureOrNull() &&
+				maxHpEdit.isFailureOrNull() &&
+				currentHpEdit.isFailureOrNull()
 			) {
 				applyMonsterType()
 			} else {
@@ -93,8 +91,9 @@ data class EditCombatantViewModel(
 					confirmApplyMonsterDialog = it
 					it.invokeOnCancellation { confirmApplyMonsterDialog = null }
 				}
-				if (confirmed)
+				if (confirmed) {
 					applyMonsterType()
+				}
 				confirmApplyMonsterDialog = null
 			}
 			loadNameSuggestions(type)
@@ -139,22 +138,24 @@ data class EditCombatantViewModel(
 	}
 
 	suspend fun saveCombatant() {
-		onSave(CombatantModel(
-			combatantModel.ownerId,
-			id,
-			name,
-			initiativeEdit.value.getOrThrow(),
-			maxHpEdit.value.getOrThrow(),
-			currentHpEdit.value.getOrThrow(),
-			monsterType?.displayName,
-			combatantModel.disabled,
-			isHidden,
-		))
-    }
+		onSave(
+			CombatantModel(
+				combatantModel.ownerId,
+				id,
+				name,
+				initiativeEdit.value.getOrThrow(),
+				maxHpEdit.value.getOrThrow(),
+				currentHpEdit.value.getOrThrow(),
+				monsterType?.displayName,
+				combatantModel.disabled,
+				isHidden,
+			),
+		)
+	}
 
-    fun cancel() {
-        onCancel()
-    }
+	fun cancel() {
+		onCancel()
+	}
 }
 
 private fun EditFieldViewModel<*>.isFailureOrNull() = value.getOrNull() == null

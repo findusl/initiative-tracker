@@ -20,7 +20,7 @@ fun ListDetailLayout(
 		if (isWidescreen) {
 			Row(
 				horizontalArrangement = Arrangement.SpaceEvenly,
-				modifier = Modifier.fillMaxWidth()
+				modifier = Modifier.fillMaxWidth(),
 			) {
 				val modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1f)
 				Box(modifier) {

@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.toPersistentList
 data class AoeDamageViewModel(
 	private val combatants: ImmutableList<CombatantModel>,
 	private val onSubmit: suspend (AoeOptions, ImmutableCollection<CombatantId>) -> Boolean,
-	private val onDismiss: () -> Unit
+	private val onDismiss: () -> Unit,
 ) {
 	var targets by mutableStateOf(combatants.map { TargetViewModel(it.name, false, it.id) })
 		private set
@@ -42,7 +42,7 @@ data class AoeDamageViewModel(
 
 	suspend fun onSubmitPressed() {
 		isSubmitting = true
-		val selectedTargets = targets.asSequence().filter { it.isSelected }.map { it.id }.toPersistentList()
+		val selectedTargets = targets.filter { it.isSelected }.map { it.id }.toPersistentList()
 		onSubmit(TODO(), selectedTargets)
 		isSubmitting = false
 	}

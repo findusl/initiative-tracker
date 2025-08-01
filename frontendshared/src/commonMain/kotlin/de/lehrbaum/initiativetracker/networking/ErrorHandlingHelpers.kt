@@ -3,10 +3,10 @@ package de.lehrbaum.initiativetracker.networking
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
-import kotlinx.io.IOException
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlinx.io.IOException
 
 /**
  * Run catching with a nested Result
@@ -45,8 +45,7 @@ inline fun <T> Result<T>.filter(description: String, condition: (T) -> Boolean):
 	return if (condition(value)) this else Result.failure(RuntimeException(description))
 }
 
-fun <R> Iterable<Result<R>>.filterIsSuccess(): List<R> =
-	filter { it.isSuccess }.map { it.getOrThrow() }
+fun <R> Iterable<Result<R>>.filterIsSuccess(): List<R> = filter { it.isSuccess }.map { it.getOrThrow() }
 
 suspend inline fun <reified T> HttpResponse.bodyOrFailure(): Result<T> =
 	if (status.isSuccess()) Result.success(body()) else Result.failure(IOException("ResponseStatus $status"))
