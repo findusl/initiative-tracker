@@ -38,8 +38,8 @@ import de.lehrbaum.initiativetracker.ui.composables.Guide
 import de.lehrbaum.initiativetracker.ui.composables.OkCancelButtonRow
 import de.lehrbaum.initiativetracker.ui.composables.composableIf
 import de.lehrbaum.initiativetracker.ui.composables.rememberCoroutineScope
-import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
@@ -50,7 +50,7 @@ fun EditCombatantScreen(editCombatantViewModel: EditCombatantViewModel) {
 		confirmApplyMonsterDialog(
 			onDismiss = { completionContinuation.resume(false) },
 			onAccept = { completionContinuation.resume(true) },
-			editCombatantViewModel
+			editCombatantViewModel,
 		)
 	}
 }
@@ -60,11 +60,11 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 	val canSave by remember(editCombatantViewModel) {
 		derivedStateOf {
 			!editCombatantViewModel.run {
-				nameError
-					|| initiativeEdit.hasError
-					|| maxHpEdit.hasError
-					|| currentHpEdit.hasError
-					|| monsterTypeError
+				nameError ||
+					initiativeEdit.hasError ||
+					maxHpEdit.hasError ||
+					currentHpEdit.hasError ||
+					monsterTypeError
 			}
 		}
 	}
@@ -76,7 +76,7 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 			IconButton(onClick = editCombatantViewModel::cancel) {
 				Icon(
 					imageVector = Icons.Filled.Close,
-					contentDescription = "Cancel edit"
+					contentDescription = "Cancel edit",
 				)
 			}
 		},
@@ -90,7 +90,7 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 						showLoadingSpinner = false
 					}
 				},
-				enabled = canSave
+				enabled = canSave,
 			) {
 				Row(verticalAlignment = Alignment.CenterVertically) {
 					Text("Save")
@@ -99,12 +99,12 @@ private fun DialogTopBar(editCombatantViewModel: EditCombatantViewModel) {
 						CircularProgressIndicator(
 							color = MaterialTheme.colors.onPrimary,
 							strokeWidth = 3.dp,
-							modifier = Modifier.padding(start = 8.dp).size(28.dp)
+							modifier = Modifier.padding(start = 8.dp).size(28.dp),
 						)
 					}
 				}
 			}
-		}
+		},
 	)
 }
 
@@ -113,7 +113,7 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 	Column(
 		modifier = modifier
 			.padding(Constants.defaultPadding)
-			.fillMaxWidth()
+			.fillMaxWidth(),
 	) {
 		CreatureTypeField(editCombatantViewModel)
 		NameField(editCombatantViewModel)
@@ -123,7 +123,7 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 		if (editCombatantViewModel.monsterType != null) {
 			Guide(
 				text = "When using a prepared monster type, the initiative is calculated by rolling a d20 and adding the monster's initiative bonus.",
-				guideKey = "initiative_calculation"
+				guideKey = "initiative_calculation",
 			)
 			Spacer(modifier = Modifier.height(Constants.defaultPadding))
 		}
@@ -152,10 +152,12 @@ private fun EditCombatantContent(editCombatantViewModel: EditCombatantViewModel,
 fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 	var firstRun by remember(editCombatantViewModel) { mutableStateOf(true) }
 	LaunchedEffect(editCombatantViewModel.monsterType) {
-		if (firstRun) // skip on first run because user just opened the edit dialog
+		if (firstRun) {
+			// skip on first run because user just opened the edit dialog
 			firstRun = false
-		else
+		} else {
 			editCombatantViewModel.onMonsterTypeChanged(editCombatantViewModel.monsterType)
+		}
 	}
 	AutocompleteTextField(
 		text = editCombatantViewModel.monsterTypeName,
@@ -164,7 +166,7 @@ fun CreatureTypeField(editCombatantViewModel: EditCombatantViewModel) {
 		error = editCombatantViewModel.monsterTypeError,
 		suggestions = editCombatantViewModel.monsterTypeNameSuggestions,
 		placeholder = "Skeleton (MM)",
-		enabled = editCombatantViewModel.monsters.isNotEmpty()
+		enabled = editCombatantViewModel.monsters.isNotEmpty(),
 	)
 }
 
@@ -176,9 +178,9 @@ fun NameField(editCombatantViewModel: EditCombatantViewModel) {
 		onTextChanged = { editCombatantViewModel.name = it },
 		error = editCombatantViewModel.nameError,
 		suggestions = editCombatantViewModel.nameSuggestionsToShow,
-		trailingIcon = composableIf (editCombatantViewModel.nameLoading) {
-			CircularProgressIndicator(color = MaterialTheme.colors.primary,)
-		}
+		trailingIcon = composableIf(editCombatantViewModel.nameLoading) {
+			CircularProgressIndicator(color = MaterialTheme.colors.primary)
+		},
 	)
 }
 
@@ -186,12 +188,12 @@ fun NameField(editCombatantViewModel: EditCombatantViewModel) {
 private fun confirmApplyMonsterDialog(
 	onDismiss: () -> Unit,
 	onAccept: () -> Unit,
-	editCombatantViewModel: EditCombatantViewModel
+	editCombatantViewModel: EditCombatantViewModel,
 ) {
 	GeneralDialog(onDismissRequest = onDismiss) {
 		Column(
 			modifier = Modifier.padding(16.dp),
-			verticalArrangement = Arrangement.spacedBy(8.dp)
+			verticalArrangement = Arrangement.spacedBy(8.dp),
 		) {
 			Text(text = "Apply stats of ${editCombatantViewModel.monsterTypeName} where known?")
 			OkCancelButtonRow(true, onDismiss, onAccept)

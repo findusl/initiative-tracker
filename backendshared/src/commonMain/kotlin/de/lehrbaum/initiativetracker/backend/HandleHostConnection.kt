@@ -93,11 +93,9 @@ private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: 
 		}
 		if (localSession == null) {
 			HostingCommand.SessionNotFound
-		}
-		else if (localSession.hostWebsocketSession?.isActive == true) {
+		} else if (localSession.hostWebsocketSession?.isActive == true) {
 			HostingCommand.SessionAlreadyHasHost
-		}
-		else {
+		} else {
 			session = localSession
 			localSession.hostWebsocketSession = this
 			HostingCommand.JoinedAsHost(localSession.combatState.value)
@@ -108,5 +106,5 @@ private suspend fun DefaultWebSocketServerSession.obtainSession(hostingCommand: 
 }
 
 private class HostSessionState(
-	val commandResponse: Channel<Boolean> = Channel(capacity = RENDEZVOUS)
+	val commandResponse: Channel<Boolean> = Channel(capacity = RENDEZVOUS),
 )

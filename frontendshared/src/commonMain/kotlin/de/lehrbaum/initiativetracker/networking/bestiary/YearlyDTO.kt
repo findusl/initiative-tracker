@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class YearlyDTO(
 	@SerialName("1e")
-	val e: List<String>
+	val e: List<String>,
 )

@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonTransformingSerializer
 data class SpellDTO(
 	@SerialName("entry")
 	val spellReference: String,
-	val hidden: Boolean = false
+	val hidden: Boolean = false,
 )
 
 internal object SpellDTODeserializer : JsonTransformingSerializer<SpellDTO>(SpellDTO.serializer()) {

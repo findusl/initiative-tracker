@@ -68,7 +68,7 @@ data class MonsterDTO(
 	@SerialName("_versions")
 	val versions: List<VersionDTO>? = null,
 	val vulnerable: List<@Serializable(with = DamageTypeDTODeserializer::class) DamageTypeDTO>? = null,
-	val wis: Int? = null
+	val wis: Int? = null,
 ) {
 	@kotlinx.serialization.Transient
 	val displayName = "$name ($source)"

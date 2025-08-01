@@ -32,7 +32,7 @@ fun BackendInputDialog(backendInputViewModel: BackendInputViewModel) {
 			Row {
 				Switch(
 					checked = backendInputViewModel.secureConnectionChosen,
-					onCheckedChange = { backendInputViewModel.secureConnectionChosen = it }
+					onCheckedChange = { backendInputViewModel.secureConnectionChosen = it },
 				)
 				Text("Use Secure Connection?")
 			}

@@ -23,8 +23,7 @@ object CombatLinkRepository {
 		persistCombatLinks()
 	}
 
-	private fun persistCombatLinks() =
-		settings.encodeValue(SETTINGS_KEY_V2, combatLinks.value)
+	private fun persistCombatLinks() = settings.encodeValue(SETTINGS_KEY_V2, combatLinks.value)
 
 	private fun loadCombatLinks(): Set<CombatLink> {
 		settings.remove(SETTINGS_KEY_V1) // the old CombatLink did not specify the host, not convertible

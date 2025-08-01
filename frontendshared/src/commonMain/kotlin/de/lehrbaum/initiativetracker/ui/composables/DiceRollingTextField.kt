@@ -45,7 +45,7 @@ fun DiceRollingTextField(
 			mostRecentInputNumber = it
 			onNumberChanged(it)
 		},
-		onInputValidChanged = { onNumberChanged(if (it) mostRecentInputNumber else null) }
+		onInputValidChanged = { onNumberChanged(if (it) mostRecentInputNumber else null) },
 	)
 }
 
@@ -88,7 +88,8 @@ fun DiceRollingTextField(
 				parsed?.let(onNumberChanged)
 				onInputValidChanged(parsed != null)
 			},
-			modifier = Modifier.fillMaxWidth()
+			modifier = Modifier
+				.fillMaxWidth()
 				.onSizeChanged {
 					textFieldWidth = it.width
 					textFieldHeight = it.height
@@ -115,8 +116,9 @@ fun DiceRollingTextField(
 					onInputValidChanged(true)
 				}) {
 					Column {
-						if (result.intermediateStep != result.sum.toString())
+						if (result.intermediateStep != result.sum.toString()) {
 							Text("=${result.intermediateStep}")
+						}
 						Text("=${result.sum}")
 					}
 				}

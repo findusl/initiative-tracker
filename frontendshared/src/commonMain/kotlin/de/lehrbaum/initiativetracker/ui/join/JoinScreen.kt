@@ -30,9 +30,9 @@ fun JoinScreen(drawerState: DrawerState, joinViewModel: JoinViewModel) {
 					val text = joinViewModel.title
 					Text(text, color = MaterialTheme.colors.onPrimary)
 				},
-				navigationIcon = { BurgerMenuButtonForDrawer(drawerState) }
+				navigationIcon = { BurgerMenuButtonForDrawer(drawerState) },
 			)
-		}
+		},
 	) {
 		Column {
 			OutlinedTextField(
@@ -42,7 +42,7 @@ fun JoinScreen(drawerState: DrawerState, joinViewModel: JoinViewModel) {
 				},
 				label = { Text("Host") },
 				isError = joinViewModel.hostFieldError,
-				modifier = Modifier.fillMaxWidth()
+				modifier = Modifier.fillMaxWidth(),
 			)
 			OutlinedTextField(
 				value = joinViewModel.combatIdFieldContent,
@@ -51,19 +51,19 @@ fun JoinScreen(drawerState: DrawerState, joinViewModel: JoinViewModel) {
 				},
 				label = { Text("Combat Id (Optional)") },
 				isError = joinViewModel.combatIdFieldError,
-				modifier = Modifier.fillMaxWidth()
+				modifier = Modifier.fillMaxWidth(),
 			)
 			Row {
 				Switch(
 					checked = joinViewModel.secureConnectionChosen,
-					onCheckedChange = { joinViewModel.secureConnectionChosen = it }
+					onCheckedChange = { joinViewModel.secureConnectionChosen = it },
 				)
 				Text("Use Secure Connection?")
 			}
 			Row(horizontalArrangement = Arrangement.SpaceEvenly) {
 				Button(
 					onClick = { joinViewModel.onConnectPressed() },
-					enabled = joinViewModel.inputsAreValid
+					enabled = joinViewModel.inputsAreValid,
 				) {
 					Text("Connect", modifier = Modifier.padding(start = 16.dp).align(CenterVertically))
 				}

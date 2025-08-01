@@ -11,10 +11,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun BurgerMenuButtonForDrawer(drawerState: DrawerState) {
-    val coroutineScope = rememberCoroutineScope()
-    IconButton(
-        onClick = { coroutineScope.launch { drawerState.open() } }
-    ) {
-        Icon(Icons.Default.Menu, contentDescription = "Burger menu to control drawer")
-    }
+	val coroutineScope = rememberCoroutineScope()
+	IconButton(
+		onClick = { coroutineScope.launch { drawerState.open() } },
+	) {
+		Icon(Icons.Default.Menu, contentDescription = "Burger menu to control drawer")
+	}
 }

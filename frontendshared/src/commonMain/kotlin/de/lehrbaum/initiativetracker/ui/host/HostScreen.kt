@@ -75,7 +75,6 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewModel) {
-
 	val connectionStateState =
 		hostCombatViewModel.hostConnectionState.collectAsStateResettable(HostConnectionState.Connecting)
 
@@ -104,7 +103,9 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 		detail = if (connectionStateState.value == HostConnectionState.Connected) {
 			hostCombatViewModel.editCombatantViewModel.value?.let { { EditCombatantScreen(it) } }
 				?: hostCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } }
-		} else null,
+		} else {
+			null
+		},
 		onDetailDismissRequest = { hostCombatViewModel.editCombatantViewModel.value?.cancel() },
 	)
 
@@ -114,10 +115,7 @@ fun HostScreen(drawerState: DrawerState, hostCombatViewModel: HostCombatViewMode
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
-private fun MainContent(
-	hostCombatViewModel: HostCombatViewModel,
-	connectionStateState: ResettableState<HostConnectionState>
-) {
+private fun MainContent(hostCombatViewModel: HostCombatViewModel, connectionStateState: ResettableState<HostConnectionState>) {
 	hostCombatViewModel.run {
 		val connectionState = connectionStateState.value
 
@@ -126,7 +124,6 @@ private fun MainContent(
 				val combatantsList = combatants.collectAsState(persistentListOf()).value
 
 				Column {
-
 					GuideBanners(combatantsList.isNotEmpty())
 
 					CombatantList(
@@ -136,14 +133,21 @@ private fun MainContent(
 						::onCombatantLongClicked,
 						::addNewCombatant,
 						dismissToStartAction = {
-							if (combatStarted && !it.disabled) swipeToDisable(::disableCombatant)
-							else swipeToDelete(::deleteCombatant)
+							if (combatStarted && !it.disabled) {
+								swipeToDisable(::disableCombatant)
+							} else {
+								swipeToDelete(::deleteCombatant)
+							}
 						},
 						dismissToEndAction = {
-							if (it.disabled) swipeToEnable(::enableCombatant)
-							else if (combatStarted) swipeToJumpToTurn(::jumpToCombatant)
-							else null
-						}
+							if (it.disabled) {
+								swipeToEnable(::enableCombatant)
+							} else if (combatStarted) {
+								swipeToJumpToTurn(::jumpToCombatant)
+							} else {
+								null
+							}
+						},
 					)
 				}
 			}
@@ -167,14 +171,14 @@ private fun HostCombatViewModel.GuideBanners(hasCombatants: Boolean) {
 	if (hasCombatants && !combatStarted) {
 		Guide(
 			text = "Start the combat for initiative and damaging to work.",
-			guideKey = "start_combat_guide"
+			guideKey = "start_combat_guide",
 		)
 	}
 
 	if (combatStarted) {
 		Guide(
 			text = "You can swipe combatants right and left",
-			guideKey = "swipe_combatants_guide"
+			guideKey = "swipe_combatants_guide",
 		)
 	}
 }
@@ -197,7 +201,7 @@ private fun Dialogs(
 				ConfirmDamageDialog(
 					options,
 					onDamageApplied = ::onConfirmDamageDialogSubmit,
-					onDismiss = ::onConfirmDamageDialogCancel
+					onDismiss = ::onConfirmDamageDialogCancel,
 				)
 			}
 			if (isRecording) {
@@ -212,7 +216,7 @@ private fun Dialogs(
 			}
 			if (showResetConfirmation) {
 				ResetConfirmationDialog(
-					onConfirm = { onResetResponse(true) }
+					onConfirm = { onResetResponse(true) },
 				) { onResetResponse(false) }
 			}
 		}
@@ -220,9 +224,7 @@ private fun Dialogs(
 }
 
 @Composable
-private fun HostCombatViewModel.FinishRecordingDialog(
-	finishRecording: () -> Unit
-) {
+private fun HostCombatViewModel.FinishRecordingDialog(finishRecording: () -> Unit) {
 	Dialog(onDismissRequest = { cancelRecording() }) {
 		Button(
 			onClick = finishRecording,
@@ -232,7 +234,9 @@ private fun HostCombatViewModel.FinishRecordingDialog(
 					if (it.key == Key.Spacebar && it.type == KeyEventType.KeyDown) {
 						finishRecording()
 						true
-					} else false
+					} else {
+						false
+					}
 				},
 		) {
 			Text("Finish Recording")
@@ -241,26 +245,23 @@ private fun HostCombatViewModel.FinishRecordingDialog(
 }
 
 @Composable
-private fun ResetConfirmationDialog(
-	onConfirm: () -> Unit,
-	onCancel: () -> Unit
-) {
+private fun ResetConfirmationDialog(onConfirm: () -> Unit, onCancel: () -> Unit) {
 	GeneralDialog(onDismissRequest = onCancel) {
 		Column(modifier = Modifier.padding(16.dp)) {
 			Text(
 				text = "Reset Combat",
-				style = MaterialTheme.typography.h6
+				style = MaterialTheme.typography.h6,
 			)
 			Spacer(modifier = Modifier.height(8.dp))
 			Text(
 				text = "Are you sure you want to reset the combat? This will remove all monsters, stop initiative, and return to a not running combat state.",
-				style = MaterialTheme.typography.body1
+				style = MaterialTheme.typography.body1,
 			)
 			Spacer(modifier = Modifier.height(16.dp))
 			OkCancelButtonRow(
 				submittable = true,
 				onCancel = onCancel,
-				onSubmit = onConfirm
+				onSubmit = onConfirm,
 			)
 		}
 	}
@@ -279,7 +280,7 @@ private fun NextCombatantButton(hostCombatViewModel: HostCombatViewModel) {
 private fun TopBar(
 	drawerState: DrawerState,
 	coroutineScope: CoroutineScope,
-	hostCombatViewModel: HostCombatViewModel
+	hostCombatViewModel: HostCombatViewModel,
 ) {
 	var displayDropdown by remember(hostCombatViewModel) { mutableStateOf(false) }
 
@@ -331,7 +332,7 @@ private fun TopBar(
 			}
 			MyDropdownMenu(
 				expanded = displayDropdown,
-				onDismissRequest = { displayDropdown = false }
+				onDismissRequest = { displayDropdown = false },
 			) {
 				if (hostCombatViewModel.isSharing) {
 					DropdownMenuItem(onClick = {

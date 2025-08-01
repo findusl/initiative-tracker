@@ -7,5 +7,5 @@ data class CharacterModel(
 	val id: Long,
 	val name: String,
 	val initiativeMod: Int?,
-	val maxHp: Int?
+	val maxHp: Int?,
 )

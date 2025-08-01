@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.remember
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlin.coroutines.CoroutineContext
 
 /*
 Some default remember functions do not take a key as parameter. However, since sometimes the same kind of screen can
@@ -27,21 +27,23 @@ be shown one after the other with different content, the remember functions need
 inline fun rememberCoroutineScope(
 	key: Any?,
 	crossinline getContext: @DisallowComposableCalls () -> CoroutineContext =
-		{ Dispatchers.Main }
-): CoroutineScope =
-	remember(key) { CoroutineWrapper(getContext()) }
+		{ Dispatchers.Main },
+): CoroutineScope = remember(key) { CoroutineWrapper(getContext()) }
 
 @PublishedApi
 internal class CoroutineWrapper(
-	coroutineContext: CoroutineContext
+	coroutineContext: CoroutineContext,
 ) : RememberObserver, CoroutineScope {
 	override val coroutineContext = coroutineContext + SupervisorJob()
+
 	override fun onAbandoned() {
 		cancel("Left composition")
 	}
+
 	override fun onForgotten() {
 		cancel("Left composition")
 	}
+
 	override fun onRemembered() { }
 }
 
@@ -49,7 +51,8 @@ internal class CoroutineWrapper(
 fun rememberScaffoldState(
 	key: Any? = null,
 	drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
-	snackbarHostState: SnackbarHostState = remember(key) { SnackbarHostState() }
-): ScaffoldState = remember(key) {
-	ScaffoldState(drawerState, snackbarHostState)
-}
+	snackbarHostState: SnackbarHostState = remember(key) { SnackbarHostState() },
+): ScaffoldState =
+	remember(key) {
+		ScaffoldState(drawerState, snackbarHostState)
+	}

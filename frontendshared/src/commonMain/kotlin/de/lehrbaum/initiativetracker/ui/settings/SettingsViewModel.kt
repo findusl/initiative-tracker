@@ -25,8 +25,8 @@ class SettingsViewModel {
 	var secureConnectionChosen by mutableStateOf(defaultBackend.secureConnection)
 
 	var apiKeyFieldContent by mutableStateOf(generalSettingsRepository.openAiApiKey ?: "")
-	val apiKeyFieldError by derivedStateOf { 
-		apiKeyFieldContent.isNotBlank() && !InputValidator.isValidOpenAiApiKey(apiKeyFieldContent) 
+	val apiKeyFieldError by derivedStateOf {
+		apiKeyFieldContent.isNotBlank() && !InputValidator.isValidOpenAiApiKey(apiKeyFieldContent)
 	}
 
 	var isBestiarySubmenuOpen by mutableStateOf(false)
@@ -81,5 +81,4 @@ class SettingsViewModel {
 	fun showAllGuides() {
 		generalSettingsRepository.showAllGuides()
 	}
-
 }

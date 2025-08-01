@@ -12,5 +12,5 @@ data class VariantDTO(
 	val token: TokenDTO? = null,
 	val type: String,
 	@SerialName("_version")
-	val version: VariantVersionDTO? = null
+	val version: VariantVersionDTO? = null,
 )

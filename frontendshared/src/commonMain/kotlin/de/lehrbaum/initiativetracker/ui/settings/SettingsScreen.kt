@@ -30,25 +30,24 @@ import de.lehrbaum.initiativetracker.ui.shared.ListDetailLayout
 @Composable
 fun SettingsScreen(drawerState: DrawerState, settingsViewModel: SettingsViewModel) {
 	ListDetailLayout(
-		list = { 
+		list = {
 			Scaffold(
-				topBar = { TopBar(drawerState, settingsViewModel) }
+				topBar = { TopBar(drawerState, settingsViewModel) },
 			) {
 				MainSettingsScreen(settingsViewModel)
 			}
 		},
 		detail = if (settingsViewModel.isBestiarySubmenuOpen) {
 			{ BestiarySourcesSettingsScreen(settingsViewModel) }
-		} else null,
-		onDetailDismissRequest = { settingsViewModel.closeSourcesSubmenu() }
+		} else {
+			null
+		},
+		onDetailDismissRequest = { settingsViewModel.closeSourcesSubmenu() },
 	)
 }
 
 @Composable
-private fun TopBar(
-	drawerState: DrawerState,
-	settingsViewModel: SettingsViewModel
-) {
+private fun TopBar(drawerState: DrawerState, settingsViewModel: SettingsViewModel) {
 	TopAppBar(
 		title = {
 			Text("Settings", color = MaterialTheme.colors.onPrimary)
@@ -58,7 +57,7 @@ private fun TopBar(
 			Button(onClick = settingsViewModel::onSavePressed, enabled = settingsViewModel.inputsAreValid) {
 				Text("Save")
 			}
-		}
+		},
 	)
 }
 
@@ -73,12 +72,12 @@ fun MainSettingsScreen(settingsViewModel: SettingsViewModel) {
 			},
 			label = { Text("Host") },
 			isError = settingsViewModel.hostFieldError,
-			modifier = Modifier.fillMaxWidth()
+			modifier = Modifier.fillMaxWidth(),
 		)
 		Row {
 			Switch(
 				checked = settingsViewModel.secureConnectionChosen,
-				onCheckedChange = { settingsViewModel.secureConnectionChosen = it }
+				onCheckedChange = { settingsViewModel.secureConnectionChosen = it },
 			)
 			Text("Use Secure Connection?")
 		}
@@ -92,18 +91,18 @@ fun MainSettingsScreen(settingsViewModel: SettingsViewModel) {
 			},
 			label = { Text("OpenAI API Key (Starts with sk-)") },
 			isError = settingsViewModel.apiKeyFieldError,
-			modifier = Modifier.fillMaxWidth()
+			modifier = Modifier.fillMaxWidth(),
 		)
 		if (settingsViewModel.apiKeyFieldError) {
 			Text(
 				"API key does not match the expected format.",
 				color = MaterialTheme.colors.error,
-				style = MaterialTheme.typography.caption
+				style = MaterialTheme.typography.caption,
 			)
 		} else {
 			Text(
 				"Used to autogenerate names for monsters based on type",
-				style = MaterialTheme.typography.caption
+				style = MaterialTheme.typography.caption,
 			)
 		}
 
@@ -118,12 +117,12 @@ fun MainSettingsScreen(settingsViewModel: SettingsViewModel) {
 			Text(
 				"Bestiary Sources",
 				style = MaterialTheme.typography.h6,
-				modifier = Modifier.weight(1f)
+				modifier = Modifier.weight(1f),
 			)
 			Icon(
 				Icons.AutoMirrored.Filled.ArrowForward,
 				contentDescription = "Open Bestiary Sources",
-				modifier = Modifier.padding(8.dp)
+				modifier = Modifier.padding(8.dp),
 			)
 		}
 
@@ -134,21 +133,21 @@ fun MainSettingsScreen(settingsViewModel: SettingsViewModel) {
 		Text("Guide Management", style = MaterialTheme.typography.h6)
 		Text(
 			"Control the visibility of all beginner guides in the application",
-			style = MaterialTheme.typography.caption
+			style = MaterialTheme.typography.caption,
 		)
 		Spacer(modifier = Modifier.height(Constants.smallPadding))
 
 		Row(modifier = Modifier.fillMaxWidth()) {
 			Button(
 				onClick = settingsViewModel::hideAllGuides,
-				modifier = Modifier.weight(1f).padding(end = Constants.smallPadding)
+				modifier = Modifier.weight(1f).padding(end = Constants.smallPadding),
 			) {
 				Text("Hide All Guides")
 			}
 
 			Button(
 				onClick = settingsViewModel::showAllGuides,
-				modifier = Modifier.weight(1f).padding(start = Constants.smallPadding)
+				modifier = Modifier.weight(1f).padding(start = Constants.smallPadding),
 			) {
 				Text("Show All Guides")
 			}

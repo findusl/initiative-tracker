@@ -11,7 +11,7 @@ private const val TAG = "ErrorStateHolder"
 interface ErrorStateHolder {
 	val errorState: ErrorState?
 
-	class Impl: ErrorStateHolder {
+	class Impl : ErrorStateHolder {
 		override var errorState: ErrorState? by mutableStateOf(null)
 			private set
 

@@ -9,5 +9,5 @@ data class SaveDTO(
 	val dex: String? = null,
 	val int: String? = null,
 	val str: String? = null,
-	val wis: String? = null
+	val wis: String? = null,
 )

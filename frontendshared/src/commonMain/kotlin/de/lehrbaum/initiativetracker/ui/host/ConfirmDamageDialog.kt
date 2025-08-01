@@ -33,17 +33,18 @@ data class ConfirmDamageOptions(
 fun ConfirmDamageDialog(
 	options: ConfirmDamageOptions,
 	onDamageApplied: (DamageDecision) -> Unit,
-	onDismiss: () -> Unit
+	onDismiss: () -> Unit,
 ) {
 	GeneralDialog(
-		onDismissRequest = onDismiss
+		onDismissRequest = onDismiss,
 	) {
 		Column(
 			modifier = Modifier
 				.padding(16.dp)
-				.onKeyEvent {  keyEvent ->
-					if (keyEvent.type != KeyEventType.KeyUp) false
-					else {
+				.onKeyEvent { keyEvent ->
+					if (keyEvent.type != KeyEventType.KeyUp) {
+						false
+					} else {
 						val index = when (keyEvent.key) {
 							Key.One -> 0
 							Key.Two -> 1
@@ -67,7 +68,7 @@ fun ConfirmDamageDialog(
 				if (option == FULL) modifier = modifier.defaultFocussed(options)
 				Button(
 					onClick = { onDamageApplied(option) },
-					modifier = modifier
+					modifier = modifier,
 				) {
 					Text(option.getLabel())
 				}
@@ -76,11 +77,10 @@ fun ConfirmDamageDialog(
 	}
 }
 
-private fun DamageDecision.getLabel(): String {
-	return when (this) {
+private fun DamageDecision.getLabel(): String =
+	when (this) {
 		FULL -> "Full"
 		HALF -> "Half"
 		DOUBLE -> "Double"
 		NONE -> "None"
 	}
-}

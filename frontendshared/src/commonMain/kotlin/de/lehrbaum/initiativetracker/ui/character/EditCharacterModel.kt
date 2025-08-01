@@ -20,12 +20,14 @@ data class EditCharacterModel(
 	val maxHpEdit = EditFieldViewModel(characterModel.maxHp, parseInput = OptionalIntParser)
 
 	fun saveCharacter() {
-		onSave(CharacterModel(
-			id,
-			nameEdit.value.getOrThrow(),
-			initiativeModEdit.value.getOrThrow(),
-			maxHpEdit.value.getOrThrow(),
-		))
+		onSave(
+			CharacterModel(
+				id,
+				nameEdit.value.getOrThrow(),
+				initiativeModEdit.value.getOrThrow(),
+				maxHpEdit.value.getOrThrow(),
+			),
+		)
 	}
 
 	fun cancel() {

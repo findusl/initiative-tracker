@@ -33,13 +33,13 @@ fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: Charac
 	ListDetailLayout(
 		list = {
 			Scaffold(
-				topBar = { TopBar(drawerState) }
+				topBar = { TopBar(drawerState) },
 			) {
 				CharacterList(
 					characters,
 					characterListViewModel::editCharacter,
 					characterListViewModel::addNewCharacter,
-					dismissToStartAction = swipeToDelete(characterListViewModel::deleteCharacter)
+					dismissToStartAction = swipeToDelete(characterListViewModel::deleteCharacter),
 				)
 			}
 		},
@@ -48,7 +48,7 @@ fun CharacterListScreen(drawerState: DrawerState, characterListViewModel: Charac
 		},
 		onDetailDismissRequest = {
 			characterListViewModel.editCharacterModel.value?.cancel()
-		}
+		},
 	)
 }
 
@@ -65,9 +65,12 @@ private fun CharacterList(
 	LazyColumn {
 		items(characters, key = CharacterViewModel::id) { item ->
 			SwipeToDismiss(dismissToEndAction, dismissToStartAction, item) {
-				CharacterListElement(item, Modifier.clickable {
-					onCharacterSelected(item)
-				})
+				CharacterListElement(
+					item,
+					Modifier.clickable {
+						onCharacterSelected(item)
+					},
+				)
 			}
 		}
 		addCreateNewCard("Add new character", onAddNewPressed)
@@ -75,9 +78,7 @@ private fun CharacterList(
 }
 
 @Composable
-private fun TopBar(
-	drawerState: DrawerState,
-) {
+private fun TopBar(drawerState: DrawerState) {
 	TopAppBar(
 		title = {
 			Text("Manage Characters", color = MaterialTheme.colors.onPrimary)

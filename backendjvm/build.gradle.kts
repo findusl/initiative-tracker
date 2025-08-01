@@ -21,9 +21,9 @@ ktor {
 				DockerPortMapping(
 					5009,
 					8080,
-					DockerPortMappingProtocol.TCP
-				)
-			)
+					DockerPortMappingProtocol.TCP,
+				),
+			),
 		)
 	}
 }

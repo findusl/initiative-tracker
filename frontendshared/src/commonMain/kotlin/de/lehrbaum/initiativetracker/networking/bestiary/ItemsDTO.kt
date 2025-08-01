@@ -8,5 +8,5 @@ data class ItemsDTO(
 	val footerEntries: List<String>,
 	val headerEntries: List<String>,
 	val name: String,
-	val spells: SpellsDTO
+	val spells: SpellsDTO,
 )

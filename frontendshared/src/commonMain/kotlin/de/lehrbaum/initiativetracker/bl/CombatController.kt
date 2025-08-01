@@ -10,9 +10,9 @@ import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantId
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
+import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.random.Random
 
 /**
  * Not thread safe! Has to be called from main thread.
@@ -20,7 +20,7 @@ import kotlin.random.Random
 class CombatController(
 	generalSettingsRepository: GeneralSettingsRepository,
 	private val confirmationRequester: ConfirmationRequester,
-	seed: Long? = null
+	seed: Long? = null,
 ) {
 	private val random = seed?.let { Random(seed) } ?: Random
 	private var nextId = 0L
@@ -62,10 +62,7 @@ class CombatController(
 		return newActiveCombatant
 	}
 
-	fun addCombatant(
-		name: String = "",
-		initiative: Int? = null // Sorts it to the bottom where the add button is.
-	): CombatantModel {
+	fun addCombatant(name: String = "", initiative: Int? = null): CombatantModel {
 		val newCombatant = CombatantModel(hostId, id = CombatantId(nextId++), name, initiative = initiative)
 		_combatants.value = (_combatants.value + newCombatant).sortByInitiative()
 		combatantCount++
@@ -79,7 +76,11 @@ class CombatController(
 		return newCombatant
 	}
 
-	suspend fun handleDamageCombatantRequest(targetId: CombatantId, damage: Int, sourceId: UserId): Boolean {
+	suspend fun handleDamageCombatantRequest(
+		targetId: CombatantId,
+		damage: Int,
+		sourceId: UserId,
+	): Boolean {
 		val target = combatants.value.first { it.id == targetId }
 		if (sourceId == hostId || target.ownerId == sourceId) {
 			damageCombatant(target.id, damage)
@@ -138,10 +139,11 @@ class CombatController(
 			result?.let { Pair(combatant, result) }
 		}
 		results.forEach { (combatant, result) ->
-			if (result is AOEResult.FAILURE)
+			if (result is AOEResult.FAILURE) {
 				damageCombatant(combatant.id, aoeOptions.damage)
-			else if (result is AOEResult.SUCCESS && aoeOptions.halfOnFailure)
+			} else if (result is AOEResult.SUCCESS && aoeOptions.halfOnFailure) {
 				damageCombatant(combatant.id, aoeOptions.damage / 2)
+			}
 		}
 		return true
 	}
@@ -152,9 +154,9 @@ class CombatController(
 		} else {
 			val (type, dc) = aoeOptions.save
 			val bonus = combatant.saveBonus(type)
-			return if (bonus == null)
+			return if (bonus == null) {
 				PreliminaryAOEResult.INDETERMINATE
-			else {
+			} else {
 				val roll = random.d20() + bonus
 				if (roll >= dc) AOEResult.SUCCESS(roll) else AOEResult.FAILURE(roll)
 			}
@@ -176,7 +178,8 @@ class CombatController(
 		// I don't have a name of the player, so I take the first combatant they control that is not a creature
 		// I just hope that's their main character
 		return combatants.value
-			.firstOrNull { it.ownerId == sourceId && it.creatureType == null }?.name
+			.firstOrNull { it.ownerId == sourceId && it.creatureType == null }
+			?.name
 	}
 
 	fun updateCombatant(updatedCombatant: CombatantModel) {
@@ -194,7 +197,9 @@ class CombatController(
 					oldCombatant = combatantModel
 					oldIndex = index
 					false
-				} else true
+				} else {
+					true
+				}
 			}
 		if (oldCombatant != null) {
 			combatantCount--
@@ -243,12 +248,14 @@ class CombatController(
 private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
 	id: CombatantId,
 	reSort: Boolean = false,
-	updater: (CombatantModel) -> CombatantModel
+	updater: (CombatantModel) -> CombatantModel,
 ) {
 	var result = value.map {
 		if (it.id == id) {
 			updater(it)
-		} else it
+		} else {
+			it
+		}
 	}
 	if (reSort) result = result.sortByInitiative()
 	this.value = result
@@ -257,20 +264,27 @@ private inline fun MutableStateFlow<List<CombatantModel>>.updateCombatant(
 /**
  * Sorts predictably. First by initiative then by id. null initiatives are lower than any other initiatives
  */
-private fun Iterable<CombatantModel>.sortByInitiative() =
-	sortedWith(compareByDescending(CombatantModel::initiative).thenBy { it.id })
+private fun Iterable<CombatantModel>.sortByInitiative() = sortedWith(compareByDescending(CombatantModel::initiative).thenBy { it.id })
 
 interface ConfirmationRequester {
-	suspend fun confirmDamage(damage: Int, target: CombatantModel, probableSource: String?): DamageDecision?
+	suspend fun confirmDamage(
+		damage: Int,
+		target: CombatantModel,
+		probableSource: String?,
+	): DamageDecision?
+
 	suspend fun confirmAoe(
 		aoeOptions: AoeOptions,
 		targetRolls: Map<CombatantModel, PreliminaryAOEResult>,
-		probableSource: String?
+		probableSource: String?,
 	): Map<CombatantModel, AOEDecision>?
 }
 
 enum class DamageDecision {
-	FULL, HALF, DOUBLE, NONE
+	FULL,
+	HALF,
+	DOUBLE,
+	NONE,
 }
 
 sealed interface PreliminaryAOEResult {
@@ -286,5 +300,8 @@ sealed interface AOEResult : PreliminaryAOEResult {
 }
 
 enum class AOEDecision {
-	KEEP, OVERWRITE_SUCCESS, OVERWRITE_FAILURE, OVERWRITE_IGNORE
+	KEEP,
+	OVERWRITE_SUCCESS,
+	OVERWRITE_FAILURE,
+	OVERWRITE_IGNORE,
 }

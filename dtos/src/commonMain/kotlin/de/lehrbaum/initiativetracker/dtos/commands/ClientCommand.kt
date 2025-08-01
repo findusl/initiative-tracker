@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface ClientCommand {
-
 	@Serializable
 	data class AddCombatant(val combatant: CombatantModel) : ClientCommand
 

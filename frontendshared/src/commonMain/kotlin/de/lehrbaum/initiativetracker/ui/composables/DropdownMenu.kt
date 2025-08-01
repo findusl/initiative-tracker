@@ -14,7 +14,7 @@ fun MyDropdownMenu(
 	focusable: Boolean = true,
 	modifier: Modifier = Modifier,
 	offset: DpOffset = DpOffset(0.dp, 0.dp),
-	content: @Composable ColumnScope.() -> Unit
+	content: @Composable ColumnScope.() -> Unit,
 ) {
 	androidx.compose.material.DropdownMenu(
 		expanded,
@@ -22,6 +22,6 @@ fun MyDropdownMenu(
 		modifier,
 		offset,
 		properties = PopupProperties(focusable),
-		content = content
+		content = content,
 	)
 }

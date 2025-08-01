@@ -22,5 +22,5 @@ data class SkillDTO(
 	@SerialName("sleight of hand")
 	val sleightOfHand: String? = null,
 	val stealth: String? = null,
-	val survival: String? = null
+	val survival: String? = null,
 )

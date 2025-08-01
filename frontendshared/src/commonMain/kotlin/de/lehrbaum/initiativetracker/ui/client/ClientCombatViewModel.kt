@@ -8,9 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.lehrbaum.initiativetracker.GlobalInstances
 import de.lehrbaum.initiativetracker.bl.ClientCombatSession
+import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.data.CombatLink
 import de.lehrbaum.initiativetracker.data.CombatLinkRepository
-import de.lehrbaum.initiativetracker.bl.model.CharacterModel
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
 import de.lehrbaum.initiativetracker.ui.character.CharacterChooserViewModel
@@ -18,13 +18,13 @@ import de.lehrbaum.initiativetracker.ui.damage.DamageCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.edit.EditCombatantViewModel
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState.Text
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 @Stable
 data class ClientCombatViewModel(
-    val combatLink: CombatLink,
-    private val leaveScreen: () -> Unit
+	val combatLink: CombatLink,
+	private val leaveScreen: () -> Unit,
 ) {
 	private val combatSession = ClientCombatSession(combatLink)
 
@@ -43,9 +43,11 @@ data class ClientCombatViewModel(
 		private set
 
 	private var assignDamageCombatant by mutableStateOf<CombatantModel?>(null)
-	val damageCombatantViewModel by derivedStateOf { assignDamageCombatant?.let {
-		DamageCombatantViewModel(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
-	} }
+	val damageCombatantViewModel by derivedStateOf {
+		assignDamageCombatant?.let {
+			DamageCombatantViewModel(it.name, ::onDamageDialogSubmit, ::onDamageDialogCancel)
+		}
+	}
 
 	fun onCombatantClicked(combatantViewModel: CombatantModel) {
 		assignDamageCombatant = combatantViewModel
@@ -72,7 +74,7 @@ data class ClientCombatViewModel(
 					snackbarState.value = Text("Edit rejected", SnackbarDuration.Long)
 				}
 			},
-			onCancel = { editCombatantViewModel = null }
+			onCancel = { editCombatantViewModel = null },
 		)
 	}
 
@@ -87,7 +89,7 @@ data class ClientCombatViewModel(
 				},
 				onCancel = {
 					characterChooserViewModel = null
-				}
+				},
 			)
 			continuation.invokeOnCancellation { characterChooserViewModel = null }
 		}
@@ -99,8 +101,9 @@ data class ClientCombatViewModel(
 	private suspend fun onDamageDialogSubmit(damage: Int) {
 		assignDamageCombatant?.let {
 			val result = combatSession.requestDamageCharacter(it.id, damage, ownerId)
-			if (result)
+			if (result) {
 				assignDamageCombatant = null
+			}
 		}
 	}
 
@@ -125,13 +128,12 @@ data class ClientCombatViewModel(
 		combatSession.requestFinishTurn(activeCombatantIndex)
 	}
 
-	private fun CharacterModel.toCombatantModel(initiative: Int, currentHp: Int): CombatantModel {
-		return CombatantModel(
+	private fun CharacterModel.toCombatantModel(initiative: Int, currentHp: Int): CombatantModel =
+		CombatantModel(
 			ownerId = ownerId,
 			name = name,
 			initiative = initiative,
 			maxHp = maxHp,
 			currentHp = currentHp,
 		)
-	}
 }

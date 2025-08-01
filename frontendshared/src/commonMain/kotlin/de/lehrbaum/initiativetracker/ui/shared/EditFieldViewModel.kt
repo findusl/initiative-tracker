@@ -11,9 +11,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 
-@Stable
 // cannot be a data class. That breaks stuff if different edit dialogs are shown with the same values.
 // Then compose optimizes and does not actually rerun the EditTextField composable.
+@Stable
 class EditFieldViewModel<T>(
 	initialValue: T,
 	val keyboardType: KeyboardType? = null,
@@ -70,8 +70,11 @@ class EditFieldViewModel<T>(
 
 		val OptionalIntParser: (String) -> Result<Int?> =
 			{ input ->
-				if (input.isEmpty()) Result.success(null)
-				else { input.toIntOrNull()?.let { Result.success(it) } ?: failedParsing() }
+				if (input.isEmpty()) {
+					Result.success(null)
+				} else {
+					input.toIntOrNull()?.let { Result.success(it) } ?: failedParsing()
+				}
 			}
 	}
 }

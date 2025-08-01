@@ -39,7 +39,7 @@ fun <E> SwipeToDismiss(
 	dismissToEndAction: SwipeToDismissAction<E>? = null,
 	dismissToStartAction: SwipeToDismissAction<E>? = null,
 	element: E,
-	content: @Composable () -> Unit
+	content: @Composable () -> Unit,
 ) {
 	if (dismissToEndAction == null && dismissToStartAction == null) {
 		// fast path
@@ -61,7 +61,7 @@ fun <E> SwipeToDismiss(
 
 	val directions = setOfNotNull(
 		dismissToEndAction?.let { DismissDirection.StartToEnd },
-		dismissToStartAction?.let { DismissDirection.EndToStart }
+		dismissToStartAction?.let { DismissDirection.EndToStart },
 	)
 
 	val backgroundLambda = remember<@Composable RowScope.() -> Unit>(dismissToEndAction, dismissToStartAction) {
@@ -73,67 +73,63 @@ fun <E> SwipeToDismiss(
 		directions = directions,
 		dismissThresholds = { FractionalThreshold(0.3f) },
 		background = backgroundLambda,
-		dismissContent = { content() }
+		dismissContent = { content() },
 	)
 }
 
 @Composable
-fun <E : Any> swipeToDelete(delete: (E) -> Unit): SwipeToDismissAction<E> {
-	return SwipeToDismissAction(
+fun <E : Any> swipeToDelete(delete: (E) -> Unit): SwipeToDismissAction<E> =
+	SwipeToDismissAction(
 		MaterialTheme.colors.error,
 		Icons.Default.Delete,
 		contentDescription = "Delete List element",
 		action = { element ->
 			delete(element)
 			SwipeResponse.SLIDE_OUT
-		}
+		},
 	)
-}
 
-fun <E : Any> swipeToDisable(disable: (E) -> Unit): SwipeToDismissAction<E> {
-	return SwipeToDismissAction(
+fun <E : Any> swipeToDisable(disable: (E) -> Unit): SwipeToDismissAction<E> =
+	SwipeToDismissAction(
 		Color.DarkGray,
 		Icons.Default.Close,
 		contentDescription = "Disable List element",
 		action = { element ->
 			disable(element)
 			SwipeResponse.SLIDE_BACK
-		}
+		},
 	)
-}
 
 @Composable
-fun <E : Any> swipeToEnable(enable: (E) -> Unit): SwipeToDismissAction<E> {
-	return SwipeToDismissAction(
+fun <E : Any> swipeToEnable(enable: (E) -> Unit): SwipeToDismissAction<E> =
+	SwipeToDismissAction(
 		Color.DarkGreen,
 		Icons.Default.Check,
 		contentDescription = "Enable List element",
 		action = { element ->
 			enable(element)
 			SwipeResponse.SLIDE_BACK
-		}
+		},
 	)
-}
 
 @Composable
-fun <E : Any> swipeToJumpToTurn(jumpToTurn: (E) -> Unit): SwipeToDismissAction<E> {
-	return SwipeToDismissAction(
+fun <E : Any> swipeToJumpToTurn(jumpToTurn: (E) -> Unit): SwipeToDismissAction<E> =
+	SwipeToDismissAction(
 		MaterialTheme.colors.secondary,
 		Icons.Default.Place,
 		contentDescription = "Set list element active",
 		action = { element ->
 			jumpToTurn(element)
 			SwipeResponse.SLIDE_BACK
-		}
+		},
 	)
-}
 
 @Immutable
 data class SwipeToDismissAction<E>(
 	val color: Color,
 	val icon: ImageVector,
 	val contentDescription: String,
-	val action: (element: E) -> SwipeResponse
+	val action: (element: E) -> SwipeResponse,
 )
 
 @Composable
@@ -141,7 +137,7 @@ data class SwipeToDismissAction<E>(
 private fun SwipeToDismissBackground(
 	dismissToEndAction: SwipeToDismissAction<*>?,
 	dismissToStartAction: SwipeToDismissAction<*>?,
-	dismissState: DismissState
+	dismissState: DismissState,
 ) {
 	val direction = dismissState.dismissDirection ?: return
 
@@ -150,7 +146,7 @@ private fun SwipeToDismissBackground(
 			DismissValue.Default -> Color.LightGray
 			DismissValue.DismissedToEnd -> dismissToEndAction?.color
 			DismissValue.DismissedToStart -> dismissToStartAction?.color
-		} ?: return
+		} ?: return,
 	)
 
 	val alignment = when (direction) {
@@ -168,7 +164,7 @@ private fun SwipeToDismissBackground(
 	}
 
 	val scale by animateFloatAsState(
-		if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
+		if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
 	)
 
 	Box(
@@ -177,12 +173,12 @@ private fun SwipeToDismissBackground(
 			// Could use drawBehind here to optimize https://stackoverflow.com/questions/74361197/jetpack-compose-avoid-unnecessary-recomposition
 			.background(color)
 			.padding(horizontal = 20.dp),
-		contentAlignment = alignment
+		contentAlignment = alignment,
 	) {
 		Icon(
 			icon,
 			contentDescription = description,
-			modifier = Modifier.scale(scale)
+			modifier = Modifier.scale(scale),
 		)
 	}
 }

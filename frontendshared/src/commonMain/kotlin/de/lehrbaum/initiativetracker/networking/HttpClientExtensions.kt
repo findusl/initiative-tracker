@@ -24,23 +24,23 @@ suspend inline fun <R> HttpClient.buildBackendWebsocket(
 	method: HttpMethod = HttpMethod.Get,
 	path: String = SESSION_PATH,
 	request: HttpRequestBuilder.() -> Unit = {},
-	crossinline block: suspend DefaultClientWebSocketSession.() -> R
+	crossinline block: suspend DefaultClientWebSocketSession.() -> R,
 ): R {
-    plugin(WebSockets)
-    val session = prepareRequest {
-        this.method = method
+	plugin(WebSockets)
+	val session = prepareRequest {
+		this.method = method
 		backendWebsocketUrl(backendUri, path)
-        request()
-    }
+		request()
+	}
 
-    return session.body<DefaultClientWebSocketSession, R> {
-        try {
-            block(it)
-        } finally {
-            it.close()
-            it.cancel("Websocket closed")
-        }
-    }
+	return session.body<DefaultClientWebSocketSession, R> {
+		try {
+			block(it)
+		} finally {
+			it.close()
+			it.cancel("Websocket closed")
+		}
+	}
 }
 
 fun HttpRequestBuilder.backendWebsocketUrl(backendUri: BackendUri, path: String) {
@@ -52,5 +52,3 @@ fun HttpRequestBuilder.backendHttpUrl(backendUri: BackendUri, path: String) {
 	val scheme = if (backendUri.secureConnection) "https" else "http"
 	url(scheme, backendUri.hostName, backendUri.port, path)
 }
-
-

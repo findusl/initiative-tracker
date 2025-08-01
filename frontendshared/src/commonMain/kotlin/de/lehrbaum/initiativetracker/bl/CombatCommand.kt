@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 sealed interface CombatCommand {
 	@Serializable
-	data class DamageCommand(val target: CombatantModel, val damage: Int): CombatCommand
+	data class DamageCommand(val target: CombatantModel, val damage: Int) : CombatCommand
 }

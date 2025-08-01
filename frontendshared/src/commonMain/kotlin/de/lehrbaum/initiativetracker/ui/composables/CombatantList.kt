@@ -33,59 +33,63 @@ fun CombatantList(
 	dismissToEndAction: (@Composable (CombatantModel) -> SwipeToDismissAction<CombatantModel>?)? = null,
 	dismissToStartAction: (@Composable (CombatantModel) -> SwipeToDismissAction<CombatantModel>?)? = null,
 ) {
-    val listState = rememberLazyListState()
+	val listState = rememberLazyListState()
 
-    // Find the index of the active character
-    val activeCharacterIndex = combatants.indexOfFirst { it.active }
+	// Find the index of the active character
+	val activeCharacterIndex = combatants.indexOfFirst { it.active }
 
-    // Animate scrolling to the active character's position
-    LaunchedEffect(activeCharacterIndex) {
-        if (activeCharacterIndex != -1) {
-            listState.animateScrollToItem(activeCharacterIndex, scrollOffset = -200)
-        }
-    }
-    LazyColumn(state = listState) {
-        items(combatants, key = { it.id.id }, contentType = { CombatantModel::class }) { combatantVM ->
+	// Animate scrolling to the active character's position
+	LaunchedEffect(activeCharacterIndex) {
+		if (activeCharacterIndex != -1) {
+			listState.animateScrollToItem(activeCharacterIndex, scrollOffset = -200)
+		}
+	}
+	LazyColumn(state = listState) {
+		items(combatants, key = { it.id.id }, contentType = { CombatantModel::class }) { combatantVM ->
 			val combatant = combatantVM.combatant
-            SwipeToDismiss(dismissToEndAction?.invoke(combatant), dismissToStartAction?.invoke(combatant), combatant) {
-                CombatantListElement(combatantVM, isHost, Modifier.combinedClickable(
-                    onClick = { onCombatantClicked(combatant) },
-                    onLongClick = { onCombatantLongClicked(combatant) }
-                ))
-            }
-        }
+			SwipeToDismiss(dismissToEndAction?.invoke(combatant), dismissToStartAction?.invoke(combatant), combatant) {
+				CombatantListElement(
+					combatantVM,
+					isHost,
+					Modifier.combinedClickable(
+						onClick = { onCombatantClicked(combatant) },
+						onLongClick = { onCombatantLongClicked(combatant) },
+					),
+				)
+			}
+		}
 
-        if (onCreateNewClicked != null) {
-            addCreateNewCard("Add new combatant", onCreateNewClicked)
-        } else if (combatants.isEmpty()) {
+		if (onCreateNewClicked != null) {
+			addCreateNewCard("Add new combatant", onCreateNewClicked)
+		} else if (combatants.isEmpty()) {
 			// so that it is not completely empty, looks like an error
 			item(key = null) {
 				Text("No Combatants in the combat")
 			}
 		}
-    }
+	}
 }
 
 fun LazyListScope.addCreateNewCard(
 	label: String,
-    onClicked: () -> Unit,
+	onClicked: () -> Unit,
 	modifier: Modifier = Modifier,
 ) {
-    item {
-        Card(
+	item {
+		Card(
 			elevation = 8.dp,
 			modifier = modifier
 				// the order of modifiers is relevant. If the padding is before clickable only the inner part is clickable
 				.clickable { onClicked() }
-				.padding(Constants.defaultPadding)
+				.padding(Constants.defaultPadding),
 		) {
-            Text(
-                text = label,
-                modifier = Modifier
-                    .padding(Constants.defaultPadding)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+			Text(
+				text = label,
+				modifier = Modifier
+					.padding(Constants.defaultPadding)
+					.fillMaxWidth(),
+				textAlign = TextAlign.Center,
+			)
+		}
+	}
 }

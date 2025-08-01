@@ -46,7 +46,7 @@ private val lightColors = lightColors(
 @Composable
 fun MainComposable(mainViewModel: MainViewModel, widthInt: Int? = null) {
 	MaterialTheme(
-		colors = lightColors
+		colors = lightColors,
 	) {
 		MainScreen(mainViewModel, widthInt)
 	}
@@ -78,7 +78,7 @@ private fun MainScreen(mainViewModel: MainViewModel, widthInt: Int?) {
 			Drawer(drawerItems, mainViewModel.content.drawerItem, drawerState, mainViewModel::onDrawerItemSelected)
 		},
 		gesturesEnabled = drawerState.isOpen,
-		modifier = Modifier.background(MaterialTheme.colors.primarySurface).systemBarsPadding()
+		modifier = Modifier.background(MaterialTheme.colors.primarySurface).systemBarsPadding(),
 	) {
 		MainScreenContent(mainViewModel.content, drawerState)
 	}
@@ -89,7 +89,7 @@ private fun Drawer(
 	drawerItems: ImmutableList<DrawerItem>,
 	activeDrawerItem: DrawerItem,
 	drawerState: DrawerState,
-	onSelected: (DrawerItem) -> Unit
+	onSelected: (DrawerItem) -> Unit,
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	Column(Modifier.fillMaxSize()) {
@@ -106,7 +106,7 @@ private fun Drawer(
 						coroutineScope.launch {
 							drawerState.close()
 						}
-					}
+					},
 			) {
 				Text(item.name, Modifier.padding(Constants.defaultPadding), color = textColor)
 			}
@@ -117,7 +117,7 @@ private fun Drawer(
 @Composable
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 private fun MainScreenContent(contentState: ContentState, drawerState: DrawerState) {
-	when(contentState) {
+	when (contentState) {
 		is ContentState.CharacterScreen -> CharacterListScreen(drawerState, contentState.characterListViewModel)
 		is ContentState.HostLocalCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)
 		is ContentState.HostSharedCombat -> HostScreen(drawerState, contentState.hostCombatViewModel)

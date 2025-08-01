@@ -11,7 +11,6 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
 class MainActivity : ComponentActivity() {
-
 	private val viewModel by viewModels<AndroidMainViewModel>()
 
 	init {
@@ -27,6 +26,6 @@ class MainActivity : ComponentActivity() {
 	}
 }
 
-class AndroidMainViewModel: ViewModel() {
+class AndroidMainViewModel : ViewModel() {
 	val mainModel = MainViewModel()
 }

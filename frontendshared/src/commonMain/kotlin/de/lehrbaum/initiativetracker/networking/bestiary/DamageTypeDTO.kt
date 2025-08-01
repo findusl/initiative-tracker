@@ -9,8 +9,8 @@ import kotlinx.serialization.json.JsonTransformingSerializer
 @Serializable
 data class DamageTypeDTO(
 	val damageType: String? = null,
-	//@SerialName("immune")
-	//val damageTypes: List<@Serializable(with = DamageTypeDTODeserializer::class) DamageTypeDTO>? = null,
+	// @SerialName("immune")
+	// val damageTypes: List<@Serializable(with = DamageTypeDTODeserializer::class) DamageTypeDTO>? = null,
 	val cond: Boolean = false,
 	val note: String? = null,
 )

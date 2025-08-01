@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonTransformingSerializer
 data class TypeDTO(
 	val tags: List<@Serializable(with = TagDTODeserializer::class) TagDTO> = listOf(),
 	@Serializable(with = TypeStringDeserializer::class)
-	val type: String
+	val type: String,
 )
 
 internal object TypeDTODeserializer : JsonTransformingSerializer<TypeDTO>(TypeDTO.serializer()) {

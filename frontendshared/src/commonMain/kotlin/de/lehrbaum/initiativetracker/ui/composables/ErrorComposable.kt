@@ -21,7 +21,7 @@ fun ErrorAlertDialog(message: String, onDismissRequest: () -> Unit) {
 		},
 		text = {
 			Text(message)
-		}
+		},
 	)
 }
 

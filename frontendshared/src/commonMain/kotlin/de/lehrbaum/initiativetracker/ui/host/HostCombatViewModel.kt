@@ -24,6 +24,8 @@ import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder
 import de.lehrbaum.initiativetracker.ui.shared.ErrorStateHolder.Impl
 import de.lehrbaum.initiativetracker.ui.shared.SnackbarState
 import de.lehrbaum.initiativetracker.ui.shared.showText
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -31,25 +33,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.job
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
 
 @Stable
 abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationRequester {
-
 	@Suppress("LeakingThis") // TASK migrate to the sharedHostCombatViewModel, only necessary there
 	protected var combatController: CombatController =
 		CombatController(GlobalInstances.generalSettingsRepository, this)
 
 	val combatants = combatController.combatants
 		.combine(combatController.activeCombatantIndex) { combatants, activeIndex ->
-			combatants.mapIndexed { index, combatant ->
-				CombatantListViewModel(
-					combatant,
-					active = index == activeIndex,
-					isOwned = combatant.ownerId == combatController.hostId
-				)
-			}.toImmutableList()
+			combatants
+				.mapIndexed { index, combatant ->
+					CombatantListViewModel(
+						combatant,
+						active = index == activeIndex,
+						isOwned = combatant.ownerId == combatController.hostId,
+					)
+				}.toImmutableList()
 		}
 
 	val editCombatantViewModel = mutableStateOf<EditCombatantViewModel?>(null)
@@ -165,7 +165,7 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 			},
 			onCancel = {
 				characterChooserViewModel = null
-			}
+			},
 		)
 	}
 
@@ -178,10 +178,11 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 				editCombatantViewModel.value = null
 			},
 			onCancel = {
-				if (firstEdit)
+				if (firstEdit) {
 					combatController.deleteCombatant(combatantModel.id)
+				}
 				editCombatantViewModel.value = null
-			}
+			},
 		)
 	}
 
@@ -220,16 +221,21 @@ abstract class HostCombatViewModel : ErrorStateHolder by Impl(), ConfirmationReq
 	override suspend fun confirmAoe(
 		aoeOptions: AoeOptions,
 		targetRolls: Map<CombatantModel, PreliminaryAOEResult>,
-		probableSource: String?
+		probableSource: String?,
 	): Map<CombatantModel, AOEDecision>? {
 		TODO("Not yet implemented")
 	}
 
 	abstract suspend fun closeSession()
+
 	abstract fun showSessionId()
+
 	abstract suspend fun shareCombat()
+
 	abstract fun onConfirmDamageDialogCancel()
+
 	abstract fun onConfirmDamageDialogSubmit(decision: DamageDecision)
+
 	abstract fun autoConfirmDamagePressed()
 
 	fun onResetResponse(response: Boolean) {

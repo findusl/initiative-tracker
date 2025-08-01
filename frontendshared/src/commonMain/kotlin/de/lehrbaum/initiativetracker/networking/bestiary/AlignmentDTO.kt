@@ -37,6 +37,7 @@ enum class AlignmentDTO {
 	UNALIGNED,
 }
 
+@Suppress("ktlint:standard:no-consecutive-comments")
 internal object AlignmentDTODeserializer : JsonTransformingSerializer<AlignmentDTO>(AlignmentDTO.serializer()) {
 	override fun transformDeserialize(element: JsonElement): JsonElement {
 		if (element !is JsonPrimitive) {

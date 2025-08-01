@@ -41,9 +41,9 @@ fun <T> EditTextField(
 	}
 	var hasFocus by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
-        value = textFieldValue,
-        onValueChange = {
+	OutlinedTextField(
+		value = textFieldValue,
+		onValueChange = {
 			if (selectWhole && it.text.isNotEmpty()) {
 				selectWhole = false
 				textFieldValue = it.copy(selection = TextRange(0, it.text.length))
@@ -54,11 +54,11 @@ fun <T> EditTextField(
 				editFieldViewModel.onTextUpdated(it.text)
 			}
 		},
-        label = { Text(label) },
+		label = { Text(label) },
 		placeholder = editFieldViewModel.placeholder?.let { { Text(it) } },
-        isError = editFieldViewModel.hasError,
-        keyboardOptions = keyboardOptions,
-        singleLine = editFieldViewModel.singleLine,
+		isError = editFieldViewModel.hasError,
+		keyboardOptions = keyboardOptions,
+		singleLine = editFieldViewModel.singleLine,
 		trailingIcon = {
 			if (editFieldViewModel.loading) {
 				CircularProgressIndicator(
@@ -70,7 +70,7 @@ fun <T> EditTextField(
 				}
 			}
 		},
-        modifier = modifier
+		modifier = modifier
 			.fillMaxWidth()
 			.onFocusChanged {
 				hasFocus = it.hasFocus
@@ -78,23 +78,26 @@ fun <T> EditTextField(
 					selectAllNextFocus = false
 					selectWhole = true
 				}
-			}
-    )
+			},
+	)
 }
 
 @Composable
-inline fun <reified T> EditTextField(editFieldViewModel: EditFieldViewModel<T>, label: String, modifier: Modifier = Modifier) {
+inline fun <reified T> EditTextField(
+	editFieldViewModel: EditFieldViewModel<T>,
+	label: String,
+	modifier: Modifier = Modifier,
+) {
 	EditTextField(editFieldViewModel, label, guessKeyboardOptions(editFieldViewModel), modifier)
 }
 
-inline fun <reified T> guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<T>) =
-	guessKeyboardOptions(editFieldViewModel, typeInfo<T>())
+inline fun <reified T> guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<T>) = guessKeyboardOptions(editFieldViewModel, typeInfo<T>())
 
 fun guessKeyboardOptions(editFieldViewModel: EditFieldViewModel<*>, typeInfo: TypeInfo): KeyboardOptions {
 	var type = editFieldViewModel.keyboardType
 
 	if (type == null) {
-		type = when(typeInfo.type) {
+		type = when (typeInfo.type) {
 			Int::class, Long::class -> KeyboardType.Number
 			Double::class, Float::class -> KeyboardType.Decimal
 			else -> null

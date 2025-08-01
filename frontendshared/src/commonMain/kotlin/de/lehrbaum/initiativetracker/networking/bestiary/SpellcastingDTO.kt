@@ -14,5 +14,5 @@ data class SpellcastingDTO(
 	val spells: SpellsDTO? = null,
 	val displayAs: String? = null,
 	val type: String? = null,
-	val will: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO> = listOf()
+	val will: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO> = listOf(),
 )

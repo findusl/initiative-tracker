@@ -10,28 +10,25 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SnackbarHostState.bindSnackbarState(stateHolder: MutableState<SnackbarState?>) {
-    val coroutineScope = rememberCoroutineScope()
-    val state = stateHolder.value
-    if (state != null) {
+	val coroutineScope = rememberCoroutineScope()
+	val state = stateHolder.value
+	if (state != null) {
 		stateHolder.value = null // ensures this is not called again with the same value
-        coroutineScope.launch {
-            val label = when (state) {
-                is SnackbarState.Copyable -> "Copy"
-                else -> null
-            }
-            val result = showSnackbar(state.text, label, state.duration)
-            if (result == SnackbarResult.ActionPerformed) {
-                when (state) {
-                    is SnackbarState.Copyable -> {
-                        // TASK("Implement copy in multiplatform")
-                        /*val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
-                       val clip = ClipData.newPlainText("Combat Session Id", sessionCode.toString())
-                       clipboard!!.setPrimaryClip(clip)
-                         */
-                    }
-                    else -> {}
-                }
-            }
-        }
-    }
+		coroutineScope.launch {
+			val label =
+				when (state) {
+					is SnackbarState.Copyable -> "Copy"
+					else -> null
+				}
+			val result = showSnackbar(state.text, label, state.duration)
+			if (result == SnackbarResult.ActionPerformed) {
+				when (state) {
+					is SnackbarState.Copyable -> {
+						// TASK("Implement copy in multiplatform")
+					}
+					else -> {}
+				}
+			}
+		}
+	}
 }

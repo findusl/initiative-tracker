@@ -12,11 +12,11 @@ import de.lehrbaum.initiativetracker.data.SessionId
 import io.ktor.http.Url
 
 data class JoinViewModel(
-    private val onJoin: (CombatLink) -> Unit,
-    val asHost: Boolean
+	private val onJoin: (CombatLink) -> Unit,
+	val asHost: Boolean,
 ) {
 	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackendUri
-	val title = if(asHost) "Host existing combat" else "Join existing combat"
+	val title = if (asHost) "Host existing combat" else "Join existing combat"
 
 	var hostFieldContent by mutableStateOf("${defaultBackend.hostName}:${defaultBackend.port}")
 	val hostFieldError by derivedStateOf { !InputValidator.isValidHost(hostFieldContent) }

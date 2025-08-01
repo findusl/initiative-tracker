@@ -13,9 +13,8 @@ import io.ktor.http.Url
 @Stable
 data class BackendInputViewModel(
 	private val onBackendConfirmed: suspend (BackendUri) -> Unit,
-    val onDismiss: () -> Unit
+	val onDismiss: () -> Unit,
 ) {
-
 	private val defaultBackend = GlobalInstances.generalSettingsRepository.defaultBackendUri
 	val title = "On which backend do you want to share?"
 

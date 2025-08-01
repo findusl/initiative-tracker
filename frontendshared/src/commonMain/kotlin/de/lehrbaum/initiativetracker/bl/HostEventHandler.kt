@@ -5,7 +5,6 @@ import de.lehrbaum.initiativetracker.dtos.commands.ServerToHostCommand
 import io.github.aakira.napier.Napier
 
 class HostEventHandler(private val combatController: CombatController) {
-
 	suspend fun handleEvent(incoming: ServerToHostCommand): HostCommand {
 		Napier.d("Received command $incoming")
 		when (incoming) {

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class VariantVersionDTO(
 	val addAs: String? = null,
 	val addHeadersAs: String? = null,
-	val name: String? = null
+	val name: String? = null,
 )

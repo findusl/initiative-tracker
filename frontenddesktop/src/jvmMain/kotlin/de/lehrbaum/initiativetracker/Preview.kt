@@ -15,9 +15,10 @@ import androidx.compose.ui.graphics.SolidColor
 @Composable
 @Preview
 fun TestStuff() {
-	Box(modifier = Modifier
-		.background(0.0.healthToBrush())
-		.fillMaxSize()
+	Box(
+		modifier = Modifier
+			.background(0.0.healthToBrush())
+			.fillMaxSize(),
 	) {
 		Text("Some text")
 	}
@@ -27,8 +28,8 @@ private val backgroundGreen = Color.Green.copy(alpha = 0.5f)
 private val backgroundRed = Color.Red.copy(alpha = 0.5f)
 
 @Composable
-private fun Double.healthToBrush(): Brush {
-	return when {
+private fun Double.healthToBrush(): Brush =
+	when {
 		this > 0.99 -> SolidColor(backgroundGreen)
 		this > 0.75 -> Brush.horizontalGradient(0.75f to backgroundGreen, 1.0f to backgroundRed)
 		this > 0.37 -> Brush.horizontalGradient(0.37f to backgroundGreen, 0.75f to backgroundRed)
@@ -36,4 +37,3 @@ private fun Double.healthToBrush(): Brush {
 		this <= 0.0 -> SolidColor(backgroundRed)
 		else -> SolidColor(MaterialTheme.colors.background)
 	}
-}

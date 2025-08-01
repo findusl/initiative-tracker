@@ -13,14 +13,14 @@ sealed class DescriptionEntryDTO
 @Serializable
 @SerialName("simple")
 data class SimpleEntryDTO(
-	val content: String
+	val content: String,
 ) : DescriptionEntryDTO()
 
 @Serializable
 @SerialName("itemSub")
 data class ItemSubEntryDTO(
 	val name: String,
-	val entry: String
+	val entry: String,
 ) : DescriptionEntryDTO()
 
 @Serializable
@@ -68,7 +68,7 @@ data class TableEntryDTO(
 	val caption: String? = null,
 	val colLabels: List<String>? = null,
 	val colStyles: List<String>,
-	val rows: List<List<@Serializable(with = TableCellSerializer::class) TableCellDTO>>
+	val rows: List<List<@Serializable(with = TableCellSerializer::class) TableCellDTO>>,
 ) : DescriptionEntryDTO()
 
 @Serializable
@@ -80,7 +80,7 @@ data class SpellcastingEntryDTO(
 	val spells: SpellsDTO? = null,
 	val will: List<String> = listOf(),
 	val daily: DailyDTO? = null,
-	val ability: String? = null
+	val ability: String? = null,
 ) : DescriptionEntryDTO()
 
 @Serializable
@@ -103,8 +103,8 @@ internal object DescriptionEntrySerializer : JsonTransformingSerializer<Descript
 			return JsonObject(
 				mapOf(
 					"content" to element,
-					"type" to JsonPrimitive("simple")
-				)
+					"type" to JsonPrimitive("simple"),
+				),
 			)
 		}
 		require(element is JsonObject && element["type"] != null) { "Description entry is invalid $element" }

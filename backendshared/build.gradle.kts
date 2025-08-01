@@ -63,14 +63,16 @@ tasks.register<Exec>("buildNativeImageToTarFile") {
 	description = "Save the Docker image as a tar file."
 	dependsOn("publishNativeImageToLocalRegistry")
 
-	commandLine(buildList {
-		add("docker")
-		add("save")
-		add("-o")
-		add("$fullProjectName.tar")
-		add("$fullProjectName:latest")
-		// TASK this image cannot build on other architectures like mac arm
-	})
+	commandLine(
+		buildList {
+			add("docker")
+			add("save")
+			add("-o")
+			add("$fullProjectName.tar")
+			add("$fullProjectName:latest")
+			// TASK this image cannot build on other architectures like mac arm
+		},
+	)
 }
 
 val fullProjectName: String

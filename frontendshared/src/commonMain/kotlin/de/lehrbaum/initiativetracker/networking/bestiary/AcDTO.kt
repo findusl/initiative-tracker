@@ -12,11 +12,11 @@ data class AcDTO(
 	val from: List<String>? = null,
 	val condition: String? = null,
 	val braces: Boolean = false,
-	val special: String? = null
+	val special: String? = null,
 )
 
 internal object AcDTODeserializer : JsonTransformingSerializer<AcDTO>(
-	AcDTO.serializer()
+	AcDTO.serializer(),
 ) {
 	override fun transformDeserialize(element: JsonElement): JsonElement {
 		if (element is JsonPrimitive) {

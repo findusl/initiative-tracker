@@ -17,5 +17,5 @@ data class DailyDTO(
 	@SerialName("2")
 	val twice: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO> = listOf(),
 	@SerialName("3")
-	val thrice: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO> = listOf()
+	val thrice: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO> = listOf(),
 )

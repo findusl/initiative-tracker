@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class TokenDTO(
 	val name: String,
 	val page: Int,
-	val source: String
+	val source: String,
 )

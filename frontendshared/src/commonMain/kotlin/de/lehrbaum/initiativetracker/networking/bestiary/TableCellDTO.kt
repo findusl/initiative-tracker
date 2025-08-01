@@ -13,13 +13,13 @@ sealed class TableCellDTO
 @Serializable
 @SerialName("simple")
 data class SimpleCellDTO(
-	val content: String
+	val content: String,
 ) : TableCellDTO()
 
 @Serializable
 @SerialName("cell")
 data class RollCellDTO(
-	val roll: RollResultDTO
+	val roll: RollResultDTO,
 ) : TableCellDTO()
 
 @Serializable
@@ -35,8 +35,8 @@ internal object TableCellSerializer : JsonTransformingSerializer<TableCellDTO>(T
 			return JsonObject(
 				mapOf(
 					"content" to element,
-					"type" to JsonPrimitive("simple")
-				)
+					"type" to JsonPrimitive("simple"),
+				),
 			)
 		}
 		return element

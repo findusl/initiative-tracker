@@ -44,9 +44,12 @@ fun CharacterChooserScreen(characterChooserViewModel: CharacterChooserViewModel)
 				.padding(Constants.defaultPadding)
 				.fillMaxWidth()
 			items(characters, key = CharacterViewModel::id) { item ->
-				CharacterListElement(item, itemModifier.clickable {
-					chosen = item
-				})
+				CharacterListElement(
+					item,
+					itemModifier.clickable {
+						chosen = item
+					},
+				)
 			}
 			if (characters.isEmpty()) {
 				item {
@@ -63,11 +66,15 @@ fun CharacterChooserScreen(characterChooserViewModel: CharacterChooserViewModel)
 }
 
 @Composable
-private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterViewModel, Int, Int) -> Unit, onCancel: () -> Unit) {
+private fun ExtraInfoDialog(
+	chosen: CharacterViewModel,
+	onComplete: (CharacterViewModel, Int, Int) -> Unit,
+	onCancel: () -> Unit,
+) {
 	Dialog(onDismissRequest = onCancel) {
 		Surface(
 			shape = RoundedCornerShape(16.dp),
-			color = Color.White
+			color = Color.White,
 		) {
 			Column(modifier = Modifier.padding(Constants.defaultPadding)) {
 				var initiativeValue by remember { mutableStateOf(0) }
@@ -78,7 +85,7 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 					onNumberChanged = { initiativeValue = it },
 					onInputValidChanged = { initiativeIsValidNumber = it },
 				)
-				//EditTextField(initiativeField, "Initiative")
+				// EditTextField(initiativeField, "Initiative")
 				val currentHpField = remember(chosen) {
 					EditFieldViewModel(chosen.maxHp ?: 0, parseInput = RequiredIntParser)
 				}
@@ -89,7 +96,7 @@ private fun ExtraInfoDialog(chosen: CharacterViewModel, onComplete: (CharacterVi
 				OkCancelButtonRow(
 					submittable.value,
 					onCancel,
-					onSubmit = { onComplete(chosen, initiativeValue, currentHpField.value.getOrThrow()) }
+					onSubmit = { onComplete(chosen, initiativeValue, currentHpField.value.getOrThrow()) },
 				)
 			}
 		}
@@ -104,7 +111,7 @@ private fun TopBar(onCancel: () -> Unit) {
 			IconButton(onClick = onCancel) {
 				Icon(
 					imageVector = Icons.Filled.Close,
-					contentDescription = "Cancel edit"
+					contentDescription = "Cancel edit",
 				)
 			}
 		},

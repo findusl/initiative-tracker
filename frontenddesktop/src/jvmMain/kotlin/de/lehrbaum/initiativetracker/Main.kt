@@ -23,45 +23,44 @@ import io.github.aakira.napier.Napier
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-fun main() = application {
-	val windowState = rememberWindowState(width = 900.dp, height = 600.dp)
+fun main() =
+	application {
+		val windowState = rememberWindowState(width = 900.dp, height = 600.dp)
 
-	LaunchedEffect(key1 = this) {
-		// Initialize Logging.
-		Napier.base(CustomAntilog())
-	}
-
-	val mainViewModel = MainViewModel()
-
-	val shortcuts = remember { mutableMapOf<Char, () -> Unit>() }
-	val shortcutManager = ShortcutManagerImpl(shortcuts)
-
-	Window(
-		onCloseRequest = ::exitApplication,
-		state = windowState,
-		title = "InitiativeTracker",
-		onKeyEvent = shortcutManager::onKeyEvent
-	) {
-		val widthInt: Int? by derivedStateOf {
-			windowState.size.width.let { if (it.isSpecified) it.value.toInt() else null }
+		LaunchedEffect(key1 = this) {
+			// Initialize Logging.
+			Napier.base(CustomAntilog())
 		}
-		CompositionLocalProvider(LocalShortcutManager provides shortcutManager) {
-			MainComposable(mainViewModel, widthInt)
+
+		val mainViewModel = MainViewModel()
+
+		val shortcuts = remember { mutableMapOf<Char, () -> Unit>() }
+		val shortcutManager = ShortcutManagerImpl(shortcuts)
+
+		Window(
+			onCloseRequest = ::exitApplication,
+			state = windowState,
+			title = "InitiativeTracker",
+			onKeyEvent = shortcutManager::onKeyEvent,
+		) {
+			val widthInt: Int? by derivedStateOf {
+				windowState.size.width.let { if (it.isSpecified) it.value.toInt() else null }
+			}
+			CompositionLocalProvider(LocalShortcutManager provides shortcutManager) {
+				MainComposable(mainViewModel, widthInt)
+			}
 		}
 	}
-}
 
 class CustomAntilog(
 	private val defaultTag: String = "App",
-	private val minLogLevel: LogLevel = LogLevel.DEBUG
+	private val minLogLevel: LogLevel = LogLevel.DEBUG,
 ) : Antilog() {
-
-
 	override fun performLog(
 		priority: LogLevel,
 		tag: String?,
 		throwable: Throwable?,
-		message: String?
+		message: String?,
 	) {
 		if (priority.ordinal < minLogLevel.ordinal) return
 		val formattedTag = tag ?: defaultTag
@@ -73,7 +72,12 @@ class CustomAntilog(
 		}
 	}
 
-	private fun buildLogMessage(priority: LogLevel, tag: String, throwable: Throwable?, message: String?): String {
+	private fun buildLogMessage(
+		priority: LogLevel,
+		tag: String,
+		throwable: Throwable?,
+		message: String?,
+	): String {
 		val logLevelChar = priority.name.first()
 		val timestamp = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 		val baseMessage = "$logLevelChar $timestamp $tag: $message"

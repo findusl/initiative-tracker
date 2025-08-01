@@ -20,7 +20,7 @@ import kotlinx.coroutines.plus
 private val logger = KtorSimpleLogger("main.ClientConnection")
 
 suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCommand.JoiningCommand) {
-	val session = when(joinSession) {
+	val session = when (joinSession) {
 		is StartCommand.JoinDefaultSession -> defaultSession
 		is StartCommand.JoinSessionById -> sessions[joinSession.sessionId]
 	}
@@ -41,7 +41,6 @@ suspend fun DefaultWebSocketServerSession.handleJoinSession(joinSession: StartCo
 		session.combatState.collectLatest {
 			sendSerialized(ServerToClientCommand.CombatUpdatedCommand(it) as ServerToClientCommand)
 		}
-
 	} catch (e: Exception) {
 		logger.warn("client websocket failed somehow $e")
 	}
@@ -95,28 +94,29 @@ private suspend fun DefaultWebSocketServerSession.handleClientCommands(session: 
 private suspend fun DefaultWebSocketServerSession.forwardCommandAndHandleResponse(
 	session: Session,
 	command: ServerToHostCommand,
-	state: ClientSessionState
+	state: ClientSessionState,
 ) = with(state) {
 	require(activeCommandScope == null) { "This client tried to send two commands!" }
 	activeCommandScope = plus(Job()) // avoids cancelling the whole outer scope on exception
-	activeCommandScope?.launch {
-		val scopeReference = activeCommandScope // Keep the scope to launch the response if it was not cancelled
-		val onComplete: (Boolean) -> Unit = { result: Boolean ->
-			logger.trace("Lambda command result $result")
-			scopeReference?.launch {
-				logger.trace("Sending result to client $result")
-				sendSerialized(ServerToClientCommand.CommandCompleted(result) as ServerToClientCommand)
+	activeCommandScope
+		?.launch {
+			val scopeReference = activeCommandScope // Keep the scope to launch the response if it was not cancelled
+			val onComplete: (Boolean) -> Unit = { result: Boolean ->
+				logger.trace("Lambda command result $result")
+				scopeReference?.launch {
+					logger.trace("Sending result to client $result")
+					sendSerialized(ServerToClientCommand.CommandCompleted(result) as ServerToClientCommand)
+				}
 			}
+			logger.trace("Sending to server command queue")
+			session.serverCommandQueue.send(Pair(command, onComplete))
+			// Maybe a more object oriented approach could improve this. Then we could call a suspend function here that
+			// will complete completely or throw.
+		}?.invokeOnCompletion {
+			activeCommandScope = null // Once the command is sent there is no cancelling anymore
 		}
-		logger.trace("Sending to server command queue")
-		session.serverCommandQueue.send(Pair(command, onComplete))
-		// Maybe a more object oriented approach could improve this. Then we could call a suspend function here that
-		// will complete completely or throw.
-	}?.invokeOnCompletion {
-		activeCommandScope = null  // Once the command is sent there is no cancelling anymore
-	}
 }
 
 private class ClientSessionState(
-	var activeCommandScope: CoroutineScope? = null
+	var activeCommandScope: CoroutineScope? = null,
 )
