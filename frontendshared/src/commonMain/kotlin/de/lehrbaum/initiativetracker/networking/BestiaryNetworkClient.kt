@@ -37,9 +37,8 @@ interface BestiaryNetworkClient {
 
 class BestiaryNetworkClientImpl(
 	defaultClient: HttpClient,
-	settingsRepository: GeneralSettingsRepository = GlobalInstances.generalSettingsRepository
+	settingsRepository: GeneralSettingsRepository = GlobalInstances.generalSettingsRepository,
 ) : BestiaryNetworkClient {
-
 	private val httpClient = defaultClient.config {
 		install(ContentNegotiation) {
 			val jsonSerializer = Json {
@@ -65,25 +64,24 @@ class BestiaryNetworkClientImpl(
 	}
 
 	@ExperimentalCoroutinesApi // this is not required to propagate to the interface, weird
-	override val monsters = monsterSources.mapLatest { sources ->
-		channelFlow {
-			sources.values.sortSourcesByMyPreference().forEach { url ->
-				launch {
-					try {
-						Napier.v("Loading bestiary from $url", tag = TAG)
-						val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
-						send(bestiary.monster)
-					} catch (e: Exception) {
-						Napier.e("Failed to load from $url", e, TAG)
+	override val monsters = monsterSources
+		.mapLatest { sources ->
+			channelFlow {
+				sources.values.sortSourcesByMyPreference().forEach { url ->
+					launch {
+						try {
+							Napier.v("Loading bestiary from $url", tag = TAG)
+							val bestiary = httpClient.request(url).body<BestiaryCollectionDTO>()
+							send(bestiary.monster)
+						} catch (e: Exception) {
+							Napier.e("Failed to load from $url", e, TAG)
+						}
 					}
 				}
-			}
-		}
-			.scan(persistentListOf<MonsterDTO>()) { accumulated, newResource ->
+			}.scan(persistentListOf<MonsterDTO>()) { accumulated, newResource ->
 				accumulated + newResource // this is surprisingly performant due to the Trie implementation of persistent list
 			}
-	}
-		.flattenConcat()
+		}.flattenConcat()
 		.catch {
 			Napier.e("Error loading bestiary", it, tag = TAG)
 			if (it is Exception) { // for offline testing
@@ -92,8 +90,7 @@ class BestiaryNetworkClientImpl(
 			} else {
 				emit(persistentListOf())
 			}
-		}
-		.conflate()
+		}.conflate()
 		.flowOn(Dispatchers.IO)
 
 	private fun Collection<String>.sortSourcesByMyPreference(): Collection<String> = shuffled()

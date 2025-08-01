@@ -11,12 +11,12 @@ import de.lehrbaum.initiativetracker.ui.Constants
 
 @Composable
 fun CharacterListElement(characterViewModel: CharacterViewModel, modifier: Modifier = Modifier) {
-    Card(
+	Card(
 		elevation = 8.dp,
 		modifier = modifier
 			.padding(Constants.defaultPadding)
-			.fillMaxWidth()
+			.fillMaxWidth(),
 	) {
-        Text(text = characterViewModel.name, modifier = Modifier.padding(Constants.defaultPadding))
-    }
+		Text(text = characterViewModel.name, modifier = Modifier.padding(Constants.defaultPadding))
+	}
 }

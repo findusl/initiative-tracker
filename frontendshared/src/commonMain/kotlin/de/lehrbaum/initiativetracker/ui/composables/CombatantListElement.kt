@@ -29,10 +29,14 @@ import io.kamel.image.asyncPainterResource
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CombatantListElement(combatantVM: CombatantListViewModel, isHost: Boolean, modifier: Modifier = Modifier) {
+fun CombatantListElement(
+	combatantVM: CombatantListViewModel,
+	isHost: Boolean,
+	modifier: Modifier = Modifier,
+) {
 	val combatant = combatantVM.combatant
 	val outerBackgroundColor by animateColorAsState(
-		if (combatantVM.active) MaterialTheme.colors.secondary else Color.Transparent
+		if (combatantVM.active) MaterialTheme.colors.secondary else Color.Transparent,
 	)
 	val disabled = combatantVM.disabled
 	val crossRed = Color.Red.copy(alpha = ContentAlpha.disabled)
@@ -43,7 +47,7 @@ fun CombatantListElement(combatantVM: CombatantListViewModel, isHost: Boolean, m
 		elevation = 8.dp,
 		modifier = modifier
 			.background(outerBackgroundColor)
-			.padding(defaultPadding)
+			.padding(defaultPadding),
 	) {
 		ListItem(
 			modifier = Modifier
@@ -56,30 +60,32 @@ fun CombatantListElement(combatantVM: CombatantListViewModel, isHost: Boolean, m
 			icon = composableIf(!combatant.isHidden || getsAllInformation) {
 				combatantVM.imageUrl()?.let {
 					KamelImage(
-						{ asyncPainterResource(it) }, contentDescription = "Icon of ${combatant.name}",
+						{ asyncPainterResource(it) },
+						contentDescription = "Icon of ${combatant.name}",
 						modifier = Modifier
 							.widthIn(min = 20.dp, max = 40.dp) // guessed the values
 							.aspectRatio(ratio = 1.0f),
-						contentAlignment = Alignment.CenterStart
+						contentAlignment = Alignment.CenterStart,
 					)
 				}
 			},
 			secondaryText = composableIf(getsAllInformation) {
 				val informationItems = listOfNotNull(
 					combatantVM.monsterDTO?.ac?.firstOrNull()?.ac?.let { "AC $it" },
-					"${combatant.currentHp}/${combatant.maxHp}"
+					"${combatant.currentHp}/${combatant.maxHp}",
 				)
 				Text(informationItems.joinToString(", "))
 			},
 			text = {
-				if (combatant.isHidden && !getsAllInformation)
+				if (combatant.isHidden && !getsAllInformation) {
 					Text("<Hidden>")
-				else
+				} else {
 					Text(text = combatant.name)
+				}
 			},
 			trailing = {
 				Text(text = combatantVM.initiativeString)
-			}
+			},
 		)
 	}
 }
@@ -92,29 +98,26 @@ private fun DrawScope.drawDisabledCross(color: Color) {
 		color = color,
 		start = Offset(0f, 0f),
 		end = Offset(size.width, size.height),
-		strokeWidth = strokeWidth
+		strokeWidth = strokeWidth,
 	)
 	drawLine(
 		color = color,
 		start = Offset(0f, size.height),
 		end = Offset(size.width, 0f),
-		strokeWidth = strokeWidth
+		strokeWidth = strokeWidth,
 	)
 }
 
 private data class HealthColors(
-	val alpha: Float
+	val alpha: Float,
 ) {
 	val backgroundGreen = Color.DarkGreen.copy(alpha = alpha)
 	val backgroundRed = Color.Red.copy(alpha = alpha)
 }
 
 @Composable
-private fun Double?.healthToBrush(
-	enabled: Boolean,
-	colors: HealthColors = HealthColors(if (enabled) ContentAlpha.medium else ContentAlpha.disabled)
-): Brush {
-	return when {
+private fun Double?.healthToBrush(enabled: Boolean, colors: HealthColors = HealthColors(if (enabled) ContentAlpha.medium else ContentAlpha.disabled)): Brush =
+	when {
 		this == null -> SolidColor(MaterialTheme.colors.background)
 		this > 0.99 -> SolidColor(colors.backgroundGreen)
 		this > 0.75 -> Brush.horizontalGradient(0.75f to colors.backgroundGreen, 1.0f to colors.backgroundRed)
@@ -123,4 +126,3 @@ private fun Double?.healthToBrush(
 		this <= 0.0 -> SolidColor(colors.backgroundRed)
 		else -> SolidColor(MaterialTheme.colors.background)
 	}
-}

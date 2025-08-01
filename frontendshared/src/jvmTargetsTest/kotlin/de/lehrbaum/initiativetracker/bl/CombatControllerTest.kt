@@ -4,20 +4,20 @@ import de.lehrbaum.initiativetracker.bl.AOEDecision.KEEP
 import de.lehrbaum.initiativetracker.bl.AOEDecision.OVERWRITE_FAILURE
 import de.lehrbaum.initiativetracker.bl.AOEDecision.OVERWRITE_IGNORE
 import de.lehrbaum.initiativetracker.bl.AOEDecision.OVERWRITE_SUCCESS
-import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.bl.model.AoeOptions
 import de.lehrbaum.initiativetracker.bl.model.SaveDC
 import de.lehrbaum.initiativetracker.bl.model.SavingThrow
+import de.lehrbaum.initiativetracker.data.GeneralSettingsRepository
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.dtos.UserId
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlinx.coroutines.runBlocking
 
 @Suppress("INLINE_FROM_HIGHER_PLATFORM") // KTIJ-18375
 class CombatControllerTest {
@@ -56,7 +56,7 @@ class CombatControllerTest {
 
 		val updatedCombatant = combatController.combatants.value.first().copy(
 			name = updatedName,
-			initiative = updatedInitiative
+			initiative = updatedInitiative,
 		)
 		combatController.updateCombatant(updatedCombatant)
 
@@ -112,7 +112,6 @@ class CombatControllerTest {
 
 	@Test
 	fun `combatants should be sorted by initiative`() {
-
 		// Add combatants out of order
 		combatController.addCombatant(initiative = 10)
 		combatController.addCombatant(initiative = 5)
@@ -129,7 +128,6 @@ class CombatControllerTest {
 
 	@Test
 	fun `combatants should be sorted by initiative and then by id if initiative is equal`() {
-
 		// Add combatants with equal initiatives
 		combatController.addCombatant(initiative = 10)
 		combatController.addCombatant(initiative = 10)
@@ -183,5 +181,4 @@ class CombatControllerTest {
 		assertTrue(result)
 		assertEquals(15, combatController.combatants.value.first().currentHp)
 	}
-
 }

@@ -11,12 +11,12 @@ import kotlinx.collections.immutable.toPersistentList
  */
 
 inline fun <T, R> ImmutableCollection<T>.map(crossinline transform: (T) -> R): PersistentList<R> {
-	if (this.size <= MAX_BUFFER_SIZE ) return (this as Iterable<T>).map(transform).toPersistentList()
+	if (this.size <= MAX_BUFFER_SIZE) return (this as Iterable<T>).map(transform).toPersistentList()
 	return asSequence().map { transform(it) }.toPersistentList() // slightly better performance for bigger lists
 }
 
-inline fun  <T> ImmutableCollection<T>.filter(crossinline predicate: (T) -> Boolean): PersistentList<T> {
-	if (this.size <= MAX_BUFFER_SIZE ) return (this as Iterable<T>).filter(predicate).toPersistentList()
+inline fun <T> ImmutableCollection<T>.filter(crossinline predicate: (T) -> Boolean): PersistentList<T> {
+	if (this.size <= MAX_BUFFER_SIZE) return (this as Iterable<T>).filter(predicate).toPersistentList()
 	return asSequence().filter { predicate(it) }.toPersistentList() // slightly better performance for bigger lists
 }
 

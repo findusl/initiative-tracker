@@ -3,9 +3,9 @@ package de.lehrbaum.initiativetracker.bl
 import kotlin.random.Random
 
 object Dice {
-
 	fun calculateDiceFormula(formula: String, seed: Long): CalculationResult? {
-		val cleanedFormula = formula.trim()
+		val cleanedFormula = formula
+			.trim()
 			.replace('#', 'd')
 			.replace("\\s".toRegex(), "")
 			.replace("+-", "-")

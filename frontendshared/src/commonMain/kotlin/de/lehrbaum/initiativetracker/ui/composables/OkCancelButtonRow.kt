@@ -23,38 +23,38 @@ fun OkCancelButtonRow(
 	onSubmit: () -> Unit,
 	showSubmitLoadingSpinner: Boolean = false,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Button(
-            onClick = { onCancel() },
-            shape = RoundedCornerShape(50.dp),
-            modifier = Modifier
-                .height(50.dp)
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            Text(text = "Cancel")
-        }
-        Button(
-            onClick = onSubmit,
-            shape = RoundedCornerShape(50.dp),
+	Row(
+		horizontalArrangement = Arrangement.SpaceEvenly,
+		verticalAlignment = Alignment.CenterVertically,
+		modifier = Modifier.fillMaxWidth(),
+	) {
+		Button(
+			onClick = { onCancel() },
+			shape = RoundedCornerShape(50.dp),
+			modifier = Modifier
+				.height(50.dp)
+				.fillMaxWidth()
+				.weight(1f),
+		) {
+			Text(text = "Cancel")
+		}
+		Button(
+			onClick = onSubmit,
+			shape = RoundedCornerShape(50.dp),
 			enabled = submittable,
-            modifier = Modifier
-                .height(50.dp)
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
+			modifier = Modifier
+				.height(50.dp)
+				.fillMaxWidth()
+				.weight(1f),
+		) {
 			if (showSubmitLoadingSpinner) {
 				CircularProgressIndicator(
 					color = MaterialTheme.colors.onPrimary,
 					strokeWidth = 3.dp,
-					modifier = Modifier.padding(start = 8.dp).size(28.dp)
+					modifier = Modifier.padding(start = 8.dp).size(28.dp),
 				)
 			}
-            Text(text = "Ok")
-        }
-    }
+			Text(text = "Ok")
+		}
+	}
 }

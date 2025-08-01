@@ -17,23 +17,25 @@ private const val TAG = "DefaultHttpClient"
 fun createDefaultHttpClient() =
 	// This needs changes for iOS
 	createPlatformSpecificHttpClient {
-        install(WebSockets) {
-            contentConverter = KotlinxWebsocketSerializationConverter(Json)
-        }
-        install(ContentNegotiation) {
-            json(Json {
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
-        }
-        install(Logging) {
-            logger = object : Logger {
-                override fun log(message: String) {
-                    Napier.v(message, null, TAG)
-                }
-            }
-            level = LogLevel.INFO // change when debugging
-        }
-    }
+		install(WebSockets) {
+			contentConverter = KotlinxWebsocketSerializationConverter(Json)
+		}
+		install(ContentNegotiation) {
+			json(
+				Json {
+					isLenient = true
+					ignoreUnknownKeys = true
+				},
+			)
+		}
+		install(Logging) {
+			logger = object : Logger {
+				override fun log(message: String) {
+					Napier.v(message, null, TAG)
+				}
+			}
+			level = LogLevel.INFO // change when debugging
+		}
+	}
 
 expect fun createPlatformSpecificHttpClient(initializationBlock: HttpClientConfig<*>.() -> Unit): HttpClient

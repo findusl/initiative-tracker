@@ -6,8 +6,9 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
 @Suppress("FunctionName", "unused")
-fun MainViewController() = ComposeUIViewController {
-	val mainViewModel = remember { MainViewModel() }
-	Napier.base(DebugAntilog())
-	MainComposable(mainViewModel)
-}
+fun MainViewController() =
+	ComposeUIViewController {
+		val mainViewModel = remember { MainViewModel() }
+		Napier.base(DebugAntilog())
+		MainComposable(mainViewModel)
+	}

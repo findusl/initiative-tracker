@@ -29,13 +29,13 @@ open class MainViewModel {
 		DrawerItem.JoinAsHost,
 		DrawerItem.HostCombat,
 		DrawerItem.Characters,
-		DrawerItem.Settings
+		DrawerItem.Settings,
 	)
 	val drawerItems = CombatLinkRepository.combatLinks.map { combatLinks ->
 		defaultDrawerItems.addAll(combatLinks.map { DrawerItem.RememberedCombat(it) })
 	}
 
-	/* Persistent ViewModels */
+	// Persistent ViewModels
 	private val localCombatContentState = hostNewCombat()
 	// Task also make join screen persistent but test first
 
@@ -146,12 +146,10 @@ sealed interface DrawerItem {
 			stringBuilder.append(combatLink.backendUri.hostName)
 			stringBuilder.toString()
 		}
-
 	}
 }
 
 sealed class ContentState(val drawerItem: DrawerItem) {
-
 	data class HostLocalCombat(val hostCombatViewModel: HostLocalCombatViewModelImpl) :
 		ContentState(DrawerItem.HostCombat)
 

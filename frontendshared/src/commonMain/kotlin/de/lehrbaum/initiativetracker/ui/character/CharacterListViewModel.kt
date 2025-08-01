@@ -2,16 +2,15 @@ package de.lehrbaum.initiativetracker.ui.character
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
-import de.lehrbaum.initiativetracker.data.CharacterRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
+import de.lehrbaum.initiativetracker.data.CharacterRepository
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 
 @Stable
 data class CharacterListViewModel(
-	private val characterRepository: CharacterRepository = CharacterRepository()
+	private val characterRepository: CharacterRepository = CharacterRepository(),
 ) {
-
 	val characters = characterRepository.characters.map { list ->
 		list.map { it.toCharacterViewModel() }.toImmutableList()
 	}
@@ -40,7 +39,7 @@ data class CharacterListViewModel(
 				characterRepository.updateCharacter(it)
 				editCharacterModel.value = null
 			},
-			onCancel = { editCharacterModel.value = null }
+			onCancel = { editCharacterModel.value = null },
 		)
 	}
 }

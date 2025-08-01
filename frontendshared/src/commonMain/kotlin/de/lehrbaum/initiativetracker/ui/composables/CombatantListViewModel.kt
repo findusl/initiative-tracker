@@ -28,7 +28,7 @@ data class CombatantListViewModel(
 
 	val healthPercentage: Double? = combatant.run { maxHp?.toDouble()?.let { currentHp?.div(it) } }
 
-	/* This is a derived state since the monsters could still be loading. */
+	// This is a derived state since the monsters could still be loading.
 	val monsterDTO by derivedStateOf { combatant.creatureType?.let { MonsterCache.getMonsterByName(it) } }
 
 	fun imageUrl(): Url? {
@@ -38,7 +38,7 @@ data class CombatantListViewModel(
 			return URLBuilder(
 				protocol = URLProtocol.HTTPS,
 				host = "5e.tools",
-				pathSegments = listOf("img", monster.source, monster.name + ".png")
+				pathSegments = listOf("img", monster.source, monster.name + ".png"),
 			).build()
 		}
 		monster.tokenUrl?.let {

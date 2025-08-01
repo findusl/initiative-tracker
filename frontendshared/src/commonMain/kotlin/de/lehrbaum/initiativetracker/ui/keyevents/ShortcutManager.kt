@@ -8,6 +8,7 @@ val LocalShortcutManager = compositionLocalOf<ShortcutManager?> { null }
 
 interface ShortcutManager {
 	fun addShortcut(key: Char, action: () -> Unit): Boolean
+
 	fun removeShortcut(key: Char)
 }
 
@@ -16,6 +17,8 @@ fun ShortcutManager.disposableShortcut(key: Char, action: () -> Unit) {
 	DisposableEffect(Unit) {
 		if (addShortcut(key, action)) {
 			onDispose { removeShortcut(key) }
-		} else onDispose {  }
+		} else {
+			onDispose { }
+		}
 	}
 }

@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface StartCommand {
-
 	@Serializable
 	sealed interface HostingCommand : StartCommand {
 		@Serializable

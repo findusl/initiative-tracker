@@ -13,7 +13,7 @@ import de.lehrbaum.initiativetracker.networking.createDefaultHttpClient
  * Using lazy to avoid tests to crash even if they don't use the instances
  */
 object GlobalInstances {
-    val httpClient by lazy { createDefaultHttpClient() }
+	val httpClient by lazy { createDefaultHttpClient() }
 	val backendNetworkClient by lazy { BackendNetworkClient(httpClient) }
 	val bestiaryNetworkClient: BestiaryNetworkClient by lazy { BestiaryNetworkClientImpl(httpClient) }
 	val generalSettingsRepository by lazy { GeneralSettingsRepository() }

@@ -18,12 +18,11 @@ object InputValidator {
 		return regex.matches(input) && input.length >= 10
 	}
 
-	fun isValidUrl(url: String): Boolean {
-		return try {
+	fun isValidUrl(url: String): Boolean =
+		try {
 			Url(url)
 			url.endsWith("json")
 		} catch (e: Exception) {
 			false
 		}
-	}
 }

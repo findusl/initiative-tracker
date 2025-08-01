@@ -13,7 +13,7 @@ data class SpeedsDTO(
 	val climb: @Serializable(with = SpeedDTODeserializer::class) SpeedDTO? = null,
 	val fly: @Serializable(with = SpeedDTODeserializer::class) SpeedDTO? = null,
 	val swim: @Serializable(with = SpeedDTODeserializer::class) SpeedDTO? = null,
-	val walk: @Serializable(with = SpeedDTODeserializer::class) SpeedDTO? = null
+	val walk: @Serializable(with = SpeedDTODeserializer::class) SpeedDTO? = null,
 )
 
 @Serializable

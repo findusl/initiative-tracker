@@ -24,5 +24,5 @@ data class SpellsDTO(
 	@SerialName("8")
 	val eightLevel: SpellsForLevelDTO? = null,
 	@SerialName("9")
-	val ninthLevel: SpellsForLevelDTO? = null
+	val ninthLevel: SpellsForLevelDTO? = null,
 )

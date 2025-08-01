@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OtherSourceDTO(
-	val source: String
+	val source: String,
 )

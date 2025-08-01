@@ -31,37 +31,36 @@ import de.lehrbaum.initiativetracker.ui.Constants
 
 @Composable
 fun BestiarySourcesSettingsScreen(settingsViewModel: SettingsViewModel) {
-
 	Scaffold(
-		topBar = { TopBar(settingsViewModel) }
+		topBar = { TopBar(settingsViewModel) },
 	) {
 		LazyColumn(modifier = Modifier.padding(Constants.defaultPadding)) {
 			item {
-
 				// Homebrew JSON links section
 				Text("Homebrew JSON Resources", style = MaterialTheme.typography.h6)
 				Text(
 					"Add links to homebrew JSON resources compatible with 5e.tools",
-					style = MaterialTheme.typography.caption
+					style = MaterialTheme.typography.caption,
 				)
 
 				// GitHub reference link
 				Row(
 					verticalAlignment = Alignment.CenterVertically,
-					modifier = Modifier.clickable { 
-						openPlatformUrl("https://github.com/TheGiddyLimit/homebrew/tree/master/creature")
-					}.padding(vertical = 4.dp)
+					modifier = Modifier
+						.clickable {
+							openPlatformUrl("https://github.com/TheGiddyLimit/homebrew/tree/master/creature")
+						}.padding(vertical = 4.dp),
 				) {
 					Icon(
 						Icons.Default.Link,
 						contentDescription = "Link",
 						tint = MaterialTheme.colors.primary,
-						modifier = Modifier.padding(end = 4.dp)
+						modifier = Modifier.padding(end = 4.dp),
 					)
 					Text(
 						"Find more homebrew JSONs on GitHub",
 						color = MaterialTheme.colors.primary,
-						textDecoration = TextDecoration.Underline
+						textDecoration = TextDecoration.Underline,
 					)
 				}
 
@@ -74,11 +73,11 @@ fun BestiarySourcesSettingsScreen(settingsViewModel: SettingsViewModel) {
 						onValueChange = { settingsViewModel.newHomebrewLinkContent = it },
 						label = { Text("JSON URL") },
 						isError = settingsViewModel.newHomebrewLinkError,
-						modifier = Modifier.weight(1f)
+						modifier = Modifier.weight(1f),
 					)
 					IconButton(
 						onClick = { settingsViewModel.addHomebrewLink() },
-						enabled = settingsViewModel.newHomebrewLinkContent.isNotBlank() && !settingsViewModel.newHomebrewLinkError
+						enabled = settingsViewModel.newHomebrewLinkContent.isNotBlank() && !settingsViewModel.newHomebrewLinkError,
 					) {
 						Icon(Icons.Default.Add, contentDescription = "Add")
 					}
@@ -87,7 +86,7 @@ fun BestiarySourcesSettingsScreen(settingsViewModel: SettingsViewModel) {
 					Text(
 						"Please enter a valid URL",
 						color = MaterialTheme.colors.error,
-						style = MaterialTheme.typography.caption
+						style = MaterialTheme.typography.caption,
 					)
 				}
 
@@ -98,10 +97,10 @@ fun BestiarySourcesSettingsScreen(settingsViewModel: SettingsViewModel) {
 			items(settingsViewModel.homebrewLinks) { link ->
 				Card(
 					modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-					elevation = 2.dp
+					elevation = 2.dp,
 				) {
 					Row(
-						modifier = Modifier.fillMaxWidth().padding(8.dp)
+						modifier = Modifier.fillMaxWidth().padding(8.dp),
 					) {
 						Text(
 							text = link,
@@ -109,7 +108,7 @@ fun BestiarySourcesSettingsScreen(settingsViewModel: SettingsViewModel) {
 							textDecoration = TextDecoration.Underline,
 							modifier = Modifier
 								.weight(1f)
-								.clickable { openPlatformUrl(link) }
+								.clickable { openPlatformUrl(link) },
 						)
 						IconButton(onClick = { settingsViewModel.removeHomebrewLink(link) }) {
 							Icon(Icons.Default.Delete, contentDescription = "Remove")

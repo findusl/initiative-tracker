@@ -3,13 +3,13 @@ package de.lehrbaum.initiativetracker.data
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import de.lehrbaum.initiativetracker.BuildKonfig
+import kotlin.random.Random
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlin.random.Random
 
 private const val APP_ID_KEY = "id"
 private const val DEFAULT_BACKEND_KEY = "defaultBackend"
@@ -20,9 +20,8 @@ private const val SHOW_GUIDE_PREFIX = "showGuide"
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
 class GeneralSettingsRepository(
-	private val settings: ObservableSettings = createSettings(SETTINGS_NAME)
+	private val settings: ObservableSettings = createSettings(SETTINGS_NAME),
 ) {
-
 	private var showGuideDefault = true
 
 	val installationId = settings.getLongOrSet(APP_ID_KEY, Random::nextLong)
@@ -47,12 +46,10 @@ class GeneralSettingsRepository(
 	private val defaultHomebrewLinks = listOf(
 		"https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts.json",
 		"https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts%202.json",
-		"https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts%203.json"
+		"https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/creature/Kobold%20Press%3B%20Tome%20of%20Beasts%203.json",
 	)
 
-	private fun loadHomebrewLinks(): List<String> {
-		return settings.decodeValue(HOMEBREW_LINKS_KEY, defaultHomebrewLinks)
-	}
+	private fun loadHomebrewLinks(): List<String> = settings.decodeValue(HOMEBREW_LINKS_KEY, defaultHomebrewLinks)
 
 	private val homebrewLinksStateFlow = MutableStateFlow(loadHomebrewLinks())
 	val homebrewLinksFlow: Flow<List<String>> = homebrewLinksStateFlow
@@ -64,8 +61,8 @@ class GeneralSettingsRepository(
 			settings.encodeValue(HOMEBREW_LINKS_KEY, value)
 		}
 
-	fun showGuideFlow(guideKey: String): Flow<Boolean> {
-		return callbackFlow {
+	fun showGuideFlow(guideKey: String): Flow<Boolean> =
+		callbackFlow {
 			val key = "$SHOW_GUIDE_PREFIX$guideKey"
 			trySend(settings.getBooleanOrSet(key, { showGuideDefault }))
 			val listener = settings.addBooleanListener(key, defaultValue = true) { value ->
@@ -73,7 +70,6 @@ class GeneralSettingsRepository(
 			}
 			awaitClose { listener.deactivate() }
 		}.conflate()
-	}
 
 	fun hideGuide(guideKey: String) {
 		settings.putBoolean("$SHOW_GUIDE_PREFIX$guideKey", false)
@@ -97,5 +93,4 @@ class GeneralSettingsRepository(
 	}
 }
 
-private fun BuildKonfig.defaultBackendUri(): BackendUri =
-	BackendUri(backendSecure, backendHost, backendPort)
+private fun BuildKonfig.defaultBackendUri(): BackendUri = BackendUri(backendSecure, backendHost, backendPort)

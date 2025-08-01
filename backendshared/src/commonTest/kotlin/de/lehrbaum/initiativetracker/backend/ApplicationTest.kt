@@ -10,22 +10,23 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ApplicationTest {
-
 	@Test
-	fun simpleTest() = testApplication {
-		application {
-			configureSerialization()
-			configureSockets()
-			configureRouting()
-			platformSpecificSetup()
-		}
-		val testContent = """{"combatants":[], "activeCombatantIndex":0 } """
+	fun simpleTest() =
+		testApplication {
+			application {
+				configureSerialization()
+				configureSockets()
+				configureRouting()
+				platformSpecificSetup()
+			}
+			val testContent = """{"combatants":[], "activeCombatantIndex":0 } """
 
-		client.post("/session") {
-			contentType(ContentType.Application.Json)
-			setBody(testContent)
-		}.apply {
-			assertEquals(HttpStatusCode.Created, status)
+			client
+				.post("/session") {
+					contentType(ContentType.Application.Json)
+					setBody(testContent)
+				}.apply {
+					assertEquals(HttpStatusCode.Created, status)
+				}
 		}
-	}
 }

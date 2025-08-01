@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class SpellsForLevelDTO(
 	/** null means as often as wanted */
 	val slots: Int? = null,
-	val spells: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO>
+	val spells: List<@Serializable(with = SpellDTODeserializer::class) SpellDTO>,
 )

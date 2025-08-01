@@ -20,5 +20,5 @@ data class VersionDTO(
 	val speed: SpeedsDTO? = null,
 	val spellcasting: List<SpellcastingDTO>? = null,
 	val variant: VariantDTO? = null,
-	val wis: Int? = null
+	val wis: Int? = null,
 )

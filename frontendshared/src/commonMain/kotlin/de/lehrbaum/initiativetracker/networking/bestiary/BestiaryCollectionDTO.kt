@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BestiaryCollectionDTO(
-	val monster: List<MonsterDTO>
+	val monster: List<MonsterDTO>,
 )

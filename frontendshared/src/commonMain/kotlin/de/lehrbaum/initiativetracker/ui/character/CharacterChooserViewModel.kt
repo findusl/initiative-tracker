@@ -1,8 +1,8 @@
 package de.lehrbaum.initiativetracker.ui.character
 
 import androidx.compose.runtime.Stable
-import de.lehrbaum.initiativetracker.data.CharacterRepository
 import de.lehrbaum.initiativetracker.bl.model.CharacterModel
+import de.lehrbaum.initiativetracker.data.CharacterRepository
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 
@@ -19,7 +19,11 @@ data class CharacterChooserViewModel(
 
 	fun cancel() = onCancel()
 
-	fun onChosen(characterViewModel: CharacterViewModel, initiative: Int, currentHp: Int) {
+	fun onChosen(
+		characterViewModel: CharacterViewModel,
+		initiative: Int,
+		currentHp: Int,
+	) {
 		val model = characterRepository.getById(characterViewModel.id)
 		onChosen(model, initiative, currentHp)
 	}

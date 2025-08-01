@@ -30,59 +30,59 @@ import de.lehrbaum.initiativetracker.ui.Constants
  */
 @Composable
 fun Guide(
-    text: String,
-    guideKey: String,
-    modifier: Modifier = Modifier
+	text: String,
+	guideKey: String,
+	modifier: Modifier = Modifier,
 ) {
-    val settingsRepository = GlobalInstances.generalSettingsRepository
+	val settingsRepository = GlobalInstances.generalSettingsRepository
 
-    val shouldShow by settingsRepository.showGuideFlow(guideKey).collectAsState(initial = false)
+	val shouldShow by settingsRepository.showGuideFlow(guideKey).collectAsState(initial = false)
 
-    if (shouldShow) {
-        GuideContent(
-            text = text,
-            onDismiss = {
-                settingsRepository.hideGuide(guideKey)
-            },
-            modifier = modifier
-        )
-    }
+	if (shouldShow) {
+		GuideContent(
+			text = text,
+			onDismiss = {
+				settingsRepository.hideGuide(guideKey)
+			},
+			modifier = modifier,
+		)
+	}
 }
 
 @Composable
 private fun GuideContent(
-    text: String,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+	text: String,
+	onDismiss: () -> Unit,
+	modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(Constants.defaultPadding),
-        elevation = 2.dp
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+	Card(
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(Constants.defaultPadding),
+		elevation = 2.dp,
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			modifier = Modifier
 				.background(MaterialTheme.colors.surface.copy(alpha = 0.9f)) // Slightly muted surface
 				.padding(Constants.defaultPadding)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.body2, // Smaller font than body1
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier.padding(start = 4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Dismiss guide",
-                    tint = MaterialTheme.colors.primary
-                )
-            }
-        }
-    }
+				.fillMaxWidth(),
+		) {
+			Text(
+				text = text,
+				style = MaterialTheme.typography.body2, // Smaller font than body1
+				modifier = Modifier.weight(1f),
+			)
+			IconButton(
+				onClick = onDismiss,
+				modifier = Modifier.padding(start = 4.dp),
+			) {
+				Icon(
+					imageVector = Icons.Default.Close,
+					contentDescription = "Dismiss guide",
+					tint = MaterialTheme.colors.primary,
+				)
+			}
+		}
+	}
 }

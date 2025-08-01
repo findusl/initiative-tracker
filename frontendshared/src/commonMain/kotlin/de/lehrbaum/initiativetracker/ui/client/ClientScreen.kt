@@ -67,7 +67,7 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 					TopBar(drawerState, clientCombatViewModelState.value, onAddCharacter = {
 						coroutineScope.launch { clientCombatViewModel.chooseCharacterToAdd() }
 					})
-				 },
+				},
 			) {
 				Content(clientCombatViewModelState.value, connectionStateState)
 			}
@@ -83,27 +83,27 @@ fun ClientScreen(drawerState: DrawerState, clientCombatViewModel: ClientCombatVi
 		detail = if (connectionStateState.value is ClientCombatState.Connected) {
 			clientCombatViewModel.characterChooserViewModel?.let { { CharacterChooserScreen(it) } }
 				?: clientCombatViewModel.editCombatantViewModel?.let { { EditCombatantScreen(it) } }
-		} else null
+		} else {
+			null
+		},
 	)
 }
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
-private fun Content(
-	clientCombatViewModel: ClientCombatViewModel,
-	connectionStateState: ResettableState<ClientCombatState>,
-) {
+private fun Content(clientCombatViewModel: ClientCombatViewModel, connectionStateState: ResettableState<ClientCombatState>) {
 	val connectionState = connectionStateState.value
 	when (connectionState) {
 		is ClientCombatState.Connected -> {
-			val combatantList = connectionState.combatants.mapIndexed { index, combatant ->
-				CombatantListViewModel(
-					combatant,
-					active = index == connectionState.activeCombatantIndex,
-					isOwned = combatant.ownerId == clientCombatViewModel.ownerId
-				)
-			}.toImmutableList()
+			val combatantList = connectionState.combatants
+				.mapIndexed { index, combatant ->
+					CombatantListViewModel(
+						combatant,
+						active = index == connectionState.activeCombatantIndex,
+						isOwned = combatant.ownerId == clientCombatViewModel.ownerId,
+					)
+				}.toImmutableList()
 			CombatantList(
 				combatantList,
 				isHost = false,
@@ -116,7 +116,7 @@ private fun Content(
 		is ClientCombatState.Disconnected -> {
 			Column {
 				Text("Disconnected. Reason: ${connectionState.reason}")
-				Button( { connectionStateState.reset() } ) {
+				Button({ connectionStateState.reset() }) {
 					Text("Restart Connection")
 				}
 			}
@@ -152,7 +152,7 @@ private fun NextCombatantButton(clientCombatViewModel: ClientCombatViewModel, co
 	val coroutineScope = rememberCoroutineScope(connectionStateState)
 	if (connectionStateState.activeCombatantIndex >= 0 &&
 		connectionStateState.combatants[connectionStateState.activeCombatantIndex].ownerId == clientCombatViewModel.ownerId
-		) {
+	) {
 		var finishTurnLoading by remember(connectionStateState) { mutableStateOf(false) }
 		FloatingActionButton(onClick = {
 			coroutineScope.launch {
