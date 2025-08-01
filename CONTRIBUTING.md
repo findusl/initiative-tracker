@@ -67,4 +67,8 @@ questions.
 
 ### TASK comments
 
-There are some TASK comments littered in the code, for things that aren't really an issue but could be fixed at some point. 
+There are some TASK comments littered in the code, for things that aren't really an issue but could be fixed at some point.
+
+### Formatting
+
+Use `./gradlew ktlintFormat` before each commit and adds any formatting changes to your commit automatically.
