@@ -48,7 +48,7 @@ WebAssembly in the future, pending the stability and compatibility of the necess
 ## Versioning
 
 The versioning is controlled in the libs.versions.toml, as this provides a central and typesafe location to define these. Automation of version increase would
-nice to have.
+nice to have. -> Actuall dependabot is doing a good job with that at the moment.
 
 ## Contributing
 
