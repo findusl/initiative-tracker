@@ -16,6 +16,11 @@ updates:
     reviewers:
       - "findusl"
     open-pull-requests-limit: 10
+    ignore:
+      # Allow 8.11.x bugfixes, block 8.12+ (Intellij IDE Plugin support)
+      - dependency-name: "com.android.tools.build:gradle"
+        versions:
+          - ">= 8.12.0"
     groups:
       all-dependencies:
         patterns:
