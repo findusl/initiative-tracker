@@ -20,7 +20,7 @@ openai-client = "4.0.1"
 multiplatform-settings = "1.3.0"
 jetbrains-compose = "1.8.2"
 build-konfig = "0.17.1"
-androidx-compose-bom = "2025.08.00"
+androidx-compose-bom = "2025.08.01"
 
 [libraries]
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
