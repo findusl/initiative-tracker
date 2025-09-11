@@ -110,7 +110,7 @@ kotlin {
 			dependencies {
 				// Android gradle module wants to have this on class path otherwise it complains
 				//noinspection UseTomlInstead I want this special case to be clearly visible
-				api("androidx.activity:activity-compose:1.10.1")
+				api("androidx.activity:activity-compose:1.11.0")
 
 				// Multiplatform logging
 				implementation(libs.napier)
