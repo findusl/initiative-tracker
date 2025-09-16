@@ -162,7 +162,7 @@ buildkonfig {
 
 android {
 	namespace = "de.lehrbaum.initiativetracker"
-	compileSdk = 35
+	compileSdk = 36
 	defaultConfig {
 		minSdk = 30 // to avoid warnings, the actual minSdk is set in frontendandroid/build.gradle.kts
 	}
