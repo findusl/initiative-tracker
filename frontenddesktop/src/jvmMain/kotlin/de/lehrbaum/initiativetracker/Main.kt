@@ -1,5 +1,6 @@
 package de.lehrbaum.initiativetracker
 
+import androidx.compose.foundation.InternalFoundationApi
 import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -97,6 +98,7 @@ private class ShortcutManagerImpl(private val shortcuts: MutableMap<Char, () -> 
 		shortcuts.remove(key)
 	}
 
+	@OptIn(InternalFoundationApi::class)
 	fun onKeyEvent(keyEvent: KeyEvent): Boolean {
 		Napier.v("Got keyEvent $keyEvent")
 		if (keyEvent.isTypedEvent) {
