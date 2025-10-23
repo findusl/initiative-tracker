@@ -1,7 +1,7 @@
 package de.lehrbaum.initiativetracker.bl
 
+import de.findusl.wavrecorder.platformRecorder
 import de.lehrbaum.initiativetracker.GlobalInstances
-import de.lehrbaum.initiativetracker.audio.AudioRecorder
 import de.lehrbaum.initiativetracker.dtos.CombatantModel
 import de.lehrbaum.initiativetracker.networking.flatMap
 import io.github.aakira.napier.Napier
@@ -11,7 +11,7 @@ private const val TAG = "AudioCommandController"
 class AudioCommandController(
 	private val combatController: CombatController,
 ) {
-	private var audioRecorder = AudioRecorder()
+	private var audioRecorder = platformRecorder
 	private val openAiNetworkClientProvider = GlobalInstances.openAiNetworkClientProvider
 
 	private val combatants: Iterable<CombatantModel>
@@ -38,12 +38,12 @@ class AudioCommandController(
 
 		// free up the resources. This can most likely be improved for re-use but not a concern right now
 		audioRecorder.close()
-		audioRecorder = AudioRecorder()
+		audioRecorder = platformRecorder
 		return result
 	}
 
 	fun cancelRecording() {
 		audioRecorder.close()
-		audioRecorder = AudioRecorder()
+		audioRecorder = platformRecorder
 	}
 }
