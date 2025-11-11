@@ -3,7 +3,7 @@ plugins {
 	alias(libs.plugins.kotlin.multiplatform) apply false
 	alias(libs.plugins.jetbrains.compose) apply false
 	alias(libs.plugins.compose.compiler) apply false
-	id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+	id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
 }
 
 buildscript {
