@@ -35,7 +35,7 @@ android {
 		applicationId = "de.lehrbaum.initiativetracker.remote"
 		minSdk = 30
 		targetSdk = 36
-		versionCode = 4
+		versionCode = 5
 		version = libs.versions.frontendVersion.get()
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
