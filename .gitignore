@@ -105,6 +105,9 @@ gradle-app.setting
 /.idea/misc.xml
 /.idea/caches/deviceStreaming.xml
 /.idea/runConfigurations.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/xcode.xml
+/.idea/deviceManager.xml
 /app/remote/release/app-remote-release.aab
 
 # Android apk build folders
@@ -120,5 +123,3 @@ frontendios/iosApp.xcodeproj/*
 
 # Some Kotlin metadata
 .kotlin/
-/.idea/deploymentTargetSelector.xml
-/.idea/xcode.xml

@@ -8,12 +8,12 @@ gradle-android-tools = "8.11.2"
 javapoet = "1.13.0"
 junit = "4.13.2"
 kamel-image = "1.0.9"
-kotlin = "2.2.0"
+kotlin = "2.3.0"
 kotlinx-coroutines-core = "1.10.2"
 kotlinx-serialization-json = "1.10.0"
 ktor = "3.4.0"
 kotlinx-collections-immutable = "0.4.0"
-logback-classic = "1.5.26"
+logback-classic = "1.5.27"
 mockk = "1.14.9"
 napier = "2.7.1"
 openai-client = "4.0.1"
@@ -62,12 +62,10 @@ multiplatform-settings-serialization = { module = "com.russhwolf:multiplatform-s
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 multiplatform-settings-test = { module = "com.russhwolf:multiplatform-settings-test", version.ref = "multiplatform-settings" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx-compose-bom" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 wav-recorder = { module = "de.findusl:wav-recorder", version.ref = "wavRecorder" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinx-serialization = { id = "org.jetbrains.plugin.serialization", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "build-konfig" }
