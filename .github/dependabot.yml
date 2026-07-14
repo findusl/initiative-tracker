@@ -21,6 +21,10 @@ updates:
       - dependency-name: "com.android.tools.build:gradle"
         versions:
           - ">= 8.12.0"
+      # Gradle 9.6+ is incompatible with the current Android Gradle Plugin
+      - dependency-name: "gradle-wrapper"
+        versions:
+          - ">= 9.6.0"
     groups:
       all-dependencies:
         patterns:
