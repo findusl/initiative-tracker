@@ -123,3 +123,4 @@ frontendios/iosApp.xcodeproj/*
 
 # Some Kotlin metadata
 .kotlin/
+/gradle/gradle-daemon-jvm.properties
