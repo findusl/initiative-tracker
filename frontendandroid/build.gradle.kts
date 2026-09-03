@@ -29,13 +29,13 @@ kotlin {
 }
 
 android {
-	compileSdk = 36
+	compileSdk = 37
 
 	defaultConfig {
 		applicationId = "de.lehrbaum.initiativetracker.remote"
 		minSdk = 30
-		targetSdk = 36
-		versionCode = 5
+		targetSdk = 37
+		versionCode = 6
 		version = libs.versions.frontendVersion.get()
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
